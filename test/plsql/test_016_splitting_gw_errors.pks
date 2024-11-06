@@ -12,6 +12,7 @@ create or replace package test_016_splitting_gw_errors as
 
   --%suite(16 Splitting Gateway Errors and Restarts)
   --%rollback(manual)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
@@ -48,3 +49,4 @@ create or replace package test_016_splitting_gw_errors as
   procedure tear_down_tests;
 
 end test_016_splitting_gw_errors;
+/

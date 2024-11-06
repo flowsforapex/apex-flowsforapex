@@ -441,6 +441,18 @@ create or replace package body flow_plugin_manage_instance as
                      , pi_var_name    => l_var_name
                      , pi_clob_value  => l_process_variable.get_clob('value')
                      );
+                  when 'json' then
+                     apex_debug.info(
+                        p_message => '......Name: %s - Type: %s - Value %s'
+                        , p0 => l_var_name
+                        , p1 => l_var_type
+                        , p2 => l_process_variable.get_clob('value')
+                     );
+                     flow_process_vars.set_var(
+                        pi_prcs_id    => l_prcs_id
+                     , pi_var_name    => l_var_name
+                     , pi_json_value  => l_process_variable.get_clob('value')
+                     );   
                   else
                      raise e_incorrect_variable_type;
                end case;

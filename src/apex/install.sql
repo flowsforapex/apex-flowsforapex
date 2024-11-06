@@ -20,7 +20,6 @@ prompt --install
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
 @@application/shared_components/files/css_flows4apex_css.sql
 @@application/shared_components/files/js_flows4apex_js.sql
-@@application/shared_components/files/js_flows4apex_min_js.sql
 @@application/shared_components/files/js_flows4apex_js_map.sql
 @@application/shared_components/files/css_flows4apex_min_css.sql
 @@application/shared_components/files/css_flows4apex_css_map.sql
@@ -34,6 +33,7 @@ prompt --install
 @@application/shared_components/files/lib_prismjs_css_prism_css_map.sql
 @@application/shared_components/files/lib_prismjs_css_prism_dark_min_css.sql
 @@application/shared_components/files/lib_prismjs_css_prism_dark_css_map.sql
+@@application/shared_components/files/js_flows4apex_min_js.sql
 @@application/shared_components/files/app_100_logo_png.sql
 @@application/shared_components/files/favicon_png.sql
 @@application/shared_components/files/css_flows4apex_dark_css.sql
@@ -78,6 +78,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/diagram_categories_lov.sql
 @@application/shared_components/user_interface/lovs/flow_instance_diagrams_lov.sql
 @@application/shared_components/user_interface/lovs/flow_rest_roles.sql
+@@application/shared_components/user_interface/lovs/flow_simple_form_templates_lov.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p13_object_attributes.sql
 @@application/shared_components/user_interface/lovs/p13_var_exp_set_on.sql
@@ -91,6 +92,7 @@ prompt --install
 @@application/comments.sql
 @@application/shared_components/navigation/breadcrumbs/breadcrumb.sql
 @@application/shared_components/navigation/breadcrumbentry.sql
+@@application/shared_components/user_interface/templates/page/drawer.sql
 @@application/shared_components/user_interface/templates/page/minimal_no_navigation.sql
 @@application/shared_components/user_interface/templates/page/standard.sql
 @@application/shared_components/user_interface/templates/page/wizard_modal_dialog.sql
@@ -104,6 +106,8 @@ prompt --install
 @@application/shared_components/user_interface/templates/button/text.sql
 @@application/shared_components/user_interface/templates/button/icon.sql
 @@application/shared_components/user_interface/templates/region/cards_container.sql
+@@application/shared_components/user_interface/templates/region/inline_drawer.sql
+@@application/shared_components/user_interface/templates/region/image.sql
 @@application/shared_components/user_interface/templates/region/wizard_container.sql
 @@application/shared_components/user_interface/templates/region/title_bar.sql
 @@application/shared_components/user_interface/templates/region/tabs_container.sql
@@ -133,6 +137,7 @@ prompt --install
 @@application/shared_components/user_interface/templates/list/media_list.sql
 @@application/shared_components/user_interface/templates/list/cards.sql
 @@application/shared_components/user_interface/templates/list/badge_list.sql
+@@application/shared_components/user_interface/templates/report/contextual_info.sql
 @@application/shared_components/user_interface/templates/report/value_attribute_pairs_column.sql
 @@application/shared_components/user_interface/templates/report/media_list.sql
 @@application/shared_components/user_interface/templates/report/timeline.sql
@@ -157,7 +162,6 @@ prompt --install
 @@application/shared_components/user_interface/themes.sql
 @@application/shared_components/user_interface/theme_style.sql
 @@application/shared_components/user_interface/theme_files.sql
-@@application/shared_components/user_interface/theme_display_points.sql
 @@application/shared_components/user_interface/template_opt_groups.sql
 @@application/shared_components/user_interface/template_options.sql
 @@application/shared_components/globalization/language.sql
@@ -170,11 +174,13 @@ prompt --install
 @@application/shared_components/automations/flows_for_apex_purge_statistics.sql
 @@application/shared_components/automations/flows_for_apex_gather_daily_statistics.sql
 @@application/shared_components/automations/flows_for_apex_purge_logs.sql
+@@application/shared_components/security/authentications/no_auth.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
-@@application/shared_components/plugins/region_type/com_flows4apex_modeler_region.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_ins_vars_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process.sql
+@@application/shared_components/plugins/region_type/com_flows4apex_modeler_region.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_step_process.sql
+@@application/shared_components/plugins/process_type/com_flows4apex_return_to_flows_process.sql
 @@application/shared_components/plugins/region_type/com_flows4apex_viewer_region.sql
 @@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
@@ -205,6 +211,9 @@ prompt --install
 @@application/pages/page_00036.sql
 @@application/pages/page_00037.sql
 @@application/pages/page_00038.sql
+@@application/pages/page_00039.sql
+@@application/pages/page_00050.sql
+@@application/pages/page_00051.sql
 @@application/pages/page_00100.sql
 @@application/pages/page_09999.sql
 @@application/deployment/definition.sql

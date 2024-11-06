@@ -12,6 +12,7 @@ create or replace package test_007_procvars as
 
   --%suite(07 Process Variables API)
   --%rollback(manual)
+  --%tags(short,ce,ee)
 
   --%beforeall
   procedure set_up_tests;
@@ -414,3 +415,4 @@ create or replace package test_007_procvars as
   procedure tear_down_tests;
 
 end test_007_procvars;
+/

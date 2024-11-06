@@ -55,9 +55,11 @@
   --palette-background-color: var(--color-grey-225-10-97);
   --palette-border-color: var(--color-grey-225-10-75);
 
+  --popup-font-family: "IBM Plex Sans", sans-serif;
   --popup-font-size: 14px;
   --popup-header-entry-selected-color: var(--color-blue-205-100-50);
   --popup-header-font-weight: bolder;
+  --popup-header-group-divider-color: var(--color-grey-225-10-75);
   --popup-background-color: var(--color-white);
   --popup-border-color: transparent;
   --popup-shadow-color: var(--color-black-opacity-30);
@@ -121,8 +123,13 @@
   stroke: var(--element-selected-outline-stroke-color);
 }
 
+.djs-connection.selected .djs-outline {
+  display: none;
+}
+
 .djs-multi-select .djs-element.selected .djs-outline {
   stroke: var(--element-selected-outline-secondary-stroke-color);
+  display: block;
 }
 
 .djs-shape.connect-ok .djs-visual > :nth-child(1) {
@@ -265,33 +272,25 @@ svg.new-parent {
   stroke: none !important;
 }
 
-marker.djs-dragger circle,
-marker.djs-dragger path,
-marker.djs-dragger polygon,
-marker.djs-dragger polyline,
-marker.djs-dragger rect {
+.djs-dragger marker circle,
+.djs-dragger marker path,
+.djs-dragger marker polygon,
+.djs-dragger marker polyline,
+.djs-dragger marker rect {
   fill: var(--element-dragger-color) !important;
   stroke: none !important;
 }
 
-marker.djs-dragger text,
-marker.djs-dragger tspan {
+.djs-dragger marker text,
+.djs-dragger marker tspan {
   fill: none !important;
   stroke: var(--element-dragger-color) !important;
 }
 
-.djs-dragging {
-  opacity: 0.3;
-}
-
 .djs-dragging,
 .djs-dragging > * {
+  opacity: 0.3 !important;
   pointer-events: none !important;
-}
-
-.djs-dragging .djs-context-pad,
-.djs-dragging .djs-outline {
-  display: none !important;
 }
 
 /**
@@ -475,16 +474,13 @@ marker.djs-dragger tspan {
 /**
  * context-pad
  */
-.djs-overlay-context-pad {
-  width: 72px;
-  z-index: 100;
-}
-
 .djs-context-pad {
   position: absolute;
   display: none;
   pointer-events: none;
   line-height: 1;
+  width: 72px;
+  z-index: 100;
 }
 
 .djs-context-pad .entry {
@@ -516,29 +512,20 @@ marker.djs-dragger tspan {
 /**
  * popup styles
  */
-.djs-popup-backdrop {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  z-index: 200;
-  line-height: 1;
-  font-family: "IBM Plex Sans", sans-serif;
-}
-
 .djs-popup {
+  line-height: 1;
   box-sizing: border-box;
   width: min-content;
   background: var(--popup-background-color);
   overflow: hidden;
-  position: absolute;
-
+  position: fixed;
+  z-index: 200;
   box-shadow: 0px 2px 6px var(--popup-shadow-color);
   border: solid 1px var(--popup-border-color);
   min-width: 120px;
   outline: none;
   font-size: var(--popup-font-size);
+  font-family: var(--popup-font-family);
 }
 
 .djs-popup-search input {
@@ -568,12 +555,41 @@ marker.djs-dragger tspan {
   border-radius: 2px;
 }
 
+.djs-popup button.entry {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
 .djs-popup-header .entry.active {
   color: var(--popup-header-entry-selected-color);
 }
 
 .djs-popup-header .entry.disabled {
   color: inherit;
+}
+
+.djs-popup-header-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.djs-popup-header-group .entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.djs-popup-header-group + .djs-popup-header-group:before {
+  content: '';
+  width: 1px;
+  height: 20px;
+  background: var(--popup-header-group-divider-color);
+  margin: 0 5px;
 }
 
 .djs-popup-search {
@@ -679,6 +695,11 @@ marker.djs-dragger tspan {
   line-height: 1.4em;
 }
 
+.djs-popup .entry,
+.djs-popup .entry-header {
+  margin: 1px;
+}
+
 .djs-popup-title,
 .djs-popup-label,
 .djs-popup-entry-description,
@@ -690,13 +711,6 @@ marker.djs-dragger tspan {
 
 .djs-popup-entry-name {
   display: flex;
-}
-
-.entry-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
 }
 
 .djs-popup-body {
@@ -752,22 +766,13 @@ marker.djs-dragger tspan {
 }
 
 /**
- * touch
+ * bendpoints
  */
-
-.djs-shape,
-.djs-connection {
-  touch-action: none;
-}
-
 .djs-segment-dragger,
 .djs-bendpoint {
   display: none;
 }
 
-/**
- * bendpoints
- */
 .djs-segment-dragger .djs-visual {
   display: none;
 

@@ -23,12 +23,14 @@ as
   , pi_scope    in flow_subflows.sbfl_scope%type default 0
   ) return varchar2
   as
-    l_application flow_types_pkg.t_bpmn_attribute_vc2;
-    l_page        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_request     flow_types_pkg.t_bpmn_attribute_vc2;
-    l_clear_cache flow_types_pkg.t_bpmn_attribute_vc2;
-    l_items       flow_types_pkg.t_bpmn_attribute_vc2;
-    l_values      flow_types_pkg.t_bpmn_attribute_vc2;
+    l_application        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_page               flow_types_pkg.t_bpmn_attribute_vc2;
+    l_request            flow_types_pkg.t_bpmn_attribute_vc2;
+    l_clear_cache        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_items              flow_types_pkg.t_bpmn_attribute_vc2;
+    l_values             flow_types_pkg.t_bpmn_attribute_vc2;
+    l_form_template_item flow_types_pkg.t_bpmn_attribute_vc2;
+    l_form_template_id   flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     select max(ut_application)
          , max(ut_page_id)
@@ -36,25 +38,31 @@ as
          , max(ut_clear_cache)
          , listagg( ut_item_name, ',' ) within group ( order by order_key ) as item_names
          , listagg( ut_item_value, ',' ) within group ( order by order_key ) as item_values
+         , max(ut_form_template_item)
+         , max(ut_form_template_id)
       into l_application
          , l_page
          , l_request
          , l_clear_cache
          , l_items
          , l_values
+         , l_form_template_item
+         , l_form_template_id
       from flow_objects objt
       join json_table( objt.objt_attributes
            , '$.apex'
              columns
-               ut_application varchar2(4000) path '$.applicationId'
-             , ut_page_id     varchar2(4000) path '$.pageId'
-             , ut_request     varchar2(4000) path '$.request'
-             , ut_clear_cache varchar2(4000) path '$.cache'
+               ut_application        varchar2(4000) path '$.applicationId'
+             , ut_page_id            varchar2(4000) path '$.pageId'
+             , ut_request            varchar2(4000) path '$.request'
+             , ut_clear_cache        varchar2(4000) path '$.cache'
              , nested path '$.pageItems[*]'
                  columns ( order_key for ordinality
                          , ut_item_name varchar2(4000) path '$.name'
                          , ut_item_value varchar2(4000) path '$.value'
                          )
+             , ut_form_template_item varchar2(4000) path '$.formTemplateItem'
+             , ut_form_template_id   varchar2(4000) path '$.formTemplateId'
            ) jt
         on objt.objt_id = pi_objt_id
     ;
@@ -66,6 +74,27 @@ as
     flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_clear_cache );
     flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_items );
     flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_values );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_form_template_item );
+    flow_proc_vars_int.do_substitution ( pi_prcs_id => pi_prcs_id, pi_sbfl_id => pi_sbfl_id, pi_step_key => pi_step_key, pi_scope => pi_scope, pio_string  => l_form_template_id );
+
+    -- apex_simple_form
+    if l_form_template_id is not null
+       and
+       l_form_template_item is not null
+    then
+      -- append item name
+      if l_items is null then
+        l_items := l_form_template_item;
+      else
+        l_items := l_items || ',' || l_form_template_item;
+      end if;
+      -- append item value
+      if l_values is null then
+        l_values := l_form_template_id;
+      else
+        l_values := l_values || ',' || l_form_template_id;
+      end if;
+    end if;
 
     return
       apex_page.get_url
@@ -419,17 +448,18 @@ $END
           , p0 => l_apex_task_id
           );  
 
-          flow_proc_vars_int.set_var 
-          ( pi_prcs_id      => l_prcs_id
-          , pi_scope        => l_scope
-          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
-          , pi_num_value    => l_apex_task_id
-          , pi_sbfl_id      => l_sbfl_id
-          , pi_objt_bpmn_id => p_step_info.target_objt_ref
-          );
+--          flow_proc_vars_int.set_var 
+--          ( pi_prcs_id      => l_prcs_id
+--          , pi_scope        => l_scope
+--          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
+--          , pi_num_value    => l_apex_task_id
+--          , pi_sbfl_id      => l_sbfl_id
+--          , pi_objt_bpmn_id => p_step_info.target_objt_ref
+--          );
           -- set the status to 'waiting for approval'
           update flow_subflows sbfl
              set sbfl.sbfl_last_update    = systimestamp
+               , sbfl.sbfl_apex_task_id   = l_apex_task_id
                , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_approval
                , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                       , sys_context('userenv','os_user')
@@ -545,53 +575,33 @@ $END
       apex_debug.enter
       (p_routine_name => 'return_approval_result'
       );
-      -- check task belongs to this process by looking for a process variable with content = task id and name ending in task id suffix.
-      begin
-        select prov.prov_var_name
-             , replace (prov.prov_var_name , flow_constants_pkg.gc_prov_suffix_task_id) l_potential_current
-             , prov.prov_scope
-          into l_var_name
-             , l_potential_current
-             , l_scope
-          from flow_process_variables prov
-         where prov.prov_prcs_id = p_process_id
-           and prov.prov_var_num = p_apex_task_id
-           and prov.prov_var_type = flow_constants_pkg.gc_prov_var_type_number
-           and prov.prov_var_name like '%'||flow_constants_pkg.gc_prov_suffix_task_id
-        ;
-        apex_debug.info 
-        ( p_message => '--- Returning Approval Result - Found current step %0 scope %1'
-        , p0 => l_potential_current
-        , p1 => l_scope
-        );
-      exception
-        when no_data_found then
-          raise e_task_id_proc_var_not_found;
-        when too_many_rows then
-          raise e_task_id_duplicate_found;
-      end;
 
       begin
         -- find and lock the subflow
         select sbfl.sbfl_id
              , sbfl.sbfl_step_key
              , sbfl.sbfl_dgrm_id
+             , sbfl.sbfl_scope
+             , sbfl.sbfl_current
           into l_sbfl_id
              , l_step_key
              , l_dgrm_id
+             , l_scope
+             , l_current_bpmn_id 
           from flow_subflows sbfl
          where sbfl.sbfl_prcs_id = p_process_id
-           and sbfl.sbfl_scope = l_scope
-           and sbfl.sbfl_current = l_potential_current
+           and sbfl.sbfl_apex_task_id = p_apex_task_id
         for update of sbfl.sbfl_step_key wait 5;
       exception
         when no_data_found then
           raise e_task_not_current_step;
+        when too_many_rows then
+          raise e_task_id_duplicate_found;
         when e_lock_timeout then
           raise e_lock_timeout;
       end;
       apex_debug.info 
-      ( p_message => '--- Returning Approval Result - Found Subflow %0 step Key %1 Diagram %2'
+      ( p_message => '--- Returning Approval Outcome - Found Subflow %0 step Key %1 Diagram %2'
       , p0 => l_sbfl_id
       , p1 => l_step_key
       , p2 => l_dgrm_id
@@ -601,10 +611,10 @@ $END
         select objt.objt_attributes."apex"."resultVariable"
           into l_result_var
           from flow_objects objt
-         where objt.objt_bpmn_id = l_potential_current
+         where objt.objt_bpmn_id = l_current_bpmn_id 
            and objt.objt_dgrm_id = l_dgrm_id;
         apex_debug.info 
-        ( p_message => '--- Returning Approval Result - Found result variable id %0'
+        ( p_message => '--- Returning Approval Outcome - Found result variable id %0'
         , p0 => l_result_var
         );
       exception

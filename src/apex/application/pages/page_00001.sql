@@ -3,33 +3,33 @@ begin
 --   Manifest
 --     PAGE: 00001
 --   Manifest End
-wwv_flow_api.component_begin (
- p_version_yyyy_mm_dd=>'2020.10.01'
-,p_release=>'20.2.0.00.20'
+wwv_flow_imp.component_begin (
+ p_version_yyyy_mm_dd=>'2022.04.12'
+,p_release=>'22.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
-wwv_flow_api.create_page(
+wwv_flow_imp_page.create_page(
  p_id=>1
-,p_user_interface_id=>wwv_flow_api.id(12495499263265880052)
+,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Getting Started'
 ,p_alias=>'GETTING-STARTED'
 ,p_step_title=>'Getting Started - &APP_NAME_TITLE.'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
-,p_last_updated_by=>'C##LMOREAUX'
-,p_last_upd_yyyymmddhh24miss=>'20230625101559'
+,p_page_component_map=>'11'
+,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
+,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
-wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(10603774502745437)
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(10603774502745437)
 ,p_plug_name=>'Getting Started'
-,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader:t-Region--scrollBody'
-,p_plug_template=>wwv_flow_api.id(12495582446800880234)
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--scrollBody'
+,p_plug_template=>wwv_flow_imp.id(12495582446800880234)
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_plug_display_point=>'BODY'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<h2>Flows for APEX</h2>',
 '<h3>A Low code, BPMN-based Process Flow system for APEX.</h3>',
@@ -57,11 +57,11 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
-wwv_flow_api.create_page_plug(
- p_id=>wwv_flow_api.id(16518361588787101)
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(16518361588787101)
 ,p_plug_name=>'Getting Started'
 ,p_region_template_options=>'#DEFAULT#:t-HeroRegion--hideIcon'
-,p_plug_template=>wwv_flow_api.id(12495589722092880240)
+,p_plug_template=>wwv_flow_imp.id(12495589722092880240)
 ,p_plug_display_sequence=>20
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
@@ -69,6 +69,6 @@ wwv_flow_api.create_page_plug(
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
-wwv_flow_api.component_end;
+wwv_flow_imp.component_end;
 end;
 /

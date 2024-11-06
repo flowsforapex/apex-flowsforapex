@@ -12,8 +12,8 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_quarterly_summaries_months'       ,p_value => '60');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'engine_app_mode'                               ,p_value => 'production');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'duplicate_step_prevention'                     ,p_value => 'strict');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_initial_installed'                     ,p_value => '23.1');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_now_installed'                         ,p_value => '23.1');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_initial_installed'                     ,p_value => '24.1');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_now_installed'                         ,p_value => '24.1');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_workspace'                             ,p_value => 'FLOWS4APEX');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_application'                           ,p_value => '100');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_pageid'                                ,p_value => '1');
@@ -26,6 +26,10 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'rest_base'                                     ,p_value => null );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_archive_location'                      ,p_value => null );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_bpmn_location'                         ,p_value => null );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_edition'                               ,p_value => 'community' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_key'                                   ,p_value => '' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'licensed_to'                                   ,p_value => '' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_expiry_date'                           ,p_value => '' );
 
   commit;
 end;

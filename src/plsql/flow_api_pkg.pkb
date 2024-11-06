@@ -230,10 +230,11 @@ create or replace package body flow_api_pkg as
     end if;
 
     flow_globals.set_context
-    ( pi_prcs_id  => p_process_id
-    , pi_sbfl_id  => p_subflow_id
-    , pi_step_key => p_step_key
-    , pi_scope    => flow_engine_util.get_scope (p_process_id => p_process_id, p_subflow_id => p_subflow_id)
+    ( pi_prcs_id      => p_process_id
+    , pi_sbfl_id      => p_subflow_id
+    , pi_step_key     => p_step_key
+    , pi_scope        => flow_engine_util.get_scope (p_process_id => p_process_id, p_subflow_id => p_subflow_id)
+    , pi_loop_counter => flow_engine_util.get_loop_counter (pi_sbfl_id => p_subflow_id)
     );
     flow_engine.restart_step
     ( p_process_id => p_process_id
@@ -680,6 +681,7 @@ create or replace package body flow_api_pkg as
         l_task.process_id              := l_row.prcs_id;
         l_task.subflow_id              := l_row.sbfl_id;
         l_task.step_key                := l_row.sbfl_step_key;
+        l_task.current_obj             := l_row.sbfl_current;
 
     end process_row;
 

@@ -4,7 +4,7 @@ begin
   l_dgrm_content := apex_string.join_clob(
     apex_t_varchar2(
       q'[<?xml version="1.0" encoding="UTF-8"?>]'
-      ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="22.2.0">]'
+      ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">]'
       ,q'[  <bpmn:process id="Process_0rxermh" isExecutable="false" apex:isCallable="true" apex:manualInput="false">]'
       ,q'[    <bpmn:extensionElements>]'
       ,q'[      <apex:inVariables>]'
@@ -76,7 +76,6 @@ begin
       ,q'[      <bpmn:outgoing>Flow_07uc0ef</bpmn:outgoing>]'
       ,q'[    </bpmn:startEvent>]'
       ,q'[    <bpmn:task id="Activity_calledTask" name="called Task">]'
-      ,q'[      <bpmn:documentation>Model11b_scope, Func Body and Expression Test set to Static Type until Issue 444 fixed.</bpmn:documentation>]'
       ,q'[      <bpmn:extensionElements>]'
       ,q'[        <apex:beforeTask>]'
       ,q'[          <apex:processVariable>]'
@@ -123,15 +122,24 @@ begin
       ,q'[            <apex:varSequence>5</apex:varSequence>]'
       ,q'[            <apex:varName>VarExp_InCalled_ExpressionVC2</apex:varName>]'
       ,q'[            <apex:varDataType>VARCHAR2</apex:varDataType>]'
-      ,q'[            <apex:varExpressionType>static</apex:varExpressionType>]'
-      ,q'[            <apex:varExpression>KING is UPPERCASE</apex:varExpression>]'
+      ,q'[            <apex:varExpressionType>plsqlRawExpression</apex:varExpressionType>]'
+      ,q'[            <apex:varExpression>Initcap ('JONES');</apex:varExpression>]'
       ,q'[          </apex:processVariable>]'
       ,q'[          <apex:processVariable>]'
       ,q'[            <apex:varSequence>6</apex:varSequence>]'
       ,q'[            <apex:varName>VarExp_InCalled_FuncBodyVC2</apex:varName>]'
       ,q'[            <apex:varDataType>VARCHAR2</apex:varDataType>]'
-      ,q'[            <apex:varExpressionType>static</apex:varExpressionType>]'
-      ,q'[            <apex:varExpression>January</apex:varExpression>]'
+      ,q'[            <apex:varExpressionType>plsqlRawFunctionBody</apex:varExpressionType>]'
+      ,q'[            <apex:varExpression>return initcap('january is initcap');</apex:varExpression>]'
+      ,q'[          </apex:processVariable>]'
+      ,q'[          <apex:processVariable>]'
+      ,q'[            <apex:varSequence>7</apex:varSequence>]'
+      ,q'[            <apex:varName>VarExp_InCalled_SQLArrayJSON</apex:varName>]'
+      ,q'[            <apex:varDataType>JSON</apex:varDataType>]'
+      ,q'[            <apex:varExpressionType>sqlQueryArray</apex:varExpressionType>]'
+      ,q'[            <apex:varExpression>select ename,empno]'
+      ,q'[from emp]'
+      ,q'[where deptno = 10</apex:varExpression>]'
       ,q'[          </apex:processVariable>]'
       ,q'[        </apex:beforeTask>]'
       ,q'[        <apex:afterTask />]'
@@ -147,14 +155,6 @@ begin
       ,q'[  </bpmn:process>]'
       ,q'[  <bpmndi:BPMNDiagram id="BPMNDiagram_1">]'
       ,q'[    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">]'
-      ,q'[      <bpmndi:BPMNEdge id="Flow_0gykeas_di" bpmnElement="Flow_0gykeas">]'
-      ,q'[        <di:waypoint x="470" y="290" />]'
-      ,q'[        <di:waypoint x="522" y="290" />]'
-      ,q'[      </bpmndi:BPMNEdge>]'
-      ,q'[      <bpmndi:BPMNEdge id="Flow_07uc0ef_di" bpmnElement="Flow_07uc0ef">]'
-      ,q'[        <di:waypoint x="318" y="290" />]'
-      ,q'[        <di:waypoint x="370" y="290" />]'
-      ,q'[      </bpmndi:BPMNEdge>]'
       ,q'[      <bpmndi:BPMNShape id="Event_0j4rspz_di" bpmnElement="Event_0j4rspz">]'
       ,q'[        <dc:Bounds x="282" y="272" width="36" height="36" />]'
       ,q'[        <bpmndi:BPMNLabel>]'
@@ -170,6 +170,14 @@ begin
       ,q'[          <dc:Bounds x="510" y="315" width="60" height="14" />]'
       ,q'[        </bpmndi:BPMNLabel>]'
       ,q'[      </bpmndi:BPMNShape>]'
+      ,q'[      <bpmndi:BPMNEdge id="Flow_07uc0ef_di" bpmnElement="Flow_07uc0ef">]'
+      ,q'[        <di:waypoint x="318" y="290" />]'
+      ,q'[        <di:waypoint x="370" y="290" />]'
+      ,q'[      </bpmndi:BPMNEdge>]'
+      ,q'[      <bpmndi:BPMNEdge id="Flow_0gykeas_di" bpmnElement="Flow_0gykeas">]'
+      ,q'[        <di:waypoint x="470" y="290" />]'
+      ,q'[        <di:waypoint x="522" y="290" />]'
+      ,q'[      </bpmndi:BPMNEdge>]'
       ,q'[    </bpmndi:BPMNPlane>]'
       ,q'[  </bpmndi:BPMNDiagram>]'
       ,q'[</bpmn:definitions>]'
@@ -179,8 +187,7 @@ begin
     pi_dgrm_name => 'A11b - Variable Exp Types with CallActivity',
     pi_dgrm_version => '0',
     pi_dgrm_category => 'Testing',
-    pi_dgrm_content => l_dgrm_content,
-    pi_force_overwrite => true
+    pi_dgrm_content => l_dgrm_content
 );
 end;
 /

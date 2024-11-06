@@ -443,7 +443,7 @@ function getVariableErrors(){
           }
         );
       } 
-    } else if ( varType === "CLOB" ) {
+    } else if ( varType === "CLOB" || varType === "JSON" ) {
       if ( apex.item("P8_PROV_VAR_CLOB").isEmpty() ) {
         errors.push(
           {
@@ -455,6 +455,21 @@ function getVariableErrors(){
           }
         );
       } 
+      if (varType === "JSON") {
+        try {
+          JSON.parse(apex.item("P8_PROV_VAR_CLOB").getValue());
+        } catch (e) {
+          errors.push(
+            {
+              type:       "error",
+              location:   [ "inline" ],
+              pageItem:   "P8_PROV_VAR_CLOB",
+              message:    apex.lang.getMessage( "APP_ERR_PROV_VAR_INVALID_JSON" ),
+              unsafe:     false
+            }
+          );
+        }
+      }
     } 
   }
   return errors;
@@ -522,7 +537,7 @@ function addProcessVariable(action, focusElement){
           data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
         } else if ( data.x04 === "TIMESTAMP WITH TIME ZONE" ) {
           data.x05 = apex.item("P8_PROV_VAR_TSTZ").getValue();
-        } else if ( data.x04 === "CLOB" ) {
+        } else if ( data.x04 === "CLOB" || data.x04 === "JSON") {
           var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
           if ( !Array.isArray( chunkedClob ) ) {
             chunkedClob = [chunkedClob];
@@ -558,7 +573,7 @@ function addProcessVariable(action, focusElement){
       apex.item( "P8_PROV_VAR_NAME" ).enable();
       apex.item( "P8_PROV_VAR_TYPE" ).setValue("VARCHAR2");
       apex.item( "P8_PROV_VAR_TYPE" ).enable();
-      apex.item( "P8_PROV_SCOPE"    ).setValue("0");
+      apex.item( "P8_PROV_SCOPE"    ).setValue(apex.items.P8_DIAGRAM_LEVEL.isEmpty() ? "0" : apex.items.P8_DIAGRAM_LEVEL.value );
       apex.item( "P8_PROV_SCOPE"    ).enable();
       apex.jQuery( "#add-prov-var-btn" ).show();
       apex.jQuery( "#save-prov-var-btn" ).hide();
@@ -602,7 +617,7 @@ function updateProcessVariable(action, focusElement){
           data.x05 = apex.item("P8_PROV_VAR_DATE").getValue();
         } else if ( data.x04 === "TIMESTAMP WITH TIME ZONE" ) {
           data.x05 = apex.item("P8_PROV_VAR_TSTZ").getValue();
-        } else if ( data.x04 === "CLOB" ) {
+        } else if ( data.x04 === "CLOB" || data.x04 === "JSON") {
           var chunkedClob = apex.server.chunk(apex.item("P8_PROV_VAR_CLOB").getValue());
           if ( !Array.isArray( chunkedClob ) ) {
             chunkedClob = [chunkedClob];
@@ -681,8 +696,8 @@ function updateProcessVariable(action, focusElement){
                 apex.item("P8_PROV_VAR_DATE").setValue("");
                 apex.item("P8_PROV_VAR_CLOB").setValue("");
                 apex.item("P8_PROV_VAR_TSTZ").setFocus();
-              } else if ( varType === "CLOB") {
-                apex.item("P8_PROV_VAR_CLOB").setValue(data.clob_value);
+              } else if ( varType === "CLOB" || varType === "JSON") {
+                apex.item("P8_PROV_VAR_CLOB").setValue(varType === "CLOB" ? data.clob_value : data.json_value);
                 apex.item("P8_PROV_VAR_VC2").setValue("");
                 apex.item("P8_PROV_VAR_NUM").setValue("");
                 apex.item("P8_PROV_VAR_DATE").setValue("");

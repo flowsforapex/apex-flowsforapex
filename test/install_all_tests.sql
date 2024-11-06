@@ -9,6 +9,7 @@ PROMPT >> =================
 PROMPT >> Installing Package Specifications
 
 @plsql/test-helpers/test_helper.pks
+@plsql/test_constants.pks
 @plsql/test_001_api.pks
 @plsql/test_002_gateway.pks
 @plsql/test_003_startEvents.pks
@@ -18,7 +19,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_007_procvars.pks
 @plsql/test_008_subproc_misc.pks
 @plsql/test_009_call_activity_nesting.pks
-@plsql/test_010_variable_expression.pks
+@plsql/test_010_variable_expressions.pks
 @plsql/test_011_var_exps_in_callActivities.pks
 @plsql/test_012_call_activity_timer_BEs.pks
 @plsql/test_013_call_Activity_escalation_BEs.pks
@@ -45,7 +46,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_007_procvars.pkb
 @plsql/test_008_subproc_misc.pkb
 @plsql/test_009_call_activity_nesting.pkb
-@plsql/test_010_variable_expression.pkb
+@plsql/test_010_variable_expressions.pkb
 @plsql/test_011_var_exps_in_callActivities.pkb
 @plsql/test_012_call_activity_timer_BEs.pkb
 @plsql/test_013_call_Activity_escalation_BEs.pkb

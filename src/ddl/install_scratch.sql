@@ -3,8 +3,10 @@
 --   site:      Oracle Database 12cR2
 --   type:      Oracle Database 12cR2
 
--- edited by Richard Allen Feb 2022
+-- edited by Richard Allen (Oracle) Feb 2022
 -- (c) Copyright, Oracle Corporation and/or its associates.  2020-2023.
+-- edited by Richard Allen (Flowquest) Jan 2024
+-- (c) Copyright, Flowquest Limited. 2024
 
 
 -- predefined type, no DDL - SDO_GEOMETRY
@@ -101,84 +103,67 @@ CREATE TABLE flow_processes (
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
 
-comment on column flow_processes.prcs_start_ts is 
- 'Timestamp for process start.  Resets if process instance is reset.';
-
-comment on column flow_processes.prcs_complete_ts is 
- 'Timestamp for process end when instance is in states "completed" or "terminated".';
-
-  comment on column flow_processes.prcs_archived_ts is 
- 'Timestamp for process archive.  Resets if process instance is reset. ';
-
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
 
 create index flow_prcs_dgrm_status_ix on flow_processes (prcs_dgrm_id, prcs_status);
 
 CREATE TABLE flow_subflow_log (
-    sflg_prcs_id       NUMBER NOT NULL,
-    sflg_objt_id       VARCHAR2(50) NOT NULL,
-    sflg_sbfl_id       NUMBER NOT NULL,
-    sflg_dgrm_id       NUMBER,
-    sflg_diagram_level NUMBER,
-    sflg_last_updated  DATE,
-    sflg_notes         VARCHAR2(200)
+    sflg_prcs_id                NUMBER NOT NULL,
+    sflg_objt_id                VARCHAR2(50) NOT NULL,
+    sflg_sbfl_id                NUMBER NOT NULL,
+    sflg_step_key               VARCHAR2(20 CHAR),
+    sflg_dgrm_id                NUMBER,
+    sflg_scope                  NUMBER,
+    sflg_diagram_level          NUMBER,
+    sflg_iter_id                NUMBER,
+    sflg_last_updated           DATE,
+    sflg_notes                  VARCHAR2(200)
 );
+
+create index flow_sflg_iter_ix on flow_subflow_log (sflg_prcs_id, sflg_dgrm_id  , sflg_diagram_level );
 
 CREATE TABLE flow_subflows (
-    sbfl_id               NUMBER
+    sbfl_id                         NUMBER
         GENERATED ALWAYS AS IDENTITY ( START WITH 1 NOCACHE )
     NOT NULL,
-    sbfl_prcs_id          NUMBER NOT NULL,
-    sbfl_dgrm_id          NUMBER NOT NULL,
-    sbfl_sbfl_id          NUMBER,
-    sbfl_process_level    NUMBER,
-    sbfl_diagram_level    NUMBER,
-    sbfl_calling_sbfl     NUMBER,
-    sbfl_scope            NUMBER,
-    sbfl_starting_object  VARCHAR2(50 CHAR),
-    sbfl_route            VARCHAR2(100 CHAR),
-    sbfl_last_completed   VARCHAR2(50 CHAR),
-    sbfl_current          VARCHAR2(50 CHAR),
-    sbfl_step_key         VARCHAR2(20 CHAR) not null,
-    sbfl_due_on           TIMESTAMP WITH TIME ZONE,
-    sbfl_priority         NUMBER,
-    sbfl_status           VARCHAR2(20 CHAR),
-    sbfl_became_current   TIMESTAMP WITH TIME ZONE,
-    sbfl_work_started     TIMESTAMP WITH TIME ZONE,
-    sbfl_has_events       VARCHAR2(200 CHAR),
-    sbfl_is_following_ebg VARCHAR2(1 CHAR),
-    sbfl_lane             VARCHAR2(50 CHAR),
-    sbfl_lane_name        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
-    sbfl_lane_isRole      VARCHAR2(10 CHAR), /*cannot always be looked up with callActivities so must include */
-    sbfl_lane_role        VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
-    sbfl_reservation      VARCHAR2(255 CHAR),
-    sbfl_potential_users  VARCHAR2(4000 CHAR),
-    sbfl_potential_groups VARCHAR2(4000 CHAR),
-    sbfl_excluded_users   VARCHAR2(4000 CHAR),
-    sbfl_last_update      TIMESTAMP WITH TIME ZONE NOT NULL,
-    sbfl_last_update_by   VARCHAR2(255 CHAR)
+    sbfl_prcs_id                    NUMBER NOT NULL,
+    sbfl_dgrm_id                    NUMBER NOT NULL,
+    sbfl_sbfl_id                    NUMBER,
+    sbfl_process_level              NUMBER,
+    sbfl_diagram_level              NUMBER,
+    sbfl_calling_sbfl               NUMBER,
+    sbfl_scope                      NUMBER,
+    sbfl_starting_object            VARCHAR2(50 CHAR),
+    sbfl_route                      VARCHAR2(100 CHAR),
+    sbfl_last_completed             VARCHAR2(50 CHAR),
+    sbfl_current                    VARCHAR2(50 CHAR),
+    sbfl_step_key                   VARCHAR2(20 CHAR) not null,
+    sbfl_due_on                     TIMESTAMP WITH TIME ZONE,
+    sbfl_priority                   NUMBER,
+    sbfl_status                     VARCHAR2(20 CHAR),
+    sbfl_became_current             TIMESTAMP WITH TIME ZONE,
+    sbfl_work_started               TIMESTAMP WITH TIME ZONE,
+    sbfl_has_events                 VARCHAR2(200 CHAR),
+    sbfl_is_following_ebg           VARCHAR2(1 CHAR),
+    sbfl_lane                       VARCHAR2(50 CHAR),
+    sbfl_lane_name                  VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_isRole                VARCHAR2(10 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_lane_role                  VARCHAR2(200 CHAR), /*cannot always be looked up with callActivities so must include */
+    sbfl_reservation                VARCHAR2(255 CHAR),
+    sbfl_potential_users            VARCHAR2(4000 CHAR),
+    sbfl_potential_groups           VARCHAR2(4000 CHAR),
+    sbfl_excluded_users             VARCHAR2(4000 CHAR),
+    sbfl_apex_task_id               NUMBER,
+    sbfl_iteration_type             VARCHAR2(10 CHAR),
+    sbfl_iobj_id                    NUMBER,
+    sbfl_iter_id                    NUMBER,
+    sbfl_iteration_var              VARCHAR2(50 CHAR),  -- remove after rewrite - acessible through flow_iterated_objects
+    sbfl_iteration_var_scope        NUMBER, -- remove after rewrite - acessible through flow_iterated_objects
+    sbfl_loop_counter               NUMBER,
+    sbfl_loop_total_instances       NUMBER,
+    sbfl_last_update                TIMESTAMP WITH TIME ZONE NOT NULL,
+    sbfl_last_update_by             VARCHAR2(255 CHAR)
 );
-
-COMMENT ON COLUMN flow_subflows.sbfl_dgrm_id is
-    'Diagram to be used on this Subflow. For top level process diagrams, this is same as prcs_dgrm_id.  When in a Call Activity, it is the Called Diagram';
-
-COMMENT ON COLUMN flow_subflows.sbfl_sbfl_id is
-    'Parent Subflow of this Subflow.  Note that the parent may no longer exist if is has completed before its child.';
-
-COMMENT ON COLUMN flow_subflows.sbfl_process_level is
-    'Process level of initial subflow in an instance is 0. 
-    On starting a new SubProcess or CallActivity, a new level is started having Process Level = its initial Subflow ID';
-
-COMMENT ON COLUMN flow_subflows.sbfl_diagram_level is 
-    'Diagram level of initial diagram in an instance is 0. 
-    On starting a new CallActivity, a new level is started having Diagram Level = its initial Subflow ID';
-
-COMMENT ON COLUMN flow_subflows.sbfl_calling_sbfl is
-    'At all process levels except 0 (main), this contains the Subflow ID of the parent object in the calling process level';
-
-COMMENT ON COLUMN flow_subflows.sbfl_scope is
-    'Variable scope to used for variables in this Subflow.  Generally = Diagram Level, except in iteration or other special cases.';
-
 
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_pk PRIMARY KEY ( sbfl_id );
 
@@ -197,15 +182,77 @@ CREATE TABLE flow_instance_diagrams (
     prdg_diagram_level  NUMBER
 );
 
-COMMENT ON COLUMN flow_instance_diagrams.prdg_prdg_id is
-    'Parent prdg_id (prdg_id of Calling Diagram)';
-
 alter table flow_instance_diagrams
   add constraint flow_prdg_pk primary key ( prdg_id )
 ;
 
 create index flow_prdg_dgrm_prcs_ix
   on flow_instance_diagrams (prdg_prcs_id, prdg_dgrm_id);
+
+create table flow_iterated_objects (
+    iobj_id             NUMBER GENERATED BY DEFAULT AS IDENTITY ( START WITH 1 NOCACHE ORDER )
+                        NOT NULL,
+    iobj_prcs_id        NUMBER NOT NULL,
+    iobj_diagram_level  NUMBER NOT NULL,
+    iobj_dgrm_id        NUMBER NOT NULL,
+    iobj_parent_bpmn_id VARCHAR2(50 CHAR) not null,
+    iobj_step_key       VARCHAR2(20 CHAR) not null,
+    iobj_iteration_var  VARCHAR2(50 CHAR) not null,
+    iobj_var_scope      NUMBER not null,
+    iobj_objt_type      VARCHAR2(15 char),
+    iobj_iteration_type VARCHAR2(10 char),
+    iobj_parent_iter_id NUMBER,
+    iobj_display_name   VARCHAR2 (400 CHAR)
+);
+
+alter table flow_iterated_objects
+  add constraint flow_iobj_pk primary key (iobj_id);
+
+alter table flow_iterated_objects
+  add constraint flow_iobj_uk unique    ( iobj_prcs_id
+                                        , iobj_iteration_var
+                                        , iobj_var_scope);
+
+create index flow_iobj_step_key_ix on flow_iterated_objects
+                                        ( iobj_prcs_id
+                                        , iobj_step_key);
+
+create table flow_iterations (
+    iter_id             NUMBER GENERATED BY DEFAULT AS IDENTITY ( START WITH 1 NOCACHE ORDER )
+                        NOT NULL,
+    iter_prcs_id        number not null,
+    iter_iobj_id        number not null,
+    iter_loop_counter   number not null,
+    iter_sbfl_id        number,
+    iter_scope          number,
+    iter_step_key       varchar2(20 char),
+    iter_status         varchar2(10 char),
+    iter_description    varchar2(200 char),
+    iter_display_name   VARCHAR2 (400 CHAR),
+    iter_inputs         clob,
+    iter_outputs        clob
+);
+
+alter table flow_iterations
+    add constraint flow_iter_pk primary key (iter_id);
+
+alter table flow_iterations
+    add constraint flow_iter_uk unique  ( iter_prcs_id 
+                                        , iter_iobj_id
+                                        , iter_loop_counter);
+
+alter table flow_iterations add constraint iter_iobj_fk foreign key (iter_iobj_id) 
+                                           references flow_iterated_objects (iobj_id)
+                                           on delete cascade;        
+
+alter table flow_iterated_objects add constraint iobj_parent_iter_fk foreign key (iobj_parent_iter_id) 
+                                           references flow_iterations (iter_id)
+                                           on delete cascade;                                                
+                                                                                                                                                              
+
+alter table flow_iterations add constraint iter_inputs_is_json_ck check ( iter_inputs is json );
+
+alter table flow_iterations add constraint iter_outputs_is_json_ck check ( iter_outputs is json );
 
 CREATE TABLE flow_timers (
     timr_id            NUMBER
@@ -227,22 +274,6 @@ CREATE TABLE flow_timers (
     timr_callback_par  varchar2(200 CHAR)
 );
 
-COMMENT ON COLUMN flow_timers.timr_status IS
-    'Status of the timer. For the status codes see constant definitions in FLOW_TIMERS_PKG package declaration.';
-
-COMMENT ON COLUMN flow_timers.timr_start_on IS
-    'Expected start datetime.
-Used for both date and duration definitions.';
-
-COMMENT ON COLUMN flow_timers.timr_interval_ym IS
-    'Interval YM for cycles.';
-
-COMMENT ON COLUMN flow_timers.timr_interval_ds IS
-    'Interval DS for cycles.';
-
-COMMENT ON COLUMN flow_timers.timr_repeat_times IS
-    'Number of runs for cycles.';
-
 CREATE INDEX timr_prcs_sbfl_ix ON
     flow_timers (
         timr_prcs_id
@@ -260,11 +291,13 @@ create table flow_message_subscriptions (
     msub_prcs_id	        number,	
     msub_sbfl_id	        number,	
     msub_step_key	        varchar2( 20 char),	
+    msub_dgrm_id            number,
     msub_callback           varchar2(200 char),
     msub_callback_par       varchar2(200 char),
     msub_payload_var        varchar2(50 char),
     msub_created	        timestamp with time zone	
 );
+
 
 alter table flow_message_subscriptions
   add constraint flow_msub_pk primary key ( msub_id )
@@ -274,6 +307,7 @@ alter table flow_message_subscriptions
     add constraint flow_msub_uk UNIQUE (msub_message_name, msub_key_name, msub_key_value);
 
 create index flow_msub_prcs_sbfl_ix on flow_message_subscriptions( msub_prcs_id, msub_sbfl_id );  
+
 
 
 ALTER TABLE flow_connections
@@ -357,7 +391,11 @@ alter table flow_message_subscriptions
         references flow_subflows (sbfl_id)
             ON DELETE CASCADE;
 
-
+alter table flow_message_subscriptions
+    add constraint flow_msub_dgrm_fk FOREIGN KEY ( msub_dgrm_id )
+        references flow_diagrams (dgrm_id)
+            ON DELETE CASCADE;
+            
 -- Oracle SQL Developer Data Modeler Summary Report: 
 -- 
 -- CREATE TABLE                             8
@@ -413,6 +451,7 @@ create table flow_process_variables
 , prov_var_date     date
 , prov_var_tstz     timestamp with time zone
 , prov_var_clob     clob
+, prov_var_json     clob
 , prov_var_name_uc  varchar2(50 char) generated always as ( upper(prov_var_name) )
 );
 
@@ -422,6 +461,8 @@ alter table flow_process_variables add constraint prov_pk primary key (prov_prcs
 alter table flow_process_variables add constraint prov_prcs_fk foreign key (prov_prcs_id)
    references flow_processes (prcs_id)
    on delete cascade;
+
+alter table flow_process_variables add constraint prov_is_json check ( prov_var_json is json);
 
 
 CREATE TABLE flow_object_expressions (
@@ -485,6 +526,7 @@ create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
 , lgsf_objt_id       		VARCHAR2(50) NOT NULL
 , lgsf_sbfl_id      		NUMBER NOT NULL
+, lgsf_step_key             VARCHAR2(20 CHAR)
 , lgsf_sbfl_process_level   NUMBER
 , lgsf_last_completed 	    VARCHAR2(50) 
 , lgsf_status_when_complete VARCHAR2(20)
@@ -515,6 +557,7 @@ create table flow_variable_event_log
 , lgvr_var_date 			date
 , lgvr_var_tstz 			timestamp with time zone
 , lgvr_var_clob 			clob
+, lgvr_var_json             clob
 );
 
 create index flow_lgvr_ix on flow_variable_event_log (lgvr_prcs_id, lgvr_scope, lgvr_var_name);
@@ -674,4 +717,15 @@ create table flow_rest_event_log (
 , lgrt_error_stacktrace     CLOB
 );
 
+create table flow_simple_form_templates (
+  sfte_id        number generated by default as identity (start with 1) not null
+, sfte_name      varchar2(150 char) not null
+, sfte_static_id varchar2(150 char) not null
+, sfte_content   clob
+);
 
+alter table flow_simple_form_templates add constraint sfte_pk primary key ( sfte_id );
+
+alter table flow_simple_form_templates add constraint sfte_uk unique ( sfte_static_id );
+
+alter table flow_simple_form_templates add constraint sfte_ck check ( sfte_content is json(strict) );

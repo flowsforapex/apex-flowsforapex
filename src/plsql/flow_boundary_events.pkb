@@ -4,22 +4,29 @@ is
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
-  procedure set_boundary_timers
+  procedure set_boundary_events
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_sbfl_info     in flow_subflows%rowtype
   )
   is 
-    l_new_non_int_timer_sbfl  flow_types_pkg.t_subflow_context;
-    l_parent_tag              varchar2(50);
+    l_new_non_int_event_sbfl      flow_types_pkg.t_subflow_context;
+    l_new_non_int_event_sbfl_info flow_subflows%rowtype;
+    l_subscription_detail         flow_message_flow.t_subscription_details;
+    l_status                      flow_subflows.sbfl_status%type;
+    l_parent_tag                  varchar2(50);
+    l_child_tag                   varchar2(50);
+    l_msg_sub                     flow_message_subscriptions.msub_id%type;
   begin
     apex_debug.enter 
-    ( 'set_boundary_timers'
+    ( 'set_boundary_events'
     , 'subflow', p_subflow_id
     );
     begin
-      for boundary_timers in 
+      for boundary_events in 
         (
         select objt.objt_bpmn_id as objt_bpmn_id 
+             , objt.objt_sub_tag_name as objt_sub_tag_name
              , objt.objt_interrupting as objt_interrupting
              , sbfl.sbfl_process_level as sbfl_process_level
              , sbfl.sbfl_dgrm_id as sbfl_dgrm_id
@@ -31,80 +38,130 @@ is
             on sbfl.sbfl_current = objt.objt_attached_to
            and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event  
-           and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
+           and objt.objt_sub_tag_name in ( flow_constants_pkg.gc_bpmn_timer_event_definition
+                                         , flow_constants_pkg.gc_bpmn_message_event_definition )
            and sbfl.sbfl_id = p_subflow_id
            and sbfl.sbfl_prcs_id = p_process_id
         )
       loop
-        case boundary_timers.objt_interrupting
+        apex_debug.message 
+        ( p_message => 'Boundary Event found.  ID: %0 SubTag:  %1  Interupting: %2'
+        , p0 => boundary_events.objt_bpmn_id
+        , p1 => boundary_events.objt_sub_tag_name
+        , p2 => boundary_events.objt_interrupting
+        );
+        case boundary_events.objt_interrupting
         when 1 then
           -- process any before-event variable expressions on the starting object
           flow_expressions.process_expressions
-          ( pi_objt_id     => boundary_timers.objt_id 
+          ( pi_objt_id     => boundary_events.objt_id 
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => p_subflow_id
-          , pi_var_scope   => boundary_timers.sbfl_scope
-          , pi_expr_scope  => boundary_timers.sbfl_scope
+          , pi_var_scope   => boundary_events.sbfl_scope
+          , pi_expr_scope  => boundary_events.sbfl_scope
           );
           -- test for any step errors
           if not flow_globals.get_step_error then 
-            -- interupting timer.  set timer on current object in current subflow
-            flow_timers_pkg.start_timer
-            ( pi_prcs_id      => p_process_id
-            , pi_sbfl_id      => p_subflow_id
-            , pi_callback     => flow_constants_pkg.gc_bpmn_boundary_event
-            , pi_callback_par => 'interrupting'
-            );
-            l_parent_tag := ':SIT';  -- (Self, Interrupting, Timer)
+            case boundary_events.objt_sub_tag_name
+            when flow_constants_pkg.gc_bpmn_timer_event_definition then
+              -- interupting timer.  set timer on current object in current subflow
+              flow_timers_pkg.start_timer
+              ( pi_prcs_id      => p_process_id
+              , pi_sbfl_id      => p_subflow_id
+              , pi_callback     => flow_constants_pkg.gc_bpmn_boundary_event
+              , pi_callback_par => 'interrupting'
+              );
+              l_parent_tag := ':SIT';  -- (Self, Interrupting, Timer)
+            when flow_constants_pkg.gc_bpmn_message_event_definition then
+              -- interupting message.  set message subscription on current object in current subflow
+              l_subscription_detail := flow_message_util.get_msg_subscription_details ( p_msg_object_bpmn_id  => boundary_events.objt_bpmn_id
+                                                                                      , p_dgrm_id  => boundary_events.sbfl_dgrm_id
+                                                                                      , p_sbfl_info  => p_sbfl_info
+                                                                                      );
+              l_subscription_detail.callback     := flow_constants_pkg.gc_bpmn_boundary_event;
+              l_subscription_detail.callback_par := boundary_events.objt_bpmn_id;
+              l_msg_sub := flow_message_flow.subscribe ( p_subscription_details  => l_subscription_detail);
+  
+              l_parent_tag := ':SIM';  -- (Self, Interrupting, Message)
+            end case;
           end if;
         when 0 then
-          -- non-interupting timer.  create child subflow starting at boundary event and start timer
-          l_new_non_int_timer_sbfl := flow_engine_util.subflow_start
+            case boundary_events.objt_sub_tag_name
+            when flow_constants_pkg.gc_bpmn_timer_event_definition   then 
+              l_status      := flow_constants_pkg.gc_sbfl_status_waiting_timer;
+              l_child_tag   := ':SNT';  -- (Self, Non-Interrupting, Timer)
+              l_parent_tag  := ':CNT';  -- (Child, Non-Interrupting, Timer)
+            when flow_constants_pkg.gc_bpmn_message_event_definition then 
+              l_status := flow_constants_pkg.gc_sbfl_status_waiting_message;
+              l_child_tag   := ':SNM';  -- (Self, Non-Interrupting, Message)  
+              l_parent_tag  := ':CNM';  -- (Child, Non-U=Interrupting, Message)            
+            end case;
+
+          -- non-interupting event.  create child subflow starting at boundary event and start timer/subscribe message / etc
+          l_new_non_int_event_sbfl := flow_engine_util.subflow_start
           ( p_process_id => p_process_id
           , p_parent_subflow => p_subflow_id
-          , p_starting_object => boundary_timers.objt_bpmn_id
-          , p_current_object => boundary_timers.objt_bpmn_id
+          , p_starting_object => boundary_events.objt_bpmn_id
+          , p_current_object => boundary_events.objt_bpmn_id
           , p_route => 'from boundary event - run 1'
-          , p_last_completed => boundary_timers.parent_current_object 
-          , p_status => flow_constants_pkg.gc_sbfl_status_waiting_timer
-          , p_parent_sbfl_proc_level => boundary_timers.sbfl_process_level
+          , p_last_completed => boundary_events.parent_current_object 
+          , p_status => l_status
+          , p_parent_sbfl_proc_level => boundary_events.sbfl_process_level
           , p_new_proc_level => false
-          , p_dgrm_id => boundary_timers.sbfl_dgrm_id
+          , p_dgrm_id => boundary_events.sbfl_dgrm_id
           );
  
           -- process any before-event variable expressions on the starting object
           flow_expressions.process_expressions
-          ( pi_objt_id     => boundary_timers.objt_id
+          ( pi_objt_id     => boundary_events.objt_id
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
-          , pi_sbfl_id     => l_new_non_int_timer_sbfl.sbfl_id
-          , pi_var_scope   => boundary_timers.sbfl_scope
-          , pi_expr_scope  => boundary_timers.sbfl_scope
+          , pi_sbfl_id     => l_new_non_int_event_sbfl.sbfl_id
+          , pi_var_scope   => boundary_events.sbfl_scope
+          , pi_expr_scope  => boundary_events.sbfl_scope
           );
           -- test for any step errors
           if not flow_globals.get_step_error then 
-            flow_timers_pkg.start_timer
-            ( pi_prcs_id      => p_process_id
-            , pi_sbfl_id      => l_new_non_int_timer_sbfl.sbfl_id
-            , pi_step_key     => l_new_non_int_timer_sbfl.step_key
-            , pi_callback     => flow_constants_pkg.gc_bpmn_boundary_event
-            , pi_callback_par => 'non-interrupting'
-            );
+            case boundary_events.objt_sub_tag_name
+            when flow_constants_pkg.gc_bpmn_timer_event_definition then
+              -- non-interrupting timer - start timer on event subflow
+              flow_timers_pkg.start_timer
+              ( pi_prcs_id      => p_process_id
+              , pi_sbfl_id      => l_new_non_int_event_sbfl.sbfl_id
+              , pi_step_key     => l_new_non_int_event_sbfl.step_key
+              , pi_callback     => flow_constants_pkg.gc_bpmn_boundary_event
+              , pi_callback_par => 'non-interrupting'                -----  RA NOTE  move to constants_pkg
+              );
+            when flow_constants_pkg.gc_bpmn_message_event_definition then
+              -- non-interupting message.  set message subscription on event subflow
+              select *
+                into l_new_non_int_event_sbfl_info
+                from flow_subflows
+               where sbfl_id = l_new_non_int_event_sbfl.sbfl_id;
+
+              l_subscription_detail := flow_message_util.get_msg_subscription_details ( p_msg_object_bpmn_id  => boundary_events.objt_bpmn_id
+                                                                                      , p_dgrm_id             => boundary_events.sbfl_dgrm_id
+                                                                                      , p_sbfl_info           => l_new_non_int_event_sbfl_info
+                                                                                      );  
+              l_subscription_detail.callback      := flow_constants_pkg.gc_bpmn_boundary_event;
+              l_subscription_detail.callback_par  := boundary_events.objt_bpmn_id;
+              l_msg_sub := flow_message_flow.subscribe(p_subscription_details  => l_subscription_detail);
+            end case;
+
             -- test again for any step errors
             if not flow_globals.get_step_error then 
               -- set timer flag on child (Self, Noninterrupting, Timer)
               update flow_subflows sbfl
-                  set sbfl.sbfl_has_events      = sbfl.sbfl_has_events||':SNT'
+                  set sbfl.sbfl_has_events      = sbfl.sbfl_has_events||l_child_tag
                     , sbfl.sbfl_last_update     = systimestamp
                     , sbfl.sbfl_last_update_by  = coalesce ( sys_context('apex$session','app_user') 
                                                            , sys_context('userenv','os_user')
                                                            , sys_context('userenv','session_user')
                                                            )  
-                where sbfl.sbfl_id = l_new_non_int_timer_sbfl.sbfl_id
+                where sbfl.sbfl_id = l_new_non_int_event_sbfl.sbfl_id
                   and sbfl.sbfl_prcs_id = p_process_id
               ;
-              l_parent_tag := ':CNT';  -- (Child, Noninterrupting, Timer)
             end if;
           end if;
         end case;
@@ -124,9 +181,9 @@ is
       when no_data_found then
         return;
     end;
-  end set_boundary_timers;
+  end set_boundary_events;
 
-  procedure unset_boundary_timers
+  procedure unset_boundary_events
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   )
@@ -135,11 +192,11 @@ is
     l_return_code         number;
   begin
     apex_debug.enter 
-    ( 'unset_boundary_timers'
+    ( 'unset_boundary_events'
     , 'subflow', p_subflow_id
     );
     begin
-      for boundary_timers in 
+      for boundary_events in 
         (
         select objt.objt_bpmn_id as objt_bpmn_id 
              , objt.objt_interrupting as objt_interrupting
@@ -148,12 +205,13 @@ is
             on sbfl.sbfl_current = objt.objt_attached_to
            and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
          where objt.objt_tag_name = flow_constants_pkg.gc_bpmn_boundary_event  
-           and objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
+           and objt.objt_sub_tag_name in ( flow_constants_pkg.gc_bpmn_timer_event_definition
+                                         , flow_constants_pkg.gc_bpmn_message_event_definition )
            and sbfl.sbfl_id = p_subflow_id
            and sbfl.sbfl_prcs_id = p_process_id
         )
       loop
-        case boundary_timers.objt_interrupting
+        case boundary_events.objt_interrupting
         when 1 then
           -- interupting timer.  terminate timer on current object in current subflow
           flow_timers_pkg.terminate_timer
@@ -165,7 +223,7 @@ is
           -- non-interupting timer.  find child subflow starting at boundary event and delete if not yet fired
           -- timer will delete cascade
           delete from flow_subflows
-          where sbfl_starting_object = boundary_timers.objt_bpmn_id
+          where sbfl_starting_object = boundary_events.objt_bpmn_id
           and sbfl_sbfl_id = p_subflow_id
           and sbfl_prcs_id = p_process_id
           and sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_timer
@@ -187,7 +245,7 @@ is
       when no_data_found then
         return;
     end;
-  end unset_boundary_timers;
+  end unset_boundary_events;
 
   procedure lock_child_boundary_timers
   ( p_process_id          in flow_processes.prcs_id%type
@@ -221,11 +279,14 @@ is
       -- $F4AMESSAGE 'boundary-event-child-lock-to' || 'Child Boundary Subflows or Timers of %0 currently locked by another user.  Retry your transaction later.'  
   end lock_child_boundary_timers; 
 
-  procedure handle_interrupting_timer
-    ( p_process_id in flow_processes.prcs_id%type
-    , p_subflow_id in flow_subflows.sbfl_id%type
+  procedure handle_interrupting_boundary_event
+    ( p_process_id      in flow_processes.prcs_id%type
+    , p_subflow_id      in flow_subflows.sbfl_id%type
+    , p_event_type      in flow_objects.objt_sub_tag_name%type
+    , p_boundary_object in flow_objects.objt_bpmn_id%type default null
     ) 
-      -- used for InterruptingTimer events, called by flow_engine.flow_handle_event
+      -- used for Interrupting Timer   Boundary events, called by flow_engine.timer_callback
+      -- used for Interrupting Message Boundary events, called by flow_message_flow.receive_message
   is
     l_boundary_objt_bpmn_id  flow_objects.objt_bpmn_id%type;
     l_parent_objt_tag        flow_objects.objt_tag_name%type;
@@ -236,29 +297,60 @@ is
     l_scope                  flow_subflows.sbfl_scope%type;
   begin
     apex_debug.enter 
-    ( 'handle_interrupting_timer'
+    ( 'handle_interrupting_boundary_event'
     , 'subflow', p_subflow_id
+    , 'event type', p_event_type
+    , 'boundary object',p_boundary_object
     );
-    select boundary_objt.objt_bpmn_id
-         , main_objt.objt_tag_name
-         , main_objt.objt_bpmn_id
-         , sbfl.sbfl_scope
-      into l_boundary_objt_bpmn_id
-         , l_parent_objt_tag
-         , l_parent_objt_bpmn_id
-         , l_scope
-      from flow_subflows sbfl
-      join flow_objects main_objt
-        on main_objt.objt_bpmn_id = sbfl.sbfl_current
-       and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
-      join flow_objects boundary_objt
-        on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
-       and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
-     where sbfl.sbfl_id = p_subflow_id
-       and sbfl.sbfl_prcs_id = p_process_id
-       and boundary_objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition
-       and boundary_objt.objt_interrupting = 1
-        ;
+    -- we are migrating boundary event callback structure over next few releases but will handle old and new way
+    -- result will be to allow multiple boundary events of the same type on an object
+    if p_boundary_object is null or p_boundary_object in ('interrupting', 'non-interrupting') then 
+      -- old style - should be only one event of type on parent
+      select boundary_objt.objt_bpmn_id
+           , main_objt.objt_tag_name
+           , main_objt.objt_bpmn_id
+           , sbfl.sbfl_scope
+        into l_boundary_objt_bpmn_id
+           , l_parent_objt_tag
+           , l_parent_objt_bpmn_id
+           , l_scope
+        from flow_subflows sbfl
+        join flow_objects main_objt
+          on main_objt.objt_bpmn_id = sbfl.sbfl_current
+         and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+        join flow_objects boundary_objt
+          on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+         and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         and boundary_objt.objt_sub_tag_name = p_event_type
+         and boundary_objt.objt_interrupting = 1
+          ;
+    else
+      -- newstyle - event callback contained a bpmn id of the object to callback
+      select boundary_objt.objt_bpmn_id
+           , main_objt.objt_tag_name
+           , main_objt.objt_bpmn_id
+           , sbfl.sbfl_scope
+        into l_boundary_objt_bpmn_id
+           , l_parent_objt_tag
+           , l_parent_objt_bpmn_id
+           , l_scope
+        from flow_subflows sbfl
+        join flow_objects main_objt
+          on main_objt.objt_bpmn_id = sbfl.sbfl_current
+         and main_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+        join flow_objects boundary_objt
+          on boundary_objt.objt_attached_to = main_objt.objt_bpmn_id
+         and boundary_objt.objt_dgrm_id = sbfl.sbfl_dgrm_id
+         and boundary_objt.objt_bpmn_id = p_boundary_object
+       where sbfl.sbfl_id = p_subflow_id
+         and sbfl.sbfl_prcs_id = p_process_id
+         and boundary_objt.objt_sub_tag_name = p_event_type
+         and boundary_objt.objt_interrupting = 1
+          ;
+    end if;
+
     if l_parent_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
                             , flow_constants_pkg.gc_bpmn_call_activity )
     then
@@ -277,8 +369,8 @@ is
           );
        end if;
     end if;
-    -- clean up any other boundary timers on the object
-    flow_boundary_events.unset_boundary_timers 
+    -- clean up any other boundary events on the object
+    flow_boundary_events.unset_boundary_events 
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );
@@ -333,7 +425,7 @@ is
       );
     end if;
 
-  end handle_interrupting_timer;
+  end handle_interrupting_boundary_event;
 
   procedure get_boundary_event
   ( pi_dgrm_id                  in  flow_diagrams.dgrm_id%type
@@ -450,7 +542,7 @@ is
         );  
       end if;
       -- first remove any non-interrupting timers that are on the parent event
-      unset_boundary_timers (pi_sbfl_info.sbfl_prcs_id, pi_par_sbfl);
+      unset_boundary_events (pi_sbfl_info.sbfl_prcs_id, pi_par_sbfl);
       -- stop processing in process level and all lower (child) levels
       flow_engine_util.terminate_level
       ( p_process_id => pi_sbfl_info.sbfl_prcs_id

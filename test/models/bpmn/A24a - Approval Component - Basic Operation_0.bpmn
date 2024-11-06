@@ -2,6 +2,17 @@
 <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">
   <bpmn:process id="Process_A24a" name="24a - Approval Component - Basic Operation" isExecutable="false" apex:manualInput="false">
     <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:extensionElements>
+        <apex:onEvent>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Ste24_Test_App_ID</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlRawExpression</apex:varExpressionType>
+            <apex:varExpression>test_constants.gc_Ste24_Test_App_ID</apex:varExpression>
+          </apex:processVariable>
+        </apex:onEvent>
+      </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1x50t9n</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:task id="Activity_PreTest_A" name="PreTest A">
@@ -10,10 +21,10 @@
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_1x50t9n" sourceRef="Event_Start" targetRef="Activity_Setup" />
     <bpmn:sequenceFlow id="Flow_16oik1e" sourceRef="Activity_PreTest_A" targetRef="Activity_Approval_A24A" />
-    <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="false">
+    <bpmn:userTask id="Activity_Approval_A24A" name="Approval A24A" apex:type="apexApproval" apex:manualInput="true">
       <bpmn:extensionElements>
         <apex:apexApproval>
-          <apex:applicationId>106</apex:applicationId>
+          <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>
           <apex:taskStaticId>A24A_SIMPLE_TASK_WITH_TASK_PK</apex:taskStaticId>
           <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>
           <apex:parameters>
@@ -80,10 +91,10 @@
       <bpmn:incoming>Flow_B</bpmn:incoming>
       <bpmn:outgoing>Flow_0m64eas</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="false">
+    <bpmn:userTask id="Activity_Approval_A24B" name="Approval A24B" apex:type="apexApproval" apex:manualInput="true">
       <bpmn:extensionElements>
         <apex:apexApproval>
-          <apex:applicationId>106</apex:applicationId>
+          <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>
           <apex:taskStaticId>A24B_SIMPLE_TASK_ACTION_QUERY</apex:taskStaticId>
           <apex:businessRef>&amp;F4A$BUSINESS_REF.</apex:businessRef>
           <apex:parameters>
@@ -126,10 +137,10 @@
       <bpmn:incoming>Flow_C</bpmn:incoming>
       <bpmn:outgoing>Flow_00hvn43</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="false">
+    <bpmn:userTask id="Activity_Approval_A24C" name="Approval A24C" apex:type="apexApproval" apex:manualInput="true">
       <bpmn:extensionElements>
         <apex:apexApproval>
-          <apex:applicationId>106</apex:applicationId>
+          <apex:applicationId>&amp;F4A$Ste24_Test_App_ID.</apex:applicationId>
           <apex:taskStaticId>A24C_SIMPLE_TASK_NO_ACTION_SOURCE</apex:taskStaticId>
           <apex:parameters>
             <apex:parameter>

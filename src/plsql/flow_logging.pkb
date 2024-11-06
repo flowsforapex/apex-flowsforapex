@@ -164,27 +164,38 @@ create or replace package body flow_logging as
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
+  , p_iteration_status  in flow_types_pkg.t_iteration_status default null
   , p_notes             in flow_subflow_log.sflg_notes%type default null
   )
   is 
+    l_notes    varchar2(20);
   begin
+    if p_iteration_status.is_complete then 
+      l_notes := 'COMPLETE'; 
+    else 
+      l_notes := null;
+    end if;
     -- current instance status / progress logging
     insert into flow_subflow_log sflg
     ( sflg_prcs_id
     , sflg_objt_id
     , sflg_sbfl_id
+    , sflg_step_key
     , sflg_last_updated
     , sflg_dgrm_id
     , sflg_diagram_level
     , sflg_notes
+    , sflg_iter_id
     )
     select p_process_id
          , p_completed_object
          , p_subflow_id
+         , sbfl.sbfl_step_key
          , sysdate
          , sbfl.sbfl_dgrm_id
          , sbfl.sbfl_diagram_level
          , p_notes
+         , sbfl.sbfl_iter_id
       from flow_subflows sbfl
      where sbfl.sbfl_id = p_subflow_id
     ;
@@ -199,6 +210,7 @@ create or replace package body flow_logging as
       ( lgsf_prcs_id 
       , lgsf_objt_id 
       , lgsf_sbfl_id 
+      , lgsf_step_key
       , lgsf_sbfl_process_level
       , lgsf_last_completed
       , lgsf_status_when_complete
@@ -207,12 +219,15 @@ create or replace package body flow_logging as
       , lgsf_started 
       , lgsf_completed
       , lgsf_reservation
+      , lgsf_due_on
+      , lgsf_priority
       , lgsf_user
       , lgsf_comment
       )
       select sbfl.sbfl_prcs_id
            , p_completed_object
            , sbfl.sbfl_id
+           , sbfl.sbfl_step_key
            , sbfl.sbfl_process_level
            , sbfl.sbfl_last_completed
            , sbfl.sbfl_status
@@ -221,6 +236,8 @@ create or replace package body flow_logging as
            , sbfl.sbfl_work_started
            , systimestamp
            , sbfl.sbfl_reservation
+           , sbfl.sbfl_due_on
+           , sbfl.sbfl_priority
           , case g_logging_hide_userid 
             when 'true' then 
               null
@@ -256,7 +273,8 @@ create or replace package body flow_logging as
   , p_var_num           in flow_process_variables.prov_var_num%type default null
   , p_var_date          in flow_process_variables.prov_var_date%type default null
   , p_var_clob          in flow_process_variables.prov_var_clob%type default null
-  , p_var_tstz            in flow_process_variables.prov_var_tstz%type default null
+  , p_var_tstz          in flow_process_variables.prov_var_tstz%type default null
+  , p_var_json          in flow_process_variables.prov_var_json%type default null
   )
   as 
   begin 
@@ -275,6 +293,7 @@ create or replace package body flow_logging as
       , lgvr_var_date   
       , lgvr_var_clob   
       , lgvr_var_tstz  
+      , lgvr_var_json
       )
       values
       ( p_process_id
@@ -290,6 +309,7 @@ create or replace package body flow_logging as
       , p_var_date 
       , p_var_clob  
       , p_var_tstz 
+      , p_var_json
       );
     end if;
   exception

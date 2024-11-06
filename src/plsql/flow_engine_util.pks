@@ -7,9 +7,11 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Consulting Limited. 2024
 --
 -- Created  April-2021  Richard Allen (Flowquest) - for  MT AG
 -- Modified 2022-07-18  Moritz Klein (MT AG)
+-- Modified 09-Jan-2024  Richard Allen, Flowquest Consulting
 --
 */
 
@@ -29,6 +31,10 @@ as
   ( p_objt_bpmn_id in flow_objects.objt_bpmn_id%type
   , p_dgrm_id      in flow_diagrams.dgrm_id%type  
   ) return flow_objects.objt_tag_name%type;
+
+  function get_object_tag
+  ( p_sbfl_info   in flow_subflows%rowtype
+  ) return flow_objects.objt_tag_name%type;
   
   function get_object_subtag
   (
@@ -42,6 +48,11 @@ as
     p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   ) return boolean;
+
+  --function is_multi_instance
+  --( 
+  --  p_objt_attribute   in flow_objects.objt_attributes%type
+  --) return boolean;
 
   function get_subprocess_parent_subflow
   ( p_process_id in flow_processes.prcs_id%type
@@ -63,6 +74,14 @@ as
   , p_lock_subflow  in boolean default false
   , p_lock_process  in boolean default false
   ) return flow_subflows%rowtype;
+
+  function get_iteration_type
+  ( p_step_info     in flow_types_pkg.flow_step_info
+  ) return varchar2;
+
+  function get_loop_counter
+  ( pi_sbfl_id       in  flow_subflows.sbfl_id%type
+  ) return flow_subflows.sbfl_loop_counter%type;
 
   function step_key
   ( pi_sbfl_id        in flow_subflows.sbfl_id%type default null
@@ -102,6 +121,13 @@ as
     , p_new_diagram               in boolean default false
     , p_dgrm_id                   in flow_diagrams.dgrm_id%type
     , p_follows_ebg               in boolean default false
+    , p_loop_counter              in number default null
+    , p_iteration_type            in flow_subflows.sbfl_iteration_type%type default null
+    , p_loop_total_instances      in flow_subflows.sbfl_loop_total_instances%type default null
+    , p_iteration_var             in flow_process_variables.prov_var_name%type default null
+    , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
+    , p_iter_id                   in flow_iterations.iter_id%type default null
+    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

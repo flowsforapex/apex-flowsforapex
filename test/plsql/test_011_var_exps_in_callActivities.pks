@@ -10,6 +10,7 @@ create or replace package test_011_var_exps_in_callActivities is
 
    --%suite(11 Variable Expressions in Call Activities)
    --%rollback(manual)
+   --%tags(short,ce,ee)
 
    --%test
    procedure var_exp_all_types;
@@ -19,3 +20,4 @@ create or replace package test_011_var_exps_in_callActivities is
    procedure tear_down_tests;
 
 end test_011_var_exps_in_callActivities;
+/

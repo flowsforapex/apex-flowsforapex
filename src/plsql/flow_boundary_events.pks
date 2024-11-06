@@ -4,12 +4,13 @@ create or replace package flow_boundary_events
                 , flow_call_activities)
 is 
 
-  procedure set_boundary_timers 
+  procedure set_boundary_events 
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_sbfl_info  in flow_subflows%rowtype
   );  
 
-  procedure unset_boundary_timers 
+  procedure unset_boundary_events 
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
   );  
@@ -20,9 +21,11 @@ is
   , p_parent_objt_bpmn_id in flow_objects.objt_bpmn_id%type
   ); 
 
-  procedure handle_interrupting_timer
+  procedure handle_interrupting_boundary_event
   ( p_process_id in flow_processes.prcs_id%type
   , p_subflow_id in flow_subflows.sbfl_id%type
+  , p_event_type in flow_objects.objt_sub_tag_name%type
+  , p_boundary_object in flow_objects.objt_bpmn_id%type default null
   );
   procedure process_escalation
   ( pi_sbfl_info        in  flow_subflows%rowtype

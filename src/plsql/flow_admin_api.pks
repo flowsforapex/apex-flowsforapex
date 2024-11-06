@@ -11,10 +11,11 @@ create or replace package flow_admin_api
 FLOWS FOR APEX ADMIN API
 =========================
 
-The `flow_admin_api` package gives you access to the Flows for APEX engine admin procedures, and allows you to perform:
+The `flow_admin_api` package gives you access to the Flows for APEX engine admin procedures, and allows you to perform the following from the PL/SQL API:
 -  Maintenance, Archiving and Purging of the Flows for APEX log files
 -  Maintenance, Archiving, and Purging of the Flows for APEX performance statistics all_summaries
-- Maintenance of Flows for APEX instance configuration parameters
+-  Maintenance of Flows for APEX instance configuration parameters
+-  Release of Diagrams (useful when introducing a new model into a production system).
 
 */
 -- Log File Functions
@@ -50,6 +51,13 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
   ( p_config_key        in flow_configuration.cfig_key%type
   , p_default_value     in flow_configuration.cfig_value%type
   ) return flow_configuration.cfig_value%type;
+
+-- release a diagram
+
+  procedure release_diagram
+  ( pi_dgrm_name    in flow_diagrams.dgrm_name%type,
+    pi_dgrm_version in flow_diagrams.dgrm_version%type default '0'
+  );
 
 end flow_admin_api;
 /

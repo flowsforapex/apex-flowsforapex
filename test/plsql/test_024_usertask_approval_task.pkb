@@ -14,6 +14,10 @@ create or replace package body test_024_usertask_approval_task as
   -- suite(24 usertask - approval task)
   -- rollback(manual)
 
+  g_human_task_app_id  constant varchar2(6)  := test_constants.gc_Ste24_Test_App_ID ;
+  g_approver_user      constant varchar2(40) := test_constants.gc_tester1;
+  g_testing_user       constant varchar2(40) := test_constants.gc_tester2;
+
   g_model_a24a constant varchar2(100) := 'A24a - Approval Component - Basic Operation';
   g_model_a24b constant varchar2(100) := 'A24b - Approval Task - Task Cancelation';
   g_model_a24c constant varchar2(100) := 'A24c -';
@@ -130,6 +134,13 @@ create or replace package body test_024_usertask_approval_task as
      where sbfl_prcs_id = l_prcs_id
        and sbfl_current = 'Activity_Setup';
 
+    -- set the app_id (important for Approval Tasks)
+
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name => 'Ste24_Test_App_ID'
+                              , pi_vc2_value =>  g_human_task_app_id
+                              );
+
     -- set the path proc var
 
     flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
@@ -217,10 +228,12 @@ create or replace package body test_024_usertask_approval_task as
 
         -- check for task Id returned
 
-        l_task_id :=      flow_process_vars.get_var_num ( pi_prcs_id => l_prcs_id
-                                                        , pi_var_name => 'Activity_Approval_A24'||p_path||':task_id'
-                                                        , pi_sbfl_id => l_sbfl_id
-                                                        );
+        select sbfl_apex_task_id
+          into l_task_id
+          from flow_subflows
+         where sbfl_prcs_id = l_prcs_id
+           and sbfl_current = 'Activity_Approval_A24'||p_path;
+
         ut.expect(l_task_id).to_be_not_null();
 
         -- change session to the approver
@@ -230,9 +243,9 @@ create or replace package body test_024_usertask_approval_task as
           when others then 
             null;
         end;
-        apex_session.create_session ( p_app_id => 106
+        apex_session.create_session ( p_app_id => g_human_task_app_id 
                                     , p_page_id => 3
-                                    , p_username => 'BO'
+                                    , p_username => g_approver_user 
                                     );
         -- make the approval
         apex_approval.complete_task ( p_task_id => l_task_id
@@ -246,9 +259,9 @@ create or replace package body test_024_usertask_approval_task as
           when others then 
             null;
         end;
-        --apex_session.create_session ( p_app_id => 106
+        --apex_session.create_session ( p_app_id => g_human_task_app_id 
         --                            , p_page_id => 3
-        --                            , p_username => 'FLOWSDEV2'
+        --                            , p_username => g_testing_user 
         --                            );              
         -- check workflow has moved forwards
 
@@ -273,7 +286,7 @@ create or replace package body test_024_usertask_approval_task as
                                                         , pi_var_name => 'Return_'||p_path
                                                         , pi_sbfl_id => l_sbfl_id
                                                         );
-        ut.expect(l_task_id).to_be_not_null();
+        ut.expect(l_actual_vc2).to_be_not_null();
 
         -- step forward to End
 
@@ -425,6 +438,13 @@ create or replace package body test_024_usertask_approval_task as
          where p.prcs_id = l_prcs_id;
     ut.expect( l_actual ).to_equal( l_expected );   
 
+    -- set the app_id (important for Approval Tasks)
+
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name => 'Ste24_Test_App_ID'
+                              , pi_vc2_value =>  g_human_task_app_id
+                              );
+
     -- set the path proc var & business_ref
 
     flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
@@ -484,9 +504,13 @@ create or replace package body test_024_usertask_approval_task as
        and sbfl_status not in ( 'split', 'in subprocess');
     ut.expect( l_actual ).to_equal( l_expected ).unordered;   
     -- check for task Id returned
-    l_task_id :=      flow_process_vars.get_var_num ( pi_prcs_id => l_prcs_id
-                                                    , pi_var_name => 'Activity_Approval_A24'||l_path||':task_id'
-                                                    );
+
+        select sbfl_apex_task_id
+          into l_task_id
+          from flow_subflows
+         where sbfl_prcs_id = l_prcs_id
+           and sbfl_current = 'Activity_Approval_A24'||l_path;
+
     ut.expect(l_task_id).to_be_not_null();     
 
     -- check task exists in apex
