@@ -23,6 +23,7 @@
       , { "content_type": "plaintext", "path": "migrations/23.1_to_24.1/", "name": "feature-666.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/23.1_to_24.1/", "name": "feature-685.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/23.1_to_24.1/", "name": "feature-simple-forms.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "migrations/23.1_to_24.1/", "name": "fix-apex-task-id.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/23.1_to_24.1/", "name": "set_flows_version.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_apex_env.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_types_pkg.pks", "add_show_errors": false }
