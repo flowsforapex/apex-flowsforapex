@@ -6,3 +6,4 @@ node_modules
 */*.log
 local_diagrams
 test/models/*.zip
+*/*.zip

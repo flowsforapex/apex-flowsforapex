@@ -33,3 +33,10 @@ begin
   end loop;
 end;
 /
+
+PROMPT >> Dropping Job and Program
+begin
+  dbms_scheduler.drop_job( job_name => 'APEX_FLOW_STEP_TIMERS_J', force => true );
+  dbms_scheduler.drop_program( program_name => 'APEX_FLOW_STEP_TIMERS_P' );
+end;
+/
