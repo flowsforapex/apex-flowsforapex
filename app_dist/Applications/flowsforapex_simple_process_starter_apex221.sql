@@ -28,8 +28,8 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   11:16 Wednesday November 6, 2024
---   Exported By:     MOREAUX.LOUIS@GMAIL.COM
+--   Date and Time:   13:16 Friday November 15, 2024
+--   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
 --     Pages:                     14
@@ -39,7 +39,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 --       Processes:               23
 --       Regions:                 44
 --       Buttons:                 22
---       Dynamic Actions:         18
+--       Dynamic Actions:         17
 --     Shared Components:
 --       Logic:
 --         Items:                  3
@@ -124,8 +124,8 @@ wwv_flow_imp.create_flow(
 ,p_tokenize_row_search=>'N'
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'Process Starter'
-,p_last_updated_by=>'MOREAUX.LOUIS@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20241106111618'
+,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
+,p_last_upd_yyyymmddhh24miss=>'20241115131538'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>13
 ,p_ui_type_name => null
@@ -26286,7 +26286,7 @@ wwv_flow_imp_page.create_page(
 '<p>Creating a new template must be done in the Flows for APEX application.</p>'))
 ,p_page_component_map=>'16'
 ,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20241002161626'
+,p_last_upd_yyyymmddhh24miss=>'20241115131538'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(4736653462149510)
@@ -26308,6 +26308,8 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>70
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
+,p_plug_display_condition_type=>'ITEM_IS_NOT_NULL'
+,p_plug_display_when_condition=>'P21_SFTE_ID'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'HTML'
 );
@@ -26542,6 +26544,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXTAREA'
 ,p_cSize=>30
 ,p_cHeight=>5
+,p_display_when=>'P21_SFTE_ID'
+,p_display_when_type=>'ITEM_IS_NOT_NULL'
 ,p_field_template=>wwv_flow_imp.id(34532284141496730)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'Y'
@@ -26587,25 +26591,6 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SHOW'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_imp.id(6977676341365536)
-);
-wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(6977223851365532)
-,p_name=>'Hide Preview'
-,p_event_sequence=>20
-,p_condition_element=>'P21_SFTE_ID'
-,p_triggering_condition_type=>'NULL'
-,p_bind_type=>'bind'
-,p_bind_event_type=>'ready'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(6977790693365537)
-,p_event_id=>wwv_flow_imp.id(6977223851365532)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_HIDE'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_imp.id(6977676341365536)
 );
