@@ -1860,7 +1860,7 @@ as
   end set_archiving_settings;
 
 
-  procedure set_statictis_settings(
+  procedure set_statistics_settings(
     pi_stats_retain_daily in flow_configuration.cfig_value%type
   , pi_stats_retain_month in flow_configuration.cfig_value%type
   , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
@@ -1870,7 +1870,22 @@ as
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month , p_value => pi_stats_retain_month);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr , p_value => pi_stats_retain_qtr);
+  end set_statistics_settings;
 
+-- The typo set_statictis_settings was included in 23.1 and 24.1 releases and is retained here for upwards
+-- compatibility (but just calls set_statistics_settings)    
+  procedure set_statictis_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      set_statistics_settings 
+      ( pi_stats_retain_daily => pi_stats_retain_daily
+      , pi_stats_retain_month => pi_stats_retain_month
+      , pi_stats_retain_qtr   => pi_stats_retain_qtr
+      );
   end set_statictis_settings;
 
 

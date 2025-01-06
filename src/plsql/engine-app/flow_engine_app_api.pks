@@ -273,6 +273,14 @@ as
     pi_archiving_enabled  in flow_configuration.cfig_value%type
   );
 
+  procedure set_statistics_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  );
+
+-- set_statictis_settings was included in 23.1 and 24.1 and is retained here for upwards
+-- compatibility (but just calls set_statistics_settings)
   procedure set_statictis_settings(
     pi_stats_retain_daily in flow_configuration.cfig_value%type
   , pi_stats_retain_month in flow_configuration.cfig_value%type
