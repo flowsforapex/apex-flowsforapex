@@ -1,5 +1,7 @@
 -- Installs test models, tests, test apps in test env
 
+spool install_ce_test_scratch.log
+
 PROMPT >> Installing CE Test Packages
 
 @install_all_tests.sql
@@ -8,7 +10,6 @@ PROMPT >> Install All CE Test models
 
 @models/sql/import.sql
 commit;
-
 
 PROMPT>> Install Emp/Dept
 

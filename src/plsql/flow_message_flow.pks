@@ -3,6 +3,7 @@ create or replace package flow_message_flow as
 -- Flows for APEX - flow_message_flow.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2024-2025.
 --
 -- Created  04-Mar-2023  Richard Allen (Oracle Corporation)
 -- Edited      May 2024  Richard Allen (Flowquest)
@@ -22,11 +23,12 @@ create or replace package flow_message_flow as
   );   
 
   type t_flow_simple_message is record
-  ( endpoint      flow_types_pkg.t_vc200
-  , message_name  flow_message_subscriptions.msub_message_name%type
-  , key_name      flow_message_subscriptions.msub_key_name%type
-  , key_value     flow_message_subscriptions.msub_key_value%type
-  , payload       clob 
+  ( endpoint        flow_types_pkg.t_vc200
+  , message_name    flow_message_subscriptions.msub_message_name%type
+  , key_name        flow_message_subscriptions.msub_key_name%type
+  , key_value       flow_message_subscriptions.msub_key_value%type
+  , payload_is_json boolean
+  , payload         clob 
   );  
 
   e_msgflow_msg_not_correlated exception;
