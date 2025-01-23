@@ -1,17 +1,23 @@
 create or replace package body flow_modeler
 as
-  function render
+  procedure render
   (
-    p_region              in  apex_plugin.t_region
-  , p_plugin              in  apex_plugin.t_plugin
-  , p_is_printer_friendly in  boolean
+    p_plugin in            apex_plugin.t_plugin
+  , p_region in            apex_plugin.t_region
+  , p_param  in            apex_plugin.t_region_render_param
+  , p_result in out nocopy apex_plugin.t_region_render_result
   )
-    return apex_plugin.t_region_render_result
   as
-    l_return apex_plugin.t_region_render_result;
-
+    l_region_id p_region.static_id%type := p_region.static_id;
+    
     l_show_custom_extensions flow_configuration.cfig_value%type;
   begin
+    apex_plugin_util.debug_region
+    (
+      p_plugin => p_plugin
+    , p_region => p_region
+    );
+    
     -- get config value for plugin mode
     begin
         select cfig_value
@@ -23,20 +29,16 @@ as
             l_show_custom_extensions := 'false';
     end;
 
-    apex_plugin_util.debug_region
-    (
-      p_plugin => p_plugin
-    , p_region => p_region
-    );
-    sys.htp.p( '<div id="' || p_region.static_id || '_modeler" class="flows4apex-modeler ' || v('THEME_PLUGIN_CLASS') || '">' );
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="canvas"></div>' );
-    sys.htp.p( '<div id="' || p_region.static_id || '_properties" class="properties-panel-parent"></div>' );
-    sys.htp.p( '<div id="' || p_region.static_id || '_dialogContainer" class="dialog-container"></div>' );
-    sys.htp.p( '</div>' );
     apex_javascript.add_onload_code
     (
       p_code =>
-        'apex.jQuery("#' || p_region.static_id || '").modeler({' ||
+        'f4a.plugins.modeler.render({' ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'regionId'
+        , p_value     => l_region_id
+        , p_add_comma => true
+        ) ||
         apex_javascript.add_attribute
         (
           p_name      => 'ajaxIdentifier'
@@ -52,12 +54,17 @@ as
         apex_javascript.add_attribute
         (
           p_name      => 'showCustomExtensions'
-        , p_value     => l_show_custom_extensions
+        , p_value     => ( l_show_custom_extensions = 'true' )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'themePluginClass'
+        , p_value     => v('THEME_PLUGIN_CLASS')
         , p_add_comma => true
         ) ||
         '})'
     );
-    return l_return;
   end render;
 
 
@@ -524,7 +531,7 @@ as
     v_command varchar2(100);
     v_input   varchar2(4000);
     v_json    json_element_t;
-    
+
     l_result  clob := '{"message":""}';
   begin
     if (apex_application.g_x02 is not null) then
@@ -590,14 +597,14 @@ as
   end parse_code;
 
 
-  function ajax
+  procedure ajax
   (
-    p_region              in  apex_plugin.t_region
-  , p_plugin              in  apex_plugin.t_plugin
+    p_plugin in            apex_plugin.t_plugin
+  , p_region in            apex_plugin.t_region
+  , p_param  in            apex_plugin.t_region_ajax_param
+  , p_result in out nocopy apex_plugin.t_region_ajax_result
   )
-    return apex_plugin.t_region_ajax_result
   as
-    l_return apex_plugin.t_region_ajax_result;
   begin
     case upper(apex_application.g_x01)
       when 'LOAD' then load( p_region => p_region, p_plugin => p_plugin );
@@ -617,7 +624,6 @@ as
       when 'GET_FORM_TEMPLATES' then get_form_templates;
       else null;
     end case;
-    return l_return;
   end ajax;
 end flow_modeler;
 /
