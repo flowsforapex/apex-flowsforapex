@@ -49,6 +49,7 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
             loadDiagram: () => this.loadDiagram(),
             getDiagram: () => this.getDiagram(),
             getSVG: () => this.getSVG(),
+            downloadAsSVG: () => this.downloadAsSVG(),
         } );
 
         if (refreshOnLoad) this.refresh();
@@ -129,6 +130,14 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
             return await this.viewerElement.getSVG();
         } catch (err) {
             apex.debug.error( "Get SVG failed.", err );
+        }
+    },
+
+    downloadAsSVG: async function() {
+        try {
+            await this.viewerElement.downloadAsSVG();
+        } catch (err) {
+            apex.debug.error( "Download SVG failed.", err );
         }
     },
 

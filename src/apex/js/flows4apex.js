@@ -159,22 +159,10 @@ function sendToServer(dataToSend, options = {}){
     } ); 
 }
 
-function downloadAsSVG(event){
-  var regionId = $(event.target).parents('.t-Region').attr('id');
-  apex
-    .region( regionId )
-    .getSVG()
-    .then( ( svg ) => {
-      var svgBlob = new Blob( [svg], {
-        type: "image/svg+xml",
-      } );
-      var fileName = Date.now();
-
-      var downloadLink = document.createElement( "a" );
-      downloadLink.download = fileName;
-      downloadLink.href = window.URL.createObjectURL( svgBlob );
-      downloadLink.click();
-    } );
+function downloadAsSVG(){
+    apex
+    .region( "flow-monitor" )
+    .downloadAsSVG();
 }
 
 function startFlowInstance( action, element ) {
