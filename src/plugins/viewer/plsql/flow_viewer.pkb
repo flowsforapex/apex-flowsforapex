@@ -1,15 +1,15 @@
 create or replace package body flow_viewer
 as
 
-    function render
+    procedure render
   (
-    p_region              in  apex_plugin.t_region
-  , p_plugin              in  apex_plugin.t_plugin
-  , p_is_printer_friendly in  boolean
+    p_plugin in            apex_plugin.t_plugin
+  , p_region in            apex_plugin.t_region
+  , p_param  in            apex_plugin.t_region_render_param
+  , p_result in out nocopy apex_plugin.t_region_render_result
   )
-    return apex_plugin.t_region_render_result
   as
-    l_return apex_plugin.t_region_render_result;
+    l_region_id p_region.static_id%type := p_region.static_id;
   begin
 
     apex_plugin_util.debug_region
@@ -17,82 +17,90 @@ as
       p_plugin => p_plugin
     , p_region => p_region
     );
-    sys.htp.p( '<div id="' || p_region.static_id || '_viewer" class="flows4apex-viewer ' || v('THEME_PLUGIN_CLASS') || '">' );
-    sys.htp.p( '<div id="' || p_region.static_id || '_canvas" class="canvas" style="display: none;"></div>' );
-    sys.htp.p( '<span id="' || p_region.static_id || '_ndf" class="nodatafound" style="display: none;">' || coalesce(p_region.no_data_found_message, 'No data found.') || '</span>' );
-    sys.htp.p( '</div>' );
+
     apex_javascript.add_onload_code
     (
-      p_code => 'apex.jQuery("#' || p_region.static_id || '").viewer({' ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'ajaxIdentifier'
-                  , p_value     => apex_plugin.get_ajax_identifier
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'itemsToSubmit'
-                  , p_value     => apex_plugin_util.page_item_names_to_jquery( p_page_item_names => p_region.ajax_items_to_submit )
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'noDataFoundMessage'
-                  , p_value     => p_region.no_data_found_message
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'refreshOnLoad'
-                  , p_value     => ( p_region.attribute_08 = 'Y' )
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'showToolbar'
-                  , p_value     => ( p_region.attribute_11 = 'Y' )
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'addHighlighting'
-                  , p_value     => ( p_region.attribute_09 = 'Y' )
-                  , p_add_comma => true
-                  ) ||    
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'enableCallActivities'
-                  , p_value     => ( p_region.attribute_14 = 'Y' )
-                  , p_add_comma => true
-                  ) ||  
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'enableMousewheelZoom'
-                  , p_value     => ( p_region.attribute_15 = 'Y' )
-                  , p_add_comma => true
-                  ) ||
-                  apex_javascript.add_attribute
-                  (
-                    p_name      => 'useBPMNcolors'
-                  , p_value     => ( p_region.attribute_16 = 'Y' )
-                  , p_add_comma => true
-                  ) ||
-                  '"config":' || p_region.init_javascript_code || '({})' ||
-                '})'
+      p_code => 
+        'f4a.plugins.viewer.render({' ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'regionId'
+        , p_value     => l_region_id
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'ajaxIdentifier'
+        , p_value     => apex_plugin.get_ajax_identifier
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'itemsToSubmit'
+        , p_value     => apex_plugin_util.page_item_names_to_jquery( p_page_item_names => p_region.ajax_items_to_submit )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'noDataFoundMessage'
+        , p_value     => p_region.no_data_found_message
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'refreshOnLoad'
+        , p_value     => ( p_region.attributes.get_varchar2('attribute_08') = 'Y' )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'showToolbar'
+        , p_value     => ( p_region.attributes.get_varchar2('attribute_11') = 'Y' )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'addHighlighting'
+        , p_value     => ( p_region.attributes.get_varchar2('attribute_09') = 'Y' )
+        , p_add_comma => true
+        ) ||    
+        apex_javascript.add_attribute
+        (
+          p_name      => 'enableCallActivities'
+        , p_value     => ( p_region.attributes.get_varchar2('attribute_14') = 'Y' )
+        , p_add_comma => true
+        ) ||  
+        apex_javascript.add_attribute
+        (
+          p_name      => 'enableMousewheelZoom'
+        , p_value     => ( p_region.attributes.get_varchar2('attribute_15') = 'Y' )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'useBPMNcolors'
+        , p_value     => ( p_region.attributes.get_varchar2('attribute_16') = 'Y' )
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'themePluginClass'
+        , p_value     => v('THEME_PLUGIN_CLASS')
+        , p_add_comma => true
+        ) ||
+        '"config":' || p_region.init_javascript_code || '({})' ||
+    '})'
     );
-
-    return l_return;
   end render;
 
-  function ajax
+  procedure ajax
   (
-    p_region              in  apex_plugin.t_region
-  , p_plugin              in  apex_plugin.t_plugin
+    p_plugin in            apex_plugin.t_plugin
+  , p_region in            apex_plugin.t_region
+  , p_param  in            apex_plugin.t_region_ajax_param
+  , p_result in out nocopy apex_plugin.t_region_ajax_result
   )
-    return apex_plugin.t_region_ajax_result
   as
-
     l_context                  apex_exec.t_context;
     l_diagram_col_idx          pls_integer;
     l_current_col_idx          pls_integer;
@@ -109,8 +117,6 @@ as
     l_current_nodes   apex_t_varchar2;
     l_completed_nodes apex_t_varchar2;
     l_error_nodes     apex_t_varchar2;
-
-    l_return apex_plugin.t_region_ajax_result;
   begin
     apex_plugin_util.debug_region
     (
@@ -128,7 +134,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_01
+      , p_column_name => p_region.attributes.get_varchar2('attribute_01')
       , p_is_required => true
       , p_data_type   => apex_exec.c_data_type_clob
       );
@@ -137,7 +143,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_02
+      , p_column_name => p_region.attributes.get_varchar2('attribute_02')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
@@ -146,7 +152,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_04
+      , p_column_name => p_region.attributes.get_varchar2('attribute_04')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
@@ -155,7 +161,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_06
+      , p_column_name => p_region.attributes.get_varchar2('attribute_06')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
@@ -164,7 +170,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_03
+      , p_column_name => p_region.attributes.get_varchar2('attribute_03')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_number
       );
@@ -173,7 +179,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_05 
+      , p_column_name => p_region.attributes.get_varchar2('attribute_05')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_number
       );
@@ -182,7 +188,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_07 
+      , p_column_name => p_region.attributes.get_varchar2('attribute_07')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
@@ -190,7 +196,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_12 
+      , p_column_name => p_region.attributes.get_varchar2('attribute_12')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_varchar2
       );
@@ -198,7 +204,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_13
+      , p_column_name => p_region.attributes.get_varchar2('attribute_13')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_number
       );
@@ -206,7 +212,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_17
+      , p_column_name => p_region.attributes.get_varchar2('attribute_17')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_clob
       );
@@ -214,7 +220,7 @@ as
       apex_exec.get_column_position
       (
         p_context     => l_context
-      , p_column_name => p_region.attribute_18
+      , p_column_name => p_region.attributes.get_varchar2('attribute_18')
       , p_is_required => false
       , p_data_type   => apex_exec.c_data_type_clob
       );
@@ -224,7 +230,7 @@ as
     if apex_exec.get_total_row_count( p_context => l_context ) > 0 then
 
       -- multiple rows found but call activity option disabled
-      if apex_exec.get_total_row_count( p_context => l_context ) > 1 and p_region.attribute_14 = 'N' then
+      if apex_exec.get_total_row_count( p_context => l_context ) > 1 and p_region.attributes.get_varchar2('attribute_14') = 'N' then
 
         apex_json.write
         (
@@ -395,7 +401,6 @@ as
     end if;
 
     apex_json.close_object;
-    return l_return;
   end ajax;
 
 end flow_viewer;
