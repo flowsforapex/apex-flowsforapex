@@ -428,25 +428,16 @@ as
   as
     l_result clob;
     l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
-    -- check that APEX is min v22.1
-    $IF flow_apex_env.ver_le_21_2
-    $THEN
-    $ELSE
-      cursor c_task_defs is select * from apex_appl_taskdefs where application_id = l_application_id order by static_id;
-      l_task_def apex_appl_taskdefs%rowtype;
-    $END
+    cursor c_task_defs is select * from apex_appl_taskdefs where application_id = l_application_id order by static_id;
+    l_task_def apex_appl_taskdefs%rowtype;
   begin
     l_result := '[{"label":"","value":""},';
-    $IF flow_apex_env.ver_le_21_2
-    $THEN
-    $ELSE
-      open c_task_defs;
-      loop
-          fetch c_task_defs into l_task_def;
-          exit when c_task_defs%NOTFOUND;
-          l_result := l_result || '{"label":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
+    open c_task_defs;
+    loop
+        fetch c_task_defs into l_task_def;
+        exit when c_task_defs%NOTFOUND;
+        l_result := l_result || '{"label":"' || l_task_def.name || '","value":"' || l_task_def.static_id || '"},';
     end loop;
-    $END
     l_result := rtrim(l_result, ',') || ']';
     htp.p(l_result);
   end get_tasks;
@@ -456,53 +447,44 @@ as
   as
     l_placeholders apex_t_varchar2;
     l_application_id number := cast(apex_application.g_x02 as number default null on conversion error);
-    -- check that APEX is min v22.1
-    $IF flow_apex_env.ver_le_21_2
-    $THEN
-    $ELSE
-      cursor c_parameters
-      is 
-      select aatp.*
-        from apex_appl_taskdef_params aatp
-        join apex_appl_taskdefs aat
-          on aatp.task_def_id = aat.task_def_id
-      where aat.application_id = l_application_id
-        and aat.static_id = apex_application.g_x03;
-      l_parameter apex_appl_taskdef_params%rowtype;
-    $END
+    cursor c_parameters
+    is 
+    select aatp.*
+      from apex_appl_taskdef_params aatp
+      join apex_appl_taskdefs aat
+        on aatp.task_def_id = aat.task_def_id
+    where aat.application_id = l_application_id
+      and aat.static_id = apex_application.g_x03;
+    l_parameter apex_appl_taskdef_params%rowtype;
   begin
     apex_json.open_array;
-    $IF flow_apex_env.ver_le_21_2
-    $THEN
-    $ELSE
-      open c_parameters;
-      loop
-          fetch c_parameters into l_parameter;
-          exit when c_parameters%NOTFOUND;
-          apex_json.open_object;
-          apex_json.write(
-            p_name  => 'STATIC_ID'
-          , p_value => l_parameter.static_id
-          , p_write_null => true
-          );
-          apex_json.write(
-            p_name  => 'DATA_TYPE'
-          , p_value => l_parameter.data_type
-          , p_write_null => true
-          );
-          apex_json.write(
-            p_name  => 'VALUE'
-          , p_value => case l_parameter.static_id
-                      when 'PROCESS_ID' then chr(38) || 'F4A$PROCESS_ID.'
-                      when 'SUBFLOW_ID' then chr(38) || 'F4A$SUBFLOW_ID.'
-                      when 'STEP_KEY' then chr(38) || 'F4A$STEP_KEY.'
-                      else ''
-                      end
-          , p_write_null => true
-          );
-          apex_json.close_object;
-      end loop;
-    $END
+    open c_parameters;
+    loop
+        fetch c_parameters into l_parameter;
+        exit when c_parameters%NOTFOUND;
+        apex_json.open_object;
+        apex_json.write(
+          p_name  => 'STATIC_ID'
+        , p_value => l_parameter.static_id
+        , p_write_null => true
+        );
+        apex_json.write(
+          p_name  => 'DATA_TYPE'
+        , p_value => l_parameter.data_type
+        , p_write_null => true
+        );
+        apex_json.write(
+          p_name  => 'VALUE'
+        , p_value => case l_parameter.static_id
+                     when 'PROCESS_ID' then chr(38) || 'F4A$PROCESS_ID.'
+                     when 'SUBFLOW_ID' then chr(38) || 'F4A$SUBFLOW_ID.'
+                     when 'STEP_KEY' then chr(38) || 'F4A$STEP_KEY.'
+                     else ''
+                     end
+        , p_write_null => true
+        );
+        apex_json.close_object;
+    end loop;
     apex_json.close_array;
   end get_json_parameters;
 
