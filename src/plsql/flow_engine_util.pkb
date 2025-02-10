@@ -5,7 +5,7 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Consulting Limited. 2024
+-- (c) Copyright Flowquest Consulting Limited. 2024-2025
 --
 -- Created  April-2021  Richard Allen (Flowquest) - from flow_engine.pkb
 -- Modified 2022-07-18  Moritz Klein (MT AG)
@@ -257,6 +257,7 @@ end get_object_tag;
             into l_prcs_check_id
             from flow_processes prcs
           where prcs.prcs_id = p_process_id
+          for update wait 2
           ;
         exception
           when no_data_found then
@@ -337,15 +338,15 @@ end get_object_tag;
   begin
     -- get loop characteristics
     l_target_objt_attributes := sys.json_object_t.parse(p_step_info.target_objt_attributes);
-    apex_debug.message (p_message => 'l_target_objt_atributes: %0', p0 => l_target_objt_attributes.to_string);
+    apex_debug.message (p_message => '...l_target_objt_atributes: %0', p0 => l_target_objt_attributes.to_string);
     if l_target_objt_attributes.has('apex') then
-      apex_debug.message (p_message => 'has apex');
+      apex_debug.message (p_message => '...has apex');
       l_target_iter_attributes := l_target_objt_attributes.get_object('apex');
       if l_target_objt_attributes.get_object('apex').has('standardLoopCharacteristics') then
-        apex_debug.message (p_message => 'has standardLoop');
+        apex_debug.message (p_message => '...has standardLoop');
         l_iteration_type := flow_constants_pkg.gc_iteration_loop;
       elsif l_target_objt_attributes.get_object('apex').has('multiInstanceLoopCharacteristics') then
-        apex_debug.message (p_message => 'has multiIstanceLoop');
+        apex_debug.message (p_message => '...has multiIstanceLoop');
         l_multi_attributes := l_target_objt_attributes.get_object('apex').get_object('multiInstanceLoopCharacteristics');
         l_sequential := l_multi_attributes.get_boolean('isSequential');
         case l_sequential
@@ -358,7 +359,7 @@ end get_object_tag;
     else 
       l_iteration_type := null;
     end if;
-    apex_debug.message (p_message => 'Iteration Type: %0', p0 => l_iteration_type);
+    apex_debug.message (p_message => '...Iteration Type: %0', p0 => l_iteration_type);
     return l_iteration_type;
   end get_iteration_type;
 
@@ -422,7 +423,7 @@ end get_object_tag;
     l_new_iter_id         flow_iterations.iter_id%type;
   begin
     apex_debug.enter 
-    ( 'subflow_start'
+    ( '>>  subflow_start'
     , 'Process', p_process_id
     , 'Parent Subflow', p_parent_subflow 
     , 'Loop Counter', p_loop_counter
@@ -579,7 +580,7 @@ end get_object_tag;
     end if;
 
     apex_debug.info
-    ( p_message => 'New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7'
+    ( p_message => '... New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
@@ -600,7 +601,7 @@ end get_object_tag;
     l_apex_task_id  number;
   begin
     apex_debug.enter
-    ( 'terminate_level'
+    ( '>> terminate_level'
     , 'Process',  p_process_id
     , 'Process Level', p_process_level
     );
@@ -674,7 +675,7 @@ end get_object_tag;
       and sbfl_prcs_id = p_process_id
       ;
     apex_debug.info 
-    ( p_message => 'Process %0 : All subflows at process level %1 terminated'
+    ( p_message => '... Process %0 : All subflows at process level %1 terminated'
     , p0 => p_process_id
     , p1 => p_process_level
     );
@@ -696,7 +697,7 @@ end get_object_tag;
     l_parent_subflow_current          flow_subflows.sbfl_current%type;
   begin
     apex_debug.enter
-    ( 'subflow_complete'
+    ( '>> subflow_complete'
     , 'Subflow' , p_subflow_id 
     );
     select sbfl.sbfl_sbfl_id
@@ -771,7 +772,7 @@ end get_object_tag;
   begin 
 
     apex_debug.enter 
-    ( 'lock_subflow'
+    ( '>> lock_subflow'
     , 'Subflow', p_subflow_id 
     );
 
@@ -795,6 +796,47 @@ end get_object_tag;
       -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
       return false;
   end lock_subflow;
+
+  procedure lock_all_for_process 
+  ( p_process_id  in    flow_processes.prcs_id%type
+  ) 
+  is
+    cursor c_lock_all is 
+        select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg_id
+          from flow_subflows sbfl
+          join flow_processes prcs
+            on prcs.prcs_id = sbfl.sbfl_prcs_id 
+          join flow_subflow_log sflg 
+            on prcs.prcs_id = sflg.sflg_prcs_id
+          join flow_instance_diagrams prdg
+            on prcs.prcs_id = prdg.prdg_prcs_id
+          where prcs.prcs_id = p_process_id
+          order by sbfl.sbfl_process_level, sbfl.sbfl_id
+            for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id wait 2
+    ;
+  begin
+    apex_debug.enter
+    ( '>> lock all_for_process'
+    , 'process_id', p_process_id
+    );
+    -- lock all objects
+    begin
+      open c_lock_all;
+      flow_timers_pkg.lock_process_timers ( pi_prcs_id => p_process_id );  
+      flow_message_util.lock_instance_subscriptions ( p_process_id => p_process_id );
+      close c_lock_all;
+    exception 
+      when lock_timeout then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'process-lock-timeout'
+        , p0 => p_process_id          
+        );
+        -- $F4AMESSAGE 'process-lock-timeout' || 'Process objects for %0 currently locked by another user.  Try again later.'
+        raise;
+    end;
+  end lock_all_for_process;
+
 
   function get_scope
   (  p_process_id  in flow_processes.prcs_id%type
