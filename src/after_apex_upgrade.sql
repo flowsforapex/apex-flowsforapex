@@ -68,6 +68,8 @@ alter package flow_services compile specification;
 alter package flow_timers_pkg compile specification;
 alter package flow_instances compile specification;
 alter package flow_iteration compile specification;
+alter package flow_iteration_util_ee compile specification;
+alter package flow_rewind compile specification;
 alter package flow_engine compile specification;
 alter package flow_settings compile specification;
 alter package flow_reservations compile specification;

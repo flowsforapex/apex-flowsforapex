@@ -53,6 +53,8 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_services.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_timers_pkg.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_instances.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_instances_util_ee.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_rewind.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_engine.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_settings.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_reservations.pks", "add_show_errors": false }

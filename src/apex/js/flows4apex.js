@@ -259,6 +259,40 @@ function bulkTerminateFlowInstance(action, element) {
   }
 }
 
+function suspendFlowInstance(action, element) {
+  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "instance_action_dialog" );
+    var data = getflowInstanceData(action, element);
+    data.x03 = getConfirmComment();
+
+    var options = {};
+    options.messageKey = "APP_INSTANCE_SUSPENDED";
+    options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
+    options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
+    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
+    sendToServer(data, options);
+  } else {
+    openModalConfirmWithComment( action, element, "APP_CONFIRM_SUSPEND_INSTANCE", "APP_SUSPEND_INSTANCE" );
+  }
+}
+
+function resumeFlowInstance(action, element) {
+  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "instance_action_dialog" );
+    var data = getflowInstanceData(action, element);
+    data.x03 = getConfirmComment();
+
+    var options = {};
+    options.messageKey = "APP_INSTANCE_RESUMED";
+    options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
+    options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
+    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
+    sendToServer(data, options);
+  } else {
+    openModalConfirmWithComment( action, element, "APP_CONFIRM_RESUME_INSTANCE", "APP_RESUME_INSTANCE" );
+  }
+}
+
 function deleteFlowInstance( action, element ){ 
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
@@ -891,6 +925,18 @@ function bulkRescheduleTimer ( action ){
   }
 }
 
+function deleteOnResume( action, element ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_DELETE_ON_RESUME"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getSubflowData(action, element);
+      
+      var options = {};
+      options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+      sendToServer(data, options);
+    }
+  });
+}
+
 function receiveMessage( action, element ) {
   if ( apex.jQuery( "#receive_message_dialog" ).dialog( "isOpen" ) ) {
     var data = getMessageData( action, element );
@@ -1127,7 +1173,13 @@ function initActions(){
           name: "receive-message",
           action: function ( event, focusElement ) {
             receiveMessage( this.name, focusElement );
-          },
+          }
+        },
+        {
+          name: "delete-on-resume",
+          action: function( event, focusElement ) {
+            deleteOnResume( this.name, focusElement );
+          }
         }
       ] );
     }
@@ -1239,6 +1291,18 @@ function initActions(){
           name: "delete-flow-instance",
           action: function ( event, focusElement ) {
             deleteFlowInstance( this.name, focusElement );
+          }
+        },
+        {
+          name: "suspend-flow-instance",
+          action: function ( event, focusElement ) {
+            suspendFlowInstance( this.name, focusElement );
+          }
+        },
+        {
+          name: "resume-flow-instance",
+          action: function ( event, focusElement ) {
+            resumeFlowInstance( this.name, focusElement );
           }
         },
         {
@@ -1467,6 +1531,13 @@ function initPage8() {
           item.disabled =
             prcsStatus === "running" || prcsStatus === "error" ? false : true;
         }
+        if ( item.action === "suspend-flow-instance" ) {
+          item.disabled =
+            prcsStatus === "running" || prcsStatus === "error" ? false : true;
+        }  
+        if ( item.action === "resume-flow-instance" ) {
+          item.disabled = prcsStatus !== "suspended" ? true : false;
+        }              
         return item;
       } );
 
@@ -1546,6 +1617,7 @@ function initPage8() {
         var rowBtn = apex.jQuery( ".subflow-actions-btn.is-active" );
         var menuItems = ui.menu.items;
         var sbflStatus = rowBtn.data( "status" );
+        var prcsStatus = apex.item("P8_PRCS_STATUS").getValue();
         var subflReservation = rowBtn.data( "reservation" );
         menuItems = menuItems.map( function ( item ) {
           if ( item.action === "complete-step" ) {
@@ -1569,6 +1641,9 @@ function initPage8() {
           if ( item.action === "reschedule-timer" ) {
             item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
+          if ( item.action === "delete-on-resume" ) {
+            item.disabled = prcsStatus !== "suspended" ? true : false;
+          } 
           return item;
         } );
         ui.menu.items = menuItems;

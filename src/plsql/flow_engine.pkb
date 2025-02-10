@@ -1788,6 +1788,7 @@ procedure restart_step
   , p_subflow_id          in flow_subflows.sbfl_id%type
   , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
+  , p_check_for_error     in boolean default true
   )
 is 
   l_sbfl_rec            flow_subflows%rowtype;
@@ -1810,12 +1811,17 @@ begin
                 , p_lock_process => true
                 , p_lock_subflow => true
                 );
-  -- check subflow current task is in error status
-  if l_sbfl_rec.sbfl_status <> flow_constants_pkg.gc_sbfl_status_error then 
-      flow_errors.handle_general_error
-      ( pi_message_key => 'restart-no-error'
-      );
-      -- $F4AMESSAGE 'restart-no-error' || 'No Current Error Found.  Check your process diagram.'  
+
+  if p_check_for_error then
+    -- called externally to restart an errored step (legacy)
+    -- i.e., not being called to restart a process from a specific step
+    -- check subflow current task is in error status
+    if l_sbfl_rec.sbfl_status <> flow_constants_pkg.gc_sbfl_status_error then 
+        flow_errors.handle_general_error
+        ( pi_message_key => 'restart-no-error'
+        );
+        -- $F4AMESSAGE 'restart-no-error' || 'No Current Error Found.  Check your process diagram.'  
+    end if;
   end if;
   
   if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id

@@ -59,5 +59,42 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
     pi_dgrm_version in flow_diagrams.dgrm_version%type default '0'
   );
 
+-- suspend process instance (requires EE)
+
+  procedure suspend_process
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  );
+
+-- resume process instance (requires EE)
+
+  procedure resume_process
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  );
+
+-- delete a running subflow (requires EE)
+
+  procedure mark_subflow_for_deletion
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  );
+
+  procedure return_to_prior_gateway
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+  );
+
+  procedure return_to_prior_step
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_new_step    in flow_objects.objt_bpmn_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+  );
+
 end flow_admin_api;
 /

@@ -242,11 +242,15 @@ as
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
   gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
+  gc_sbfl_status_suspended            constant  varchar2(20 char) := 'suspended';
+  gc_sbfl_status_restart_on_resume    constant  varchar2(20 char) := 'restart on resume';
+  gc_sbfl_status_delete_on_resume     constant  varchar2(20 char) := 'delete on resume';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
   -- Process Instance Status
   gc_prcs_status_created              constant  varchar2(20 char) := 'created';
   gc_prcs_status_running              constant  varchar2(20 char) := 'running';
+  gc_prcs_status_suspended            constant  varchar2(20 char) := 'suspended';
   gc_prcs_status_completed            constant  varchar2(20 char) := 'completed';
   gc_prcs_status_terminated           constant  varchar2(20 char) := 'terminated';
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
@@ -256,6 +260,13 @@ as
   gc_prcs_event_started               constant  varchar2(20 char) := 'started';
   gc_prcs_event_completed             constant  varchar2(20 char) := gc_prcs_status_completed;
   gc_prcs_event_terminated            constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_suspended             constant  varchar2(20 char) := gc_prcs_status_suspended;
+  gc_prcs_event_resumed               constant  varchar2(20 char) := 'resumed';
+  gc_prcs_event_sbfl_suspended        constant  varchar2(20 char) := 'subflow suspended';
+  gc_prcs_event_sbfl_marked_delete    constant  varchar2(20 char) := 'subflow mark delete';
+  gc_prcs_event_sbfl_deleted          constant  varchar2(20 char) := 'subflow deleted';
+  gc_prcs_event_sbfl_resumed          constant  varchar2(20 char) := 'subflow resumed';
+  gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
   gc_prcs_event_reset                 constant  varchar2(20 char) := 'reset';
   gc_prcs_event_error                 constant  varchar2(20 char) := gc_prcs_status_error;
   gc_prcs_event_restart_step          constant  varchar2(20 char) := 'restart step';

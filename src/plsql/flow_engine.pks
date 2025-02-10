@@ -13,7 +13,7 @@ create or replace package flow_engine
                 , flow_boundary_events, flow_timers_pkg, flow_subprocesses
                 , flow_call_activities, flow_usertask_pkg
                 , flow_message_util, flow_message_util_ee, flow_message_flow
-                , flow_iteration)
+                , flow_iteration, flow_instances_util_ee)
 as 
   procedure timer_callback
   ( p_process_id    in flow_processes.prcs_id%type
@@ -47,6 +47,7 @@ procedure restart_step
   , p_subflow_id          in flow_subflows.sbfl_id%type
   , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
+  , p_check_for_error     in boolean default true
   );
 
 procedure handle_event_gateway_event

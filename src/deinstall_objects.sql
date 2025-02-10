@@ -24,6 +24,8 @@ drop package flow_message_util;
 drop package flow_message_util_ee;
 drop package flow_proc_vars_int;
 drop package flow_instances;
+drop package flow_instances_util_ee;
+drop package flow_rewind;
 drop package flow_engine;
 drop package flow_api_pkg;
 drop package flow_admin_api;

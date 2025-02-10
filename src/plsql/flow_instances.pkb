@@ -4,9 +4,11 @@ create or replace package body flow_instances as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates, 2025
 --
 -- Created  25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
 -- Modified 30-May-2022  Moritz Klein (MT AG)
+-- Modified 28-Jan-2025  Richard Allen (Flowquest)
 --
 */
 
@@ -421,19 +423,6 @@ create or replace package body flow_instances as
     )
   is
     l_return_code   number;
-    cursor c_lock_all is 
-        select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg_id
-          from flow_subflows sbfl
-          join flow_processes prcs
-            on prcs.prcs_id = sbfl.sbfl_prcs_id 
-          join flow_subflow_log sflg 
-            on prcs.prcs_id = sflg.sflg_prcs_id
-          join flow_instance_diagrams prdg
-            on prcs.prcs_id = prdg.prdg_prcs_id
-          where prcs.prcs_id = p_process_id
-          order by sbfl.sbfl_process_level, sbfl.sbfl_id
-            for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id wait 2
-    ;
   begin
     apex_debug.enter
     ( 'reset_process'
@@ -441,10 +430,7 @@ create or replace package body flow_instances as
     );
     -- lock all objects
     begin
-      open c_lock_all;
-      flow_timers_pkg.lock_process_timers ( pi_prcs_id => p_process_id );  
-      flow_message_util.lock_instance_subscriptions ( p_process_id => p_process_id );
-      close c_lock_all;
+      flow_engine_util.lock_all_for_process (p_process_id => p_process_id);
     exception 
       when lock_timeout then
         flow_errors.handle_instance_error
@@ -511,6 +497,100 @@ create or replace package body flow_instances as
     );
     commit;
   end reset_process;
+
+
+  procedure suspend_process
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    )
+  is
+    e_feature_requires_ee              exception;
+    e_prcs_not_suspendable             exception;
+    l_status                           flow_processes.prcs_status%type;
+  begin
+    $IF flow_apex_env.ee $THEN
+      -- check current process state in running or errored
+      select prcs_status
+        into l_status
+        from flow_processes
+       where prcs_id = p_process_id;
+
+      if l_status not in ( flow_constants_pkg.gc_prcs_status_running 
+                         , flow_constants_pkg.gc_prcs_status_error) then 
+        raise e_prcs_not_suspendable;
+      end if;
+
+      -- lock process, subflows, subflog log, subscriptions, prdg
+      flow_engine_util.lock_all_for_process (p_process_id => p_process_id);
+      flow_instances_util_ee.suspend_process (p_process_id => p_process_id);
+
+    $ELSE
+      raise e_feature_requires_ee;
+    $END
+    -- if process status in (running, error)
+  exception
+    when e_feature_requires_ee then
+      -- feature not supported without Enterprise Edition licence
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'feature-requires-ee'
+      );
+      raise;
+    when e_prcs_not_suspendable then
+      -- only running or errored process can be suspended
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'suspend-invalid-status'
+      );
+      raise;
+  end suspend_process;
+
+  procedure resume_process
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    )
+  is
+    e_feature_requires_ee              exception;
+    e_prcs_not_suspended               exception;
+    l_status                           flow_processes.prcs_status%type;
+  begin
+    $IF flow_apex_env.ee $THEN
+      -- check current process state is suspended
+      select prcs_status
+        into l_status
+        from flow_processes
+       where prcs_id = p_process_id;
+
+      if l_status != flow_constants_pkg.gc_prcs_status_suspended then 
+        raise e_prcs_not_suspended;
+      end if;
+
+      -- lock process, subflows, subflog log, subscriptions, prdg
+      flow_engine_util.lock_all_for_process (p_process_id => p_process_id);
+      flow_instances_util_ee.resume_process (p_process_id => p_process_id);
+
+    $ELSE
+      raise e_feature_requires_ee;
+    $END
+    -- if process status in (running, error)
+  exception
+    when e_feature_requires_ee then
+      -- feature not supported without Enterprise Edition licence
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'feature-requires-ee'
+      );
+      raise;
+    when e_prcs_not_suspended then
+      -- only suspended process can be resumed
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'resume-invalid-status'
+      );
+      raise;
+  end resume_process;
 
   procedure terminate_process
     (

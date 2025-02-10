@@ -36,6 +36,10 @@ as
   , pi_loop_counter in flow_subflows.sbfl_loop_counter%type default null
   );
 
+  procedure set_context
+  ( pi_sbfl_rec     in flow_subflows%rowtype
+  );
+
   procedure set_step_error
   ( p_has_error  in boolean default false
   );

@@ -28,6 +28,8 @@ PROMPT >> Engine
 @plsql/flow_services.pks
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
+@plsql/flow_instances_util_ee.pks
+@plsql/flow_rewind.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
 @plsql/flow_reservations.pks

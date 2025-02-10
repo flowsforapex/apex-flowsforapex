@@ -9,7 +9,9 @@ create or replace package flow_instances
 --
 */
   authid definer
-  accessible by (flow_api_pkg, flow_engine, flow_proc_vars_int, flow_diagram, flow_message_util_ee)
+  accessible by ( flow_api_pkg, flow_admin_api, flow_engine, flow_proc_vars_int 
+                , flow_diagram, flow_message_util_ee, flow_instances_util_ee 
+                )
 as
 
   function create_process
@@ -34,6 +36,18 @@ as
     );
 
   procedure delete_process
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    );
+
+  procedure suspend_process
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    );
+
+  procedure resume_process
     (
       p_process_id  in flow_processes.prcs_id%type
     , p_comment     in flow_instance_event_log.lgpr_comment%type default null

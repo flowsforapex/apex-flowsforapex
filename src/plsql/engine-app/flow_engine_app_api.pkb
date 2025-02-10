@@ -191,6 +191,10 @@ as
                 p_page => 10
               , p_clear_cache => 10
           );
+        when 'SUSPEND-FLOW-INSTANCE' then 
+          flow_admin_api.suspend_process( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
+        when 'RESUME-FLOW-INSTANCE' then 
+          flow_admin_api.resume_process( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
         when 'RESERVE-STEP' then
           flow_api_pkg.flow_reserve_step
           (
@@ -208,6 +212,25 @@ as
           , p_subflow_id => apex_application.g_x03
           , p_step_key   => apex_application.g_x04
           );    
+        when 'DELETE-ON-RESUME' then
+          flow_admin_api.mark_subflow_for_deletion
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'RETURN-PREV-GW-RESUME' then
+          flow_admin_api.return_to_prior_gateway
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'REPOSITION-SUBFLOW' then
+          flow_admin_api.return_to_prior_step
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_new_step   => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
+          );
         when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
           (
