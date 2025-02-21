@@ -14,6 +14,11 @@
   color: white!important;
 }
 
+.ffa-color--suspended {
+  background-color: #0057B8!important;
+  color: white!important;
+}
+
 .ffa-color--terminated {
   background-color: #d76a27!important;
   color: white!important;
@@ -139,6 +144,9 @@ div#attributes-ir th#JSON {
 .u-color-39-alert-text{
   color: #d2423b!important;
 }
+.u-color-31-alert-text{
+  color: #0057B8!important;
+}
 .u-color-44-alert-bg{
   background-color: rgba(140, 158, 176, 0.15)!important;
 }
@@ -153,6 +161,9 @@ div#attributes-ir th#JSON {
 }
 .u-color-39-alert-bg{
   background-color: rgba(210, 67, 59, 0.15)!important;
+}
+.u-color-31-alert-bg{
+  background-color: rgba(000, 127, 255, 0.15)!important;
 }
 
 /* IR Header with header action*/

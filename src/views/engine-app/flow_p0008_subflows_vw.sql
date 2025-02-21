@@ -27,6 +27,7 @@ as
              when 'created' then 'fa-plus-circle-o'
              when 'completed' then 'fa-check-circle-o'
              when 'terminated' then 'fa-stop-circle-o'
+             when 'suspended' then 'fa-pause-circle-o'
              when 'error' then 'fa-exclamation-circle-o'
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'

@@ -262,5 +262,96 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
         raise;
   end return_to_prior_step;
 
+  procedure rewind_from_subprocess
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is
+    l_session_id   number;  
+  begin
+
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_process_id => p_process_id);
+    end if;
+
+    flow_rewind.rewind_from_subprocess   ( p_process_id => p_process_id
+                                        , p_subflow_id => p_subflow_id
+                                        , p_comment    => p_comment
+                                        );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if; 
+  exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;
+  end rewind_from_subprocess;
+
+  procedure rewind_from_call_activity
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is
+    l_session_id   number;  
+  begin
+
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_process_id => p_process_id);
+    end if;
+
+    flow_rewind.rewind_from_call_activity ( p_process_id => p_process_id
+                                          , p_subflow_id => p_subflow_id
+                                          , p_comment    => p_comment
+                                          );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if; 
+  exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;
+  end rewind_from_call_activity;
+
+  procedure flow_force_next_step
+  ( p_process_id                   in flow_processes.prcs_id%type
+  , p_subflow_id                   in flow_subflows.sbfl_id%type
+  , p_step_key                     in flow_subflows.sbfl_step_key%type
+  , p_comment                      in flow_instance_event_log.lgpr_comment%type default null
+  )
+  is
+    l_session_id   number;
+  begin     
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_process_id => p_process_id);
+    end if;
+
+    flow_rewind.flow_force_next_step ( p_process_id                   => p_process_id
+                                     , p_subflow_id                   => p_subflow_id
+                                     , p_step_key                     => p_step_key
+                                     , p_execute_variable_expressions => false
+                                     , p_comment                      => p_comment
+                                     );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if; 
+
+  exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;
+  end flow_force_next_step;
+
+
 end flow_admin_api;
 /
