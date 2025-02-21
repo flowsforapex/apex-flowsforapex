@@ -13,7 +13,7 @@ create or replace package flow_engine
                 , flow_boundary_events, flow_timers_pkg, flow_subprocesses
                 , flow_call_activities, flow_usertask_pkg
                 , flow_message_util, flow_message_util_ee, flow_message_flow
-                , flow_iteration, flow_instances_util_ee)
+                , flow_iteration, flow_instances_util_ee, flow_rewind)
 as 
   procedure timer_callback
   ( p_process_id    in flow_processes.prcs_id%type
@@ -26,13 +26,15 @@ as
   , p_event_type    in flow_objects.objt_sub_tag_name%type
   ); 
 procedure flow_complete_step
-  ( p_process_id        in flow_processes.prcs_id%type
-  , p_subflow_id        in flow_subflows.sbfl_id%type
-  , p_step_key          in flow_subflows.sbfl_step_key%type default null
-  , p_forward_route     in flow_connections.conn_bpmn_id%type default null   
-  , p_log_as_completed  in boolean default true
-  , p_reset_step_key    in boolean default false
-  , p_recursive_call    in boolean default true
+  ( p_process_id                   in flow_processes.prcs_id%type
+  , p_subflow_id                   in flow_subflows.sbfl_id%type
+  , p_step_key                     in flow_subflows.sbfl_step_key%type default null
+  , p_forward_route                in flow_connections.conn_bpmn_id%type default null   
+  , p_log_as_completed             in boolean default true
+  , p_reset_step_key               in boolean default false
+  , p_recursive_call               in boolean default true
+  , p_force_next_step              in boolean default false
+  , p_execute_variable_expressions in boolean default true
   );
 
 procedure start_step

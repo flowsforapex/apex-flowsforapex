@@ -231,6 +231,18 @@ as
           , p_new_step   => apex_application.g_x04
           , p_comment    => apex_application.g_x05
           );
+        when 'REWIND-SUBPROCESS-ON-RESUME' then
+          flow_admin_api.rewind_from_subprocess
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'REWIND-CALL-ACTIVITY-ON-RESUME' then
+          flow_admin_api.rewind_from_call_activity
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
         when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
           (
@@ -241,6 +253,14 @@ as
                   apex_debug.message (p_message => 'ajax handler happy');
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
+          (
+            p_process_id    => apex_application.g_x02
+          , p_subflow_id    => apex_application.g_x03
+          , p_step_key      => apex_application.g_x04
+          , p_comment       => apex_application.g_x05       
+          );
+        when 'FORCE-NEXT-STEP' then 
+          flow_admin_api.flow_force_next_step 
           (
             p_process_id    => apex_application.g_x02
           , p_subflow_id    => apex_application.g_x03

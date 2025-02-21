@@ -831,9 +831,11 @@ end timer_callback;
 *************************************************************************************************************/
 
 function finish_current_step
-( p_sbfl_rec          in flow_subflows%rowtype
-, p_log_as_completed  in boolean default true
-, p_reset_step_key    in boolean default false
+( p_sbfl_rec                     in flow_subflows%rowtype
+, p_log_as_completed             in boolean default true
+, p_reset_step_key               in boolean default false
+, p_force_next_step              in boolean default false
+, p_execute_variable_expressions in boolean default true  -- only false for force next step
 ) return flow_types_pkg.t_iteration_status
 is
   l_current_step_tag      flow_objects.objt_tag_name%type;
@@ -845,26 +847,43 @@ begin
   , 'Process ID',  p_sbfl_rec.sbfl_prcs_id
   , 'Subflow ID', p_sbfl_rec.sbfl_id
   , 'Current Step', p_sbfl_rec.sbfl_current
-  , 'p_reset_step_key', case p_reset_step_key when true then 'True' when false then 'False' else 'null' end
+  , 'p_reset_step_key', case p_reset_step_key 
+                        when true then 'True' 
+                        when false then 'False' 
+                        else 'null' end
+  , 'p_force_next_step', case p_force_next_step 
+                        when true then 'True' 
+                        when false then 'False' 
+                        else 'null' end
+  , 'p_execute_variable_expressions', case p_execute_variable_expressions 
+                                      when true then 'True' 
+                                      when false then 'False' 
+                                      else 'null' end
   );
+
 
   l_current_step_tag := flow_engine_util.get_object_tag (p_sbfl_info => p_sbfl_rec);
 
-  -- evaluate and set any post-step variable expressions on the last object
-  if l_current_step_tag in 
-  ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
-  , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask 
-  , flow_constants_pkg.gc_bpmn_sendtask , flow_constants_pkg.gc_bpmn_receivetask )
-  and p_sbfl_rec.sbfl_iteration_type is null 
-  then 
-    flow_expressions.process_expressions
-      ( pi_objt_bpmn_id   => p_sbfl_rec.sbfl_current
-      , pi_set            => flow_constants_pkg.gc_expr_set_after_task
-      , pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
-      , pi_sbfl_id        => p_sbfl_rec.sbfl_id
-      , pi_var_scope      => p_sbfl_rec.sbfl_scope
-      , pi_expr_scope     => p_sbfl_rec.sbfl_scope
-    );
+  if p_execute_variable_expressions then
+
+    -- evaluate and set any post-step variable expressions on the last object
+    -- only not executed if the next step is forced and flag set to false
+    if l_current_step_tag in 
+    ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
+    , flow_constants_pkg.gc_bpmn_manualtask, flow_constants_pkg.gc_bpmn_scripttask, flow_constants_pkg.gc_bpmn_businessruletask 
+    , flow_constants_pkg.gc_bpmn_sendtask , flow_constants_pkg.gc_bpmn_receivetask )
+    and p_sbfl_rec.sbfl_iteration_type is null 
+    then 
+      flow_expressions.process_expressions
+        ( pi_objt_bpmn_id   => p_sbfl_rec.sbfl_current
+        , pi_set            => flow_constants_pkg.gc_expr_set_after_task
+        , pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
+        , pi_sbfl_id        => p_sbfl_rec.sbfl_id
+        , pi_var_scope      => p_sbfl_rec.sbfl_scope
+        , pi_expr_scope     => p_sbfl_rec.sbfl_scope
+      );
+    end if;
+
   end if;
   -- clean up any boundary events left over from the previous activity
   if (l_current_step_tag in ( flow_constants_pkg.gc_bpmn_subprocess
@@ -907,6 +926,9 @@ begin
     , p_subflow_id        => p_sbfl_rec.sbfl_id
     , p_completed_object  => p_sbfl_rec.sbfl_current
     , p_iteration_status  => l_iteration_status
+    , p_notes             => case p_force_next_step
+                              when true then 'Step Completion was Forced. Variable Expressions were not executed.'
+                              else null end
     );
   end if;
   -- release subflow reservation
@@ -1396,13 +1418,15 @@ end run_step;
 
 
 procedure flow_complete_step
-( p_process_id        in flow_processes.prcs_id%type
-, p_subflow_id        in flow_subflows.sbfl_id%type 
-, p_step_key          in flow_subflows.sbfl_step_key%type default null
-, p_forward_route     in flow_connections.conn_bpmn_id%type default null
-, p_log_as_completed  in boolean default true
-, p_reset_step_key    in boolean default false -- only set for initial call after splitting parallel iteration
-, p_recursive_call    in boolean default true
+( p_process_id                   in flow_processes.prcs_id%type
+, p_subflow_id                   in flow_subflows.sbfl_id%type 
+, p_step_key                     in flow_subflows.sbfl_step_key%type default null
+, p_forward_route                in flow_connections.conn_bpmn_id%type default null
+, p_log_as_completed             in boolean default true
+, p_reset_step_key               in boolean default false -- only set for initial call after splitting parallel iteration
+, p_recursive_call               in boolean default true
+, p_force_next_step              in boolean default false
+, p_execute_variable_expressions in boolean default true
 )
 is
   l_sbfl_rec                  flow_subflows%rowtype;
@@ -1411,6 +1435,7 @@ is
   l_timestamp                 flow_subflows.sbfl_became_current%type;
   l_step_key                  flow_subflows.sbfl_step_key%type;
   l_previous_step             flow_objects.objt_bpmn_id%type;  
+  l_new_status                flow_subflows.sbfl_status%type;
   l_next_loop_counter         number;
   l_existing_iter_id          flow_iterations.iter_id%type;
   l_existing_iobj_id          flow_iterated_objects.iobj_id%type;
@@ -1429,6 +1454,9 @@ begin
   , 'Supplied Step Key', p_step_key
   , 'recursive_call', case when p_recursive_call then 'true'  else 'false'  end
   , 'reset_step_key', case when p_reset_step_key then 'true'  else 'false'  end
+  , 'forced_next_step', case when p_force_next_step then 'true'  else 'false'  end
+  , 'execute_var_exps', case when p_execute_variable_expressions then 'true'  
+                             else 'false'  end
   );
   flow_globals.set_is_recursive_step (p_is_recursive_step => p_recursive_call);
   -- Get current object and current subflow info and lock it
@@ -1461,9 +1489,11 @@ begin
 
     -- complete the current step by doing the post-step operations
     l_iteration_status  :=  finish_current_step
-                            ( p_sbfl_rec         => l_sbfl_rec
-                            , p_log_as_completed => p_log_as_completed
-                            , p_reset_step_key   => p_reset_step_key
+                            ( p_sbfl_rec                     => l_sbfl_rec
+                            , p_log_as_completed             => p_log_as_completed
+                            , p_reset_step_key               => p_reset_step_key
+                            , p_force_next_step              => p_force_next_step
+                            , p_execute_variable_expressions => p_execute_variable_expressions
                             );
 
     if flow_globals.get_step_error then
@@ -1622,13 +1652,20 @@ begin
   else
     l_timestamp := systimestamp;
 
+    -- think about adding a check here if suspended and ee and certain object types
+    -- will test using a case statement in the update of sbfl_status...
+    l_new_status := case l_sbfl_rec.sbfl_status
+                    when flow_constants_pkg.gc_sbfl_status_suspended then flow_constants_pkg.gc_sbfl_status_restart_on_resume
+                    else flow_constants_pkg.gc_sbfl_status_running
+                    end; 
+
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
       set sbfl.sbfl_current             = l_step_info.target_objt_ref
         , sbfl.sbfl_last_completed      = l_sbfl_rec.sbfl_current
         , sbfl.sbfl_became_current      = l_timestamp
         , sbfl.sbfl_step_key            = l_step_info.target_objt_step_key
-        , sbfl.sbfl_status              = flow_constants_pkg.gc_sbfl_status_running
+        , sbfl.sbfl_status              = l_new_status
         , sbfl.sbfl_work_started        = null
         , sbfl.sbfl_potential_users     = null
         , sbfl.sbfl_potential_groups    = null
@@ -1661,59 +1698,62 @@ begin
     commit;
 
     apex_debug.info
-    ( p_message => 'Subflow %0 : Step End Committed for step %1'
+    ( p_message => 'Subflow %0 : Step End Committed for step %1.  New Sbfl Status %3'
     , p0        => p_subflow_id
     , p1        => l_sbfl_rec.sbfl_current
     , p2        => case l_sbfl_rec.sbfl_loop_counter 
                         when null then ''
                         else ' ['||l_sbfl_rec.sbfl_loop_counter ||']'
                         end
+    , p3        => l_new_status
     );
   
-    -- start of pre-phase for next step
-    -- reset step_had_error flag
-    flow_globals.set_step_error ( p_has_error => false);
-    -- now into next step so is not part of users current step
-    flow_globals.set_is_recursive_step (p_is_recursive_step => true);
-    apex_debug.info ( p_message => 'Step now counted as recursive');
-    -- relock subflow
-    l_sbfl_rec := flow_engine_util.get_subflow_info 
-    ( p_process_id => p_process_id
-    , p_subflow_id => p_subflow_id
-    , p_lock_process => false
-    , p_lock_subflow => true
-    );
+    if l_new_status = flow_constants_pkg.gc_sbfl_status_running then
+      -- start of pre-phase for next step
+      -- reset step_had_error flag
+      flow_globals.set_step_error ( p_has_error => false);
+      -- now into next step so is not part of users current step
+      flow_globals.set_is_recursive_step (p_is_recursive_step => true);
+      apex_debug.info ( p_message => 'Step now counted as recursive');
+      -- relock subflow
+      l_sbfl_rec := flow_engine_util.get_subflow_info 
+      ( p_process_id => p_process_id
+      , p_subflow_id => p_subflow_id
+      , p_lock_process => false
+      , p_lock_subflow => true
+      );
 
-    -- Run the step
-    run_step 
-    ( p_sbfl_rec                => l_sbfl_rec
-    , p_step_info               => l_step_info 
-    , p_iteration_is_complete   => l_iteration_status.is_complete
-    );
-    -- Commit transaction before returning
-    if flow_globals.get_step_error then
-      rollback;
- 
-      -- set error status on instance and subflow
-      flow_errors.set_error_status
-      ( pi_prcs_id => p_process_id
-      , pi_sbfl_id => p_subflow_id
+      -- Run the step
+      run_step 
+      ( p_sbfl_rec                => l_sbfl_rec
+      , p_step_info               => l_step_info 
+      , p_iteration_is_complete   => l_iteration_status.is_complete
       );
-      commit;
- 
-      apex_debug.info
-      ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error.  (Error Status Just Committed.)'
-      , p0        => p_subflow_id
-      );
-      
-    else
-      commit;
+      -- Commit transaction before returning
+      if flow_globals.get_step_error then
+        rollback;
+  
+        -- set error status on instance and subflow
+        flow_errors.set_error_status
+        ( pi_prcs_id => p_process_id
+        , pi_sbfl_id => p_subflow_id
+        );
+        commit;
+  
+        apex_debug.info
+        ( p_message => 'Subflow %0 : Step End Rollback due to earlier Error.  (Error Status Just Committed.)'
+        , p0        => p_subflow_id
+        );
 
-      apex_debug.info
-      ( p_message => 'Subflow %0 : Step End Committed'
-      , p0        => p_subflow_id
-      );
-    end if;
+      else
+        commit;
+
+        apex_debug.info
+        ( p_message => 'Subflow %0 : Step End Committed'
+        , p0        => p_subflow_id
+        );
+      end if;  -- step error
+    end if; -- status = running
   end if;
   end flow_complete_step;
 

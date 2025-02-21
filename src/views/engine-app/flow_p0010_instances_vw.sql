@@ -40,6 +40,7 @@ as
                  , case prcs_status
                      when 'running' then 'fa-play-circle-o'
                      when 'created' then 'fa-plus-circle-o'
+                     when 'suspended' then 'fa-pause-circle-o'
                      when 'completed' then 'fa-check-circle-o'
                      when 'terminated' then 'fa-stop-circle-o'
                      when 'error' then 'fa-exclamation-circle-o'
