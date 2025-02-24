@@ -99,11 +99,13 @@ CREATE TABLE flow_processes (
     prcs_due_on         TIMESTAMP WITH TIME ZONE,
     prcs_archived_ts    TIMESTAMP WITH TIME ZONE,
     prcs_priority       NUMBER,
+    prcs_was_altered    VARCHAR2(1 CHAR),
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
+ALTER TABLE flow_processes ADD CONSTRAINT prcs_ck_was_altered_yn CHECK (prcs_was_altered in ('Y','N'));
 
 create index flow_prcs_dgrm_status_ix on flow_processes (prcs_dgrm_id, prcs_status);
 

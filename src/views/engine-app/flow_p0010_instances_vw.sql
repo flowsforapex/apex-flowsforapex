@@ -12,6 +12,7 @@ as
         , prcs_priority
         , prcs_status_icon
         , prcs_due_on
+        , prcs_was_altered
         , prcs_init_date
         , prcs_last_update
         , prcs_business_ref
@@ -34,6 +35,7 @@ as
                  , dgrm_category as prcs_dgrm_category
                  , prcs_status
                  , prcs_due_on at time zone sessiontimezone as prcs_due_on
+                 , prcs_was_altered
                  , prcs_init_ts at time zone sessiontimezone as prcs_init_date
                  , prcs_last_update at time zone sessiontimezone as prcs_last_update
                  , prcs_business_ref

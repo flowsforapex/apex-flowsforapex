@@ -11,6 +11,7 @@ create or replace package flow_instances
   authid definer
   accessible by ( flow_api_pkg, flow_admin_api, flow_engine, flow_proc_vars_int 
                 , flow_diagram, flow_message_util_ee, flow_instances_util_ee 
+                , flow_rewind
                 )
 as
 
@@ -74,6 +75,11 @@ as
     ( p_process_id  in flow_processes.prcs_id%type
     ) return flow_processes.prcs_due_on%type
     ;
+
+  procedure set_was_altered
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    );
 
 end flow_instances;
 /

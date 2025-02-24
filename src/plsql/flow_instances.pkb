@@ -847,5 +847,21 @@ create or replace package body flow_instances as
       return l_due_on;
   end due_on;
 
+  procedure set_was_altered
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    )
+  is
+  begin 
+      update flow_processes prcs
+      set prcs.prcs_was_altered = 'Y'
+        , prcs.prcs_last_update = systimestamp
+        , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                              , sys_context('userenv','os_user')
+                                              , sys_context('userenv','session_user')
+                                              )  
+      where prcs.prcs_id = p_process_id;
+  end set_was_altered;
+
 end flow_instances;
 /
