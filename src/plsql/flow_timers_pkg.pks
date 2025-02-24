@@ -18,7 +18,7 @@ Purpose:
 ******************************************************************************/
   authid definer
 -- accessible by ( flow_engine, flow_instances, flow_boundary_events, flow_api_pkg
---               , flow_admin_api )
+--               , flow_admin_api , flow_instances_util_ee )
 as
 
 
@@ -28,6 +28,7 @@ as
   c_created    constant varchar2(1) := 'C'; -- Created and waiting for the first action.
   c_active     constant varchar2(1) := 'A'; -- The time has already completed 1 action
                                             -- but will perform more actions.
+                                            -- NO LONGER USED
   c_ended      constant varchar2(1) := 'E'; -- The timer has naturally completed his
                                             -- action/s with no external intervention.
   c_expired    constant varchar2(1) := 'X'; -- The timers is stopped by call from the
@@ -38,6 +39,8 @@ as
   c_broken     constant varchar2(1) := 'B'; -- Error occured in timer flow.
                                             -- Timer will be ignored until manually
                                             -- reset to created or active.
+  c_suspended  constant varchar2(1) := 'S'; -- Timer is suspended as it is part of a
+                                            -- process instance which has been suspended.
 
 
 /******************************************************************************
@@ -111,6 +114,26 @@ procedure reschedule_timer
     pi_prcs_id      in flow_processes.prcs_id%type
   , pi_sbfl_id      in flow_subflows.sbfl_id%type
   , po_return_code out number
+  );
+
+/******************************************************************************
+  suspend_process_timers
+    suspend all timers for a process instance
+******************************************************************************/
+
+  procedure suspend_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  );
+
+/******************************************************************************
+  resume_process_timers
+    resume all timers for a process instance    
+******************************************************************************/
+
+  procedure resume_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
   );
 
 

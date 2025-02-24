@@ -952,8 +952,41 @@ exception
 
 end reschedule_timer;
 
+/******************************************************************************
+  suspend_process_timers
+    suspend all timers for a process instance
+******************************************************************************/
 
+  procedure suspend_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  is
+  begin
+    update flow_timers
+       set timr_status = c_suspended
+     where timr_prcs_id = pi_prcs_id
+       and timr_status = c_created
+    ;
+  end suspend_process_timers;
 
+/******************************************************************************
+  resume_process_timers
+    resume all timers for a process instance    
+******************************************************************************/
+
+  procedure resume_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  is
+  begin
+    update flow_timers
+       set timr_status = c_created
+     where timr_prcs_id = pi_prcs_id
+       and timr_status = c_suspended
+    ;
+  end resume_process_timers;
 
 /******************************************************************************
   EXPIRE_TIMER
