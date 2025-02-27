@@ -4,9 +4,11 @@ create or replace package body flow_logging as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG
 -- Updated 10-Feb-2023  Richard Allen (Oracle)  
+-- Updated 25-Feb-2025  Richard Allen (Flowquest Limited)
 --
 */
   g_logging_level           flow_configuration.cfig_value%type; 
@@ -260,6 +262,98 @@ create or replace package body flow_logging as
       -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
       raise;
   end log_step_completion;
+
+  procedure log_step_event
+  ( p_sbfl_rec         in flow_subflows%rowtype
+  , p_event            in flow_step_events.lgse_event_type%type
+  , p_comment          in flow_step_events.lgse_comment%type default null
+  , p_error_info       in flow_step_events.lgse_error_info%type default null
+  , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
+  , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
+  , p_new_priority     in flow_subflows.sbfl_priority%type default null
+  )
+  is
+    l_step_log_rec  flow_step_events%rowtype;
+  begin
+    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
+                          , flow_constants_pkg.gc_config_logging_level_secure
+                          , flow_constants_pkg.gc_config_logging_level_full
+                          ) 
+    then
+
+      l_step_log_rec.lgse_prcs_id         := p_sbfl_rec.sbfl_prcs_id;
+      l_step_log_rec.lgse_step_key        := p_sbfl_rec.sbfl_step_key;
+      l_step_log_rec.lgse_sbfl_id         := p_sbfl_rec.sbfl_id;
+      l_step_log_rec.lgse_dgrm_id         := p_sbfl_rec.sbfl_dgrm_id;
+      l_step_log_rec.lgse_objt_bpmn_id    := p_sbfl_rec.sbfl_current;
+      l_step_log_rec.lgse_event_type      := p_event;   
+      l_step_log_rec.lgse_timestamp       := systimestamp;
+      l_step_log_rec.lgse_user            := coalesce ( sys_context('apex$session','app_user') 
+                                                      , sys_context('userenv','os_user')
+                                                      , sys_context('userenv','session_user')
+                                                      );
+      l_step_log_rec.lgse_apex_task_id    := p_sbfl_rec.sbfl_apex_task_id;
+      l_step_log_rec.lgse_new_reservation := p_new_reservation;
+      l_step_log_rec.lgse_new_due_on      := p_new_due_on;  
+      l_step_log_rec.lgse_new_priority    := p_new_priority;
+      l_step_log_rec.lgse_comment         := p_comment;
+
+      insert into flow_step_events 
+      values l_step_log_rec;
+    end if;
+    exception
+      when others then
+        flow_errors.handle_general_error
+        ( pi_message_key => 'logging-step-event'
+        );
+        -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
+        raise;
+  end log_step_event;
+
+  -- overload for log_step_event for se when p_sbfl_rec is not available
+  procedure log_step_event
+  ( p_process_id       in flow_processes.prcs_id%type
+  , p_subflow_id       in flow_subflows.sbfl_id%type
+  , p_event            in flow_step_events.lgse_event_type%type
+  , p_comment          in flow_step_events.lgse_comment%type default null
+  , p_error_info       in flow_step_events.lgse_error_info%type default null
+  , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
+  , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
+  , p_new_priority     in flow_subflows.sbfl_priority%type default null
+  )
+  is
+    l_sbfl_rec  flow_subflows%rowtype;
+  begin
+    select * 
+      into l_sbfl_rec
+      from flow_subflows
+     where sbfl_id      = p_subflow_id
+       and sbfl_prcs_id = p_process_id
+    ;
+
+    log_step_event
+    ( p_sbfl_rec         => l_sbfl_rec
+    , p_event            => p_event
+    , p_comment          => p_comment
+    , p_error_info       => p_error_info
+    , p_new_reservation  => p_new_reservation
+    , p_new_due_on       => p_new_due_on
+    , p_new_priority     => p_new_priority
+    );
+  exception
+    when no_data_found then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-step-event'
+      );
+      -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
+      raise;
+    when others then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-step-event'
+      );
+      -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
+      raise;
+  end log_step_event;
 
   procedure log_variable_event -- logs process variable set events
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type

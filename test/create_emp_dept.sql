@@ -20,6 +20,8 @@ create table emp(
   constraint fk_deptno foreign key (deptno) references dept (deptno)
 );
 
+DELETE FROM dept;
+
 insert into dept
 values(10, 'ACCOUNTING', 'NEW YORK');
 insert into dept
@@ -29,6 +31,8 @@ values(30, 'SALES', 'CHICAGO');
 insert into dept
 values(40, 'OPERATIONS', 'BOSTON');
  
+DELETE FROM emp;
+
 insert into emp
 values(
  7839, 'KING', 'PRESIDENT', null,
@@ -38,31 +42,31 @@ values(
 insert into emp
 values(
  7698, 'BLAKE', 'MANAGER', 7839,
- to_date('1-5-1981','dd-mm-yyyy'),
+ to_date('01-05-1981','dd-mm-yyyy'),
  2850, null, 30
 );
 insert into emp
 values(
  7782, 'CLARK', 'MANAGER', 7839,
- to_date('9-6-1981','dd-mm-yyyy'),
+ to_date('09-06-1981','dd-mm-yyyy'),
  2450, null, 10
 );
 insert into emp
 values(
  7566, 'JONES', 'MANAGER', 7839,
- to_date('2-4-1981','dd-mm-yyyy'),
+ to_date('02-04-1981','dd-mm-yyyy'),
  2975, null, 20
 );
 insert into emp
 values(
  7788, 'SCOTT', 'ANALYST', 7566,
- to_date('13-JUL-87','dd-mm-rr') - 85,
+ to_date('09-NOV-1981','dd-mm-yyyy') ,
  3000, null, 20
 );
 insert into emp
 values(
  7902, 'FORD', 'ANALYST', 7566,
- to_date('3-12-1981','dd-mm-yyyy'),
+ to_date('03-12-1981','dd-mm-yyyy'),
  3000, null, 20
 );
 insert into emp
@@ -80,13 +84,13 @@ values(
 insert into emp
 values(
  7521, 'WARD', 'SALESMAN', 7698,
- to_date('22-2-1981','dd-mm-yyyy'),
+ to_date('22-02-1981','dd-mm-yyyy'),
  1250, 500, 30
 );
 insert into emp
 values(
  7654, 'MARTIN', 'SALESMAN', 7698,
- to_date('28-9-1981','dd-mm-yyyy'),
+ to_date('28-09-1981','dd-mm-yyyy'),
  1250, 1400, 30
 );
 insert into emp
@@ -98,7 +102,7 @@ values(
 insert into emp
 values(
  7876, 'ADAMS', 'CLERK', 7788,
- to_date('13-JUL-87', 'dd-mm-rr') - 51,
+ to_date('23-SEP-1981', 'dd-mm-yyyy'),
  1100, null, 20
 );
 insert into emp

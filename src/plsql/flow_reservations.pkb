@@ -1,4 +1,13 @@
 create or replace package body flow_reservations
+/* 
+-- Flows for APEX - flow_reservations.pkb
+-- 
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2021-2025.
+--
+-- Created 05-May-2021  Richard Allen (Flowquest)
+-- Updated 25-Feb-2025  Richard Allen (Flowquest Limited)
+--
+*/
 as 
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
@@ -11,10 +20,9 @@ as
     , p_called_internally  in boolean default false
     )
   is
-    l_existing_reservation  flow_subflows.sbfl_reservation%type;
+    l_sbfl_rec              flow_subflows%rowtype;
     e_reserved_by_other     exception;
     e_reserved_by_same      exception;
-    l_step_key_required     flow_subflows.sbfl_step_key%type;
   begin
     apex_debug.enter
     ('reserve_step'
@@ -25,25 +33,20 @@ as
     );
 
     -- check step is not already reserved and lock the subflow
-    select sbfl_reservation
-         , sbfl_step_key
-      into l_existing_reservation
-         , l_step_key_required
-      from flow_subflows sbfl 
-     where sbfl.sbfl_id = p_subflow_id
-       and sbfl.sbfl_prcs_id = p_process_id
-       for update of sbfl_reservation wait 2
-    ;
+    l_sbfl_rec := flow_engine_util.get_subflow_info ( p_process_id => p_process_id
+                                                    , p_subflow_id => p_subflow_id
+                                                    , p_lock_subflow => true
+                                                    );
     -- first check the step key
     if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
                                       , pi_sbfl_id  => p_subflow_id
                                       , pi_step_key_supplied  => p_step_key
-                                      , pi_step_key_required => l_step_key_required
+                                      , pi_step_key_required => l_sbfl_rec.sbfl_step_key
                                       ) 
     then 
       -- step key valid
-      if l_existing_reservation is not null then
-        if p_reservation = l_existing_reservation then 
+      if l_sbfl_rec.sbfl_reservation is not null then
+        if p_reservation = l_sbfl_rec.sbfl_reservation then 
           -- step already reserved by required reservation
           raise e_reserved_by_same;
         else 
@@ -61,6 +64,11 @@ as
        where sbfl_prcs_id = p_process_id
          and sbfl_id = p_subflow_id
       ;
+      flow_logging.log_step_event
+      ( p_sbfl_rec         => l_sbfl_rec
+      , p_event            => flow_constants_pkg.gc_step_event_reserved
+      , p_new_reservation  => p_reservation
+      );
       -- commit reservation if this is an external call
       if not p_called_internally then 
         commit;
@@ -80,7 +88,7 @@ as
         flow_errors.handle_general_error
         ( pi_message_key    => 'reservation-by-other_user'
         , p0 => p_reservation
-        , p1 => l_existing_reservation
+        , p1 => l_sbfl_rec.sbfl_reservation
         );
         -- $F4AMESSAGE 'reservation-by-other_user' || 'Reservation for %0 unsuccessful.  Step already reserved by another user (%1).'           
     when e_reserved_by_same then
@@ -104,6 +112,7 @@ as
   is
     l_existing_reservation      flow_subflows.sbfl_reservation%type;
     l_step_key_required         flow_subflows.sbfl_step_key%type;
+    l_sbfl_rec                  flow_subflows%rowtype;
     e_reserved_wrong_step_key   exception;
   begin
     apex_debug.enter
@@ -112,23 +121,18 @@ as
     , 'Process ', p_process_id 
     , 'Step Key', p_step_key
     );
-    -- subflow should already be locked when calling internally
+    -- get the subflow details (subflow should already be locked when calling internally)
+    l_sbfl_rec := flow_engine_util.get_subflow_info ( p_process_id => p_process_id
+                                                    , p_subflow_id => p_subflow_id
+                                                    , p_lock_subflow => not p_called_internally
+                                                    );
+    -- check step key called externally
     if not p_called_internally then 
-      -- lock  subflow if called externally
-      select sbfl_reservation
-           , sbfl_step_key
-        into l_existing_reservation
-           , l_step_key_required 
-        from flow_subflows sbfl 
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
-         for update of sbfl_reservation wait 2
-      ;
       -- check step key is valid (internal calls have already checked this so no need to check again)
-      if not flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
-                                            , pi_sbfl_id  => p_subflow_id
-                                            , pi_step_key_supplied  => p_step_key
-                                            , pi_step_key_required => l_step_key_required
+      if not flow_engine_util.step_key_valid( pi_prcs_id           => p_process_id
+                                            , pi_sbfl_id           => p_subflow_id
+                                            , pi_step_key_supplied => p_step_key
+                                            , pi_step_key_required => l_sbfl_rec.sbfl_step_key
                                             ) 
       then 
         raise e_reserved_wrong_step_key;
@@ -146,6 +150,13 @@ as
     where sbfl_prcs_id = p_process_id
       and sbfl_id = p_subflow_id
     ;
+
+    -- log the release
+    flow_logging.log_step_event
+    ( p_sbfl_rec         => l_sbfl_rec
+    , p_event            => flow_constants_pkg.gc_step_event_released
+    );
+
     -- commit reservation if this is an external call
     if not p_called_internally then 
       commit;

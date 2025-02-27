@@ -545,6 +545,26 @@ create table flow_step_event_log
 
 create index flow_lgsf_ix on flow_step_event_log (lgsf_prcs_id, lgsf_objt_id );
 
+drop table flow_step_events;
+create table flow_step_events
+( lgse_prcs_id              NUMBER NOT NULL
+, lgse_step_key             VARCHAR2(20 CHAR) NOT NULL
+, lgse_sbfl_id              NUMBER NOT NULL
+, lgse_dgrm_id              NUMBER NOT NULL 
+, lgse_objt_bpmn_id         VARCHAR2(50 CHAR) NOT NULL
+, lgse_event_type           VARCHAR2(20 CHAR) NOT NULL
+, lgse_timestamp            TIMESTAMP WITH TIME ZONE NOT NULL
+, lgse_user                 VARCHAR2(255 CHAR)
+, lgse_apex_task_id         NUMBER
+, lgse_new_reservation      VARCHAR2(255 CHAR)
+, lgse_new_due_on           TIMESTAMP WITH TIME ZONE
+, lgse_new_priority         NUMBER
+, lgse_error_info           VARCHAR2(2000 CHAR)
+, lgse_comment              VARCHAR2(2000 CHAR)
+);
+
+create index flow_lgse_ix on flow_step_events (lgse_prcs_id, lgse_objt_bpmn_id );
+
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null
 , lgvr_scope                number not null

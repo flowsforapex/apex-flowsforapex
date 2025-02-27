@@ -262,11 +262,6 @@ as
   gc_prcs_event_terminated            constant  varchar2(20 char) := gc_prcs_status_terminated;
   gc_prcs_event_suspended             constant  varchar2(20 char) := gc_prcs_status_suspended;
   gc_prcs_event_resumed               constant  varchar2(20 char) := 'resumed';
-  gc_prcs_event_sbfl_suspended        constant  varchar2(20 char) := 'subflow suspended';
-  gc_prcs_event_sbfl_marked_delete    constant  varchar2(20 char) := 'subflow mark delete';
-  gc_prcs_event_sbfl_deleted          constant  varchar2(20 char) := 'subflow deleted';
-  gc_prcs_event_sbfl_resumed          constant  varchar2(20 char) := 'subflow resumed';
-  gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
   gc_prcs_event_reset                 constant  varchar2(20 char) := 'reset';
   gc_prcs_event_error                 constant  varchar2(20 char) := gc_prcs_status_error;
   gc_prcs_event_restart_step          constant  varchar2(20 char) := 'restart step';
@@ -277,6 +272,28 @@ as
   gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
   gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
   gc_prcs_event_warning               constant  varchar2(20 char) := 'warning';
+  gc_prcs_event_sbfl_marked_delete    constant  varchar2(20 char) := 'subflow mark delete';
+  gc_prcs_event_sbfl_deleted          constant  varchar2(20 char) := 'subflow deleted';
+  gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
+  gc_prcs_event_rewind_subprocess     constant  varchar2(20 char) := 'rewind subprocess';
+  gc_prcs_event_rewind_call_activity  constant  varchar2(20 char) := 'rewind call activity';
+
+  -- Subflow and Step Events
+  gc_step_event_became_current        constant  varchar2(20 char) := 'current';
+  gc_step_event_work_started          constant  varchar2(20 char) := 'started';
+  gc_step_event_work_paused           constant  varchar2(20 char) := 'paused'; 
+  gc_step_event_completed             constant  varchar2(20 char) := 'completed';
+  gc_step_event_reserved              constant  varchar2(20 char) := 'reserved';
+  gc_step_event_released              constant  varchar2(20 char) := 'released';
+  gc_step_event_error                 constant  varchar2(20 char) := 'error'; 
+  gc_step_event_suspended             constant  varchar2(20 char) := 'suspended';
+  gc_step_event_resumed               constant  varchar2(20 char) := 'resumed';
+  gc_step_event_repositioned          constant  varchar2(20 char) := 'repositioned';
+  gc_step_event_error_restart         constant  varchar2(20 char) := 'restart';
+  gc_step_event_error_forced          constant  varchar2(20 char) := 'forced';
+  gc_step_event_interrupted           constant  varchar2(20 char) := 'interrupted';
+  gc_step_event_rescheduled           constant  varchar2(20 char) := 'rescheduled';
+  gc_step_event_abandoned             constant  varchar2(20 char) := 'abandoned'; 
 
   -- Process Variable Datatypes
 
