@@ -22,7 +22,6 @@ as
     , p_comment           => pi_message
     , p_error_info        => pi_error_info
     );
-
     --  commit the autonomous transaction
     commit;
   end autonomous_write_to_instance_log;
