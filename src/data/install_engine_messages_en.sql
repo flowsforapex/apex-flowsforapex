@@ -276,6 +276,8 @@ begin
     values ( 'suspend-invalid-status', c_load_lang, q'[Only process instances currently in running or error status can be suspended.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'resume-invalid-status', c_load_lang, q'[Only process instances currently suspended can be resumed.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var_exp_plsql_other', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  PL/SQL error shown in event log. ]' );
 -- above here manually added for 25.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

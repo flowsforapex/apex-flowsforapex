@@ -930,6 +930,12 @@ begin
                               when true then 'Step Completion was Forced. Variable Expressions were not executed.'
                               else null end
     );
+    flow_logging.log_step_event
+    ( p_sbfl_rec        => p_sbfl_rec
+    , p_event           => case p_force_next_step
+                              when true then flow_constants_pkg.gc_step_event_error_forced
+                              else flow_constants_pkg.gc_step_event_completed end
+    );
   end if;
   -- release subflow reservation
   if p_sbfl_rec.sbfl_reservation is not null then
@@ -1223,6 +1229,13 @@ begin
   , p2 => p_sbfl_rec.sbfl_prcs_id
   );    
 
+  -- log step as current
+  flow_logging.log_step_event
+  ( p_sbfl_rec => p_sbfl_rec
+  , p_event    => flow_constants_pkg.gc_step_event_became_current
+  );
+  -- TODO - consider moving this into flow_tasks when you have priority, due on, reservation data...
+
   -- evaluate and set any pre-step variable expressions on the next object
   if p_step_info.target_objt_tag in 
   ( flow_constants_pkg.gc_bpmn_task, flow_constants_pkg.gc_bpmn_usertask, flow_constants_pkg.gc_bpmn_servicetask
@@ -1461,15 +1474,15 @@ begin
   flow_globals.set_is_recursive_step (p_is_recursive_step => p_recursive_call);
   -- Get current object and current subflow info and lock it
   l_sbfl_rec := flow_engine_util.get_subflow_info 
-  ( p_process_id => p_process_id
-  , p_subflow_id => p_subflow_id
-  , p_lock_process => false 
-  , p_lock_subflow => true
-  );
+                ( p_process_id   => p_process_id
+                , p_subflow_id   => p_subflow_id
+                , p_lock_process => false 
+                , p_lock_subflow => true
+                );
 
   -- check step key is valid
-  if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
-                                    , pi_sbfl_id  => p_subflow_id
+  if flow_engine_util.step_key_valid( pi_prcs_id            => p_process_id
+                                    , pi_sbfl_id            => p_subflow_id
                                     , pi_step_key_supplied  => p_step_key
                                     , pi_step_key_required  => l_sbfl_rec.sbfl_step_key) then 
     -- step key is valid 
@@ -1765,6 +1778,7 @@ begin
     )
   is
     l_existing_start       flow_subflows.sbfl_work_started%type;
+    l_sbfl_rec             flow_subflows%rowtype;
   begin
     apex_debug.enter
     ( 'start_step'
@@ -1773,20 +1787,16 @@ begin
     , 'Step Key', p_step_key
     );
     -- subflow should already be locked when calling internally
-    if not p_called_internally then 
-      -- lock  subflow if called externally
-      select sbfl_work_started
-        into l_existing_start
-        from flow_subflows sbfl 
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
-         for update of sbfl_work_started wait 3
-      ;
-    end if;
+    l_sbfl_rec := flow_engine_util.get_subflow_info 
+                  ( p_process_id   => p_process_id
+                  , p_subflow_id   => p_subflow_id
+                  , p_lock_subflow => not p_called_internally
+                  );
     -- check the step key
     if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
                                       , pi_sbfl_id  => p_subflow_id
                                       , pi_step_key_supplied  => p_step_key
+                                      , pi_step_key_required  => l_sbfl_rec.sbfl_step_key
                                       ) 
     then 
       -- set the start time if null
@@ -1801,6 +1811,11 @@ begin
         where sbfl_prcs_id = p_process_id
           and sbfl_id = p_subflow_id
         ;
+        -- log the start
+        flow_logging.log_step_event 
+        ( p_sbfl_rec    => l_sbfl_rec
+        , p_event       => flow_constants_pkg.gc_step_event_work_started
+        );
         -- commit reservation if this is an external call
         if not p_called_internally then 
           commit;
@@ -1867,6 +1882,7 @@ begin
   if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
                                     , pi_sbfl_id  => p_subflow_id
                                     , pi_step_key_supplied  => p_step_key
+                                    , pi_step_key_required  => l_sbfl_rec.sbfl_step_key
                                     ) 
   then 
     -- valid step key was supplied
@@ -1892,6 +1908,15 @@ begin
     , p_event         => flow_constants_pkg.gc_prcs_event_restart_step
     , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
     , p_comment       => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
+    );
+    flow_logging.log_step_event 
+    ( p_sbfl_rec    => l_sbfl_rec
+    , p_event       => case p_check_for_error
+                       when true then 
+                         flow_constants_pkg.gc_step_event_error_restart
+                       else 
+                         flow_constants_pkg.gc_step_event_resumed
+                       end
     );
     -- see if instance can be reset to running
     select count(sbfl_id)

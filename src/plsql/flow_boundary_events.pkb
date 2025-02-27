@@ -295,6 +295,7 @@ is
     l_step_key               flow_subflows.sbfl_step_key%type;
     l_timestamp              flow_subflows.sbfl_became_current%type;
     l_scope                  flow_subflows.sbfl_scope%type;
+    l_sbfl_rec               flow_subflows%rowtype;
   begin
     apex_debug.enter 
     ( 'handle_interrupting_boundary_event'
@@ -379,6 +380,13 @@ is
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );
+    -- log the step interruption on the interupted object
+    flow_logging.log_step_event
+    ( p_process_id       => p_process_id
+    , p_subflow_id       => p_subflow_id
+    , p_event            => flow_constants_pkg.gc_step_event_interrupted
+    , p_comment          => 'Boundary Event Interrupted by '||l_boundary_objt_bpmn_id
+    );
     -- generate a step key & insert in the update...use later
     l_timestamp := systimestamp;
     l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_subflow_id
@@ -400,6 +408,7 @@ is
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+ 
     -- process on-event variable expressions for the boundary event
     flow_expressions.process_expressions
     ( pi_objt_bpmn_id => l_boundary_objt_bpmn_id  
