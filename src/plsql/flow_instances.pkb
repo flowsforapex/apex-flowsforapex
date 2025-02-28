@@ -336,7 +336,8 @@ create or replace package body flow_instances as
 
   procedure start_process
   ( p_process_id              in flow_processes.prcs_id%type
-  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null  -- only for messageStart, etc.
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null -- only for messageStart, etc.
+  , p_is_recursive_step       in boolean default false
   )
   is
     l_dgrm_id               flow_diagrams.dgrm_id%type;
@@ -358,7 +359,7 @@ create or replace package body flow_instances as
     -- check process exists, is not running, and lock it
     begin
 
-      flow_globals.set_is_recursive_step (p_is_recursive_step => false);
+      flow_globals.set_is_recursive_step (p_is_recursive_step => p_is_recursive_step);
       -- initialise step_had_error flag
       flow_globals.set_step_error ( p_has_error => false);
 
@@ -393,9 +394,11 @@ create or replace package body flow_instances as
         -- $F4AMESSAGE 'start-multiple-already-running' || 'You tried to start a process (id %0) with multiple copies already running.' 
     end;
 
-    l_starting_object := flow_diagram.get_start_event ( p_dgrm_id               => l_dgrm_id
-                                                      , p_process_id            => p_process_id
-                                                      , p_event_starting_object => p_event_starting_object);
+    if not flow_globals.get_step_error then
+      -- get the starting object
+      l_starting_object := flow_diagram.get_start_event ( p_dgrm_id               => l_dgrm_id
+                                                        , p_process_id            => p_process_id
+                                                        , p_event_starting_object => p_event_starting_object);
 
     begin
       -- get instance scheduling information for the process being started
@@ -419,68 +422,71 @@ create or replace package body flow_instances as
       apex_debug.info (p_message => 'Process Priority : %0  Due On : %1', p0 => l_priority, p1 => l_due_on );
     end;
 
+      if not flow_globals.get_step_error then
+        -- mark process as running
+        update flow_processes prcs
+           set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_running
+             , prcs.prcs_start_ts       = systimestamp
+             , prcs.prcs_last_update    = systimestamp
+             , prcs.prcs_last_update_by =  coalesce  ( sys_context('apex$session','app_user') 
+                                                     , sys_context('userenv','os_user')
+                                                     , sys_context('userenv','session_user')
+                                                     )  
+             , prcs.prcs_priority       = l_priority
+             , prcs.prcs_due_on         = l_due_on
+         where prcs.prcs_dgrm_id   = l_dgrm_id
+           and prcs.prcs_id        = p_process_id
+             ;    
+        -- log the start
+        flow_logging.log_instance_event
+        ( p_process_id  => p_process_id
+        , p_event       => flow_constants_pkg.gc_prcs_event_started
+        , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+        );
+        -- create the status for new subflow based on start subtype
+        case
+          when l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
+            l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
+          when (   l_starting_object.objt_sub_tag_name is null 
+               or  l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
+            l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_running;
+          else
+            raise e_unsupported_start_event;
+        end case;
 
-    -- mark process as running
-    update flow_processes prcs
-       set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_running
-         , prcs.prcs_start_ts       = systimestamp
-         , prcs.prcs_last_update    = systimestamp
-         , prcs.prcs_last_update_by =  coalesce  ( sys_context('apex$session','app_user') 
-                                                 , sys_context('userenv','os_user')
-                                                 , sys_context('userenv','session_user')
-                                                 )  
-         , prcs.prcs_priority       = l_priority
-         , prcs.prcs_due_on         = l_due_on
-     where prcs.prcs_dgrm_id   = l_dgrm_id
-       and prcs.prcs_id        = p_process_id
-         ;    
-    -- log the start
-    flow_logging.log_instance_event
-    ( p_process_id  => p_process_id
-    , p_event       => flow_constants_pkg.gc_prcs_event_started
-    , p_event_level => flow_constants_pkg.gc_logging_level_major_events
-    );
-    -- create the status for new subflow based on start subtype
-    case
-      when l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then
-        l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_waiting_timer;
-      when (   l_starting_object.objt_sub_tag_name is null 
-           or  l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
-        l_new_subflow_status := flow_constants_pkg.gc_sbfl_status_running;
-      else
-        raise e_unsupported_start_event;
-    end case;
+        if not flow_globals.get_step_error then
+          -- create the main subflow
 
-    l_main_subflow := flow_engine_util.subflow_start 
-      ( p_process_id => p_process_id
-      , p_parent_subflow => null
-      , p_starting_object => l_starting_object.objt_bpmn_id
-      , p_current_object  => l_starting_object.objt_bpmn_id
-      , p_route => 'main'
-      , p_last_completed => null
-      , p_status => l_new_subflow_status 
-      , p_parent_sbfl_proc_level => 0 
-      , p_new_proc_level => false
-      , p_dgrm_id => l_dgrm_id
-      );
+          l_main_subflow := flow_engine_util.subflow_start 
+            ( p_process_id => p_process_id
+            , p_parent_subflow => null
+            , p_starting_object => l_starting_object.objt_bpmn_id
+            , p_current_object  => l_starting_object.objt_bpmn_id
+            , p_route => 'main'
+            , p_last_completed => null
+            , p_status => l_new_subflow_status 
+            , p_parent_sbfl_proc_level => 0 
+            , p_new_proc_level => false
+            , p_dgrm_id => l_dgrm_id
+            );
 
-    apex_debug.info
-    ( p_message => 'Initial Subflow created %0 with Step Key %1'
-    , p0 => l_main_subflow.sbfl_id
-    , p1 => l_main_subflow.step_key
-    );
-    if l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
-      -- process any before-event variable expressions on the starting object
-      flow_expressions.process_expressions
-      ( pi_objt_bpmn_id   => l_starting_object.objt_bpmn_id
-      , pi_set            => flow_constants_pkg.gc_expr_set_before_event
-      , pi_prcs_id        => p_process_id
-      , pi_sbfl_id        => l_main_subflow.sbfl_id
-      , pi_var_scope      => l_main_subflow.scope
-      , pi_expr_scope     => l_main_subflow.scope
-      );
-      -- test for any step errors
-      if not flow_globals.get_step_error then 
+          apex_debug.info
+          ( p_message => 'Initial Subflow created %0 with Step Key %1'
+          , p0 => l_main_subflow.sbfl_id
+          , p1 => l_main_subflow.step_key
+          );
+          if l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition then 
+            -- process any before-event variable expressions on the starting object
+            flow_expressions.process_expressions
+            ( pi_objt_bpmn_id   => l_starting_object.objt_bpmn_id
+            , pi_set            => flow_constants_pkg.gc_expr_set_before_event
+            , pi_prcs_id        => p_process_id
+            , pi_sbfl_id        => l_main_subflow.sbfl_id
+            , pi_var_scope      => l_main_subflow.scope
+            , pi_expr_scope     => l_main_subflow.scope
+            );
+            -- test for any step errors
+            if not flow_globals.get_step_error then 
         -- set the instance name if defined
         if l_instance_name_def is not null then
           set_instance_name
@@ -493,28 +499,34 @@ create or replace package body flow_instances as
         if not flow_globals.get_step_error then
 
           -- start the timer
-          flow_timers_pkg.start_timer
-          (
-            pi_prcs_id    => p_process_id
-          , pi_sbfl_id    => l_main_subflow.sbfl_id
-          , pi_step_key   => l_main_subflow.step_key
-          , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
-          ); 
+                flow_timers_pkg.start_timer
+                (
+                  pi_prcs_id    => p_process_id
+                , pi_sbfl_id    => l_main_subflow.sbfl_id
+                , pi_step_key   => l_main_subflow.step_key
+                , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
+                ); 
+            else
+              -- set error status on instance and subflow
+              flow_errors.set_error_status
+              ( pi_prcs_id => p_process_id
+              , pi_sbfl_id => l_main_subflow.sbfl_id
+              );
         end if;
-      end if;       
+            end if;       
 
-    elsif (  l_starting_object.objt_sub_tag_name is null 
-          or l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
-      -- plain (none) startEvent or messageStartEvent
-      -- process any variable expressions on the starting object
-      flow_expressions.process_expressions
-      ( pi_objt_bpmn_id  => l_starting_object.objt_bpmn_id
-      , pi_set           => flow_constants_pkg.gc_expr_set_on_event
-      , pi_prcs_id       => p_process_id
-      , pi_sbfl_id       => l_main_subflow.sbfl_id
-      , pi_var_scope     => l_main_subflow.scope
-      , pi_expr_scope    => l_main_subflow.scope      
-      );
+          elsif (  l_starting_object.objt_sub_tag_name is null 
+                or l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
+            -- plain (none) startEvent or messageStartEvent
+            -- process any variable expressions on the starting object
+            flow_expressions.process_expressions
+            ( pi_objt_bpmn_id  => l_starting_object.objt_bpmn_id
+            , pi_set           => flow_constants_pkg.gc_expr_set_on_event
+            , pi_prcs_id       => p_process_id
+            , pi_sbfl_id       => l_main_subflow.sbfl_id
+            , pi_var_scope     => l_main_subflow.scope
+            , pi_expr_scope    => l_main_subflow.scope      
+            );
 
       if not flow_globals.get_step_error then 
         -- set the instance name if defined
@@ -526,20 +538,35 @@ create or replace package body flow_instances as
           );
         end if;
 
-        if not flow_globals.get_step_error then
-          -- step into first step
-          flow_engine.flow_complete_step  
-          ( p_process_id => p_process_id
-          , p_subflow_id => l_main_subflow.sbfl_id
-          , p_step_key   => l_main_subflow.step_key
-          , p_forward_route => null
-          , p_recursive_call => false
-          );
+              if not flow_globals.get_step_error then
+                -- step into first step
+                flow_engine.flow_complete_step  
+                ( p_process_id => p_process_id
+                , p_subflow_id => l_main_subflow.sbfl_id
+                , p_step_key   => l_main_subflow.step_key
+                , p_forward_route => null
+                , p_recursive_call => false
+                );
         end if;
-      end if;
-    else 
-      raise e_unsupported_start_event;
-    end if;
+            else 
+              -- set error status on instance and subflow
+              flow_errors.set_error_status
+              ( pi_prcs_id => p_process_id
+              , pi_sbfl_id => l_main_subflow.sbfl_id
+              );
+            end if;
+          else 
+            raise e_unsupported_start_event;
+          end if;
+        else
+          -- set error status on instance and subflow
+          flow_errors.set_error_status
+          ( pi_prcs_id => p_process_id
+          , pi_sbfl_id => l_main_subflow.sbfl_id
+          );
+        end if; -- not step error creating main subflow
+      end if; -- not step error finding start object and setting priority and due on
+    end if; -- not step error finding a created process
 
   exception
     when e_unsupported_start_event then

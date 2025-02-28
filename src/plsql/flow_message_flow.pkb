@@ -71,7 +71,7 @@ create or replace package body flow_message_flow as
     )
   is
     l_received_message    t_flow_simple_message;
-    l_corr_msg            t_correlated_message;
+    l_corr_msg            flow_t_correlated_message;
     l_session_id          number;
   begin
       l_received_message := t_flow_simple_message();
