@@ -337,10 +337,10 @@ create or replace package body flow_message_util as
 
   function correlate_received_message  
   ( p_msg     in  flow_message_flow.t_flow_simple_message
-  ) return t_correlated_message
+  ) return flow_t_correlated_message
   is
     l_sub                 flow_message_subscriptions%rowtype;
-    l_corr_msg            t_correlated_message;
+    l_corr_msg            flow_t_correlated_message;
     l_was_correlated      boolean  := false;
   begin
     if (p_msg.key_name is null and p_msg.key_value is null) then
@@ -365,10 +365,10 @@ create or replace package body flow_message_util as
                           , p_was_correlated     => l_was_correlated
                           ); 
     -- build correlated message record
-    l_corr_msg  := t_correlated_message ( null,null,null,null,null
-                                        , null,null,null,null,null
-                                        , null,null,null,null,null
-                                        );
+    l_corr_msg  := flow_t_correlated_message ( null,null,null,null,null
+                                             , null,null,null,null,null
+                                             , null,null,null,null,null
+                                             );
 
     l_corr_msg.message_name   := p_msg.message_name;
     l_corr_msg.key_name       := p_msg.key_name;
@@ -397,7 +397,7 @@ create or replace package body flow_message_util as
   end correlate_received_message;
 
   procedure handle_correlated_message
-  ( p_corr_msg    in t_correlated_message
+  ( p_corr_msg    in flow_t_correlated_message
   )
   is
     l_sbfl_info     flow_subflows%rowtype;
@@ -479,7 +479,7 @@ create or replace package body flow_message_util as
   end handle_correlated_message;
 
   procedure intermed_save_payload_and_callback
-   ( p_corr_msg       in t_correlated_message
+   ( p_corr_msg       in flow_t_correlated_message
    , p_current        in flow_objects.objt_bpmn_id%type 
    , p_scope          in flow_subflows.sbfl_scope%type
    ) 

@@ -69,17 +69,17 @@ as
   );
 
   procedure intermed_save_payload_and_callback
-   ( p_corr_msg       in t_correlated_message
+   ( p_corr_msg       in flow_t_correlated_message
    , p_current        in flow_objects.objt_bpmn_id%type 
    , p_scope          in flow_subflows.sbfl_scope%type
    );
 
   function correlate_received_message  
   ( p_msg     in  flow_message_flow.t_flow_simple_message
-  ) return t_correlated_message;
+  ) return flow_t_correlated_message;
 
   procedure handle_correlated_message
-  ( p_corr_msg             in  t_correlated_message
+  ( p_corr_msg             in  flow_t_correlated_message
   );
 
   procedure log_received_message
