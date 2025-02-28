@@ -26,6 +26,7 @@ as
   procedure start_process
     ( p_process_id             in flow_processes.prcs_id%type
     , p_event_starting_object  in flow_objects.objt_bpmn_id%type default null    -- only for messageStart, etc.
+    , p_is_recursive_step      in boolean default false
     );
 
   procedure reset_process
