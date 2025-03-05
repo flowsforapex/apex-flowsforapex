@@ -10,6 +10,7 @@ as
         , prcs_status
         , prcs_dgrm_status_icon
         , prcs_priority
+        , prcs_logging_level
         , prcs_status_icon
         , prcs_due_on
         , prcs_was_altered
@@ -32,6 +33,7 @@ as
                   when 'archived' then 'fa fa-archive'
                 end as prcs_dgrm_status_icon
                  , prcs_priority
+                 , prcs_logging_level
                  , dgrm_category as prcs_dgrm_category
                  , prcs_status
                  , prcs_due_on at time zone sessiontimezone as prcs_due_on

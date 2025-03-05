@@ -29,6 +29,16 @@
   color: white!important;
 }
 
+.ffa-color--delete-on-resume {
+  background-color: #9dabb9!important;
+  color: #283a4d!important;
+}
+
+.ffa-color--restart-on-resume {
+  background-color: #6aad42!important;
+  color: #283a4d!important;
+}
+
 /* header */
 .apex-logo-img{
   max-height:25px!important;

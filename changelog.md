@@ -1,5 +1,11 @@
 # Flows for APEX - Changelog
 
+## v25.1 Community Edition
+- Adds Event-based logging of step events for audit trail and debugging.
+- Adds a process instance logging level to allow event logging to be specified on a per-diagram and per-instance basis.
+- Deprecates update, upload, upload and parse functions (all except parse) in bpmn_parser_pkg.   These have been available through flow_diagrams package since 23.1, and will be removed from bpmn_parser_pkg in a future release.
+- Required APEX version increased to APEX v24.1, in line with Oracle's support policy for APEX.
+
 ## v24.1 Community Edition
 
 - Adds JSON-typed process variables.

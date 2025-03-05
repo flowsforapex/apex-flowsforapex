@@ -385,6 +385,7 @@ is
     ( p_process_id       => p_process_id
     , p_subflow_id       => p_subflow_id
     , p_event            => flow_constants_pkg.gc_step_event_interrupted
+    , p_event_level      => flow_constants_pkg.gc_logging_level_major_events
     , p_comment          => 'Boundary Event Interrupted by '||l_boundary_objt_bpmn_id
     );
     -- generate a step key & insert in the update...use later
@@ -514,12 +515,6 @@ is
     -- called to process an escallation from an Escalation ITE or an Escalation End Event
     -- both can be Interrupting or Non interrupting
     --
-    -- set the throwing event to completed
-/*    flow_logging.log_step_completion   
-    ( p_process_id => pi_sbfl_info.sbfl_prcs_id
-    , p_subflow_id => pi_sbfl_info.sbfl_id
-    , p_completed_object => pi_step_info.target_objt_ref
-    );  */
     -- find matching boundary event of its type
     get_boundary_event
     ( pi_dgrm_id            => pi_step_info.dgrm_id

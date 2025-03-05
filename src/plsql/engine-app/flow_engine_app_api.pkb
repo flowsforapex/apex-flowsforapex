@@ -1767,16 +1767,18 @@ as
 
 
   function create_instance(
-    pi_dgrm_id      in flow_diagrams.dgrm_id%type
-  , pi_prcs_name    in flow_processes.prcs_name%type
-  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+    pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_prcs_name      in flow_processes.prcs_name%type
+  , pi_business_ref   in flow_process_variables.prov_var_vc2%type 
+  , pi_logging_level  in flow_processes.prcs_logging_level%type
   ) return flow_processes.prcs_id%type
   as
     l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id := flow_api_pkg.flow_create( 
                    pi_dgrm_id   => pi_dgrm_id,
-                   pi_prcs_name => pi_prcs_name);
+                   pi_prcs_name => pi_prcs_name,
+                   pi_logging_level => pi_logging_level);
     
     if pi_business_ref is not null then
       flow_process_vars.set_var( 

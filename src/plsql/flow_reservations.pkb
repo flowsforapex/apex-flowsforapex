@@ -67,6 +67,7 @@ as
       flow_logging.log_step_event
       ( p_sbfl_rec         => l_sbfl_rec
       , p_event            => flow_constants_pkg.gc_step_event_reserved
+      , p_event_level      => flow_constants_pkg.gc_logging_level_routine
       , p_new_reservation  => p_reservation
       );
       -- commit reservation if this is an external call
@@ -155,6 +156,7 @@ as
     flow_logging.log_step_event
     ( p_sbfl_rec         => l_sbfl_rec
     , p_event            => flow_constants_pkg.gc_step_event_released
+    , p_event_level      => flow_constants_pkg.gc_logging_level_routine
     );
 
     -- commit reservation if this is an external call

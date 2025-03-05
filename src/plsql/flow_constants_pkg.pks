@@ -294,6 +294,11 @@ as
   gc_step_event_interrupted           constant  varchar2(20 char) := 'interrupted';
   gc_step_event_rescheduled           constant  varchar2(20 char) := 'rescheduled';
   gc_step_event_abandoned             constant  varchar2(20 char) := 'abandoned'; 
+  gc_step_event_route_chosen          constant  varchar2(20 char) := 'route chosen';
+  gc_step_event_warning               constant  varchar2(20 char) := 'warning';
+  gc_step_event_iteration_started     constant  varchar2(20 char) := 'iteration started';
+  gc_step_event_iteration_completed   constant  varchar2(20 char) := 'iteration completed';
+  gc_step_event_iteration_terminated  constant  varchar2(20 char) := 'iteration terminated';
 
   -- Process Variable Datatypes
 
@@ -363,9 +368,19 @@ as
   gc_async_parameter_applicationId     constant flow_types_pkg.t_expr_set := 'applicationId';
   gc_async_parameter_pageId            constant flow_types_pkg.t_expr_set := 'pageId';
 
+-- Runtime Logging Levels
+
+  gc_logging_level_none                constant number := 0;
+  gc_logging_level_abnormal_events     constant number := 1;
+  gc_logging_level_major_events        constant number := 2;
+  gc_logging_level_routine             constant number := 4;
+  gc_logging_level_detailed            constant number := 6;
+  gc_logging_level_full                constant number := 8;
+
 -- Config Parameter Keys
 
-  gc_config_logging_level               constant varchar2(50 char) := 'logging_level';
+  gc_config_logging_level               constant varchar2(50 char) := 'logging_level';    -- used pre 25.1
+  gc_config_logging_default_level       constant varchar2(50 char) := 'logging_default_level';  -- used from 25.1 
   gc_config_logging_hide_userid         constant varchar2(50 char) := 'logging_hide_userid';
   gc_config_logging_language            constant varchar2(50 char) := 'logging_language';
   gc_config_logging_retain_logs         constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
@@ -373,6 +388,8 @@ as
   gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
   gc_config_logging_message_flow_recd   constant varchar2(50 char) := 'logging_received_message_flow';
   gc_config_logging_retain_msg_flow     constant varchar2(50 char) := 'logging_retain_message_flow_days';
+  gc_config_logging_bpmn_enabled        constant varchar2(50 char) := 'logging_bpmn_enabled';
+  gc_config_logging_bpmn_retain_days    constant varchar2(50 char) := 'logging_bpmn_retain_days';  
   gc_config_logging_bpmn_location       constant varchar2(50 char) := 'logging_bpmn_location';
   gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
@@ -414,6 +431,7 @@ as
   gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
   gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_logging_recd_msg            constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_logging_bpmn_enabled        constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_engine_app_mode             constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention         constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace           constant varchar2(2000 char) := 'FLOWS4APEX';

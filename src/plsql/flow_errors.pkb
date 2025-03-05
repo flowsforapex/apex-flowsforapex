@@ -18,6 +18,7 @@ as
     ( p_process_id        => pi_prcs_id
     , p_objt_bpmn_id      => pi_objt_bpmn_id
     , p_event             => flow_constants_pkg.gc_prcs_event_error
+    , p_event_level       => flow_constants_pkg.gc_logging_level_abnormal_events
     , p_comment           => pi_message
     , p_error_info        => pi_error_info
     );
@@ -27,6 +28,7 @@ as
       ( p_process_id       => pi_prcs_id
       , p_subflow_id       => pi_sbfl_id
       , p_event            => flow_constants_pkg.gc_step_event_error
+      , p_event_level      => flow_constants_pkg.gc_logging_level_abnormal_events
       , p_comment          => pi_message
       , p_error_info       => pi_error_info
       );

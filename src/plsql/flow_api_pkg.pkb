@@ -4,9 +4,11 @@ create or replace package body flow_api_pkg as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG. 2020-22
+-- (c) Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created    20-Jun-2020   Moritz Klein, MT AG 
 -- Modified   01-May-2022   Richard Allen, Oracle
+-- Modified   02-Mar-2025   Richard Allen, Flowquest
 -- 
 */
 
@@ -37,6 +39,7 @@ create or replace package body flow_api_pkg as
     pi_dgrm_name in flow_diagrams.dgrm_name%type
   , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
   , pi_prcs_name in flow_processes.prcs_name%type
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   ) return flow_processes.prcs_id%type
   as
     l_dgrm_id         flow_diagrams.dgrm_id%type;
@@ -58,16 +61,20 @@ create or replace package body flow_api_pkg as
                                                   , pi_dgrm_version         => pi_dgrm_version
                                                   );
 
+    -- TODO - Get the Logging level from the diagram, then start the process with the greatest logging level
+
     return  flow_instances.create_process
-            ( p_dgrm_id   => l_dgrm_id
-            , p_prcs_name => pi_prcs_name
+            ( p_dgrm_id       => l_dgrm_id
+            , p_prcs_name     => pi_prcs_name
+            , p_logging_level => pi_logging_level
             );
   end flow_create;
 
   function flow_create
   (
-    pi_dgrm_id   in flow_diagrams.dgrm_id%type
-  , pi_prcs_name in flow_processes.prcs_name%type
+    pi_dgrm_id       in flow_diagrams.dgrm_id%type
+  , pi_prcs_name     in flow_processes.prcs_name%type
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   ) return flow_processes.prcs_id%type
   is
     l_ret flow_processes.prcs_id%type;
@@ -75,15 +82,17 @@ create or replace package body flow_api_pkg as
     return flow_instances.create_process
            ( p_dgrm_id => pi_dgrm_id
            , p_prcs_name => pi_prcs_name
+           , p_logging_level => pi_logging_level
            )
     ;
   end flow_create;
 
   procedure flow_create
   (
-    pi_dgrm_name in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name in flow_processes.prcs_name%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type default null
+  , pi_prcs_name     in flow_processes.prcs_name%type
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   )
   as
     l_prcs_id flow_processes.prcs_id%type;
@@ -91,16 +100,18 @@ create or replace package body flow_api_pkg as
     l_prcs_id :=
       flow_create
       (
-        pi_dgrm_name => pi_dgrm_name
-      , pi_dgrm_version => pi_dgrm_version
-      , pi_prcs_name => pi_prcs_name
+        pi_dgrm_name     => pi_dgrm_name
+      , pi_dgrm_version  => pi_dgrm_version
+      , pi_prcs_name     => pi_prcs_name
+      , pi_logging_level => pi_logging_level
       );
   end flow_create;
 
   procedure flow_create
   (
-    pi_dgrm_id   in flow_diagrams.dgrm_id%type
-  , pi_prcs_name in flow_processes.prcs_name%type
+    pi_dgrm_id       in flow_diagrams.dgrm_id%type
+  , pi_prcs_name     in flow_processes.prcs_name%type
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   )
   as
     l_prcs_id flow_processes.prcs_id%type;
@@ -108,8 +119,9 @@ create or replace package body flow_api_pkg as
     l_prcs_id :=
       flow_instances.create_process
       (
-        p_dgrm_id   => pi_dgrm_id
-      , p_prcs_name => pi_prcs_name
+        p_dgrm_id       => pi_dgrm_id
+      , p_prcs_name     => pi_prcs_name
+      , p_logging_level => pi_logging_level
       );
   end flow_create;
 
