@@ -14,6 +14,41 @@ create or replace package body flow_logging as
   g_logging_level           flow_configuration.cfig_value%type; 
   g_logging_hide_userid     flow_configuration.cfig_value%type;
 
+  function event_logging_level 
+  ( p_prcs_id in flow_processes.prcs_id%type
+  ) return flow_configuration.cfig_value%type
+  is
+    l_logging_level  flow_processes.prcs_logging_level%type;
+  begin 
+    -- gets logging level for run-time events - so instance, step, and variable logging events
+    select prcs_logging_level
+      into l_logging_level
+      from flow_processes
+     where prcs_id = p_prcs_id
+    ;
+    return l_logging_level;
+  exception
+    when no_data_found then
+      return 0;
+    when others then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'logging-event-level'
+      );
+      -- $F4AMESSAGE 'logging-event-level' || 'Flows - Internal error while getting the logging level'
+      raise;
+  end event_logging_level;
+
+  function diagram_logging_level  
+  return flow_configuration.cfig_value%type
+  is
+  begin
+    -- gets logging level for diagram events
+    return flow_engine_util.get_config_value
+                       ( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_enabled
+                       , p_default_value => flow_constants_pkg.gc_config_default_logging_bpmn_enabled
+                       );
+  end;
+
   procedure log_diagram_event
   ( p_dgrm_id           in flow_diagrams.dgrm_id%type
   , p_dgrm_name         in flow_diagrams.dgrm_name%type default null
@@ -32,9 +67,7 @@ create or replace package body flow_logging as
     l_dgrm_category     flow_diagrams.dgrm_category%type;
   begin
     apex_debug.enter('Log diagram event');
-    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_secure
-                          , flow_constants_pkg.gc_config_logging_level_full
-                          ) 
+    if diagram_logging_level = 'true'
     then
       if p_dgrm_content is not null and coalesce(p_dgrm_status, 'X') != flow_constants_pkg.gc_dgrm_status_draft then
         l_log_dgrm_content := true;
@@ -100,15 +133,13 @@ create or replace package body flow_logging as
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_objt_bpmn_id      in flow_objects.objt_bpmn_id%type default null
   , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
+  , p_event_level       in flow_processes.prcs_logging_level%type
   , p_comment           in flow_instance_event_log.lgpr_comment%type default null
   , p_error_info        in flow_instance_event_log.lgpr_error_info%type default null
   )
   is 
   begin 
-    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
-                          , flow_constants_pkg.gc_config_logging_level_secure
-                          , flow_constants_pkg.gc_config_logging_level_full
-                          ) 
+    if event_logging_level(p_process_id) >= p_event_level
     then
       insert into flow_instance_event_log
       ( lgpr_prcs_id 
@@ -203,10 +234,7 @@ create or replace package body flow_logging as
     ;
 
     -- system event logging
-    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
-                          , flow_constants_pkg.gc_config_logging_level_secure
-                          , flow_constants_pkg.gc_config_logging_level_full
-                          ) 
+    if event_logging_level(p_process_id) >= flow_constants_pkg.gc_logging_level_abnormal_events
     then
       insert into flow_step_event_log
       ( lgsf_prcs_id 
@@ -266,6 +294,7 @@ create or replace package body flow_logging as
   procedure log_step_event
   ( p_sbfl_rec         in flow_subflows%rowtype
   , p_event            in flow_step_events.lgse_event_type%type
+  , p_event_level      in flow_processes.prcs_logging_level%type
   , p_comment          in flow_step_events.lgse_comment%type default null
   , p_error_info       in flow_step_events.lgse_error_info%type default null
   , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
@@ -275,10 +304,7 @@ create or replace package body flow_logging as
   is
     l_step_log_rec  flow_step_events%rowtype;
   begin
-    if g_logging_level in ( flow_constants_pkg.gc_config_logging_level_standard 
-                          , flow_constants_pkg.gc_config_logging_level_secure
-                          , flow_constants_pkg.gc_config_logging_level_full
-                          ) 
+    if event_logging_level(p_sbfl_rec.sbfl_prcs_id) >= p_event_level
     then
 
       l_step_log_rec.lgse_prcs_id         := p_sbfl_rec.sbfl_prcs_id;
@@ -315,6 +341,7 @@ create or replace package body flow_logging as
   ( p_process_id       in flow_processes.prcs_id%type
   , p_subflow_id       in flow_subflows.sbfl_id%type
   , p_event            in flow_step_events.lgse_event_type%type
+  , p_event_level      in flow_processes.prcs_logging_level%type
   , p_comment          in flow_step_events.lgse_comment%type default null
   , p_error_info       in flow_step_events.lgse_error_info%type default null
   , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
@@ -334,6 +361,7 @@ create or replace package body flow_logging as
     log_step_event
     ( p_sbfl_rec         => l_sbfl_rec
     , p_event            => p_event
+    , p_event_level      => p_event_level
     , p_comment          => p_comment
     , p_error_info       => p_error_info
     , p_new_reservation  => p_new_reservation
@@ -372,7 +400,7 @@ create or replace package body flow_logging as
   )
   as 
   begin 
-    if g_logging_level in (  flow_constants_pkg.gc_config_logging_level_full ) then
+    if event_logging_level(p_process_id) >= flow_constants_pkg.gc_logging_level_full then
       insert into flow_variable_event_log
       ( lgvr_prcs_id  
       , lgvr_scope

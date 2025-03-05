@@ -85,6 +85,7 @@ create or replace package body test_002_gateway is
       l_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - exclusive_no_route'
+         , pi_logging_level => 8
       );
       g_prcs_id_1 := l_prcs_id;
 
@@ -483,6 +484,7 @@ create or replace package body test_002_gateway is
       l_prcs_id := flow_api_pkg.flow_create(
            pi_dgrm_id   => l_dgrm_id
          , pi_prcs_name => 'test - inclusive_no_route'
+         , pi_logging_level => 8
       );
       g_prcs_id_4 := l_prcs_id;
 

@@ -39,6 +39,8 @@ as
              when 'waiting for message' then 'fa fa-envelope-o'
              when 'waiting iterations' then 'fa fa-align-justify fa-rotate-90'
              when 'iterating' then 'fa fa-align-justify fa-rotate-90'
+             when 'delete on resume' then 'fa fa-trash fam-pause fam-is-danger'
+             when 'restart on resume' then 'fa fa-pause-circle-o'
          end as sbfl_status_icon
        , sbfl.sbfl_priority
        , sbfl.sbfl_due_on

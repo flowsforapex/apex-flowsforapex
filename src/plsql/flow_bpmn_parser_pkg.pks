@@ -11,6 +11,7 @@ as
   , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   , pi_force_overwrite in boolean default false
   ) return flow_diagrams.dgrm_id%type;
+  pragma deprecate (upload_diagram, 'flow_bpmn_parser_pkg.upload_diagram is deprecated.  Use flow_diagram.upload_diagram instead');
 
   procedure upload_diagram
   (
@@ -21,6 +22,7 @@ as
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   , pi_force_overwrite in boolean default false
   );
+  pragma deprecate (upload_diagram, 'flow_bpmn_parser_pkg.upload_diagram is deprecated.  Use flow_diagram.upload_diagram instead');
 
   procedure upload_and_parse
   (
@@ -31,6 +33,7 @@ as
   , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
   , pi_force_overwrite in boolean default false
   );
+  pragma deprecate (upload_and_parse, 'flow_bpmn_parser_pkg.upload_and_parse is deprecated.  Use flow_diagram.upload_and_parse instead');
 
   procedure parse
   (
@@ -48,6 +51,7 @@ as
     pi_dgrm_id      in flow_diagrams.dgrm_id%type
   , pi_dgrm_content in flow_diagrams.dgrm_content%type
   );
+  pragma deprecate (update_diagram, 'flow_bpmn_parser_pkg.update_diagram is deprecated.  Use flow_diagram.update_diagram instead');
 
 end flow_bpmn_parser_pkg;
 /

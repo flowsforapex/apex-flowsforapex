@@ -9,6 +9,7 @@ as
        , prcs.prcs_priority
        , dgrm.dgrm_category
        , prcs.prcs_status
+       , prcs.prcs_logging_level
        , prcs.prcs_was_altered
        , prcs.prcs_init_ts
        , prcs.prcs_init_by

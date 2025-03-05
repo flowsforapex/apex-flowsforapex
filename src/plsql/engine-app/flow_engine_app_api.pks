@@ -228,9 +228,10 @@ as
   /* page 11 */
 
   function create_instance(
-    pi_dgrm_id      in flow_diagrams.dgrm_id%type
-  , pi_prcs_name    in flow_processes.prcs_name%type
-  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+    pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_prcs_name      in flow_processes.prcs_name%type
+  , pi_business_ref   in flow_process_variables.prov_var_vc2%type
+  , pi_logging_level  in flow_processes.prcs_logging_level%type
   )
   return flow_processes.prcs_id%type;
 

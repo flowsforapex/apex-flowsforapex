@@ -1010,6 +1010,7 @@ function openRepositionSubflowDialog(action, element){
     .jQuery( "#reposition-subflow-btn" )
     .attr( "data-comment", apex.jQuery( element ).attr( "data-comment" ) );
   apex.item("P8_REWIND_SBFL_ID").setValue( apex.jQuery( element ).attr("data-sbfl") );
+  apex.item("P8_REPOSITION_TEXT").setValue( apex.lang.getMessage( "APP_CONFIRM_REPOSITION_SUBFLOW" ) );
   apex.theme.openRegion( "reposition_subflow_dialog" );
 }
 

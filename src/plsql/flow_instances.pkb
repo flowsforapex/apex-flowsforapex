@@ -176,22 +176,88 @@ create or replace package body flow_instances as
                       );
   end create_call_structure;
 
+  procedure get_instance_attributes
+    ( p_prcs_id                     in  flow_processes.prcs_id%type
+    , p_dgrm_id                     in  flow_diagrams.dgrm_id%type
+    , p_starting_object             in  flow_objects.objt_bpmn_id%type default null
+    , p_requested_logging_level     in  flow_processes.prcs_logging_level%type default null
+    , p_calculated_logging_level    out flow_processes.prcs_logging_level%type
+    )
+  is
+    l_bpmn_process_objt flow_objects%rowtype;
+    l_logging_level     flow_processes.prcs_logging_level%type;
+    j_objt_attributes   sys.json_object_t;
+    j_apex_attributes   sys.json_object_t;
+    j_custom_extensions sys.json_object_t;
+  begin
+    -- This is used to calculate the instance logging level, taking into account
+    --    - the default logging level from the diagram
+    --    - the logging level requested from the process create call
+    --    - the default logging level set in flow configuration
+    -- We'll also use this to set the instance description / subject in a later project.
+
+    -- find the bpmn:process object for the diagram to get logging info 
+    l_bpmn_process_objt := flow_diagram.get_bpmn_process_object
+                            ( p_dgrm_id               => p_dgrm_id
+                            , p_process_id            => p_prcs_id
+                            , p_event_starting_object => p_starting_object
+                            );
+
+    if l_bpmn_process_objt.objt_attributes is null then
+      l_logging_level := flow_engine_util.get_config_value 
+                          ( p_config_key    => flow_constants_pkg.gc_config_logging_default_level 
+                          , p_default_value => 0 );
+    else
+      j_objt_attributes := sys.json_object_t.parse (l_bpmn_process_objt.objt_attributes);
+      if j_objt_attributes.has('apex') then
+        j_apex_attributes := j_objt_attributes.get_object('apex');
+        if j_apex_attributes.has('customExtension') then 
+          j_custom_extensions := j_apex_attributes.get_Object('customExtension');
+          if j_custom_extensions.has('minLoggingLevel') then 
+             l_logging_level := j_custom_Extensions.get_Number('minLoggingLevel');
+          else 
+             l_logging_level := flow_engine_util.get_config_value 
+                                ( p_config_key => flow_constants_pkg.gc_config_logging_default_level 
+                                , p_default_value => 0 );
+          end if;
+        else 
+             l_logging_level := flow_engine_util.get_config_value 
+                                ( p_config_key => flow_constants_pkg.gc_config_logging_default_level 
+                                , p_default_value => 0 );
+        end if;
+      end if;
+    end if;
+    l_logging_level := greatest ( nvl(p_requested_logging_level,0)
+                                , l_logging_level );
+    p_calculated_logging_level := l_logging_level;
+  end get_instance_attributes;
+
   function create_process
-    ( p_dgrm_id   in flow_diagrams.dgrm_id%type
-    , p_prcs_name in flow_processes.prcs_name%type
+    ( p_dgrm_id         in flow_diagrams.dgrm_id%type
+    , p_prcs_name       in flow_processes.prcs_name%type
+    , p_logging_level   in flow_processes.prcs_logging_level%type default null
+    , p_starting_object in flow_objects.objt_bpmn_id%type default null
     ) return flow_processes.prcs_id%type
   is
-    l_ret flow_processes.prcs_id%type;
+    l_new_prcs_id            flow_processes.prcs_id%type;
+    l_bpmn_process_objt      flow_objects%rowtype;
+    l_calc_logging_level     flow_processes.prcs_logging_level%type;
+
   begin
     apex_debug.enter
     ('create_process'
     , 'dgrm_id', p_dgrm_id
     , 'p_prcs_name', p_prcs_name 
+    , 'p_logging_level', p_logging_level
+    , 'p_starting_object', p_starting_object
     );
+
+    
     insert into flow_processes prcs
           ( prcs.prcs_name
           , prcs.prcs_dgrm_id
           , prcs.prcs_status
+          , prcs.prcs_logging_level
           , prcs.prcs_init_ts
           , prcs.prcs_last_update
           , prcs.prcs_init_by
@@ -200,6 +266,7 @@ create or replace package body flow_instances as
           ( p_prcs_name
           , p_dgrm_id
           , flow_constants_pkg.gc_prcs_status_created
+          , greatest ( nvl(p_logging_level,0), flow_constants_pkg.gc_logging_level_detailed)  -- TODO Fix this to use the default logging level from the diagram
           , systimestamp
           , systimestamp
           , coalesce  ( sys_context('apex$session','app_user') 
@@ -207,24 +274,41 @@ create or replace package body flow_instances as
                       , sys_context('userenv','session_user')
                       )  
           )
-      returning prcs.prcs_id into l_ret
+      returning prcs.prcs_id into l_new_prcs_id
     ;
     -- build the call structure for the process instance and any diagram calls 
-    create_call_structure ( p_prcs_id => l_ret, p_dgrm_id => p_dgrm_id);
+    create_call_structure ( p_prcs_id => l_new_prcs_id, p_dgrm_id => p_dgrm_id);
+
+    -- get the instance attributes
+    get_instance_attributes ( p_prcs_id                   => l_new_prcs_id
+                            , p_dgrm_id                   => p_dgrm_id
+                            , p_starting_object           => p_starting_object
+                            , p_requested_logging_level   => p_logging_level
+                            , p_calculated_logging_level  => l_calc_logging_level
+                            );
+
+    -- update the process with the logging level
+    update flow_processes prcs
+       set prcs.prcs_logging_level = l_calc_logging_level
+     where prcs.prcs_id = l_new_prcs_id
+       ;
 
     -- log the process creation
     flow_logging.log_instance_event
-    ( p_process_id => l_ret
-    , p_event      => flow_constants_pkg.gc_prcs_event_created
+    ( p_process_id  => l_new_prcs_id
+    , p_event       => flow_constants_pkg.gc_prcs_event_created
+    , p_event_level => flow_constants_pkg.gc_logging_level_major_events
     );
     commit;
 
     apex_debug.info
-    ( p_message => 'Flow Instance created.  DGRM_ID : %0, PRCS_ID : %1'
+    ( p_message => 'Flow Instance created.  DGRM_ID : %0, PRCS_ID : %1, Logging Level: %2'
     , p0 => p_dgrm_id
-    , p1 => l_ret 
+    , p1 => l_new_prcs_id 
+    , p2 => l_calc_logging_level 
     );
-    return l_ret;
+
+    return l_new_prcs_id;
   end create_process;
 
   procedure start_process
@@ -326,8 +410,9 @@ create or replace package body flow_instances as
          ;    
     -- log the start
     flow_logging.log_instance_event
-    ( p_process_id => p_process_id
-    , p_event      => flow_constants_pkg.gc_prcs_event_started
+    ( p_process_id  => p_process_id
+    , p_event       => flow_constants_pkg.gc_prcs_event_started
+    , p_event_level => flow_constants_pkg.gc_logging_level_major_events
     );
     -- create the status for new subflow based on start subtype
     case
@@ -493,6 +578,7 @@ create or replace package body flow_instances as
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_reset
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     , p_comment    => p_comment
     );
     commit;
@@ -661,6 +747,7 @@ create or replace package body flow_instances as
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_terminated
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     , p_comment    => p_comment
     );
     -- finalize
@@ -727,6 +814,7 @@ create or replace package body flow_instances as
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_deleted
+    , p_event_level => flow_constants_pkg.gc_logging_level_major_events
     , p_comment    => p_comment
     );
     -- kill any message subscriptions or  timers still running in the instance
@@ -792,9 +880,10 @@ create or replace package body flow_instances as
       where prcs.prcs_id = p_process_id;
       -- log the priority change
       flow_logging.log_instance_event
-      ( p_process_id => p_process_id
-      , p_event      => flow_constants_pkg.gc_prcs_event_priority_set
-      , p_comment    => 'Priority set to '||p_priority
+      ( p_process_id  => p_process_id
+      , p_event       => flow_constants_pkg.gc_prcs_event_priority_set
+      , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+      , p_comment     => 'Priority set to '||p_priority
       );      
   end set_priority;
 
@@ -828,9 +917,10 @@ create or replace package body flow_instances as
       where prcs.prcs_id = p_process_id;
       -- log the priority change
       flow_logging.log_instance_event
-      ( p_process_id => p_process_id
-      , p_event      => flow_constants_pkg.gc_prcs_event_due_on_set
-      , p_comment    => 'Instance Due On set to '||to_char(p_due_on, flow_constants_pkg.gc_prov_default_tstz_format)
+      ( p_process_id  => p_process_id
+      , p_event       => flow_constants_pkg.gc_prcs_event_due_on_set
+      , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+      , p_comment     => 'Instance Due On set to '||to_char(p_due_on, flow_constants_pkg.gc_prov_default_tstz_format)
       );  
   end set_due_on;
 

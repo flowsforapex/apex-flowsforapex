@@ -177,6 +177,7 @@ as
         ( p_process_id    => p_process_id
         , p_objt_bpmn_id  => p_step_info.target_objt_ref
         , p_event         => flow_constants_pkg.gc_prcs_event_enter_call
+        , p_event_level   => flow_constants_pkg.gc_logging_level_routine
         , p_comment       => 'Starting called diagram '||l_call_definition.dgrm_name||
                              ' version '||l_call_definition.dgrm_version||
                              ' in diagram level '||l_called_subflow_context.sbfl_id

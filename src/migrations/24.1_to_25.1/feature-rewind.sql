@@ -26,6 +26,8 @@ create index flow_lgse_ix on flow_step_events (lgse_prcs_id, lgse_objt_bpmn_id )
 
 declare
   v_column_exists          number := 0; 
+  l_existing_logging_level flow_configuration.cfig_value%type;
+  l_new_logging_level      number := 0;
 begin
   select count(*) 
     into v_column_exists
@@ -35,13 +37,64 @@ begin
 
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_processes 
-                          add (prcs_was_altered varchar2(1)
-                              , constraint flow_processes_was_altered_ck check (prcs_was_altered in (''Y'', ''N''))
+                          add ( prcs_was_altered varchar2(1)
+                              , constraint prcs_was_altered_ck   check (prcs_was_altered in (''Y'', ''N''))
+                              , prcs_logging_level  NUMBER,
+                              , constraint prcs_logging_level_ck check (prcs_logging_level between 0 and 8)
                               )';
-  end if;
 
+  end if;
 end;
 /
+
+PROMPT >>> Table flow_processes altered 
+
+update flow_processes
+   set prcs_logging_level = ( select case nvl(cfig_value, 'none')
+                                      when 'none'     then '0'
+                                      when 'standard' then '6'
+                                      when 'secure'   then '6'
+                                      when 'full'     then '8' 
+                                      else '0'
+                                     end
+                                from flow_configuration
+                               where cfig_key = 'logging_level')
+ where prcs_status in ('created', 'running', 'suspended', 'error')
+   and prcs_logging_level is null;
+
+PROMPT >>> Table flow_processes migrated with logging levels from flow_configuration
+
+insert into flow_configuration (cfig_key, cfig_value)
+select 'logging_default_level',  -- new key
+       case nvl(cfig_value, 'none')
+         when 'none'     then '0'
+         when 'standard' then '6'
+         when 'secure'   then '6'
+         when 'full'     then '8'
+         else '0'           -- new value
+         end
+  from flow_configuration
+ where cfig_key = 'logging_level';
+
+insert into flow_configuration (cfig_key, cfig_value)
+select 'logging_bpmn_enabled',  -- new key
+       case nvl(cfig_value, 'none')
+         when 'none'     then 'false'
+         when 'standard' then 'false'
+         when 'secure'   then 'true'
+         when 'full'     then 'true'
+         else 'false'           -- new value
+         end
+  from flow_configuration
+ where cfig_key = 'logging_level';
+
+insert into flow_configuration (cfig_key, cfig_value) values ('logging_bpmn_retain_days', '365');
+
+PROMPT >>> Diagram logging configuration migrated based on existing settings in flow_configuration
+
+commit;
+
+
 
 
 

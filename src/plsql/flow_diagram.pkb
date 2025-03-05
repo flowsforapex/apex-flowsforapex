@@ -347,6 +347,68 @@ as
     return l_starting_object;
   end get_start_event;
 
+  function get_bpmn_process_object
+  ( p_dgrm_id                 in flow_diagrams.dgrm_id%type
+  , p_process_id              in flow_processes.prcs_id%type
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null
+  ) return flow_objects%rowtype
+  is 
+    l_bpmn_process     flow_objects%rowtype;
+  begin
+    -- note: this function gets the bpmn:process object for the diagram.  
+    -- To avoid confusion with the process object in the flow_processes table,
+    -- we refer to this as the 'bpmn_process' and 'bpmn:process' in this routine
+    begin
+      if p_event_starting_object is null then 
+        -- get the diagram starting bpmn:process object 
+        select parent.*
+          into l_bpmn_process
+          from flow_objects objt
+          join flow_objects parent
+            on parent.objt_id       = objt.objt_objt_id
+           and parent.objt_dgrm_id  = objt.objt_dgrm_id
+           and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         where objt.objt_dgrm_id    = p_dgrm_id
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event  
+           and (    objt.objt_sub_tag_name is null 
+               or   objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition )
+        ;
+      else 
+        -- get the specified starting object
+        select parent.*
+          into l_bpmn_process
+          from flow_objects objt
+          join flow_objects parent
+            on parent.objt_id       = objt.objt_objt_id
+           and parent.objt_dgrm_id  = objt.objt_dgrm_id
+           and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         where objt.objt_dgrm_id = p_dgrm_id
+           and objt.objt_bpmn_id = p_event_starting_object
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event 
+        ;
+      end if;
+
+      apex_debug.info
+      ( p_message => 'Found bpmn:process object %0'
+      , p0 => l_bpmn_process.objt_bpmn_id
+      );
+    exception
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-multiple-start-events'
+        );
+        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
+      when no_data_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-no-start-event'
+        );
+        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+    end;
+    return l_bpmn_process;
+  end get_bpmn_process_object;
+
   function get_current_diagram
     ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
     , pi_dgrm_calling_method    in flow_types_pkg.t_bpmn_attribute_vc2

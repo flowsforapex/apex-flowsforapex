@@ -254,6 +254,7 @@ end flow_process_link_event;
         flow_logging.log_instance_event
         ( p_process_id => p_process_id
         , p_event      => l_process_end_status
+        , p_event_level => flow_constants_pkg.gc_logging_level_major_events
         );
         apex_debug.info 
         ( p_message => 'Process Completed with %1 Status: Process %0  '
@@ -935,6 +936,9 @@ begin
     , p_event           => case p_force_next_step
                               when true then flow_constants_pkg.gc_step_event_error_forced
                               else flow_constants_pkg.gc_step_event_completed end
+    , p_event_level     => case p_force_next_step
+                              when true then flow_constants_pkg.gc_logging_level_abnormal_events
+                              else flow_constants_pkg.gc_logging_level_major_events end
     );
   end if;
   -- release subflow reservation
@@ -1231,8 +1235,9 @@ begin
 
   -- log step as current
   flow_logging.log_step_event
-  ( p_sbfl_rec => p_sbfl_rec
-  , p_event    => flow_constants_pkg.gc_step_event_became_current
+  ( p_sbfl_rec    => p_sbfl_rec
+  , p_event       => flow_constants_pkg.gc_step_event_became_current
+  , p_event_level => flow_constants_pkg.gc_logging_level_major_events
   );
   -- TODO - consider moving this into flow_tasks when you have priority, due on, reservation data...
 
@@ -1815,6 +1820,7 @@ begin
         flow_logging.log_step_event 
         ( p_sbfl_rec    => l_sbfl_rec
         , p_event       => flow_constants_pkg.gc_step_event_work_started
+        , p_event_level => flow_constants_pkg.gc_logging_level_detailed
         );
         -- commit reservation if this is an external call
         if not p_called_internally then 
@@ -1902,13 +1908,7 @@ begin
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id      = p_subflow_id
     ;
-    -- log the restart
-    flow_logging.log_instance_event
-    ( p_process_id    => p_process_id
-    , p_event         => flow_constants_pkg.gc_prcs_event_restart_step
-    , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
-    , p_comment       => 'restart step '||l_sbfl_rec.sbfl_current||'. Comment: '||p_comment
-    );
+    -- log the restart (now a step level event)
     flow_logging.log_step_event 
     ( p_sbfl_rec    => l_sbfl_rec
     , p_event       => case p_check_for_error
@@ -1917,6 +1917,7 @@ begin
                        else 
                          flow_constants_pkg.gc_step_event_resumed
                        end
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     );
     -- see if instance can be reset to running
     select count(sbfl_id)
@@ -1940,6 +1941,7 @@ begin
       ( p_process_id    => p_process_id
       , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
       , p_event         => flow_constants_pkg.gc_prcs_status_running
+      , p_event_level   => flow_constants_pkg.gc_logging_level_abnormal_events
       );
     else
       -- mark instance as altered anyhow

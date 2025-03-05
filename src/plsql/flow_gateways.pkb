@@ -723,10 +723,11 @@ as
               , p0 => p_step_info.target_objt_ref
               , p1 => apex_string.join(l_forward_routes,':')
               );
-              flow_logging.log_instance_event
-              ( p_process_id  => p_sbfl_info.sbfl_prcs_id
-              , p_objt_bpmn_id  => p_step_info.target_objt_ref
-              , p_event  => 'Gateway Processed'
+              flow_logging.log_step_event
+              ( p_sbfl_rec      => p_sbfl_info
+--              , p_objt_bpmn_id  => p_step_info.target_objt_ref
+              , p_event  => flow_constants_pkg.gc_step_event_route_chosen
+              , p_event_level => flow_constants_pkg.gc_logging_level_routine
               , p_comment  => 'Chosen Paths : '||apex_string.join(l_forward_routes,':')
               );
             when flow_constants_pkg.gc_bpmn_gateway_parallel then 

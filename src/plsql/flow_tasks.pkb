@@ -41,7 +41,7 @@ create or replace package body flow_tasks as
     return l_return;
   end get_task_type;
 
-  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error
+/*  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error (appears not to be used)
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_script_object in flow_objects.objt_bpmn_id%type 
@@ -89,10 +89,10 @@ create or replace package body flow_tasks as
        where prcs.prcs_id = p_process_id
       ;
       -- log error as instance event
-      flow_logging.log_instance_event
+      flow_logging.log_step_event
       ( p_process_id  => p_process_id 
       , p_objt_bpmn_id => p_script_object
-      , p_event       => flow_constants_pkg.gc_prcs_event_error
+      , p_event       => flow_constants_pkg.gc_step_event_error
       , p_comment     => case p_error_type
                          when 'failed'      then 'ScriptTask failed on object '
                          when 'stop_engine' then 'User Script Requested ScriptTask Stop on object '
@@ -105,7 +105,7 @@ create or replace package body flow_tasks as
       , p0        => p_script_object
       , p_level   => 2
       );
-  end handle_script_error;
+  end handle_script_error;*/
 
   procedure process_task
     ( p_sbfl_info     in flow_subflows%rowtype
