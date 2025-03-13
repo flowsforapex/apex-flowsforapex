@@ -22,17 +22,7 @@ as
     , p_comment           => pi_message
     , p_error_info        => pi_error_info
     );
-    if pi_objt_bpmn_id is not null then
-      -- log the error in the step event log
-      flow_logging.log_step_event
-      ( p_process_id       => pi_prcs_id
-      , p_subflow_id       => pi_sbfl_id
-      , p_event            => flow_constants_pkg.gc_step_event_error
-      , p_event_level      => flow_constants_pkg.gc_logging_level_abnormal_events
-      , p_comment          => pi_message
-      , p_error_info       => pi_error_info
-      );
-    end if;
+
     --  commit the autonomous transaction
     commit;
   end autonomous_write_to_instance_log;

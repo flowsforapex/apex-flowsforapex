@@ -35,6 +35,7 @@ procedure flow_complete_step
   , p_recursive_call               in boolean default true
   , p_force_next_step              in boolean default false
   , p_execute_variable_expressions in boolean default true
+  , p_matching_object              in flow_objects.objt_bpmn_id%type default null
   );
 
 procedure start_step

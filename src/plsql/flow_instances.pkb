@@ -883,7 +883,7 @@ create or replace package body flow_instances as
       ( p_process_id  => p_process_id
       , p_event       => flow_constants_pkg.gc_prcs_event_priority_set
       , p_event_level => flow_constants_pkg.gc_logging_level_major_events
-      , p_comment     => 'Priority set to '||p_priority
+      , p_comment     => 'Process priority set to '||p_priority
       );      
   end set_priority;
 

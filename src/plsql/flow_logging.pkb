@@ -148,6 +148,7 @@ create or replace package body flow_logging as
       , lgpr_prcs_name 
       , lgpr_business_id
       , lgpr_prcs_event
+      , lgpr_severity
       , lgpr_timestamp
       , lgpr_duration 
       , lgpr_user 
@@ -160,6 +161,7 @@ create or replace package body flow_logging as
           , prcs.prcs_name
           , flow_proc_vars_int.get_business_ref (p_process_id)  --- 
           , p_event
+          , p_event_level
           , systimestamp 
           , case p_event
             when flow_constants_pkg.gc_prcs_event_completed then
@@ -198,6 +200,7 @@ create or replace package body flow_logging as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_iteration_status  in flow_types_pkg.t_iteration_status default null
+  , p_matching_object   in flow_objects.objt_bpmn_id%type default null
   , p_notes             in flow_subflow_log.sflg_notes%type default null
   )
   is 
@@ -217,6 +220,7 @@ create or replace package body flow_logging as
     , sflg_last_updated
     , sflg_dgrm_id
     , sflg_diagram_level
+    , sflg_matching_object
     , sflg_notes
     , sflg_iter_id
     )
@@ -227,6 +231,7 @@ create or replace package body flow_logging as
          , sysdate
          , sbfl.sbfl_dgrm_id
          , sbfl.sbfl_diagram_level
+         , p_matching_object
          , p_notes
          , sbfl.sbfl_iter_id
       from flow_subflows sbfl
@@ -293,39 +298,53 @@ create or replace package body flow_logging as
 
   procedure log_step_event
   ( p_sbfl_rec         in flow_subflows%rowtype
-  , p_event            in flow_step_events.lgse_event_type%type
+  , p_event            in flow_instance_event_log.lgpr_prcs_event%type
   , p_event_level      in flow_processes.prcs_logging_level%type
-  , p_comment          in flow_step_events.lgse_comment%type default null
-  , p_error_info       in flow_step_events.lgse_error_info%type default null
+  , p_comment          in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info       in flow_instance_event_log.lgpr_error_info%type default null
   , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
   , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
   , p_new_priority     in flow_subflows.sbfl_priority%type default null
   )
   is
-    l_step_log_rec  flow_step_events%rowtype;
+    l_instance_log_rec  flow_instance_event_log%rowtype;
   begin
     if event_logging_level(p_sbfl_rec.sbfl_prcs_id) >= p_event_level
     then
 
-      l_step_log_rec.lgse_prcs_id         := p_sbfl_rec.sbfl_prcs_id;
-      l_step_log_rec.lgse_step_key        := p_sbfl_rec.sbfl_step_key;
-      l_step_log_rec.lgse_sbfl_id         := p_sbfl_rec.sbfl_id;
-      l_step_log_rec.lgse_dgrm_id         := p_sbfl_rec.sbfl_dgrm_id;
-      l_step_log_rec.lgse_objt_bpmn_id    := p_sbfl_rec.sbfl_current;
-      l_step_log_rec.lgse_event_type      := p_event;   
-      l_step_log_rec.lgse_timestamp       := systimestamp;
-      l_step_log_rec.lgse_user            := coalesce ( sys_context('apex$session','app_user') 
-                                                      , sys_context('userenv','os_user')
-                                                      , sys_context('userenv','session_user')
-                                                      );
-      l_step_log_rec.lgse_apex_task_id    := p_sbfl_rec.sbfl_apex_task_id;
-      l_step_log_rec.lgse_new_reservation := p_new_reservation;
-      l_step_log_rec.lgse_new_due_on      := p_new_due_on;  
-      l_step_log_rec.lgse_new_priority    := p_new_priority;
-      l_step_log_rec.lgse_comment         := p_comment;
 
-      insert into flow_step_events 
-      values l_step_log_rec;
+      l_instance_log_rec.lgpr_prcs_id         := p_sbfl_rec.sbfl_prcs_id;
+      l_instance_log_rec.lgpr_step_key        := p_sbfl_rec.sbfl_step_key;
+      l_instance_log_rec.lgpr_sbfl_id         := p_sbfl_rec.sbfl_id;
+      l_instance_log_rec.lgpr_dgrm_id         := p_sbfl_rec.sbfl_dgrm_id;
+      l_instance_log_rec.lgpr_objt_id         := p_sbfl_rec.sbfl_current;
+      l_instance_log_rec.lgpr_prcs_event      := p_event;   
+      l_instance_log_rec.lgpr_severity        := p_event_level;
+      l_instance_log_rec.lgpr_timestamp       := systimestamp;
+      l_instance_log_rec.lgpr_user            := case g_logging_hide_userid 
+                                             when 'true' then 
+                                               null
+                                             else 
+                                               coalesce  ( sys_context('apex$session','app_user') 
+                                                         , sys_context('userenv','os_user')
+                                                         , sys_context('userenv','session_user')
+                                                         )  
+                                             end;
+      l_instance_log_rec.lgpr_apex_task_id    := p_sbfl_rec.sbfl_apex_task_id;
+      l_instance_log_rec.lgpr_comment         := case p_event
+                                             when flow_constants_pkg.gc_step_event_reserved then
+                                               'reserved for '||p_new_reservation
+                                             when flow_constants_pkg.gc_step_event_rescheduled then 
+                                               'step rescheduled to '||to_char ( p_new_due_on
+                                                                               , flow_constants_pkg.gc_prov_default_tstz_format)
+                                             when flow_constants_pkg.gc_step_event_reprioritized then
+                                               'priority set to '||p_new_priority
+                                             else
+                                               p_comment
+                                             end;
+
+      insert into flow_instance_event_log
+      values l_instance_log_rec;
     end if;
     exception
       when others then
@@ -340,47 +359,50 @@ create or replace package body flow_logging as
   procedure log_step_event
   ( p_process_id       in flow_processes.prcs_id%type
   , p_subflow_id       in flow_subflows.sbfl_id%type
-  , p_event            in flow_step_events.lgse_event_type%type
+  , p_event            in flow_instance_event_log.lgpr_prcs_event%type
   , p_event_level      in flow_processes.prcs_logging_level%type
-  , p_comment          in flow_step_events.lgse_comment%type default null
-  , p_error_info       in flow_step_events.lgse_error_info%type default null
+  , p_comment          in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info       in flow_instance_event_log.lgpr_error_info%type default null
   , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
   , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
   , p_new_priority     in flow_subflows.sbfl_priority%type default null
   )
   is
     l_sbfl_rec  flow_subflows%rowtype;
+    l_comment  flow_instance_event_log.lgpr_comment%type := p_comment;
   begin
-    select * 
-      into l_sbfl_rec
-      from flow_subflows
-     where sbfl_id      = p_subflow_id
-       and sbfl_prcs_id = p_process_id
-    ;
-
+--    begin
+      select * 
+        into l_sbfl_rec
+        from flow_subflows
+       where sbfl_id      = p_subflow_id
+         and sbfl_prcs_id = p_process_id
+      ;    
+      
     log_step_event
     ( p_sbfl_rec         => l_sbfl_rec
     , p_event            => p_event
     , p_event_level      => p_event_level
-    , p_comment          => p_comment
+    , p_comment          => l_comment
     , p_error_info       => p_error_info
     , p_new_reservation  => p_new_reservation
     , p_new_due_on       => p_new_due_on
     , p_new_priority     => p_new_priority
     );
+
   exception
-    when no_data_found then
-      flow_errors.handle_general_error
-      ( pi_message_key => 'logging-step-event'
-      );
-      -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
-      raise;
     when others then
-      flow_errors.handle_general_error
-      ( pi_message_key => 'logging-step-event'
-      );
-      -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
-      raise;
+      if p_event = flow_constants_pkg.gc_step_event_error then
+        -- this is an error event that should have already been logged as an instance event.
+        -- so we can ignore the secondary error trying to log it as a step event
+        null;
+      else
+        flow_errors.handle_general_error
+        ( pi_message_key => 'logging-step-event'
+        );
+        -- $F4AMESSAGE 'logging-step-event' || 'Flows - Internal error while logging a Step Event'
+        raise;
+      end if;
   end log_step_event;
 
   procedure log_variable_event -- logs process variable set events

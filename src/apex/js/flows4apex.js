@@ -966,18 +966,20 @@ function deleteOnResume( action, element ){
   });
 }
 
-function returnToPriorGateway( action, element ){
-  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_RETURN_PRIOR_GATEWAY"), function( okPressed ) {
-    if( okPressed ) {
-      var data = getSubflowData(action, element);
-      
-      var options = {};
-      options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
-      sendToServer(data, options);
-    }
-  });
-}
 
+function returnToPriorGateway( action, element ){
+  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "instance_action_dialog" );
+    var data = getSubflowData(action, element);
+    data.x05 = getConfirmComment();
+    var options = {};
+    options.messageKey = "APP_RETURN_PRIOR_GATEWAY";
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
+    sendToServer(data, options);
+  } else {
+    openModalConfirmWithComment( action, element, "APP_CONFIRM_RETURN_PRIOR_GATEWAY", "APP_TITLE_RETURN_PRIOR_GATEWAY" );
+  }
+}
 
 function repositionSubflow( action, element ) {
   if ( apex.jQuery( "#reposition_subflow_dialog" ).dialog( "isOpen" ) ) {
@@ -1012,6 +1014,20 @@ function openRepositionSubflowDialog(action, element){
   apex.item("P8_REWIND_SBFL_ID").setValue( apex.jQuery( element ).attr("data-sbfl") );
   apex.item("P8_REPOSITION_TEXT").setValue( apex.lang.getMessage( "APP_CONFIRM_REPOSITION_SUBFLOW" ) );
   apex.theme.openRegion( "reposition_subflow_dialog" );
+}
+
+function rewindLastStep( action, element ){
+  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+    apex.theme.closeRegion( "instance_action_dialog" );
+    var data = getSubflowData(action, element);
+    data.x05 = getConfirmComment();
+    var options = {};
+    options.messageKey = "APP_REWIND_LAST_STEP";
+    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
+    sendToServer(data, options);
+  } else {
+    openModalConfirmWithComment( action, element, "APP_CONFIRM_REWIND_LAST_STEP", "APP_TITLE_REWIND_LAST_STEP" );
+  }
 }
 
 function rewindSubProcess( action, element ){
@@ -1298,6 +1314,12 @@ function initActions(){
           name: "reposition-subflow",
           action: function( event, focusElement ) {
             repositionSubflow( this.name, focusElement );
+          }
+        },
+        {
+          name: "rewind-last-step",
+          action: function( event, focusElement ) {
+            rewindLastStep( this.name, focusElement );
           }
         },
         {
@@ -1791,6 +1813,10 @@ function initPage8() {
           if ( item.action === "reposition-subflow" ) {
             item.disabled = prcsStatus !== "suspended" ? true : false;
           } 
+          if (item.action === "rewind-last-step") {
+              var canRewind = prcsStatus === "suspended" && sbflStatus === "waiting at gateway";
+              item.disabled = !canRewind;
+          }
           if ( item.action === "rewind-subprocess-on-resume" ) {
             item.disabled = prcsStatus !== "suspended" ? true : false;
           } 
