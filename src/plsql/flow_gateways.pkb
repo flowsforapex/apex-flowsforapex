@@ -103,6 +103,44 @@ as
     po_num_steps               := l_num_steps;  
   end get_nearest_previous_opening_parincl_gateway;
 
+  function get_matching_opening_gateway
+  ( pi_sbfl_rec       in flow_subflows%rowtype
+  ) return flow_objects.objt_bpmn_id%type
+  is
+    l_gateway_rec         flow_objects%rowtype;
+    l_tgt_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
+  begin
+    apex_debug.enter
+    ( 'get_matching_opening_gateway'
+    , 'pi_sbfl_rec.sbfl_current' , pi_sbfl_rec.sbfl_current
+    , 'pi_sbfl_rec.sbfl_dgrm_id' , pi_sbfl_rec.sbfl_dgrm_id
+    , 'pi_sbfl_rec.sbfl_status'  , pi_sbfl_rec.sbfl_status
+    );
+    -- get the matching object from the subflow_log record for the completed closing gateway
+    begin
+      select distinct sflg.sflg_matching_object
+        into l_tgt_objt_bpmn_id
+        from flow_subflow_log sflg
+       where sflg_prcs_id        = pi_sbfl_rec.sbfl_prcs_id
+         and sflg_sbfl_id        = pi_sbfl_rec.sbfl_id
+         and sflg_objt_id        = pi_sbfl_rec.sbfl_current
+      ;
+    exception
+      when no_data_found then
+        -- migration issue from pre 25.1 - no matching object - just can't rewind here!
+        l_tgt_objt_bpmn_id  := null;
+      when others then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+        , pi_message_key  => 'gateway-matching-object-error'
+        );
+    end;
+    
+    apex_debug.message ( p_message => 'Matching opening gateway: %0 '
+                       , p0 => l_tgt_objt_bpmn_id
+                       );
+    return l_tgt_objt_bpmn_id;
+  end get_matching_opening_gateway;
 
   procedure get_nearest_previous_gateway
   ( pi_sbfl_rec                in  flow_subflows%rowtype

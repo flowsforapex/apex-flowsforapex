@@ -51,6 +51,45 @@ end;
 
 declare
   v_column_exists          number := 0; 
+begin
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'LGPR_SBFL_ID'
+     and upper(table_name)  = 'FLOW_INSTANCE_EVENT_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_instance_event_log 
+                          add ( lgpr_sbfl_id    NUMBER
+                              , lgpr_step_key   VARCHAR2(50)
+                              , lgpr_apex_task_id NUMBER
+                              , lgpr_severity    NUMBER
+                              )';
+      execute immediate 'alter table flow_instance_event_log 
+                         modify lgpr_prcs_name null ';
+  end if;
+end;
+/
+
+declare
+  v_column_exists          number := 0; 
+begin
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SFLG_MATCHING_OBJECT'
+     and upper(table_name)  = 'FLOW_SUBFLOW_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflow_log 
+                          add ( sflg_matching_object VARCHAR2(50)
+                              )';
+  end if;
+end;
+/
+
+declare
+  v_column_exists          number := 0; 
   l_existing_logging_level flow_configuration.cfig_value%type;
   l_new_logging_level      number := 0;
 begin
