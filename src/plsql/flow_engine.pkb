@@ -837,6 +837,7 @@ function finish_current_step
 , p_reset_step_key               in boolean default false
 , p_force_next_step              in boolean default false
 , p_execute_variable_expressions in boolean default true  -- only false for force next step
+, p_matching_object              in flow_objects.objt_bpmn_id%type default null -- only for closing parallel and inclusive gateways
 ) return flow_types_pkg.t_iteration_status
 is
   l_current_step_tag      flow_objects.objt_tag_name%type;
@@ -927,6 +928,10 @@ begin
     , p_subflow_id        => p_sbfl_rec.sbfl_id
     , p_completed_object  => p_sbfl_rec.sbfl_current
     , p_iteration_status  => l_iteration_status
+    , p_matching_object   => case l_current_step_tag
+                              when flow_constants_pkg.gc_bpmn_gateway_inclusive then p_matching_object
+                              when flow_constants_pkg.gc_bpmn_gateway_parallel  then p_matching_object
+                              else null end
     , p_notes             => case p_force_next_step
                               when true then 'Step Completion was Forced. Variable Expressions were not executed.'
                               else null end
@@ -1445,6 +1450,7 @@ procedure flow_complete_step
 , p_recursive_call               in boolean default true
 , p_force_next_step              in boolean default false
 , p_execute_variable_expressions in boolean default true
+, p_matching_object              in flow_objects.objt_bpmn_id%type default null  -- only set when current object is a closing parallel or inclusive gateway
 )
 is
   l_sbfl_rec                  flow_subflows%rowtype;
@@ -1512,6 +1518,7 @@ begin
                             , p_reset_step_key               => p_reset_step_key
                             , p_force_next_step              => p_force_next_step
                             , p_execute_variable_expressions => p_execute_variable_expressions
+                            , p_matching_object              => p_matching_object
                             );
 
     if flow_globals.get_step_error then

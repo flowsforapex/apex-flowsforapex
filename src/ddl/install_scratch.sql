@@ -121,6 +121,7 @@ CREATE TABLE flow_subflow_log (
     sflg_diagram_level          NUMBER,
     sflg_iter_id                NUMBER,
     sflg_last_updated           DATE,
+    sflg_matching_object        VARCHAR2(50 CHAR),
     sflg_notes                  VARCHAR2(200)
 );
 
@@ -513,19 +514,24 @@ create table flow_flow_event_log
 
 create table flow_instance_event_log
 ( lgpr_prcs_id           	NUMBER NOT NULL
-, lgpr_objt_id              VARCHAR2(50 CHAR) NULL
+, lgpr_objt_id              VARCHAR2(50 CHAR)          -- objt_bpmn_id
+, lgpr_sbfl_id      		NUMBER                     -- for step events
+, lgpr_step_key             VARCHAR2(20 CHAR)          -- for step events
 , lgpr_dgrm_id      		NUMBER NOT NULL
-, lgpr_prcs_name         	VARCHAR2(150 CHAR) NOT NULL
+, lgpr_prcs_name         	VARCHAR2(150 CHAR)
 , lgpr_business_id			VARCHAR2(4000 char)
 , lgpr_prcs_event       	VARCHAR2(20 CHAR) NOT NULL
+, lgpr_severity             NUMBER
 , lgpr_timestamp     		TIMESTAMP WITH TIME ZONE NOT NULL
 , lgpr_duration             interval day(3) to second (3)
 , lgpr_user 				VARCHAR2(255 char)
 , lgpr_comment				VARCHAR2(2000 CHAR)
+, lgpr_apex_task_id         NUMBER
 , lgpr_error_info           VARCHAR2(2000 CHAR)
 );
 
 create index flow_lgpr_ix on flow_instance_event_log (lgpr_prcs_id, lgpr_objt_id );
+-- TODO add step key to index as 3rd element?
 
 create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL

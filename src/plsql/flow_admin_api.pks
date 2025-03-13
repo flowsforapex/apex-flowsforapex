@@ -174,7 +174,22 @@ Available in Flows for APEX Enterprise Edition.
   , p_new_step    in flow_objects.objt_bpmn_id%type
   , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
+
 /**
+**/
+  procedure return_to_last_step
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+  );
+/**
+Procedure return_to_last_step
+This procedure steps a subflow backwards to the immediately previous step.
+This is ONLY available for a subflow that is 'waiting at gateway'.  It can only be used one single step back.
+If the subflow is not at a gateway, or is at the start of the subflow, the procedure will raise an exception.
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure rewind_from_subprocess
   ( p_process_id    in flow_processes.prcs_id%type

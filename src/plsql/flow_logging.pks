@@ -43,15 +43,16 @@ as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_iteration_status  in flow_types_pkg.t_iteration_status default null
+  , p_matching_object   in flow_objects.objt_bpmn_id%type default null
   , p_notes             in flow_subflow_log.sflg_notes%type default null
   );
 
   procedure log_step_event
   ( p_sbfl_rec         in flow_subflows%rowtype
-  , p_event            in flow_step_events.lgse_event_type%type
-  , p_event_level      in flow_processes.prcs_logging_level%type 
-  , p_comment          in flow_step_events.lgse_comment%type default null
-  , p_error_info       in flow_step_events.lgse_error_info%type default null
+  , p_event            in flow_instance_event_log.lgpr_prcs_event%type
+  , p_event_level      in flow_processes.prcs_logging_level%type
+  , p_comment          in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info       in flow_instance_event_log.lgpr_error_info%type default null
   , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
   , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
   , p_new_priority     in flow_subflows.sbfl_priority%type default null
@@ -61,10 +62,10 @@ as
   procedure log_step_event
   ( p_process_id       in flow_processes.prcs_id%type
   , p_subflow_id       in flow_subflows.sbfl_id%type
-  , p_event            in flow_step_events.lgse_event_type%type
+  , p_event            in flow_instance_event_log.lgpr_prcs_event%type
   , p_event_level      in flow_processes.prcs_logging_level%type
-  , p_comment          in flow_step_events.lgse_comment%type default null
-  , p_error_info       in flow_step_events.lgse_error_info%type default null
+  , p_comment          in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info       in flow_instance_event_log.lgpr_error_info%type default null
   , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
   , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
   , p_new_priority     in flow_subflows.sbfl_priority%type default null

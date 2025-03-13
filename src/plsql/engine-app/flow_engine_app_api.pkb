@@ -222,13 +222,20 @@ as
           flow_admin_api.return_to_prior_gateway
           ( p_process_id => apex_application.g_x02 
           , p_subflow_id => apex_application.g_x03
-          , p_comment    => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
           );
         when 'REPOSITION-SUBFLOW' then
           flow_admin_api.return_to_prior_step
           ( p_process_id => apex_application.g_x02 
           , p_subflow_id => apex_application.g_x03
           , p_new_step   => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REWIND-LAST-STEP' then
+          flow_admin_api.return_to_last_step
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+--          , p_step_key   => apex_application.g_x04
           , p_comment    => apex_application.g_x05
           );
         when 'REWIND-SUBPROCESS-ON-RESUME' then

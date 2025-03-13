@@ -169,27 +169,33 @@ function get_subprocess_parent_subflow
 
 procedure get_number_of_connections 
     ( pi_dgrm_id                  in flow_diagrams.dgrm_id%type
-    , pi_target_objt_id           in flow_connections.conn_tgt_objt_id%type
+    , pi_objt_bpmn_id             in flow_objects.objt_bpmn_id%type
     , pi_conn_type                in flow_connections.conn_tag_name%type  
     , po_num_forward_connections  out number
     , po_num_back_connections     out number
+    , po_objt_tag_name            out flow_objects.objt_tag_name%type
     )
   is 
   begin   
-    select count(*)
-      into po_num_back_connections
-      from flow_connections conn 
-     where conn.conn_tgt_objt_id = pi_target_objt_id
-       and conn.conn_tag_name = pi_conn_type
-       and conn.conn_dgrm_id = pi_dgrm_id
-    ;
-    select count(*)
-      into po_num_forward_connections
-      from flow_connections conn 
-     where conn.conn_src_objt_id = pi_target_objt_id
-       and conn.conn_tag_name = pi_conn_type
-       and conn.conn_dgrm_id = pi_dgrm_id
-    ;
+        select objt.objt_tag_name 
+        ,  (select count(input_paths.conn_id) 
+               from flow_connections input_paths 
+              where input_paths.conn_dgrm_id     = objt.objt_dgrm_id 
+                and input_paths.conn_tgt_objt_id = objt.objt_id
+                and input_paths.conn_tag_name = pi_conn_type
+            ) as objt_input_paths
+        , (select count(output_paths.conn_id) 
+               from flow_connections output_paths 
+              where output_paths.conn_dgrm_id      = objt.objt_dgrm_id 
+                and output_paths.conn_src_objt_id  = objt.objt_id
+                and output_paths.conn_tag_name = pi_conn_type
+            ) as objt_output_paths
+      into po_objt_tag_name
+         , po_num_back_connections
+         , po_num_forward_connections
+      from flow_objects objt
+     where objt.objt_bpmn_id = pi_objt_bpmn_id
+       and objt.objt_dgrm_id = pi_dgrm_id;
   end get_number_of_connections;
 
   function get_object_subtag

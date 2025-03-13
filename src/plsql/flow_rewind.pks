@@ -41,6 +41,13 @@ as
   , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
 
+  procedure return_to_last_step
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+  );
+
   function get_prior_exclusive_gateway
   (
     p_process_id  in flow_processes.prcs_id%type
