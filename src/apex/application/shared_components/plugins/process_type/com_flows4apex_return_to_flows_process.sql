@@ -4,8 +4,8 @@ begin
 --     PLUGIN: COM.FLOWS4APEX.RETURN.TO.FLOWS.PROCESS
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -16,7 +16,6 @@ wwv_flow_imp_shared.create_plugin(
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.RETURN.TO.FLOWS.PROCESS'
 ,p_display_name=>'Flows for APEX - Return to Flows for APEX'
-,p_supported_ui_types=>'DESKTOP'
 ,p_supported_component_types=>'APEX_APPL_TASKDEF_ACTIONS'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('PROCESS TYPE','COM.FLOWS4APEX.RETURN.TO.FLOWS.PROCESS'),'')
 ,p_plsql_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -51,6 +50,7 @@ wwv_flow_imp_shared.create_plugin(
 ,p_api_version=>2
 ,p_execution_function=>'execution'
 ,p_substitute_attributes=>true
+,p_version_scn=>1760507033
 ,p_subscribe_plugin_settings=>true
 ,p_version_identifier=>'24.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
@@ -67,6 +67,9 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'PROCESS_ID'
 ,p_is_translatable=>false
 );
+end;
+/
+begin
 wwv_flow_imp.component_end;
 end;
 /

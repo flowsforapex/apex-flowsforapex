@@ -1,0 +1,1 @@
+{"version":3,"sources":["flows4apex.light.css"],"names":[],"mappings":"AAAA,A,qBAAqB,+B,CACnB,yC","file":"flows4apex.light.css","sourcesContent":[".current-process:not([headers*=instance_status_col]){\r\n  background-color: rgba(0,0,0,.1)!important;\r\n}"]}

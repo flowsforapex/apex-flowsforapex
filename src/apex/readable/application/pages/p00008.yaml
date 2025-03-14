@@ -1,0 +1,8307 @@
+---
+# ====== Page: Flow Instance Details =========================
+id: 8
+identification: 
+  name: Flow Instance Details
+  alias: FLOW-INSTANCE-DETAILS
+  title: Flow Instance Details  - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_IMAGES#lib/prismjs/js/prism.js'
+  function-and-global-variable-declaration: initPage8();
+
+css: 
+  inline: |
+    /* Remove border around Instance Details alert region */
+    .t-Alert.remove-alert-border { border: none;}
+    
+    /* Make active tab in Instance Events bold */
+    .is-active .t-Tabs-link {
+        font-weight: 700;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Always
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Reposition Subflow Action ===================
+  id: 19520830623501
+  identification: 
+    name: Reposition Subflow Action
+    type: Static Content
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: reposition_subflow_dialog
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Task List Entries ===========================
+  id: 2570542357060505
+  identification: 
+    name: Task List Entries
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select *
+        from table (
+            flow_api_pkg.get_current_tasks
+                  ( p_context => 'SINGLE_PROCESS'
+                  , p_prcs_id => :P8_PRCS_ID ))
+    page-items-to-submit: 
+    - P8_PRCS_ID
+    optimizer-hint: APEX$USE_NO_GROUPING_SETS
+
+  layout: 
+    sequence: 100
+    parent-region: Tab Holder # 30368937979343097
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-react-on-prcs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: task-list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 2570671262060506
+    appearance: 
+      layout: Horizontal (Row)
+
+    card: 
+      primary-key-column-1: TASK_ID
+
+    title: 
+      advanced-formatting: false
+      column: SUBJECT
+
+    subtitle: 
+      advanced-formatting: true
+      html-expression: |
+        <small role="group" aria-label="Task Details">
+            <strong>&TASK_DEF_NAME!HTML.</strong>
+        {if INITIATOR/}
+            <span role="separator" aria-label="&middot;"> &middot; </span> Initiated by &INITIATOR_LOWER!HTML. 
+        {endif/}
+        {if !IS_COMPLETED/}
+            {case DUE_CODE/}
+                {when OVERDUE/}
+                    <span role="separator" aria-label="&middot;"> &middot; </span><strong class="u-danger-text">Due &DUE_IN.</strong>
+                {when NEXT_HOUR/}
+                    <span role="separator" aria-label="&middot;"> &middot; </span> <strong class="u-danger-text">Due &DUE_IN.</strong>
+                {when NEXT_24_HOURS/}
+                    <span role="separator" aria-label="&middot;"> &middot; </span> <span class="u-danger-text">Due &DUE_IN.</span>
+                {otherwise/}
+                    {if DUE_IN/}<span role="separator" aria-label="&middot;"> &middot; </span> <span>Due &DUE_IN.</span>{endif/}
+            {endcase/}
+        {endif/}
+        {if !IS_COMPLETED/}
+            {case PRIORITY/}
+                {when 1/}
+                    <span role="separator" aria-label="&middot;"> &middot; </span> <strong class="u-danger-text">Urgent</strong>
+                {when 2/}
+                    <span role="separator" aria-label="&middot;"> &middot; </span> <span class="u-danger-text">High priority</span>
+            {endcase/}
+        {endif/}
+        </small>
+
+    body: 
+      advanced-formatting: false
+
+    secondary-body: 
+      advanced-formatting: false
+
+    icon-and-badge: 
+      icon-source: No Icon
+      badge-column: BADGE_TEXT
+      badge-css-classes: 
+      - '&BADGE_CSS_CLASSES.'
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    messages: 
+      when-no-data-found: No Tasks
+
+    actions: 
+    - # ====== Action: Title =======================================
+      id: 2570792162060507
+      identification: 
+        type: Title
+
+      layout: 
+        sequence: 10
+
+      link: 
+        type: Redirect to URL
+        target: '&DETAILS_LINK_TARGET.'
+
+    - # ====== Action: Approve =====================================
+      id: 2570853105060508
+      identification: 
+        type: Button
+        label: Approve
+
+      layout: 
+        position: Primary
+        sequence: 20
+
+      link: 
+        type: Redirect to URL
+        target: '#'
+        link-attributes: data-id="&TASK_ID."
+
+      appearance: 
+        display-type: Text with Icon
+        icon: fa-check-square u-success-text
+        hot: false
+        css-classes: 
+        - approve
+
+      server-side-condition: 
+        type: Item = Value
+        item: TASK_TYPE
+        value: APPROVAL
+        execute-condition: For Each Row
+
+    - # ====== Action: Reject ======================================
+      id: 2570994574060509
+      identification: 
+        type: Button
+        label: Reject
+
+      layout: 
+        position: Secondary
+        sequence: 30
+
+      link: 
+        type: Redirect to URL
+        target: '#'
+        link-attributes: data-id="&TASK_ID."
+
+      appearance: 
+        display-type: Text with Icon
+        icon: fa-times u-danger-text
+        hot: false
+        css-classes: 
+        - reject
+
+      server-side-condition: 
+        type: Item = Value
+        item: TASK_TYPE
+        value: APPROVAL
+        execute-condition: For Each Row
+
+- # ====== Region: Message Subscriptions =======================
+  id: 3509332876851706
+  identification: 
+    name: Message Subscriptions
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select mes.msub_id,
+             mes.msub_message_name,
+             mes.msub_key_name,
+             mes.msub_key_value,
+             mes.msub_payload_var,
+             mes.msub_created,
+             action
+        from flow_p0008_message_subscriptions_vw mes
+       where mes.msub_prcs_id = :P8_PRCS_ID
+    page-items-to-submit: 
+    - P8_PRCS_ID
+
+  layout: 
+    sequence: 60
+    parent-region: Tab Holder # 30368937979343097
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: message-subscriptions
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 3509425289851707
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 3587249378535438
+      identification: 
+        name: Primary Report
+        alias: 35873
+
+    columns: 
+    - # ====== Column: MSUB_ID =====================================
+      id: 3509591891851708
+      identification: 
+        column-name: MSUB_ID
+        type: Hidden
+
+      heading: 
+        heading: Msub Id
+
+      layout: 
+        sequence: 10
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: MSUB_MESSAGE_NAME ===========================
+      id: 3509620456851709
+      identification: 
+        column-name: MSUB_MESSAGE_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Message Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: MSUB_KEY_NAME ===============================
+      id: 3509701785851710
+      identification: 
+        column-name: MSUB_KEY_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Key Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: MSUB_KEY_VALUE ==============================
+      id: 3509835519851711
+      identification: 
+        column-name: MSUB_KEY_VALUE
+        type: Plain Text
+
+      heading: 
+        heading: Key Value
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: MSUB_PAYLOAD_VAR ============================
+      id: 3510437164851717
+      identification: 
+        column-name: MSUB_PAYLOAD_VAR
+        type: Plain Text
+
+      heading: 
+        heading: Payload Variable
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 100
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: MSUB_CREATED ================================
+      id: 3510565399851718
+      identification: 
+        column-name: MSUB_CREATED
+        type: Plain Text
+
+      heading: 
+        heading: Created
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 110
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: ACTION ======================================
+      id: 3510601685851719
+      identification: 
+        column-name: ACTION
+        type: Plain Text
+
+      heading: 
+        heading: Quick Action
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 120
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" title="&APP_TEXT$APP_P8_RECEIVE_MESSAGE." aria-label="&APP_TEXT$APP_P8_RECEIVE_MESSAGE." class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" data-action="receive-message" data-message="#MSUB_MESSAGE_NAME#" data-key="#MSUB_KEY_NAME#" data-value="#MSUB_KEY_VALUE#"><span aria-hidden="true" class="t-Icon t-Icon--left fa fa-box-arrow-in-east"></span>&APP_TEXT$APP_P8_RECEIVE_MESSAGE.</button>
+          
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Message Subscriptions
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Receive Message =============================
+  id: 3510821361851721
+  identification: 
+    name: Receive Message
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: receive_message_dialog
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Breadcrumb ==================================
+  id: 5681179787037011
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Flow Instance ===============================
+  id: 5681250057037012
+  identification: 
+    name: Flow Instance
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_PROCESSES
+    include-rowid-column: false
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: instance-data
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Instance Details ============================
+  id: 5682136171037021
+  identification: 
+    name: Instance Details
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0008_INSTANCE_DETAILS_VW
+    include-rowid-column: false
+    where-clause: 'prcs_id = :P8_PRCS_ID'
+    page-items-to-submit: 
+    - P8_PRCS_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Instance Details # 6433334615417643
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--horizontal
+    - t-Alert--customIcons
+    - t-Alert--info
+    - t-Alert--accessibleHeading
+    - margin-bottom-none
+    css-classes: 
+    - js-react-on-prcs
+    - remove-alert-border
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-instance-detail
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Value Attribute Pairs - Column
+      template-options: 
+      - '#DEFAULT#'
+      - t-AVPList--leftAligned
+      - t-Report--hideNoPagination
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: PRIORITY ====================================
+    id: 2142146265493905
+    identification: 
+      column-name: PRIORITY
+      type: Plain Text
+
+    heading: 
+      heading: Priority
+      alignment: center
+
+    layout: 
+      sequence: 46
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: DUE_ON ======================================
+    id: 2142255235493906
+    identification: 
+      column-name: DUE_ON
+      type: Plain Text
+
+    heading: 
+      heading: Due On
+      alignment: center
+
+    layout: 
+      sequence: 16
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: STATUS ======================================
+    id: 5683966799037039
+    identification: 
+      column-name: STATUS
+      type: Plain Text
+
+    heading: 
+      heading: Status
+      alignment: center
+
+    layout: 
+      sequence: 5
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INITIALIZED_ON ==============================
+    id: 5684069475037040
+    identification: 
+      column-name: INITIALIZED_ON
+      type: Plain Text
+
+    heading: 
+      heading: Initialized On
+      alignment: center
+
+    layout: 
+      sequence: 6
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LAST_UPDATE_ON ==============================
+    id: 5684163968037041
+    identification: 
+      column-name: LAST_UPDATE_ON
+      type: Plain Text
+
+    heading: 
+      heading: Last Update On
+      alignment: center
+
+    layout: 
+      sequence: 26
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BUSINESS_REFERENCE ==========================
+    id: 5684296657037042
+    identification: 
+      column-name: BUSINESS_REFERENCE
+      type: Plain Text
+
+    heading: 
+      heading: Business Reference
+      alignment: center
+
+    layout: 
+      sequence: 36
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PRCS_ID =====================================
+    id: 8023653162825605
+    identification: 
+      column-name: PRCS_ID
+      type: Plain Text
+
+    heading: 
+      heading: ID
+      alignment: end
+
+    layout: 
+      sequence: 1
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PRCS_NAME ===================================
+    id: 8023758985825606
+    identification: 
+      column-name: PRCS_NAME
+      type: Plain Text
+
+    heading: 
+      heading: Name
+      alignment: start
+
+    layout: 
+      sequence: 2
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: DGRM_NAME ===================================
+    id: 15355984569942507
+    identification: 
+      column-name: DGRM_NAME
+      type: Plain Text
+
+    heading: 
+      heading: Model
+      alignment: start
+
+    layout: 
+      sequence: 3
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: '#DGRM_NAME# - Version #DGRM_VERSION#'
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: DGRM_VERSION ================================
+    id: 15356093907942508
+    identification: 
+      column-name: DGRM_VERSION
+      type: Hidden
+
+    layout: 
+      sequence: 4
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Instance Details ============================
+  id: 5684323221037043
+  identification: 
+    name: Instance Details
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--hideHeader
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-instances
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Variables - Row Actions =====================
+  id: 6432353612417633
+  identification: 
+    name: Variables - Row Actions
+    type: List
+
+  source: 
+    list: P8_VARIABLE_ROW_ACTION_MENU # 7074608790273038
+
+  layout: 
+    sequence: 10
+    parent-region: Variables # 8392311025345610
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: variable_row_action
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Variables - Header Actions ==================
+  id: 6433033616417640
+  identification: 
+    name: Variables - Header Actions
+    type: List
+
+  source: 
+    list: P8_VARIABLE_HEADER_ACTION_MENU # 7390393853616382
+
+  layout: 
+    sequence: 20
+    parent-region: Variables # 8392311025345610
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: variable_header_action
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Instance Details ============================
+  id: 6433334615417643
+  identification: 
+    name: Instance Details
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Instance Details # 5684323221037043
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - is-expanded
+    - t-Region--stacked
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Instance Events =============================
+  id: 8024125104825610
+  identification: 
+    name: Instance Events
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Instance Details # 5684323221037043
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - is-collapsed
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Add Gateway Route ===========================
+  id: 8354985158946288
+  identification: 
+    name: Add Gateway Route
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: gateway_selector
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Subflows - Row Actions ======================
+  id: 8367243423910488
+  identification: 
+    name: Subflows - Row Actions
+    type: List
+
+  source: 
+    list: P8_SUBFLOW_ROW_ACTION_MENU # 2407587958394790
+
+  layout: 
+    sequence: 10
+    parent-region: Subflows # 166753193485966384
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: subflow_row_action
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Reserve Step ================================
+  id: 8391710661345604
+  identification: 
+    name: Reserve Step
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: reservation_dialog
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Subflows - Header Actions ===================
+  id: 8392021138345607
+  identification: 
+    name: Subflows - Header Actions
+    type: List
+
+  source: 
+    list: P8_SUBFLOW_HEADER_ACTION_MENU # 4409050172512221
+
+  layout: 
+    sequence: 20
+    parent-region: Subflows # 166753193485966384
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: subflow_header_action
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Variables ===================================
+  id: 8392311025345610
+  identification: 
+    name: Variables
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select CHECKBOX,
+             ACTION,
+             PROV_PRCS_ID,
+             PROV_VAR_NAME,
+             PROV_VAR_TYPE,
+             PROV_SCOPE,
+             CALLING_OBJECT,
+             PROV_VAR_VALUE,
+             IS_GATEWAY_ROUTE,
+             case when :P8_DIAGRAM_LEVEL = prov_scope then 't-Button--success'
+             end as current_class,
+             case when :P8_DIAGRAM_LEVEL = prov_scope then 1 else 0
+             end as current_scope
+        from FLOW_P0008_VARIABLES_VW
+      where prov_prcs_id = :P8_PRCS_iD
+    page-items-to-submit: 
+    - P8_PRCS_ID
+    - P8_DIAGRAM_LEVEL
+
+  layout: 
+    sequence: 50
+    parent-region: Tab Holder # 30368937979343097
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-IRR-region--noBorders
+    css-classes: 
+    - js-react-on-prcs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: process-variables
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 8393401240345621
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: true
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 10983804979667357
+      identification: 
+        name: Primary Report
+        alias: 59765
+
+    columns: 
+    - # ====== Column: PROV_PRCS_ID ================================
+      id: 5974128075464466
+      identification: 
+        column-name: PROV_PRCS_ID
+        type: Plain Text
+
+      heading: 
+        heading: Process ID
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 10
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PROV_VAR_NAME ===============================
+      id: 5974553661464467
+      identification: 
+        column-name: PROV_VAR_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PROV_VAR_TYPE ===============================
+      id: 5974908646464467
+      identification: 
+        column-name: PROV_VAR_TYPE
+        type: Plain Text
+
+      heading: 
+        heading: Type
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PROV_VAR_VALUE ==============================
+      id: 5975357132464467
+      identification: 
+        column-name: PROV_VAR_VALUE
+        type: Plain Text
+
+      heading: 
+        heading: Value
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: prov_var_value
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CHECKBOX ====================================
+      id: 5975755489464467
+      identification: 
+        column-name: CHECKBOX
+        type: Plain Text
+
+      heading: 
+        heading: <input type="checkbox" id="check-all-variables">
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 50
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: variable_checkbox_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: ACTION ======================================
+      id: 5976199322464468
+      identification: 
+        column-name: ACTION
+        type: Plain Text
+
+      heading: 
+        heading: <button type="button" title="&APP_TEXT$APP_P8_VAR_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_VAR_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" data-menu="variable_header_action_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" title="&APP_TEXT$APP_P8_VAR_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_VAR_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# variable-actions-btn js-menuButton" 
+          data-menu="variable_row_action_menu"
+          data-name="#PROV_VAR_NAME#"
+          data-type="#PROV_VAR_TYPE#"
+          data-prcs="#PROV_PRCS_ID#"
+          data-scope="#PROV_SCOPE#"
+          data-gateway-route="#IS_GATEWAY_ROUTE#"
+          >
+              <span aria-hidden="true" class="t-Icon fa fa-bars"></span>
+          </button>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: variable_action_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: IS_GATEWAY_ROUTE ============================
+      id: 6432711704417637
+      identification: 
+        column-name: IS_GATEWAY_ROUTE
+        type: Hidden
+
+      heading: 
+        heading: Is Gateway Route
+
+      layout: 
+        sequence: 70
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: PROV_SCOPE ==================================
+      id: 55103738997434701
+      identification: 
+        column-name: PROV_SCOPE
+        type: Plain Text
+
+      heading: 
+        heading: Scope
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CALLING_OBJECT ==============================
+      id: 55103850324434702
+      identification: 
+        column-name: CALLING_OBJECT
+        type: Plain Text
+
+      heading: 
+        heading: Calling Object
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 90
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CURRENT_CLASS ===============================
+      id: 55108405946434748
+      identification: 
+        column-name: CURRENT_CLASS
+        type: Hidden
+
+      heading: 
+        heading: Current Class
+
+      layout: 
+        sequence: 100
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CURRENT_SCOPE ===============================
+      id: 55108556668434749
+      identification: 
+        column-name: CURRENT_SCOPE
+        type: Plain Text
+
+      heading: 
+        heading: Current Scope
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 110
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Variables
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Add/Edit Process Variable ===================
+  id: 8394514514345632
+  identification: 
+    name: Add/Edit Process Variable
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: variable_dialog
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Instance Action =============================
+  id: 13245209048329626
+  identification: 
+    name: Instance Action
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    css-classes: 
+    - f4a-dynamic-title
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: instance_action_dialog
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Action Menu =================================
+  id: 13891898475964091
+  identification: 
+    name: Action Menu
+    type: List
+
+  source: 
+    list: P8_ACTION_MENU # 6338940478461643
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: actions
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+
+- # ====== Region: Instance Events =============================
+  id: 29001516138505995
+  identification: 
+    name: Instance Events
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0008_INSTANCE_LOG_VW
+    include-rowid-column: false
+    where-clause: 'lgpr_prcs_id = :P8_PRCS_ID'
+    page-items-to-submit: 
+    - P8_PRCS_ID
+
+  layout: 
+    sequence: 10
+    parent-region: Instance Events # 8024125104825610
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-IRR-region--noBorders
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-instance-events
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 13471539909181525
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+      maximum-rows-per-page: 20
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 13861584261230054
+      identification: 
+        name: Primary Report
+        alias: 83217
+
+    columns: 
+    - # ====== Column: PRETAG ======================================
+      id: 8028177005825650
+      identification: 
+        column-name: PRETAG
+        type: Hidden
+
+      heading: 
+        heading: Pretag
+
+      layout: 
+        sequence: 100
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: LGPR_PRCS_ID ================================
+      id: 8318159619792316
+      identification: 
+        column-name: LGPR_PRCS_ID
+        type: Hidden
+
+      heading: 
+        heading: Lgpr Prcs Id
+
+      layout: 
+        sequence: 10
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: LGPR_PRCS_NAME ==============================
+      id: 8318543391792317
+      identification: 
+        column-name: LGPR_PRCS_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGPR_BUSINESS_ID ============================
+      id: 8318997702792318
+      identification: 
+        column-name: LGPR_BUSINESS_ID
+        type: Plain Text
+
+      heading: 
+        heading: Business Reference
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGPR_PRCS_EVENT =============================
+      id: 8319379673792319
+      identification: 
+        column-name: LGPR_PRCS_EVENT
+        type: Plain Text
+
+      heading: 
+        heading: Event
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '<span class="prcs_event_badge"><i class="status_icon fa #LGPR_PRCS_EVENT_ICON#"></i>#LGPR_PRCS_EVENT#</span>'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: instance_event_col
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGPR_TIMESTAMP ==============================
+      id: 8319757479792319
+      identification: 
+        column-name: LGPR_TIMESTAMP
+        type: Plain Text
+
+      heading: 
+        heading: Timestamp
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 50
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGPR_USER ===================================
+      id: 8320162530792319
+      identification: 
+        column-name: LGPR_USER
+        type: Plain Text
+
+      heading: 
+        heading: User
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGPR_COMMENT ================================
+      id: 8320570260792319
+      identification: 
+        column-name: LGPR_COMMENT
+        type: Plain Text
+
+      heading: 
+        heading: Comment
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGPR_PRCS_EVENT_ICON ========================
+      id: 8320935355792320
+      identification: 
+        column-name: LGPR_PRCS_EVENT_ICON
+        type: Hidden
+
+      heading: 
+        heading: Lgpr Prcs Event Icon
+
+      layout: 
+        sequence: 90
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: LGPR_ERROR_INFO =============================
+      id: 8321340756792320
+      identification: 
+        column-name: LGPR_ERROR_INFO
+        type: Plain Text
+
+      heading: 
+        heading: Error Stack
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '#PRETAG##LGPR_ERROR_INFO##POSTTAG#'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: POSTTAG =====================================
+      id: 12631588555220601
+      identification: 
+        column-name: POSTTAG
+        type: Hidden
+
+      heading: 
+        heading: Posttag
+
+      layout: 
+        sequence: 110
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: LGPR_OBJT_ID ================================
+      id: 12632064663220606
+      identification: 
+        column-name: LGPR_OBJT_ID
+        type: Plain Text
+
+      heading: 
+        heading: Object
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 120
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Instance Events
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Tab Holder ==================================
+  id: 30368937979343097
+  identification: 
+    name: Tab Holder
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: Instance Details # 5684323221037043
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Tabs Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-TabsRegion-mod--simple
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Reschedule Timer ============================
+  id: 62707563129232545
+  identification: 
+    name: Reschedule Timer
+    type: Static Content
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: reschedule_timer_dialog
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Subflows ====================================
+  id: 166753193485966384
+  identification: 
+    name: Subflows
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select SBFL_ID,
+             SBFL_PRCS_ID,
+             SBFL_CURRENT,
+             SBFL_STEP_KEY,
+             SBFL_SBFL_DGRM_ID,
+             SBFL_DIAGRAM_LEVEL,
+             CALLING_OBJECT,
+             SBFL_STARTING_OBJECT,
+             SBFL_LAST_UPDATE,
+             SBFL_STATUS,
+             SBFL_STATUS_ICON,
+             SBFL_PRIORITY,
+             SBFL_DUE_ON,
+             SBFL_TIMR_START_ON,
+             SBFL_CURRENT_LANE,
+             SBFL_RESERVATION,
+             SBFL_POTENTIAL_USERS,
+             SBFL_POTENTIAL_GROUPS,
+             SBFL_EXCLUDED_USERS,
+             ACTIONS,
+             CHECKBOX,
+             QUICK_ACTION_ICON,
+             QUICK_ACTION_LABEL,
+             QUICK_ACTION,
+             TIMER_STATUS_INFO,
+             case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 't-Button--success'
+             end as current_class,
+             case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 1 else 0
+             end as current_level,
+             SBFL_ITERATION_PATH
+        from FLOW_P0008_SUBFLOWS_VW
+      where sbfl_prcs_id = :P8_PRCS_ID
+    page-items-to-submit: 
+    - P8_PRCS_ID
+    - P8_DIAGRAM_LEVEL
+
+  layout: 
+    sequence: 30
+    parent-region: Tab Holder # 30368937979343097
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-IRR-region--noBorders
+    css-classes: 
+    - js-react-on-prcs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: subflows
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 8390422207345591
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: true
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 8498061205860315
+      identification: 
+        name: Primary Report
+        alias: 59631
+
+    columns: 
+    - # ====== Column: SBFL_PRIORITY ===============================
+      id: 2142388218493907
+      identification: 
+        column-name: SBFL_PRIORITY
+        type: Plain Text
+
+      heading: 
+        heading: Priority
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_POTENTIAL_USERS ========================
+      id: 2142460053493908
+      identification: 
+        column-name: SBFL_POTENTIAL_USERS
+        type: Plain Text
+
+      heading: 
+        heading: Potential Users
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 120
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_POTENTIAL_GROUPS =======================
+      id: 2142511739493909
+      identification: 
+        column-name: SBFL_POTENTIAL_GROUPS
+        type: Plain Text
+
+      heading: 
+        heading: Potential Groups
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 130
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_EXCLUDED_USERS =========================
+      id: 2142648848493910
+      identification: 
+        column-name: SBFL_EXCLUDED_USERS
+        type: Plain Text
+
+      heading: 
+        heading: Excluded Users
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 140
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_DUE_ON =================================
+      id: 2142712189493911
+      identification: 
+        column-name: SBFL_DUE_ON
+        type: Plain Text
+
+      heading: 
+        heading: Due On
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 50
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_ID =====================================
+      id: 5958060753464437
+      identification: 
+        column-name: SBFL_ID
+        type: Plain Text
+
+      heading: 
+        heading: Subflow ID
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 10
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_PRCS_ID ================================
+      id: 5958314416464441
+      identification: 
+        column-name: SBFL_PRCS_ID
+        type: Plain Text
+
+      heading: 
+        heading: Process ID
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_CURRENT ================================
+      id: 5958746107464441
+      identification: 
+        column-name: SBFL_CURRENT
+        type: Plain Text
+
+      heading: 
+        heading: Current
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_STARTING_OBJECT ========================
+      id: 5959198304464442
+      identification: 
+        column-name: SBFL_STARTING_OBJECT
+        type: Plain Text
+
+      heading: 
+        heading: Starting Object
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_LAST_UPDATE ============================
+      id: 5959540044464442
+      identification: 
+        column-name: SBFL_LAST_UPDATE
+        type: Plain Text
+
+      heading: 
+        heading: Last Update
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_STATUS =================================
+      id: 5959935453464442
+      identification: 
+        column-name: SBFL_STATUS
+        type: Plain Text
+
+      heading: 
+        heading: Status
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '<span class="sbfl_status_badge"><i class="status_icon fa #SBFL_STATUS_ICON#"></i>#SBFL_STATUS#</span><span class="sbfl_timer_start">#TIMER_STATUS_INFO#</span>'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: subflow_status_col
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_CURRENT_LANE ===========================
+      id: 5960359099464442
+      identification: 
+        column-name: SBFL_CURRENT_LANE
+        type: Plain Text
+
+      heading: 
+        heading: Lane
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 90
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_RESERVATION ============================
+      id: 5960748117464443
+      identification: 
+        column-name: SBFL_RESERVATION
+        type: Plain Text
+
+      heading: 
+        heading: Reserved For
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 110
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: ACTIONS =====================================
+      id: 5961953081464444
+      identification: 
+        column-name: ACTIONS
+        type: Plain Text
+
+      heading: 
+        heading: <button type="button" title="&APP_TEXT$APP_P8_SBFL_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_SBFL_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" data-menu="subflow_header_action_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 150
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" title="&APP_TEXT$APP_P8_SBFL_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_SBFL_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# subflow-actions-btn js-menuButton" 
+          data-menu="subflow_row_action_menu"
+          data-prcs="#SBFL_PRCS_ID#"
+          data-sbfl="#SBFL_ID#"
+          data-key = "#SBFL_STEP_KEY#"
+          data-status="#SBFL_STATUS#"
+          data-reservation="#SBFL_RESERVATION#">
+              <span aria-hidden="true" class="t-Icon fa fa-bars"></span>
+          </button>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: subflow_action_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CHECKBOX ====================================
+      id: 5962397543464444
+      identification: 
+        column-name: CHECKBOX
+        type: Plain Text
+
+      heading: 
+        heading: <input type="checkbox" id="check-all-subflows">
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 160
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: subflow_checkbox_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: SBFL_STATUS_ICON ============================
+      id: 7335900830307041
+      identification: 
+        column-name: SBFL_STATUS_ICON
+        type: Hidden
+
+      heading: 
+        heading: Sbfl Status Icon
+
+      layout: 
+        sequence: 200
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: QUICK_ACTION_ICON ===========================
+      id: 8025464938825623
+      identification: 
+        column-name: QUICK_ACTION_ICON
+        type: Hidden
+
+      heading: 
+        heading: Quick Action Icon
+
+      layout: 
+        sequence: 170
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: QUICK_ACTION ================================
+      id: 8025569156825624
+      identification: 
+        column-name: QUICK_ACTION
+        type: Plain Text
+
+      heading: 
+        heading: Quick Action
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 180
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" 
+          data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#">
+              <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#
+          </button>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: quick_action_col
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: QUICK_ACTION_LABEL ==========================
+      id: 8025669951825625
+      identification: 
+        column-name: QUICK_ACTION_LABEL
+        type: Hidden
+
+      heading: 
+        heading: Quick Action Label
+
+      layout: 
+        sequence: 190
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: SBFL_ITERATION_PATH =========================
+      id: 9074998747505001
+      identification: 
+        column-name: SBFL_ITERATION_PATH
+        type: Plain Text
+
+      heading: 
+        heading: Iteration Path
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 290
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_SBFL_DGRM_ID ===========================
+      id: 55104508785434709
+      identification: 
+        column-name: SBFL_SBFL_DGRM_ID
+        type: Plain Text
+
+      heading: 
+        heading: Calling Diagram ID
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 240
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_DIAGRAM_LEVEL ==========================
+      id: 55104683966434710
+      identification: 
+        column-name: SBFL_DIAGRAM_LEVEL
+        type: Plain Text
+
+      heading: 
+        heading: Level
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 250
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CALLING_OBJECT ==============================
+      id: 55104753757434711
+      identification: 
+        column-name: CALLING_OBJECT
+        type: Plain Text
+
+      heading: 
+        heading: Calling Object
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 260
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CURRENT_CLASS ===============================
+      id: 55108288395434746
+      identification: 
+        column-name: CURRENT_CLASS
+        type: Hidden
+
+      heading: 
+        heading: Current Class
+
+      layout: 
+        sequence: 270
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CURRENT_LEVEL ===============================
+      id: 55108363460434747
+      identification: 
+        column-name: CURRENT_LEVEL
+        type: Plain Text
+
+      heading: 
+        heading: Current Level
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 280
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_STEP_KEY ===============================
+      id: 62703712227232507
+      identification: 
+        column-name: SBFL_STEP_KEY
+        type: Plain Text
+
+      heading: 
+        heading: Step Key
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 210
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_TIMR_START_ON ==========================
+      id: 62707325166232543
+      identification: 
+        column-name: SBFL_TIMR_START_ON
+        type: Plain Text
+
+      heading: 
+        heading: Timer Start On
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 220
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: TIMER_STATUS_INFO ===========================
+      id: 62707438405232544
+      identification: 
+        column-name: TIMER_STATUS_INFO
+        type: Hidden
+
+      heading: 
+        heading: Timer Status Info
+
+      layout: 
+        sequence: 230
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Subflows
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Flow Viewer =================================
+  id: 6133652177393567089
+  identification: 
+    name: Flow Viewer
+    type: Flows for APEX - Viewer
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0008_VW
+    include-rowid-column: false
+    where-clause: 'prcs_id = :P8_PRCS_ID'
+    page-items-to-submit: 
+    - P8_PRCS_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - js-showMaximizeButton
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-monitor
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      diagram-xml: DGRM_CONTENT
+      use-bpmn-colors: true
+      add-highlighting: true
+      current-nodes: ALL_CURRENT
+      completed-nodes: ALL_COMPLETED
+      error-nodes: ALL_ERRORS
+      iteration-data: ITERATION_DATA
+      enable-call-activities: true
+      diagram-identifier: PRDG_ID
+      calling-diagram-identifier: PRDG_PRDG_ID
+      calling-object-id: CALLING_OBJT
+      breadcrumb-text: BREADCRUMB
+      allow-drilldown-on-diagram-level: DRILLDOWN_ALLOWED
+      refresh-on-load: true
+      show-toolbar: true
+      enable-mousewheel-zoom: false
+
+    messages: 
+      when-no-data-found: No process selected
+
+page-items: 
+- # ====== Page Item: P8_REPOSITION_TEXT =======================
+  id: 19622224623502
+  identification: 
+    name: P8_REPOSITION_TEXT
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Reposition Subflow Action # 19520830623501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_REPOSITION_NEW_TASK ===================
+  id: 19775721623503
+  identification: 
+    name: P8_REPOSITION_NEW_TASK
+    type: Popup LOV
+
+  label: 
+    label: Reposition Subflow to Step
+    alignment: Left
+
+  settings: 
+    display-as: Modal Dialog
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: Reposition Subflow Action # 19520830623501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: P8_REPOSITIONABLE_STEPS # 14375603769799
+    display-extra-values: false
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P8_REWIND_SBFL_ID
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_REPOSITION_COMMENT ====================
+  id: 19821641623504
+  identification: 
+    name: P8_REPOSITION_COMMENT
+    type: Textarea
+
+  label: 
+    label: Comment
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 30
+    region: Reposition Subflow Action # 19520830623501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_REWIND_SBFL_ID ========================
+  id: 19933509623505
+  identification: 
+    name: P8_REWIND_SBFL_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Reposition Subflow Action # 19520830623501
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PAYLOAD ===============================
+  id: 3510991975851722
+  identification: 
+    name: P8_PAYLOAD
+    type: Textarea
+
+  label: 
+    label: Payload
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 10
+    region: Receive Message # 3510821361851721
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_TSTZ =========================
+  id: 3747988967530343
+  identification: 
+    name: P8_PROV_VAR_TSTZ
+    type: Text Field
+
+  label: 
+    label: Value
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: 'Required format: YYYY-MM-DD HH24:MI:SS TZR'
+
+- # ====== Page Item: P8_PROV_VAR_TSTZ_VALID ===================
+  id: 3748085871530344
+  identification: 
+    name: P8_PROV_VAR_TSTZ_VALID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 100
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRCS_ID ===============================
+  id: 5681449489037014
+  identification: 
+    name: P8_PRCS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Flow Instance # 5681250057037012
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Flow Instance # 5681250057037012
+    column: PRCS_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRCS_DGRM_ID ==========================
+  id: 5681551841037015
+  identification: 
+    name: P8_PRCS_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Flow Instance # 5681250057037012
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Flow Instance # 5681250057037012
+    column: PRCS_DGRM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRCS_NAME =============================
+  id: 5681628052037016
+  identification: 
+    name: P8_PRCS_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Flow Instance # 5681250057037012
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Flow Instance # 5681250057037012
+    column: PRCS_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRCS_STATUS ===========================
+  id: 5681710279037017
+  identification: 
+    name: P8_PRCS_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Flow Instance # 5681250057037012
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Flow Instance # 5681250057037012
+    column: PRCS_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRCS_INIT_TS ==========================
+  id: 5681806442037018
+  identification: 
+    name: P8_PRCS_INIT_TS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Flow Instance # 5681250057037012
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Flow Instance # 5681250057037012
+    column: PRCS_INIT_TS
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRCS_LAST_UPDATE ======================
+  id: 5681957862037019
+  identification: 
+    name: P8_PRCS_LAST_UPDATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Flow Instance # 5681250057037012
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Flow Instance # 5681250057037012
+    column: PRCS_LAST_UPDATE
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_SELECT_OPTION =========================
+  id: 5955943099464415
+  identification: 
+    name: P8_SELECT_OPTION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Add Gateway Route # 8354985158946288
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_GATEWAY ===============================
+  id: 5956326391464421
+  identification: 
+    name: P8_GATEWAY
+    type: Select List
+
+  label: 
+    label: Gateway
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 30
+    region: Add Gateway Route # 8354985158946288
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: P8_INSTANCE_GATEWAYS_LOV # 2800147004522946
+    display-extra-values: false
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P8_PRDG_ID
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_CONNECTION ============================
+  id: 5956770983464421
+  identification: 
+    name: P8_CONNECTION
+    type: Checkbox Group
+
+  label: 
+    label: Connection
+    alignment: Left
+
+  settings: 
+    number-of-columns: 2
+
+  multiple-values: 
+    type: Delimited List
+    separator: ':'
+
+  layout: 
+    sequence: 60
+    region: Add Gateway Route # 8354985158946288
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: P8_INSTANCE_CONNECTIONS_LOV # 3000126357622364
+    display-extra-values: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P8_PRCS_ID
+    - P8_GATEWAY
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_SBFL_ID ===============================
+  id: 5972826023464463
+  identification: 
+    name: P8_SBFL_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Subflows # 166753193485966384
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_DISPLAY_SETTING =======================
+  id: 5979272276464470
+  identification: 
+    name: P8_DISPLAY_SETTING
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Flow Viewer # 6133652177393567089
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_OBJT_LIST =============================
+  id: 5979971726464470
+  identification: 
+    name: P8_OBJT_LIST
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Flow Viewer # 6133652177393567089
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_OBJT_BPMN_ID ==========================
+  id: 5980365397464471
+  identification: 
+    name: P8_OBJT_BPMN_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Flow Viewer # 6133652177393567089
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_OBJT_NAME =============================
+  id: 5980714077464471
+  identification: 
+    name: P8_OBJT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Flow Viewer # 6133652177393567089
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_RESERVATION ===========================
+  id: 5981800867464472
+  identification: 
+    name: P8_RESERVATION
+    type: Text Field
+
+  label: 
+    label: Reservation
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Reserve Step # 8391710661345604
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: If left blank, the task will be reserved for the current user (app_user).
+
+- # ====== Page Item: P8_PROV_VAR_NAME =========================
+  id: 5983384367464473
+  identification: 
+    name: P8_PROV_VAR_NAME
+    type: Text Field
+
+  label: 
+    label: Variable Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_TYPE =========================
+  id: 5983769209464473
+  identification: 
+    name: P8_PROV_VAR_TYPE
+    type: Radio Group
+
+  label: 
+    label: Type
+    alignment: Left
+
+  settings: 
+    number-of-columns: 6
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 20
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2:Varchar2;VARCHAR2,Number;NUMBER,Date;DATE,Clob;CLOB,Timestamp With Time Zone;TIMESTAMP WITH TIME ZONE,JSON;JSON'
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: VARCHAR2
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_VC2 ==========================
+  id: 5984111734464474
+  identification: 
+    name: P8_PROV_VAR_VC2
+    type: Text Field
+
+  label: 
+    label: Value
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_NUM ==========================
+  id: 5984552376464474
+  identification: 
+    name: P8_PROV_VAR_NUM
+    type: Number Field
+
+  label: 
+    label: Value
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Text
+
+  layout: 
+    sequence: 50
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_DATE =========================
+  id: 5984956372464474
+  identification: 
+    name: P8_PROV_VAR_DATE
+    type: Date Picker (jQuery) [Deprecated]
+
+  label: 
+    label: Value
+    alignment: Left
+
+  settings: 
+    show: On icon click
+    show-other-months: false
+    navigation-list-for: None
+
+  layout: 
+    sequence: 70
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: '&APP_DATE_TIME_FORMAT.'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_CLOB =========================
+  id: 5985303463464474
+  identification: 
+    name: P8_PROV_VAR_CLOB
+    type: Textarea
+
+  label: 
+    label: Value
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 110
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_DATE_VALID ===================
+  id: 6429631498417606
+  identification: 
+    name: P8_PROV_VAR_DATE_VALID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 80
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_VAR_NUM_VALID ====================
+  id: 6429967240417609
+  identification: 
+    name: P8_PROV_VAR_NUM_VALID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_CONFIRM_TEXT ==========================
+  id: 7068442550119727
+  identification: 
+    name: P8_CONFIRM_TEXT
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Instance Action # 13245209048329626
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_COMMENT ===============================
+  id: 7068819919119733
+  identification: 
+    name: P8_COMMENT
+    type: Textarea
+
+  label: 
+    label: Comment
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: Instance Action # 13245209048329626
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_LOADED_DIAGRAM ========================
+  id: 44803138381176613
+  identification: 
+    name: P8_LOADED_DIAGRAM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Flow Viewer # 6133652177393567089
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_DIAGRAM_LEVEL =========================
+  id: 55103924099434703
+  identification: 
+    name: P8_DIAGRAM_LEVEL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 90
+    region: Flow Viewer # 6133652177393567089
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PROV_SCOPE ============================
+  id: 55107419799434738
+  identification: 
+    name: P8_PROV_SCOPE
+    type: Select List
+
+  label: 
+    label: Scope
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 30
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select 
+         iscp_valid_scope as d, 
+         iscp_valid_scope as r
+      from flow_instance_scopes_vw
+      where iscp_prcs_id = :P8_PRCS_ID
+      order by 1
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Item
+    item: P8_DIAGRAM_LEVEL
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_PRDG_ID ===============================
+  id: 55107680657434740
+  identification: 
+    name: P8_PRDG_ID
+    type: Select List
+
+  label: 
+    label: Calling Diagram
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: Add Gateway Route # 8354985158946288
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: FLOW_INSTANCE_DIAGRAMS_LOV # 60714624308437115
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P8_PRCS_ID
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_RESCHEDULE_TIMER_NOW ==================
+  id: 62707796384232547
+  identification: 
+    name: P8_RESCHEDULE_TIMER_NOW
+    type: Switch
+
+  label: 
+    label: Reschedule timer now
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: Reschedule Timer # 62707563129232545
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Y
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_RESCHEDULE_TIMER_AT ===================
+  id: 62707843061232548
+  identification: 
+    name: P8_RESCHEDULE_TIMER_AT
+    type: Date Picker (jQuery) [Deprecated]
+
+  label: 
+    label: Reschedule timer at
+    alignment: Left
+
+  settings: 
+    minimum-date: +0d
+    show: Both
+    show-other-months: false
+    navigation-list-for: None
+
+  layout: 
+    sequence: 20
+    region: Reschedule Timer # 62707563129232545
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: '&APP_DATE_TIME_FORMAT.'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_RESCHEDULE_TIMER_COMMENT ==============
+  id: 73479633336995802
+  identification: 
+    name: P8_RESCHEDULE_TIMER_COMMENT
+    type: Textarea
+
+  label: 
+    label: Comment
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 30
+    region: Reschedule Timer # 62707563129232545
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+    maximum-length: 2000
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CANCEL_REPOSITION_SBFL ======================
+  id: 20052699623506
+  identification: 
+    button-name: CANCEL_REPOSITION_SBFL
+    label: Cancel
+
+  layout: 
+    sequence: 30
+    region: Reposition Subflow Action # 19520830623501
+    slot: PREVIOUS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: REPOSITION_SUBFLOW ==========================
+  id: 20335690623509
+  identification: 
+    button-name: REPOSITION_SUBFLOW
+    label: Reposition Subflow
+
+  layout: 
+    sequence: 60
+    region: Reposition Subflow Action # 19520830623501
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: reposition-subflow-btn
+    custom-attributes: 
+    - data-action="reposition-subflow"
+    - data-prcs=""
+    - data-sbfl=""
+    - data-new-task=""
+    - data-comment=""
+
+- # ====== Button: RECEIVE_MESSAGE =============================
+  id: 3511050226851723
+  identification: 
+    button-name: RECEIVE_MESSAGE
+    label: Receive Message
+
+  layout: 
+    sequence: 20
+    region: Receive Message # 3510821361851721
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: receive-message-btn
+    custom-attributes: 
+    - data-action="receive-message"
+    - data-message=""
+    - data-key=""
+    - data-value=""
+
+- # ====== Button: CANCEL_RECEIVE_MESSAGE ======================
+  id: 3511139234851724
+  identification: 
+    button-name: CANCEL_RECEIVE_MESSAGE
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Receive Message # 3510821361851721
+    slot: PREVIOUS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: SAVE_PROV_VAR_ROUTE =========================
+  id: 5954353112464407
+  identification: 
+    button-name: SAVE_PROV_VAR_ROUTE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: Add Gateway Route # 8354985158946288
+    slot: CREATE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    css-classes: 
+    - js-actionButton
+    icon: fa-save
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: save-prov-var-route-btn
+    custom-attributes: 
+    - data-action="update-process-variable"
+    - data-gateway-route="true"
+
+- # ====== Button: UNSELECT ====================================
+  id: 5954728604464411
+  identification: 
+    button-name: UNSELECT
+    label: Unselect all
+
+  layout: 
+    sequence: 40
+    region: Add Gateway Route # 8354985158946288
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--gapTop
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: unselect_btn
+
+- # ====== Button: SELECT ======================================
+  id: 5955186680464411
+  identification: 
+    button-name: SELECT
+    label: Select all
+
+  layout: 
+    sequence: 50
+    region: Add Gateway Route # 8354985158946288
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--gapTop
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: select_btn
+
+- # ====== Button: ADD_PROV_VAR_ROUTE ==========================
+  id: 5955586107464411
+  identification: 
+    button-name: ADD_PROV_VAR_ROUTE
+    label: Add
+
+  layout: 
+    sequence: 10
+    region: Add Gateway Route # 8354985158946288
+    slot: CREATE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    css-classes: 
+    - js-actionButton
+    icon: fa-plus
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: add-prov-var-route-btn
+    custom-attributes: 
+    - data-action="add-process-variable"
+    - data-gateway-route="true"
+
+- # ====== Button: RESET_SUBFLOW_IR ============================
+  id: 5963945833464455
+  identification: 
+    button-name: RESET_SUBFLOW_IR
+    label: Reset
+
+  layout: 
+    sequence: 10
+    region: Subflows # 166753193485966384
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--iconLeft
+    icon: fa-undo-alt
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:RP,8,RIR:P8_PRCS_ID:&P8_PRCS_ID.'
+      page: 8 # Flow Instance Details
+      clear-cache: RP,8,RIR
+      values: 
+        p8_prcs_id: '&P8_PRCS_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: ADD_PROCESS_VARIABLE ========================
+  id: 5976915633464468
+  identification: 
+    button-name: ADD_PROCESS_VARIABLE
+    label: Set Process Variable
+
+  layout: 
+    sequence: 20
+    region: Variables # 8392311025345610
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    css-classes: 
+    - js-hide-no-prcs
+    - js-actionButton
+    icon: fa-plus
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    custom-attributes: 
+    - data-action="add-process-variable"
+    - data-gateway-route="false"
+
+  server-side-condition: 
+    type: Item is in colon delimited list
+    item: P8_PRCS_STATUS
+    list: 'created:running:error'
+
+- # ====== Button: RESET_VARIABLE_IR ===========================
+  id: 5977391209464468
+  identification: 
+    button-name: RESET_VARIABLE_IR
+    label: Reset
+
+  layout: 
+    sequence: 30
+    region: Variables # 8392311025345610
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--iconLeft
+    icon: fa-undo-alt
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:RP,8,RIR:P8_PRCS_ID:&P8_PRCS_ID.'
+      page: 8 # Flow Instance Details
+      clear-cache: RP,8,RIR
+      values: 
+        p8_prcs_id: '&P8_PRCS_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: ADD_GATEWAY_ROUTE ===========================
+  id: 5977760271464469
+  identification: 
+    button-name: ADD_GATEWAY_ROUTE
+    label: Set Gateway Route
+
+  layout: 
+    sequence: 10
+    region: Variables # 8392311025345610
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-hide-no-prcs
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    custom-attributes: 
+    - data-action="add-process-variable"
+    - data-gateway-route="true"
+
+  server-side-condition: 
+    type: Item is in colon delimited list
+    item: P8_PRCS_STATUS
+    list: 'created:running:error'
+
+- # ====== Button: ACTION_MENU =================================
+  id: 5978892614464469
+  identification: 
+    button-name: ACTION_MENU
+    label: Action Menu
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 5681179787037011
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-menuButton
+    icon: fa-bars
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    custom-attributes: 
+    - data-menu="actions_menu"
+    - data-prcs="&P8_PRCS_ID."
+    - data-dgrm="&P8_PRCS_DGRM_ID."
+    - data-name="&P8_PRCS_NAME."
+
+- # ====== Button: RESERVE_STEP ================================
+  id: 5981427830464471
+  identification: 
+    button-name: RESERVE_STEP
+    label: Reserve
+
+  layout: 
+    sequence: 10
+    region: Reserve Step # 8391710661345604
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: reserve-step-btn
+    custom-attributes: 
+    - data-action=""
+    - data-prcs=""
+    - data-sbfl=""
+    - data-no-update="true"
+
+- # ====== Button: SAVE_PROV_VAR ===============================
+  id: 5982517441464472
+  identification: 
+    button-name: SAVE_PROV_VAR
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: EDIT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    css-classes: 
+    - js-actionButton
+    icon: fa-save
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: save-prov-var-btn
+    custom-attributes: 
+    - data-action="update-process-variable"
+    - data-gateway-route="false"
+
+- # ====== Button: ADD_PROV_VAR ================================
+  id: 5982997862464473
+  identification: 
+    button-name: ADD_PROV_VAR
+    label: Add
+
+  layout: 
+    sequence: 10
+    region: Add/Edit Process Variable # 8394514514345632
+    slot: CREATE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    css-classes: 
+    - js-actionButton
+    icon: fa-plus
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: add-prov-var-btn
+    custom-attributes: 
+    - data-action="add-process-variable"
+    - data-gateway-route="false"
+
+- # ====== Button: SHOW_HISTORY ================================
+  id: 6431406612417624
+  identification: 
+    button-name: SHOW_HISTORY
+    label: Show History
+
+  layout: 
+    sequence: 10
+    region: Breadcrumb # 5681179787037011
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    css-classes: 
+    - js-actionButton
+    icon: fa-info-circle-o
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    custom-attributes: 
+    - data-action="flow-instance-audit"
+    - data-prcs="&P8_PRCS_ID."
+    - data-name="&P8_PRCS_NAME."
+
+- # ====== Button: CANCEL ======================================
+  id: 7067605023119721
+  identification: 
+    button-name: CANCEL
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Instance Action # 13245209048329626
+    slot: PREVIOUS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: CONFIRM =====================================
+  id: 7068041536119722
+  identification: 
+    button-name: CONFIRM
+    label: Confirm
+
+  layout: 
+    sequence: 20
+    region: Instance Action # 13245209048329626
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: confirm-btn
+    custom-attributes: 
+    - data-action=""
+    - data-prcs=""
+    - data-sbfl=""
+    - data-key=""
+    - data-no-update="true"
+
+- # ====== Button: RESCHEDULE_TIMER ============================
+  id: 62707677337232546
+  identification: 
+    button-name: RESCHEDULE_TIMER
+    label: Reschedule Timer
+
+  layout: 
+    sequence: 10
+    region: Reschedule Timer # 62707563129232545
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: reschedule-timer-btn
+    custom-attributes: 
+    - data-action=""
+    - data-prcs=""
+    - data-sbfl=""
+    - data-key=""
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click on Cancel Reposition Subflow ==
+  id: 20109153623507
+  identification: 
+    name: Click on Cancel Reposition Subflow
+
+  execution: 
+    sequence: 390
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL_REPOSITION_SBFL # 20052699623506
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 20269567623508
+    identification: 
+      name: Close Region
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Reposition Subflow Action # 19520830623501
+
+    execution: 
+      sequence: 10
+      event: Click on Cancel Reposition Subflow # 20109153623507
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Receive Message ==============
+  id: 3511206012851725
+  identification: 
+    name: Cancel Receive Message
+
+  execution: 
+    sequence: 370
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL_RECEIVE_MESSAGE # 3511139234851724
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 3511347587851726
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Receive Message # 3510821361851721
+
+    execution: 
+      sequence: 10
+      event: Cancel Receive Message # 3511206012851725
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Change Prob Var Timestamp With Tim
+  id: 3748125304530345
+  identification: 
+    name: On Change Prob Var Timestamp With Time Zone Value
+
+  execution: 
+    sequence: 380
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_PROV_VAR_TSTZ
+
+  actions: 
+  - # ====== Action: Disable =====================================
+    id: 3748214983530346
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: ADD_PROV_VAR # 5982997862464473
+
+    execution: 
+      sequence: 10
+      event: On Change Prob Var Timestamp With Time Zone Value # 3748125304530345
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Disable =====================================
+    id: 3748394460530347
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: SAVE_PROV_VAR # 5982517441464472
+
+    execution: 
+      sequence: 20
+      event: On Change Prob Var Timestamp With Time Zone Value # 3748125304530345
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Set Value ===================================
+    id: 3748406279530348
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        flow_engine_app_api.check_is_tstz(
+          pi_value => :P8_PROV_VAR_TSTZ
+        , pi_format_mask => flow_constants_pkg.gc_prov_default_tstz_format
+        )
+      items-to-submit: 
+      - P8_PROV_VAR_TSTZ
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_PROV_VAR_TSTZ_VALID
+
+    execution: 
+      sequence: 30
+      event: On Change Prob Var Timestamp With Time Zone Value # 3748125304530345
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Enable ======================================
+    id: 3748529700530349
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: ADD_PROV_VAR # 5982997862464473
+
+    execution: 
+      sequence: 40
+      event: On Change Prob Var Timestamp With Time Zone Value # 3748125304530345
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Enable ======================================
+    id: 3748626209530350
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: SAVE_PROV_VAR # 5982517441464472
+
+    execution: 
+      sequence: 50
+      event: On Change Prob Var Timestamp With Time Zone Value # 3748125304530345
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Subflows Report refreshed - Mark curr
+  id: 5996686614464519
+  identification: 
+    name: Subflows Report refreshed - Mark currently running
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: Subflows # 166753193485966384
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 5997186082464520
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var runningSelector = "button.clickable-action";
+        var processRows = apex.jQuery( "#subflows tr" );
+        
+        processRows.has( runningSelector ).addClass( "flow-running" );
+        
+        apex.jQuery(".subflow-actions-btn").each(function(){
+          var sbflStatus = apex.jQuery(this).data("status");
+          apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" ? false : true );
+        });
+        
+        $("td[headers*=subflow_status_col]").each(function() {
+            var className = 'ffa-color--' + $(this).text();
+            $(this).addClass(className);
+          }
+        );
+        
+        $("th.a-IRR-header").each(function(i){
+            if ( apex.jQuery(this).attr("id") === undefined) {
+              apex.jQuery(this).find('input[type="checkbox"]').hide();
+              apex.jQuery(this).find('button#subflow-header-action').hide();
+            } else {
+              apex.jQuery(this).addClass("u-alignMiddle");
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Subflows Report refreshed - Mark currently running # 5996686614464519
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Select all connection ===============
+  id: 5998415156464520
+  identification: 
+    name: Select all connection
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SELECT # 5955186680464411
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 5998953651464521
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.jQuery("#P8_CONNECTION").find('input[type="checkbox"]').toArray().forEach(function(e) {
+          e.checked = true;
+        });
+
+    execution: 
+      sequence: 10
+      event: Select all connection # 5998415156464520
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 5999457497464521
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: SELECT # 5955186680464411
+
+    execution: 
+      sequence: 20
+      event: Select all connection # 5998415156464520
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 5999918515464521
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: UNSELECT # 5954728604464411
+
+    execution: 
+      sequence: 30
+      event: Select all connection # 5998415156464520
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Unselect all connection =============
+  id: 6000312821464522
+  identification: 
+    name: Unselect all connection
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UNSELECT # 5954728604464411
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6000816148464522
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.jQuery("#P8_CONNECTION").find('input[type="checkbox"]').toArray().forEach(function(e) {
+          e.checked = false;
+        });
+
+    execution: 
+      sequence: 10
+      event: Unselect all connection # 6000312821464522
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 6001349512464522
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: UNSELECT # 5954728604464411
+
+    execution: 
+      sequence: 20
+      event: Unselect all connection # 6000312821464522
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 6001834654464522
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: SELECT # 5955186680464411
+
+    execution: 
+      sequence: 30
+      event: Unselect all connection # 6000312821464522
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Display Button Based on Gateway Type 
+  id: 6002207343464522
+  identification: 
+    name: Display Button Based on Gateway Type
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_SELECT_OPTION
+
+  client-side-condition: 
+    type: Item = Value
+    item: P8_SELECT_OPTION
+    value: multi
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 6002775114464523
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: SELECT # 5955186680464411
+
+    execution: 
+      sequence: 20
+      event: Display Button Based on Gateway Type # 6002207343464522
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 6003299003464523
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: SELECT # 5955186680464411
+
+    execution: 
+      sequence: 20
+      event: Display Button Based on Gateway Type # 6002207343464522
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Element clicked =====================
+  id: 6004548451464524
+  identification: 
+    name: Element clicked
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click
+    selection-type: Region
+    region: Flow Viewer # 6133652177393567089
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: clickCondition($v('P8_OBJT_LIST'), this.data);
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6005023363464524
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: openObjectDialog($v('P8_OBJT_BPMN_ID'), $v('P8_OBJT_NAME'),8);
+
+    execution: 
+      sequence: 40
+      event: Element clicked # 6004548451464524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 6005591668464524
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.element.id
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_OBJT_BPMN_ID
+
+    execution: 
+      sequence: 10
+      event: Element clicked # 6004548451464524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 6006044910464525
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P8_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_name(
+            p_objt_bpmn_id => :P8_OBJT_BPMN_ID
+          , p_prdg_id => :P8_LOADED_DIAGRAM
+        );
+        end if;
+      items-to-submit: 
+      - P8_OBJT_BPMN_ID
+      - P8_LOADED_DIAGRAM
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_OBJT_NAME
+
+    execution: 
+      sequence: 20
+      event: Element clicked # 6004548451464524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Change Display Setting ===========
+  id: 6007809031464526
+  identification: 
+    name: On Change Display Setting
+
+  execution: 
+    sequence: 260
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_DISPLAY_SETTING
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 6008377992464526
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        flow_engine_app_api.set_viewport(:P8_DISPLAY_SETTING);
+        
+      items-to-submit: 
+      - P8_DISPLAY_SETTING
+
+    execution: 
+      sequence: 10
+      event: On Change Display Setting # 6007809031464526
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 6008810667464526
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Subflows # 166753193485966384
+
+    execution: 
+      sequence: 20
+      event: On Change Display Setting # 6007809031464526
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Viewer Diagram Loaded ===============
+  id: 6011636562464528
+  identification: 
+    name: Viewer Diagram Loaded
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded
+    selection-type: Region
+    region: Flow Viewer # 6133652177393567089
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 6006917102464525
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P8_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_list(p_prdg_id => :P8_LOADED_DIAGRAM);
+        end if;
+      items-to-submit: 
+      - P8_LOADED_DIAGRAM
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_OBJT_LIST
+
+    execution: 
+      sequence: 60
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6012103981464528
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: initViewer($v('P8_PRCS_ID'), $v('P8_PRCS_NAME'), $v('P8_DISPLAY_SETTING'));
+
+    execution: 
+      sequence: 20
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6180462025209949
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: changeCursor($v('P8_OBJT_LIST'));
+
+    execution: 
+      sequence: 100
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 44803077743176612
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.diagramIdentifier
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_LOADED_DIAGRAM
+
+    execution: 
+      sequence: 30
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 55104290877434706
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.callingDiagramIdentifier
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_CALLING_DIAGRAM
+
+    execution: 
+      sequence: 40
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 55104339991434707
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.callingObjectId
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_CALLING_OBJT_ID
+
+    execution: 
+      sequence: 50
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 55104408483434708
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        select prdg_diagram_level
+        from FLOW_INSTANCE_DIAGRAMS
+        where prdg_id = :P8_LOADED_DIAGRAM
+        and prdg_diagram_level is not null
+      items-to-submit: 
+      - P8_LOADED_DIAGRAM
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_DIAGRAM_LEVEL
+
+    execution: 
+      sequence: 70
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 55104910048434713
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Variables # 8392311025345610
+
+    execution: 
+      sequence: 80
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 55105202562434716
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Subflows # 166753193485966384
+
+    execution: 
+      sequence: 90
+      event: Viewer Diagram Loaded # 6011636562464528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Connection Select Option  =======
+  id: 6014453052464529
+  identification: 
+    name: 'Set Connection Select Option '
+
+  execution: 
+    sequence: 190
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_GATEWAY
+
+  client-side-condition: 
+    type: Item is not null
+    item: P8_GATEWAY
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 6014962408464530
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        flow_engine_app_api.get_connection_select_option(
+          pi_gateway => :P8_GATEWAY
+        , pi_prdg_id => :P8_PRDG_ID
+        )
+      items-to-submit: 
+      - P8_GATEWAY
+      - P8_PRDG_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_SELECT_OPTION
+
+    execution: 
+      sequence: 10
+      event: 'Set Connection Select Option ' # 6014453052464529
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 55107869454434742
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        flow_engine_app_api.get_scope(
+          pi_gateway => :P8_GATEWAY
+        , pi_prdg_id => :P8_PRDG_ID
+        )
+      items-to-submit: 
+      - P8_GATEWAY
+      - P8_PRDG_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_PROV_SCOPE
+
+    execution: 
+      sequence: 20
+      event: 'Set Connection Select Option ' # 6014453052464529
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change check-all-subflows ===========
+  id: 6016280779464530
+  identification: 
+    name: Change check-all-subflows
+
+  execution: 
+    sequence: 280
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: jQuery Selector
+    jquery-selector: '#check-all-subflows'
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6016777800464530
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($('#subflows #check-all-subflows' ).is(':checked') ) {
+              $('#subflows input[type=checkbox][name=f02]').prop('checked',true);
+             } else {
+             $('#subflows input[type=checkbox][name=f02]').prop('checked',false);
+         } 
+
+    execution: 
+      sequence: 10
+      event: Change check-all-subflows # 6016280779464530
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Change Variable Type =============
+  id: 6017148201464531
+  identification: 
+    name: On Change Variable Type
+
+  execution: 
+    sequence: 300
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_PROV_VAR_TYPE
+
+  client-side-condition: 
+    type: Item is not null
+    item: P8_PROV_VAR_TYPE
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6017642167464531
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var varType = apex.item("P8_PROV_VAR_TYPE").getValue();
+        apex.item("P8_PROV_VAR_VC2").hide();
+        apex.item("P8_PROV_VAR_NUM").hide();
+        apex.item("P8_PROV_VAR_DATE").hide();
+        apex.item("P8_PROV_VAR_TSTZ").hide();
+        apex.item("P8_PROV_VAR_CLOB").hide();
+        switch(varType) {
+            case "VARCHAR2" : 
+                apex.item("P8_PROV_VAR_VC2").show();
+                break;
+            case "NUMBER":
+                apex.item("P8_PROV_VAR_NUM").show();
+                break;
+            case "DATE":
+                apex.item("P8_PROV_VAR_DATE").show();
+                break;
+            case "TIMESTAMP WITH TIME ZONE":
+                apex.item("P8_PROV_VAR_TSTZ").show();
+                break;
+            case "CLOB":
+                apex.item("P8_PROV_VAR_CLOB").show();
+                break;
+            case "JSON":
+                apex.item("P8_PROV_VAR_CLOB").show();
+                break;    
+            default:
+                break;
+        }
+        
+
+    execution: 
+      sequence: 20
+      event: On Change Variable Type # 6017148201464531
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Variables Report Refreshed ==========
+  id: 6027025508464536
+  identification: 
+    name: Variables Report Refreshed
+
+  execution: 
+    sequence: 310
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: Variables # 8392311025345610
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6027533621464536
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("th.a-IRR-header").each(function(i){
+            if ( apex.jQuery(this).attr("id") === undefined) {
+              apex.jQuery(this).find('input[type="checkbox"]').hide();
+              apex.jQuery(this).find('button#variables_ir-header-action').hide();
+            } else {
+              apex.jQuery(this).addClass("u-alignMiddle");
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Variables Report Refreshed # 6027025508464536
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On change Prov Var Date Value =======
+  id: 6429724013417607
+  identification: 
+    name: On change Prov Var Date Value
+
+  execution: 
+    sequence: 320
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_PROV_VAR_DATE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 6429852264417608
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        flow_engine_app_api.check_is_date(
+          pi_value => :P8_PROV_VAR_DATE
+        , pi_format_mask => :APP_DATE_TIME_FORMAT
+        )
+      items-to-submit: 
+      - P8_PROV_VAR_DATE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_PROV_VAR_DATE_VALID
+
+    execution: 
+      sequence: 50
+      event: On change Prov Var Date Value # 6429724013417607
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Disable =====================================
+    id: 6430356385417613
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: ADD_PROV_VAR # 5982997862464473
+
+    execution: 
+      sequence: 10
+      event: On change Prov Var Date Value # 6429724013417607
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Disable =====================================
+    id: 6430410242417614
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: SAVE_PROV_VAR # 5982517441464472
+
+    execution: 
+      sequence: 30
+      event: On change Prov Var Date Value # 6429724013417607
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Enable ======================================
+    id: 6430596040417615
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: SAVE_PROV_VAR # 5982517441464472
+
+    execution: 
+      sequence: 80
+      event: On change Prov Var Date Value # 6429724013417607
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Enable ======================================
+    id: 6430710216417617
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: ADD_PROV_VAR # 5982997862464473
+
+    execution: 
+      sequence: 60
+      event: On change Prov Var Date Value # 6429724013417607
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: On Change Prov Var Num Value ========
+  id: 6430047364417610
+  identification: 
+    name: On Change Prov Var Num Value
+
+  execution: 
+    sequence: 330
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_PROV_VAR_NUM
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 6430261684417612
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        flow_engine_app_api.check_is_number(
+          pi_value => :P8_PROV_VAR_NUM
+        )
+      items-to-submit: 
+      - P8_PROV_VAR_NUM
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_PROV_VAR_NUM_VALID
+
+    execution: 
+      sequence: 30
+      event: On Change Prov Var Num Value # 6430047364417610
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Disable =====================================
+    id: 6430812751417618
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: ADD_PROV_VAR # 5982997862464473
+
+    execution: 
+      sequence: 10
+      event: On Change Prov Var Num Value # 6430047364417610
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Disable =====================================
+    id: 6430913570417619
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: SAVE_PROV_VAR # 5982517441464472
+
+    execution: 
+      sequence: 20
+      event: On Change Prov Var Num Value # 6430047364417610
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Enable ======================================
+    id: 6431062033417620
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: ADD_PROV_VAR # 5982997862464473
+
+    execution: 
+      sequence: 40
+      event: On Change Prov Var Num Value # 6430047364417610
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Enable ======================================
+    id: 6431104642417621
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: SAVE_PROV_VAR # 5982517441464472
+
+    execution: 
+      sequence: 50
+      event: On Change Prov Var Num Value # 6430047364417610
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Change check-all-variables ==========
+  id: 6432898825417638
+  identification: 
+    name: Change check-all-variables
+
+  execution: 
+    sequence: 290
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: jQuery Selector
+    jquery-selector: '#check-all-variables'
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6432965813417639
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($('#process-variables #check-all-variables' ).is(':checked') ) {
+              $('#process-variables input[type=checkbox][name=f03]').prop('checked',true);
+             } else {
+             $('#process-variables input[type=checkbox][name=f03]').prop('checked',false);
+         } 
+
+    execution: 
+      sequence: 10
+      event: Change check-all-variables # 6432898825417638
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click on Cancel Dialog ==============
+  id: 6433167803417641
+  identification: 
+    name: Click on Cancel Dialog
+
+  execution: 
+    sequence: 340
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL # 7067605023119721
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 6433270075417642
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Instance Action # 13245209048329626
+
+    execution: 
+      sequence: 10
+      event: Click on Cancel Dialog # 6433167803417641
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Instances Events Report Refreshed ===
+  id: 8324051646815474
+  identification: 
+    name: Instances Events Report Refreshed
+
+  execution: 
+    sequence: 350
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: Instance Events # 29001516138505995
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8324491461815477
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("td[headers*=instance_event_col]").each(function() {
+          var text = $( this ).text();
+          if ( text == "created" || text == "reset" || text == "restart step") {
+            $( this ).addClass( "ffa-color--created" );
+          } else if ( text == "completed" ) {
+            $( this ).addClass( "ffa-color--completed" );
+          } else if ( text == "started" || text == "running" ) {
+            $( this ).addClass( "ffa-color--running" );
+          } else if ( text == "terminated" ) {
+            $( this ).addClass( "ffa-color--terminated" );
+          } else if ( text == "error" ) {
+            $( this ).addClass( "ffa-color--error" );
+          }
+        });
+        
+        Prism.highlightAll();
+
+    execution: 
+      sequence: 10
+      event: Instances Events Report Refreshed # 8324051646815474
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Change Set Now ======================
+  id: 62707920017232549
+  identification: 
+    name: Change Set Now
+
+  execution: 
+    sequence: 360
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P8_RESCHEDULE_TIMER_NOW
+
+  client-side-condition: 
+    type: Item = Value
+    item: P8_RESCHEDULE_TIMER_NOW
+    value: Y
+
+  actions: 
+  - # ====== Action: Hide ========================================
+    id: 62708058684232550
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_RESCHEDULE_TIMER_AT
+
+    execution: 
+      sequence: 10
+      event: Change Set Now # 62707920017232549
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Show ========================================
+    id: 73479552347995801
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P8_RESCHEDULE_TIMER_AT
+
+    execution: 
+      sequence: 10
+      event: Change Set Now # 62707920017232549
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+processes: 
+- # ====== Process: Donwload Instance Summary ==================
+  id: 3509125998851704
+  identification: 
+    name: Donwload Instance Summary
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      begin
+          flow_engine_app_api.download_instance_summary(
+              pi_prcs_id => :P8_PRCS_ID
+          );
+      end;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: INSTANCE_SUMMARY
+
+- # ====== Process: Step Timers ================================
+  id: 3510761242851720
+  identification: 
+    name: Step Timers
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      begin
+          flow_api_pkg.step_timers;
+      end;
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: STEP_TIMERS
+
+- # ====== Process: Initialize form Flow Instance Detail =======
+  id: 5681318530037013
+  identification: 
+    name: Initialize form Flow Instance Detail
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Flow Instance # 5681250057037012
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_VARIABLE ===============================
+  id: 5986975396464506
+  identification: 
+    name: GET_VARIABLE
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: flow_engine_app_api.pass_variable;
+
+  execution: 
+    sequence: 40
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_URL ====================================
+  id: 5987345331464507
+  identification: 
+    name: GET_URL
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.get_url_p13(
+        pi_prcs_id => :P8_PRCS_ID 
+      , pi_prdg_id => :P8_LOADED_DIAGRAM
+      , pi_objt_id => apex_application.g_x01
+      , pi_title => apex_application.g_x02
+      );
+
+  execution: 
+    sequence: 30
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Set Viewport for BPMN-Viewer ===============
+  id: 5987781654464507
+  identification: 
+    name: Set Viewport for BPMN-Viewer
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: flow_engine_app_api.add_viewport_script('P8_DISPLAY_SETTING');
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+

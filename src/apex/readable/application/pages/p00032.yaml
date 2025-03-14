@@ -1,0 +1,924 @@
+---
+# ====== Page: Configuration - Logging =======================
+id: 32
+identification: 
+  name: Configuration - Logging
+  alias: CONFIGURATION-LOGGING
+  title: Configuration - Logging
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_IMAGES#lib/prismjs/js/prism.js'
+
+css: 
+  inline: |
+    span.t-Form-inlineHelp ul li {
+        font-size: 1.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: JSON Configuration ==========================
+  id: 7537546705451722
+  identification: 
+    name: JSON Configuration
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select json_query( (select flow_engine_util.get_config_value(
+                 p_config_key => 'logging_bpmn_location'
+               , p_default_value => null
+             ) from dual), '$' returning varchar2(4000) pretty) as d
+      from dual
+
+  layout: 
+    sequence: 30
+    parent-region: Logging # 11160422865040074
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: BPMN Location
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: None
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: D ===========================================
+    id: 3791697231921401
+    identification: 
+      column-name: D
+      type: Plain Text
+
+    heading: 
+      heading: D
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <pre><code class="language-json">#D#</code></pre>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Logging =====================================
+  id: 11160422865040074
+  identification: 
+    name: Logging
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Breadcrumb ==================================
+  id: 20892351125255012
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+page-items: 
+- # ====== Page Item: P32_LOGGING_LANGUAGE =====================
+  id: 3133819152214452
+  identification: 
+    name: P32_LOGGING_LANGUAGE
+    type: Radio Group
+
+  label: 
+    label: Language
+    alignment: Left
+
+  settings: 
+    number-of-columns: 12
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 10
+    region: Logging # 11160422865040074
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select distinct 
+          fmsg_lang d
+        , fmsg_lang r
+      from flow_messages
+      order by fmsg_lang
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: Language used to display error messages and log events.
+
+- # ====== Page Item: P32_LOGGING_LEVEL ========================
+  id: 3134229968214453
+  identification: 
+    name: P32_LOGGING_LEVEL
+    type: Radio Group
+
+  label: 
+    label: Level
+    alignment: Left
+
+  settings: 
+    number-of-columns: 4
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 20
+    region: Logging # 11160422865040074
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2:off;off,standard;standard,secure;secure,full;full'
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: |
+      <ul>
+          <li><strong>off</strong> - logging is disabled	</li>
+          <li><strong>standard</strong> (default) - logs instance events</li>
+          <li><strong>secure</strong> - logs model events and instance events	</li>
+          <li><strong>full</strong> - logs model, instance and process variable events		</li>
+      </ul>
+
+- # ====== Page Item: P32_LOGGING_HIDE_USERID ==================
+  id: 3134666000214454
+  identification: 
+    name: P32_LOGGING_HIDE_USERID
+    type: Switch
+
+  label: 
+    label: Hide User ID
+    alignment: Left
+
+  settings: 
+    use-defaults: false
+    on-value: true
+    on-label: Yes
+    off-value: false
+    off-label: No
+
+  layout: 
+    sequence: 30
+    region: Logging # 11160422865040074
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: |
+      <ul>
+          <li><strong>enabled</strong> - does not capture user information about the step	</li>
+          <li><strong>disabled</strong> (default) - captures userid of the process step as known to the Flow Engine	</li>
+      </ul>
+
+- # ====== Page Item: P32_LOGGING_MESSAGE_FLOW_RECD ============
+  id: 3136262120214455
+  identification: 
+    name: P32_LOGGING_MESSAGE_FLOW_RECD
+    type: Switch
+
+  label: 
+    label: Log Inbound MessageFlow
+    alignment: Left
+
+  settings: 
+    use-defaults: false
+    on-value: true
+    on-label: Yes
+    off-value: false
+    off-label: No
+
+  layout: 
+    sequence: 60
+    region: Logging # 11160422865040074
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_LOGGING_RETAIN_MSG_FLOW ==============
+  id: 3136630459214455
+  identification: 
+    name: P32_LOGGING_RETAIN_MSG_FLOW
+    type: Text Field
+
+  label: 
+    label: Message Flow Log Retention (Days)
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Logging # 11160422865040074
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_LOGGING_RETAIN_LOGS ==================
+  id: 3325454520527225
+  identification: 
+    name: P32_LOGGING_RETAIN_LOGS
+    type: Text Field
+
+  label: 
+    label: Retain Logs (Days after Process Instance Completion)
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Logging # 11160422865040074
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: true
+    label-1: 1 Year
+    value-1: 365
+    label-2: 9 Months
+    value-2: 273
+    label-3: 6 Months
+    value-3: 182
+    label-4: 3 Months
+    value-4: 90
+    label-5: 30 Days
+    value-5: 30
+    label-6: 14 Days
+    value-6: 14
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SAVE ========================================
+  id: 3138033307214457
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: LEGACY_ORPHAN_COMPONENTS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Never
+
+- # ====== Button: SAVE ========================================
+  id: 3307218597301243
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 20892351125255012
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: EDIT_CONFIGURATION ==========================
+  id: 3791980243921403
+  identification: 
+    button-name: EDIT_CONFIGURATION
+    label: Edit Configuration
+
+  layout: 
+    sequence: 10
+    region: JSON Configuration # 7537546705451722
+    slot: BOTTOM
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Left
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--link
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:38:&SESSION.::&DEBUG.:38:P38_CFIG_KEY:logging_bpmn_location'
+      page: 38 # Configuration - Location
+      clear-cache: 38
+      values: 
+        p38_cfig_key: logging_bpmn_location
+
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: On dialog close =====================
+  id: 3792574755923554
+  identification: 
+    name: On dialog close
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: EDIT_CONFIGURATION # 3791980243921403
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 3792909625923555
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: JSON Configuration # 7537546705451722
+
+    execution: 
+      sequence: 10
+      event: On dialog close # 3792574755923554
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Refresh JSON =====================
+  id: 3795925272966657
+  identification: 
+    name: On Refresh JSON
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: JSON Configuration # 7537546705451722
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 3796393337966657
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: Prism.highlightAll();
+
+    execution: 
+      sequence: 10
+      event: On Refresh JSON # 3795925272966657
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P32_LOGGING_LANGUAGE ===================
+  id: 3146072745214471
+  identification: 
+    item-name: P32_LOGGING_LANGUAGE
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_logging_language
+               , p_default_value => flow_constants_pkg.gc_config_default_logging_language
+             );
+
+- # ====== Computation: P32_LOGGING_LEVEL ======================
+  id: 3146443044214471
+  identification: 
+    item-name: P32_LOGGING_LEVEL
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>  flow_constants_pkg.gc_config_logging_level
+               , p_default_value => flow_constants_pkg.gc_config_default_logging_level
+             );
+
+- # ====== Computation: P32_LOGGING_HIDE_USERID ================
+  id: 3146858608214471
+  identification: 
+    item-name: P32_LOGGING_HIDE_USERID
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_logging_level
+               , p_default_value => flow_constants_pkg.gc_config_default_logging_level
+             );
+
+- # ====== Computation: P32_LOGGING_RETAIN_LOGS ================
+  id: 3286665275239507
+  identification: 
+    item-name: P32_LOGGING_RETAIN_LOGS
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_logging_retain_logs
+               , p_default_value => flow_constants_pkg.gc_config_default_log_retain_logs
+             );
+
+- # ====== Computation: P32_LOGGING_MESSAGE_FLOW_RECD ==========
+  id: 3286988755239510
+  identification: 
+    item-name: P32_LOGGING_MESSAGE_FLOW_RECD
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd
+               , p_default_value => flow_constants_pkg.gc_config_default_logging_recd_msg
+             );
+
+- # ====== Computation: P32_LOGGING_RETAIN_MSG_FLOW ============
+  id: 3287265563239513
+  identification: 
+    item-name: P32_LOGGING_RETAIN_MSG_FLOW
+
+  execution: 
+    sequence: 70
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow
+               , p_default_value => flow_constants_pkg.gc_config_default_log_retain_msg_flow_logs
+             );
+
+processes: 
+- # ====== Process: Set Settings ===============================
+  id: 3150354905214473
+  identification: 
+    name: Set Settings
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.set_logging_settings(
+        pi_logging_language          => :P32_LOGGING_LANGUAGE
+      , pi_logging_level             => :P32_LOGGING_LEVEL
+      , pi_logging_hide_userid       => :P32_LOGGING_HIDE_USERID
+      , pi_logging_retain_logs       => :P32_LOGGING_RETAIN_LOGS
+      , pi_logging_message_flow_recd => :P32_LOGGING_MESSAGE_FLOW_RECD
+      , pi_logging_retain_msg_flow   => :P32_LOGGING_RETAIN_MSG_FLOW
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Changes saved.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    when-button-pressed: SAVE # 3138033307214457
+

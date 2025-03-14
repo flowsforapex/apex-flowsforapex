@@ -4,8 +4,8 @@ begin
 --     PLUGIN: COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -16,12 +16,12 @@ wwv_flow_imp_shared.create_plugin(
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance'
-,p_supported_ui_types=>'DESKTOP'
 ,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC:APEX_APPL_AUTOMATION_ACTIONS'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('PROCESS TYPE','COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'),'')
 ,p_api_version=>2
 ,p_execution_function=>'flow_plugin_manage_instance.execution'
 ,p_substitute_attributes=>true
+,p_version_scn=>1760506622
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
 ,p_version_identifier=>'24.1'
@@ -539,6 +539,9 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'from dual;'))
 ,p_help_text=>'SQL query that returns the array containing the instance variables.'
 );
+end;
+/
+begin
 wwv_flow_imp.component_end;
 end;
 /

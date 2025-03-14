@@ -4,8 +4,8 @@ begin
 --     PAGE: 00039
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>39
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Configuration - License'
 ,p_alias=>'CONFIGURATION-LICENSE'
 ,p_step_title=>'Configuration - License'
@@ -24,8 +23,6 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_component_map=>'17'
-,p_last_updated_by=>'RALLEN2010@GMAIL.COM'
-,p_last_upd_yyyymmddhh24miss=>'20241002141934'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(20088203370380088)
@@ -34,9 +31,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(12495582446800880234)
 ,p_plug_display_sequence=>40
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(39018437829156626)
@@ -50,7 +47,6 @@ wwv_flow_imp_page.create_page_plug(
 ,p_menu_id=>wwv_flow_imp.id(12495636486941880396)
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_imp.id(12495520300515880126)
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(11480685064804664)

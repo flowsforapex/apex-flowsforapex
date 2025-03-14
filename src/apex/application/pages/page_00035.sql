@@ -4,8 +4,8 @@ begin
 --     PAGE: 00035
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>35
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Configuration - Engine'
 ,p_alias=>'CONFIGURATION-ENGINE'
 ,p_step_title=>'Configuration - Engine'
@@ -24,8 +23,6 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_component_map=>'16'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(24202901353579047)
@@ -39,7 +36,6 @@ wwv_flow_imp_page.create_page_plug(
 ,p_menu_id=>wwv_flow_imp.id(12495636486941880396)
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_imp.id(12495520300515880126)
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(65920170325464220)
@@ -48,9 +44,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(12495582446800880234)
 ,p_plug_display_sequence=>30
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(3221271791231712)
@@ -61,6 +57,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(12495521767510880126)
 ,p_button_image_alt=>'REST Config'
 ,p_button_position=>'LEGACY_ORPHAN_COMPONENTS'
+,p_button_alignment=>'RIGHT'
 ,p_button_redirect_url=>'f?p=&APP_ID.:30:&SESSION.::&DEBUG.:RP,30::'
 ,p_button_condition_type=>'NEVER'
 );
@@ -74,6 +71,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Apply Changes'
 ,p_button_position=>'LEGACY_ORPHAN_COMPONENTS'
+,p_button_alignment=>'RIGHT'
 ,p_button_condition_type=>'NEVER'
 ,p_icon_css_classes=>'fa-save'
 );
@@ -88,6 +86,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Apply Changes'
 ,p_button_position=>'NEXT'
+,p_button_alignment=>'RIGHT'
 ,p_icon_css_classes=>'fa-save'
 );
 wwv_flow_imp_page.create_page_item(
@@ -162,6 +161,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_inline_help_text=>'The application ID of one of your APEX apps that will be provided to create a session'
 ,p_encrypt_session_state_yn=>'N'
 ,p_attribute_03=>'right'
+,p_attribute_04=>'text'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(3223533554231713)
@@ -298,6 +298,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when_button_id=>wwv_flow_imp.id(3220853426231712)
 ,p_process_success_message=>'Changes saved.'
+,p_internal_uid=>3233135486231716
 );
 wwv_flow_imp.component_end;
 end;

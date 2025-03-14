@@ -10,20 +10,6 @@
 PROMPT >> Schema Changes for Rewind and Event Logging Feature
 PROMPT >> ---------------------------------------------------
 
-create table flow_step_events
-( lgse_prcs_id              NUMBER NOT NULL
-, lgse_step_key             VARCHAR2(20 CHAR) NOT NULL
-, lgse_sbfl_id              NUMBER NOT NULL
-, lgse_dgrm_id              NUMBER NOT NULL 
-, lgse_objt_bpmn_id         VARCHAR2(50 CHAR) NOT NULL
-, lgse_event_type           VARCHAR2(20 CHAR) NOT NULL
-, lgse_timestamp            TIMESTAMP WITH TIME ZONE NOT NULL
-, lgse_user                 VARCHAR2(255 CHAR)
-, lgse_comment              VARCHAR2(2000 CHAR)
-);
-
-create index flow_lgse_ix on flow_step_events (lgse_prcs_id, lgse_objt_bpmn_id );
-
 declare
   v_column_exists          number := 0; 
 begin
@@ -78,7 +64,7 @@ begin
       execute immediate 'alter table flow_processes 
                           add ( prcs_was_altered varchar2(1)
                               , constraint prcs_was_altered_ck   check (prcs_was_altered in (''Y'', ''N''))
-                              , prcs_logging_level  NUMBER,
+                              , prcs_logging_level  NUMBER
                               , constraint prcs_logging_level_ck check (prcs_logging_level between 0 and 8)
                               )';
 

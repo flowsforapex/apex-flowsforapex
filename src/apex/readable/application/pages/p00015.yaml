@@ -1,0 +1,434 @@
+---
+# ====== Page: Daily Statistics ==============================
+id: 15
+identification: 
+  name: Daily Statistics
+  alias: DAILY-STATISTICS
+  title: Daily Statistics
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Breadcrumb ==================================
+  id: 2541571424137177
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Processes Started On &P15_DATE. =============
+  id: 2542117955137179
+  identification: 
+    name: Processes Started On &P15_DATE.
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select stpr_dgrm_id, dgrm.dgrm_name "flow name", stpr_created created, stpr_started started, stpr_error error, stpr_completed completed, stpr_terminated terminated, stpr_reset reset
+        from flow_instance_stats stpr
+        join flow_diagrams dgrm
+          on dgrm.dgrm_id = stpr.stpr_dgrm_id
+       where stpr_period = 'DAY'
+         and stpr_period_start  = to_date(:P15_DATE,'YYYY-MM-DD')
+       order by stpr_started desc
+    page-items-to-submit: 
+    - P15_DATE
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 2542556204137179
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Instances
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Started =====================================
+      id: 2142905983493913
+      identification: 
+        name: Started
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: flow name
+        value-aggregation: No Aggregation
+        value: STARTED
+
+      appearance: 
+        color: '#6AAD42'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Errors ======================================
+      id: 2143009590493914
+      identification: 
+        name: Errors
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: flow name
+        value-aggregation: No Aggregation
+        value: ERROR
+
+      appearance: 
+        color: '#D2433B'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Completed ===================================
+      id: 2143160145493915
+      identification: 
+        name: Completed
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: flow name
+        value-aggregation: No Aggregation
+        value: COMPLETED
+
+      appearance: 
+        color: '#8C9EB0'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Terminated ==================================
+      id: 2143222807493916
+      identification: 
+        name: Terminated
+
+      execution: 
+        sequence: 50
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: flow name
+        value-aggregation: No Aggregation
+        value: TERMINATED
+
+      appearance: 
+        color: '#D76A27'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Reset =======================================
+      id: 2143393414493917
+      identification: 
+        name: Reset
+
+      execution: 
+        sequence: 60
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: flow name
+        value-aggregation: No Aggregation
+        value: RESET
+
+      appearance: 
+        color: '#C7C7CC'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Created =====================================
+      id: 2544212410137182
+      identification: 
+        name: Created
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: flow name
+        value-aggregation: No Aggregation
+        value: CREATED
+
+      appearance: 
+        color: '#D9B13B'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 2543039883137181
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 2543649056137182
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+page-items: 
+- # ====== Page Item: P15_DATE =================================
+  id: 2142839389493912
+  identification: 
+    name: P15_DATE
+    type: Text Field
+
+  label: 
+    label: Date
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Processes Started On &P15_DATE. # 2542117955137179
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
