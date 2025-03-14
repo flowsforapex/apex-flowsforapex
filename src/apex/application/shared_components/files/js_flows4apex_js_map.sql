@@ -4,8 +4,8 @@ begin
 --     APP STATIC FILES: 100
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -346,19 +346,6 @@ wwv_flow_imp.g_varchar2_table(331) := '4155724F2C51414151472C4F414330422C5141413
 wwv_flow_imp.g_varchar2_table(332) := '63432C454141597A4C2C4741456C442C49414149304C2C45414151462C4741416742432C45414157394C2C4F4141532C454141492C4D414151384C2C454141612C4941457A4578512C4B41414B32442C4F41414F432C514143522C554143412C43414349';
 wwv_flow_imp.g_varchar2_table(333) := '35422C4941414B754F2C4541434C744F2C4941414B774F2C4541434C70492C554141572C434141432C4941414974442C7142414570422C4341434968422C514141532C53414155324D2C4741456631512C4B41414B75462C57414157442C534141536F4C';
 wwv_flow_imp.g_varchar2_table(334) := '2C4941453742432C53414155222C2266696C65223A22666C6F777334617065782E6A73227D';
-null;
-wwv_flow_imp.component_end;
-end;
-/
-begin
-wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_imp_shared.create_app_static_file(
  p_id=>wwv_flow_imp.id(4704600929146008)
 ,p_file_name=>'js/flows4apex.js.map'
@@ -366,7 +353,6 @@ wwv_flow_imp_shared.create_app_static_file(
 ,p_file_charset=>'utf-8'
 ,p_file_content => wwv_flow_imp.varchar2_to_blob(wwv_flow_imp.g_varchar2_table)
 );
-null;
 wwv_flow_imp.component_end;
 end;
 /

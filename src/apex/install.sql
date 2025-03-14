@@ -2,6 +2,7 @@ prompt --install
 @@application/set_environment.sql
 @@application/delete_application.sql
 @@application/create_application.sql
+@@application/user_interfaces.sql
 @@application/shared_components/navigation/lists/p8_subflow_row_action_menu.sql
 @@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
 @@application/shared_components/navigation/lists/p9_configuration_pages.sql
@@ -18,6 +19,7 @@ prompt --install
 @@application/shared_components/navigation/lists/p10_instance_row_action_menu.sql
 @@application/shared_components/navigation/lists/desktop_navigation_bar.sql
 @@application/shared_components/navigation/lists/desktop_navigation_menu.sql
+@@application/shared_components/navigation/listentry.sql
 @@application/shared_components/files/css_flows4apex_css.sql
 @@application/shared_components/files/js_flows4apex_js.sql
 @@application/shared_components/files/js_flows4apex_js_map.sql
@@ -79,6 +81,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/flow_instance_diagrams_lov.sql
 @@application/shared_components/user_interface/lovs/flow_rest_roles.sql
 @@application/shared_components/user_interface/lovs/flow_simple_form_templates_lov.sql
+@@application/shared_components/user_interface/lovs/logging_levels.sql
 @@application/shared_components/user_interface/lovs/login_remember_username.sql
 @@application/shared_components/user_interface/lovs/p13_object_attributes.sql
 @@application/shared_components/user_interface/lovs/p13_var_exp_set_on.sql
@@ -88,6 +91,7 @@ prompt --install
 @@application/shared_components/user_interface/lovs/p6_mode.sql
 @@application/shared_components/user_interface/lovs/p8_instance_connections_lov.sql
 @@application/shared_components/user_interface/lovs/p8_instance_gateways_lov.sql
+@@application/shared_components/user_interface/lovs/p8_repositionable_steps.sql
 @@application/pages/page_groups.sql
 @@application/comments.sql
 @@application/shared_components/navigation/breadcrumbs/breadcrumb.sql
@@ -106,6 +110,8 @@ prompt --install
 @@application/shared_components/user_interface/templates/button/text.sql
 @@application/shared_components/user_interface/templates/button/icon.sql
 @@application/shared_components/user_interface/templates/region/cards_container.sql
+@@application/shared_components/user_interface/templates/region/search_results_container.sql
+@@application/shared_components/user_interface/templates/region/item_container.sql
 @@application/shared_components/user_interface/templates/region/inline_drawer.sql
 @@application/shared_components/user_interface/templates/region/image.sql
 @@application/shared_components/user_interface/templates/region/wizard_container.sql
@@ -176,13 +182,19 @@ prompt --install
 @@application/shared_components/automations/flows_for_apex_purge_logs.sql
 @@application/shared_components/security/authentications/no_auth.sql
 @@application/shared_components/security/authentications/application_express_authentication.sql
+@@application/shared_components/plugins/template_component/theme_42_avatar.sql
+@@application/shared_components/plugins/template_component/theme_42_badge.sql
+@@application/shared_components/plugins/template_component/theme_42_comments.sql
+@@application/shared_components/plugins/template_component/theme_42_button.sql
+@@application/shared_components/plugins/template_component/theme_42_timeline.sql
+@@application/shared_components/plugins/template_component/theme_42_content_row.sql
+@@application/shared_components/plugins/template_component/theme_42_media_list.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_ins_vars_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_instance_process.sql
 @@application/shared_components/plugins/region_type/com_flows4apex_modeler_region.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_manage_step_process.sql
 @@application/shared_components/plugins/process_type/com_flows4apex_return_to_flows_process.sql
 @@application/shared_components/plugins/region_type/com_flows4apex_viewer_region.sql
-@@application/user_interfaces.sql
 @@application/user_interfaces/combined_files.sql
 @@application/pages/page_00001.sql
 @@application/pages/page_00002.sql

@@ -211,6 +211,7 @@
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_expressions_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_instance_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_step_log_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_step_events_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_variable_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/engine-app/", "name": "flow_p0013_called_diagrams_vw.sql", "add_show_errors": false }

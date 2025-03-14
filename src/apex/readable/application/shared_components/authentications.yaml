@@ -1,0 +1,38 @@
+---
+- # ====== Authentication: No Auth =============================
+  id: 36651913839128043
+  identification: 
+    name: No Auth
+
+  subscription: 
+    version-number: 1760506621
+
+  settings: 
+    type: No Authentication
+
+  login-processing: 
+    switch-in-session: false
+
+  real-application-security: 
+    ras-mode: Disabled
+
+- # ====== Authentication: Application Express Authentication ==
+  id: 12495636783173880401
+  identification: 
+    name: Application Express Authentication
+
+  subscription: 
+    version-number: 1760506621
+
+  settings: 
+    type: Oracle APEX Accounts
+
+  session-not-valid: 
+    redirect-to: Login Page
+
+  login-processing: 
+    switch-in-session: false
+
+  real-application-security: 
+    ras-mode: Disabled
+

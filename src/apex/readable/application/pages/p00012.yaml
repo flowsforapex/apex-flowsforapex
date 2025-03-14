@@ -1,0 +1,516 @@
+---
+# ====== Page: Viewer ========================================
+id: 12
+identification: 
+  name: Viewer
+  alias: VIEWER
+  title: Flow Monitor - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Non-Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+  - ui-dialog--stretch
+  - t-Dialog--noPadding
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Flow Monitor (&P12_PRCS_NAME.) ==============
+  id: 6161598858353963900
+  identification: 
+    name: Flow Monitor (&P12_PRCS_NAME.)
+    type: Flows for APEX - Viewer
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_INSTANCE_DETAILS_VW
+    include-rowid-column: false
+    where-clause: 'prcs_id = :P12_PRCS_ID'
+    page-items-to-submit: 
+    - P12_PRCS_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    css-classes: 
+    - js-react-on-prcs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-monitor
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      diagram-xml: DGRM_CONTENT
+      use-bpmn-colors: true
+      add-highlighting: true
+      current-nodes: ALL_CURRENT
+      completed-nodes: ALL_COMPLETED
+      error-nodes: ALL_ERRORS
+      enable-call-activities: true
+      diagram-identifier: PRDG_ID
+      calling-diagram-identifier: PRDG_PRDG_ID
+      calling-object-id: CALLING_OBJT
+      breadcrumb-text: BREADCRUMB
+      allow-drilldown-on-diagram-level: DRILLDOWN_ALLOWED
+      refresh-on-load: true
+      show-toolbar: true
+      enable-mousewheel-zoom: false
+
+page-items: 
+- # ====== Page Item: P12_OBJT_LIST ============================
+  id: 7334819132307030
+  identification: 
+    name: P12_OBJT_LIST
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P12_OBJT_BPMN_ID =========================
+  id: 7335361967307035
+  identification: 
+    name: P12_OBJT_BPMN_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P12_OBJT_NAME ============================
+  id: 7335483836307036
+  identification: 
+    name: P12_OBJT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P12_PRCS_ID ==============================
+  id: 33735715098406128
+  identification: 
+    name: P12_PRCS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P12_PRCS_NAME ============================
+  id: 33737496021406145
+  identification: 
+    name: P12_PRCS_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P12_LOADED_DIAGRAM =======================
+  id: 44803255576176614
+  identification: 
+    name: P12_LOADED_DIAGRAM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Viewer Diagram Loaded ===============
+  id: 8049983261140649
+  identification: 
+    name: Viewer Diagram Loaded
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded
+    selection-type: Region
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+
+  client-side-condition: 
+    type: Item is not null
+    item: P12_PRCS_NAME
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8051357622140676
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P12_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_list(p_prdg_id => :P12_LOADED_DIAGRAM);
+        end if;
+      items-to-submit: 
+      - P12_LOADED_DIAGRAM
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P12_OBJT_LIST
+
+    execution: 
+      sequence: 20
+      event: Viewer Diagram Loaded # 8049983261140649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8051867682140677
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: changeCursor($v('P12_OBJT_LIST'));
+
+    execution: 
+      sequence: 30
+      event: Viewer Diagram Loaded # 8049983261140649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 44803326871176615
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.diagramIdentifier
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P12_LOADED_DIAGRAM
+
+    execution: 
+      sequence: 10
+      event: Viewer Diagram Loaded # 8049983261140649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Element clicked =====================
+  id: 8052795498141983
+  identification: 
+    name: Element clicked
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click
+    selection-type: Region
+    region: Flow Monitor (&P12_PRCS_NAME.) # 6161598858353963900
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: clickCondition($v('P12_OBJT_LIST'), this.data);
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8053186121141984
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: openObjectDialog($v('P12_OBJT_BPMN_ID'), $v('P12_OBJT_NAME'), 12);
+
+    execution: 
+      sequence: 30
+      event: Element clicked # 8052795498141983
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 8053641230141984
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.element.id
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P12_OBJT_BPMN_ID
+
+    execution: 
+      sequence: 10
+      event: Element clicked # 8052795498141983
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 8054174771141984
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P12_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_name(
+            p_objt_bpmn_id => :P12_OBJT_BPMN_ID
+          , p_prdg_id => :P12_LOADED_DIAGRAM
+        );
+        end if;
+      items-to-submit: 
+      - P12_OBJT_BPMN_ID
+      - P12_LOADED_DIAGRAM
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P12_OBJT_NAME
+
+    execution: 
+      sequence: 20
+      event: Element clicked # 8052795498141983
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+computations: 
+- # ====== Computation: P12_PRCS_NAME ==========================
+  id: 33737563010406146
+  identification: 
+    item-name: P12_PRCS_NAME
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      flow_engine_app_api.get_prcs_name(
+        pi_prcs_id => :P12_PRCS_ID
+      )
+
+processes: 
+- # ====== Process: GET_URL ====================================
+  id: 7335772142307039
+  identification: 
+    name: GET_URL
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.get_url_p13(
+        pi_prcs_id => :P12_PRCS_ID
+      , pi_prdg_id => :P12_LOADED_DIAGRAM
+      , pi_objt_id => apex_application.g_x01
+      , pi_title => apex_application.g_x02
+      );
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

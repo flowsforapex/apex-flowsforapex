@@ -1,0 +1,69 @@
+---
+- # ====== Popup LOV Template: Search Dialog ===================
+  id: 12495520149009880113
+  identification: 
+    name: Search Dialog
+    identifier: winlov
+
+  layout: 
+    template-class: Standard
+
+  subscription: 
+    master: 
+      referenced-id: 2885398517835871876
+
+  advanced: 
+    translatable: false
+
+  search-field: 
+    before-field: <div class="t-PopupLOV-actions t-Form--large">
+    after-field: </div>
+    width: 20
+    maximum-width: 100
+    filter-text-attributes: class="apex-item-text" autofocus
+
+  find-button: 
+    text: Search
+    attributes: class="t-Button t-Button--hot t-Button--padLeft"
+
+  close-button: 
+    text: Close
+    attributes: class="t-Button u-pullRight"
+
+  next-button: 
+    text: Next &gt;
+    attributes: class="t-Button t-PopupLOV-button"
+
+  previous-button: 
+    text: '&lt; Previous'
+    attributes: class="t-Button t-PopupLOV-button"
+
+  window: 
+    scroll-bars: 1
+    resizable: 1
+    width: 380
+
+  pagination: 
+    text: '<div class="t-PopupLOV-pagination">Row(s) #FIRST_ROW# - #LAST_ROW#</div>'
+    rows-per-page: 100
+
+  result-set: 
+    before: <div class="t-PopupLOV-links">
+    after: </div>
+
+  page: 
+    head: |
+      <!DOCTYPE html>
+      <html lang="&BROWSER_LANGUAGE.">
+      <head>
+      <title>#TITLE#</title>
+      #APEX_CSS#
+      #THEME_CSS#
+      #THEME_STYLE_CSS#
+      #FAVICONS#
+      #APEX_JAVASCRIPT#
+      #THEME_JAVASCRIPT#
+      <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+      </head>
+    body-attributes: class="t-Page t-Page--popupLOV"
+
