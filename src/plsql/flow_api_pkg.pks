@@ -390,6 +390,10 @@ This procedure is an optional command that can be used in applications to signal
 This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
 A ‘good-practice’ app would issue this call when work is about to start on a task, for example, from a page loading process.
 
+Use this in conjunction with `flow_pause_step` to indicate that the work is paused on a task.
+
+flow_start_step requires event logging to be  running at the 'detailed` level or higher to be effective.
+
 EXAMPLE
 
 This example will use this procedure to indicate that the work is started for the task that have the subflow ID 3 in the process ID 1.
@@ -397,6 +401,37 @@ This example will use this procedure to indicate that the work is started for th
 ```sql
 begin
    flow_api_pkg.flow_start_step(
+        p_process_id => 1
+      , p_subflow_id => 3 
+      , p_step_key   => 'NqOiEHUbAF'
+   );
+end;
+```
+**/
+   procedure flow_pause_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+   );
+ /**
+Procedure flow_pause_step
+This procedure is an optional command that can be used in conjunction with flow_start_step in applications to signal that a user has paused working on a task. 
+This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
+A ‘good-practice’ app would issue this call when work on a task is saved but the workflow task is not completed, for example, from a page save process that did not include a 'flow_complete_step'.
+
+If flow_start_step has not been called, this procedure will have no effect.
+
+'flow_pause_step' requires event logging to be running at the `detailed` level or higher to be effective.
+
+EXAMPLE
+
+This example will use this procedure to indicate that the work has paused on the task that have the subflow ID 3 in the process ID 1.
+
+```sql
+begin
+   flow_api_pkg.flow_pause_step(
         p_process_id => 1
       , p_subflow_id => 3 
       , p_step_key   => 'NqOiEHUbAF'

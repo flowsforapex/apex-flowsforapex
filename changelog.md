@@ -3,8 +3,11 @@
 ## v25.1 Community Edition
 - Adds Event-based logging of step events for audit trail and debugging.
 - Adds a process instance logging level to allow event logging to be specified on a per-diagram and per-instance basis.
+- Changes behavior for flow_api_pkg.start_step.  Previously start_step could be used once to optionally used to log the time that work started on a step.  Now you can start and pause (flow_api_pkg.pause_step) multiple times, with timings logged in the event log.
+- Add support for start_step and pause_step calls in the manage-flow-instance-step plugin.
 - Deprecates update, upload, upload and parse functions (all except parse) in bpmn_parser_pkg.   These have been available through flow_diagrams package since 23.1, and will be removed from bpmn_parser_pkg in a future release.
 - Required APEX version increased to APEX v24.1, in line with Oracle's support policy for APEX.
+- 
 
 ## v24.1 Community Edition
 
@@ -16,7 +19,7 @@
 - Enhancement to BPMN Viewer to allow task start from the viewer.
 - Enhances flow_admin_api so that a diagram can be 'released' from the API.  This is useful for remote deployment of diagrams into production environments.
 - Change internal storage of the APEX Task Id from a process variable to flow_subflows.sbfl_apex_task_id when APEX Human Tasks are used in UserTasks.
-- Fixes a bug preventing rescheduling interuptable timers on subflows having a previous interrupting timer event.
+- Fixes a bug preventing rescheduling interruptable timers on subflows having a previous interrupting timer event.
 - Adds a new example application that can be used as a process hub for end users to start new processes.
 - Required APEX version increased to APEX v22.1
 
