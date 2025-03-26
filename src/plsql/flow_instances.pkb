@@ -202,6 +202,7 @@ create or replace package body flow_instances as
                             , p_process_id            => p_prcs_id
                             , p_event_starting_object => p_starting_object
                             );
+    apex_debug.message (p_message => 'BPMN Process Object : %0', p0 => l_bpmn_process_objt.objt_id);
 
     if l_bpmn_process_objt.objt_attributes is null then
       l_logging_level := flow_engine_util.get_config_value 
@@ -214,7 +215,8 @@ create or replace package body flow_instances as
         if j_apex_attributes.has('customExtension') then 
           j_custom_extensions := j_apex_attributes.get_Object('customExtension');
           if j_custom_extensions.has('minLoggingLevel') then 
-             l_logging_level := j_custom_Extensions.get_Number('minLoggingLevel');
+             l_logging_level := j_custom_Extensions.get_number('minLoggingLevel');
+             apex_debug.message (p_message => 'Logging Level set from BPMN Process Object : %0', p0 => l_logging_level);
           else 
              l_logging_level := flow_engine_util.get_config_value 
                                 ( p_config_key => flow_constants_pkg.gc_config_logging_default_level 

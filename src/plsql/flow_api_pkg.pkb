@@ -226,6 +226,21 @@ create or replace package body flow_api_pkg as
     );
   end flow_start_step;
 
+    procedure flow_pause_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
+  )
+  is 
+  begin
+    flow_engine.pause_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    , p_step_key    => p_step_key
+    );
+  end flow_pause_step;
+
   procedure flow_restart_step
   (
     p_process_id    in flow_processes.prcs_id%type

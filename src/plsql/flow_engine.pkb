@@ -1811,7 +1811,7 @@ begin
                                       , pi_step_key_required  => l_sbfl_rec.sbfl_step_key
                                       ) 
     then 
-      -- set the start time if null
+      -- set the start time if null (will happen first time work started)
       if l_existing_start is null then
         update flow_subflows sbfl
            set sbfl_work_started        = systimestamp
@@ -1823,13 +1823,72 @@ begin
         where sbfl_prcs_id = p_process_id
           and sbfl_id = p_subflow_id
         ;
-        -- log the start
+      end if;
+      -- log the start
+      flow_logging.log_step_event 
+      ( p_sbfl_rec    => l_sbfl_rec
+      , p_event       => flow_constants_pkg.gc_step_event_work_started
+      , p_event_level => flow_constants_pkg.gc_logging_level_detailed
+      );
+      -- commit reservation if this is an external call
+      if not p_called_internally then 
+        commit;
+      end if;
+    end if;
+  exception
+    when no_data_found then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'startwork-sbfl-not-found'
+      , p0 => p_subflow_id
+      , p1 => p_process_id
+      );
+      -- $F4AMESSAGE 'startwork-sbfl-not-found' || 'Start Work time recording unsuccessful.  Subflow %0 in Process %1 not found.'  
+    when lock_timeout then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'timeout_locking_subflow'
+      , p0 => p_subflow_id
+      );
+      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'        
+  end start_step;
+
+  procedure pause_step -- just (optionally) records the pause time of work on the current step
+    ( p_process_id         in flow_processes.prcs_id%type
+    , p_subflow_id         in flow_subflows.sbfl_id%type
+    , p_step_key           in flow_subflows.sbfl_step_key%type default null
+    , p_called_internally  in boolean default false
+    )
+  is
+    l_existing_start       flow_subflows.sbfl_work_started%type;
+    l_sbfl_rec             flow_subflows%rowtype;
+  begin
+    apex_debug.enter
+    ( 'start_step'
+    , 'Subflow ', p_subflow_id
+    , 'Process ', p_process_id 
+    , 'Step Key', p_step_key
+    );
+    -- subflow should already be locked when calling internally
+    l_sbfl_rec := flow_engine_util.get_subflow_info 
+                  ( p_process_id   => p_process_id
+                  , p_subflow_id   => p_subflow_id
+                  , p_lock_subflow => not p_called_internally
+                  );
+    -- check the step key
+    if flow_engine_util.step_key_valid( pi_prcs_id  => p_process_id
+                                      , pi_sbfl_id  => p_subflow_id
+                                      , pi_step_key_supplied  => p_step_key
+                                      , pi_step_key_required  => l_sbfl_rec.sbfl_step_key
+                                      ) 
+    then 
+      -- set the pause time - requires the step to have already started work
+      if l_sbfl_rec.sbfl_work_started is not null then
+        -- log the pause
         flow_logging.log_step_event 
         ( p_sbfl_rec    => l_sbfl_rec
-        , p_event       => flow_constants_pkg.gc_step_event_work_started
+        , p_event       => flow_constants_pkg.gc_step_event_work_paused
         , p_event_level => flow_constants_pkg.gc_logging_level_detailed
         );
-        -- commit reservation if this is an external call
+        -- commit pause if this is an external call
         if not p_called_internally then 
           commit;
         end if;
@@ -1849,7 +1908,7 @@ begin
       , p0 => p_subflow_id
       );
       -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'        
-  end start_step;
+end pause_step;
 
 procedure restart_step
   ( p_process_id          in flow_processes.prcs_id%type

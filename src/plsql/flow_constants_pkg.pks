@@ -3,18 +3,18 @@ create or replace package flow_constants_pkg
 -- Flows for APEX - flow_constants_pkg.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
--- (c) Copyright Flowquest Consulting Limited. 2024.
+-- (c) Copyright Flowquest Consulting Limited. 2024-25.
 --
 -- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
 -- Edited  10-Mar-2023 Moritz Klein, MT GmbH
--- Edited  03-Jan-2024 R Allen, Flowquest Consulting
+-- Edited  03-Jan-2024 R Allen, Flowquest Limited
 --
 */
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '24.1';
+  gc_version constant varchar2(10 char) := '25.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';

@@ -45,6 +45,13 @@ procedure start_step
   , p_called_internally   in boolean default false
   );
 
+procedure pause_step
+  ( p_process_id          in flow_processes.prcs_id%type
+  , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_step_key            in flow_subflows.sbfl_step_key%type default null
+  , p_called_internally   in boolean default false
+  );
+
 procedure restart_step
   ( p_process_id          in flow_processes.prcs_id%type
   , p_subflow_id          in flow_subflows.sbfl_id%type
