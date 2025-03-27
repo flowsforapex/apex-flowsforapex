@@ -16,3 +16,15 @@ flow_plsql_runner_pkg
 g_current_prcs_id
 ordr_id
 clob
+prcs
+dgrm
+sbfl
+sysdate
+varchar2
+Startable
+utPLSQL
+vw
+varchar
+pkg
+myvar
+

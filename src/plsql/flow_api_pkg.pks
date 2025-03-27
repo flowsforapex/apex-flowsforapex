@@ -109,7 +109,7 @@ These API functions are provided as Application Helper functions from the Flows 
 ,
       pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    ) return flow_processes.prcs_id%type;
@@ -144,7 +144,7 @@ end;
    function flow_create (
       pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    ) return flow_processes.prcs_id%type;
@@ -174,7 +174,7 @@ end;
 ,
       pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    );
@@ -209,7 +209,7 @@ end;
    procedure flow_create (
       pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    );

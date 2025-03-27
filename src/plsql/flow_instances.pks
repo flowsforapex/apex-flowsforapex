@@ -17,7 +17,7 @@ as
 
   function create_process
     ( p_dgrm_id         in flow_diagrams.dgrm_id%type
-    , p_prcs_name       in flow_processes.prcs_name%type
+    , p_prcs_name       in flow_processes.prcs_name%type default null
     , p_logging_level   in flow_processes.prcs_logging_level%type default null
     , p_starting_object in flow_objects.objt_bpmn_id%type default null
     ) return flow_processes.prcs_id%type

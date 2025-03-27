@@ -234,9 +234,33 @@ create or replace package body flow_instances as
     p_calculated_logging_level := l_logging_level;
   end get_instance_attributes;
 
+  procedure set_instance_name
+    ( p_prcs_id            in flow_processes.prcs_id%type
+    , p_sbfl_id            in flow_subflows.sbfl_id%type
+    , p_instance_name_def  in flow_types_pkg.t_bpmn_attribute_vc2
+    )
+  is
+    l_instance_name  varchar2(200) := p_instance_name_def;
+  begin
+    -- set the instance name
+    if l_instance_name is not null then
+      flow_proc_vars_int.do_substitution
+      ( pi_prcs_id => p_prcs_id
+      , pi_sbfl_id => p_sbfl_id
+      , pi_scope   => 0
+      , pio_string => l_instance_name
+      );
+      update flow_processes prcs
+         set prcs.prcs_name = l_instance_name
+       where prcs.prcs_id   = p_prcs_id
+       ;
+    end if;
+  end set_instance_name;
+
+
   function create_process
     ( p_dgrm_id         in flow_diagrams.dgrm_id%type
-    , p_prcs_name       in flow_processes.prcs_name%type
+    , p_prcs_name       in flow_processes.prcs_name%type default null
     , p_logging_level   in flow_processes.prcs_logging_level%type default null
     , p_starting_object in flow_objects.objt_bpmn_id%type default null
     ) return flow_processes.prcs_id%type
@@ -244,7 +268,7 @@ create or replace package body flow_instances as
     l_new_prcs_id            flow_processes.prcs_id%type;
     l_bpmn_process_objt      flow_objects%rowtype;
     l_calc_logging_level     flow_processes.prcs_logging_level%type;
-
+    l_instance_name          flow_processes.prcs_name%type;
   begin
     apex_debug.enter
     ('create_process'
@@ -254,7 +278,15 @@ create or replace package body flow_instances as
     , 'p_starting_object', p_starting_object
     );
 
-    
+    if p_prcs_name is not null then
+      l_instance_name := p_prcs_name;
+    else
+      select substr (dgrm.dgrm_name,1,50) || ' - ' || to_char(systimestamp,'DD-MON-YYYY HH24:MI:SS')
+        into l_instance_name
+        from flow_diagrams dgrm
+       where dgrm.dgrm_id = p_dgrm_id;
+    end if;
+
     insert into flow_processes prcs
           ( prcs.prcs_name
           , prcs.prcs_dgrm_id
@@ -265,7 +297,7 @@ create or replace package body flow_instances as
           , prcs.prcs_init_by
           )
     values
-          ( p_prcs_name
+          ( l_instance_name
           , p_dgrm_id
           , flow_constants_pkg.gc_prcs_status_created
           , greatest ( nvl(p_logging_level,0), flow_constants_pkg.gc_logging_level_detailed)  -- TODO Fix this to use the default logging level from the diagram
@@ -300,6 +332,7 @@ create or replace package body flow_instances as
     ( p_process_id  => l_new_prcs_id
     , p_event       => flow_constants_pkg.gc_prcs_event_created
     , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+    , p_comment     => 'Instance name set to ' || l_instance_name
     );
     commit;
 
@@ -327,6 +360,7 @@ create or replace package body flow_instances as
     l_due_on_json           flow_types_pkg.t_bpmn_attribute_vc2;
     l_due_on                flow_processes.prcs_due_on%type;
     l_starting_object       flow_objects%rowtype;
+    l_instance_name_def     flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter
     ('start_process'
@@ -379,8 +413,10 @@ create or replace package body flow_instances as
       -- get instance scheduling information for the process being started
       select objt.objt_attributes."apex"."priority"
            , objt.objt_attributes."apex"."dueOn"
+           , objt.objt_attributes."apex"."customExtension"."instanceName"  -- TODO - implement instanceName
         into l_priority_json
            , l_due_on_json
+           , l_instance_name_def 
         from flow_objects objt
        where objt.objt_dgrm_id  = l_dgrm_id
          and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
@@ -457,13 +493,26 @@ create or replace package body flow_instances as
       );
       -- test for any step errors
       if not flow_globals.get_step_error then 
-        flow_timers_pkg.start_timer
-        (
-          pi_prcs_id    => p_process_id
-        , pi_sbfl_id    => l_main_subflow.sbfl_id
-        , pi_step_key   => l_main_subflow.step_key
-        , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
-        ); 
+        -- set the instance name if defined
+        if l_instance_name_def is not null then
+          set_instance_name
+          ( p_prcs_id => p_process_id
+          , p_sbfl_id => l_main_subflow.sbfl_id
+          , p_instance_name_def => l_instance_name_def
+          );
+        end if;
+
+        if not flow_globals.get_step_error then
+
+          -- start the timer
+          flow_timers_pkg.start_timer
+          (
+            pi_prcs_id    => p_process_id
+          , pi_sbfl_id    => l_main_subflow.sbfl_id
+          , pi_step_key   => l_main_subflow.step_key
+          , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
+          ); 
+        end if;
       end if;       
 
     elsif (  l_starting_object.objt_sub_tag_name is null 
@@ -480,14 +529,25 @@ create or replace package body flow_instances as
       );
 
       if not flow_globals.get_step_error then 
-        -- step into first step
-        flow_engine.flow_complete_step  
-        ( p_process_id => p_process_id
-        , p_subflow_id => l_main_subflow.sbfl_id
-        , p_step_key   => l_main_subflow.step_key
-        , p_forward_route => null
-        , p_recursive_call => false
-        );
+        -- set the instance name if defined
+        if l_instance_name_def is not null then
+          set_instance_name
+          ( p_prcs_id => p_process_id
+          , p_sbfl_id => l_main_subflow.sbfl_id
+          , p_instance_name_def => l_instance_name_def
+          );
+        end if;
+
+        if not flow_globals.get_step_error then
+          -- step into first step
+          flow_engine.flow_complete_step  
+          ( p_process_id => p_process_id
+          , p_subflow_id => l_main_subflow.sbfl_id
+          , p_step_key   => l_main_subflow.step_key
+          , p_forward_route => null
+          , p_recursive_call => false
+          );
+        end if;
       end if;
     else 
       raise e_unsupported_start_event;
