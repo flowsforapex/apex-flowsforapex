@@ -38,7 +38,7 @@ create or replace package body flow_api_pkg as
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
   , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name in flow_processes.prcs_name%type
+  , pi_prcs_name in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
   ) return flow_processes.prcs_id%type
   as
@@ -73,7 +73,7 @@ create or replace package body flow_api_pkg as
   function flow_create
   (
     pi_dgrm_id       in flow_diagrams.dgrm_id%type
-  , pi_prcs_name     in flow_processes.prcs_name%type
+  , pi_prcs_name     in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
   ) return flow_processes.prcs_id%type
   is
@@ -91,7 +91,7 @@ create or replace package body flow_api_pkg as
   (
     pi_dgrm_name     in flow_diagrams.dgrm_name%type
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name     in flow_processes.prcs_name%type
+  , pi_prcs_name     in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
   )
   as
@@ -110,7 +110,7 @@ create or replace package body flow_api_pkg as
   procedure flow_create
   (
     pi_dgrm_id       in flow_diagrams.dgrm_id%type
-  , pi_prcs_name     in flow_processes.prcs_name%type
+  , pi_prcs_name     in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
   )
   as
