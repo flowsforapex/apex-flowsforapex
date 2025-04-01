@@ -120,9 +120,10 @@ begin
       ;
       -- pass the step_key through unchanged and use on the receiving ICE
       flow_complete_step
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
-      , p_step_key   => p_sbfl_info.sbfl_step_key
+      ( p_process_id      => p_process_id
+      , p_subflow_id      => p_subflow_id
+      , p_step_key        => p_sbfl_info.sbfl_step_key
+      , p_matching_object => p_step_info.target_objt_ref
       );
     else
       apex_debug.error(p_message  => 'error finding matching link object found');    
@@ -837,7 +838,7 @@ function finish_current_step
 , p_reset_step_key               in boolean default false
 , p_force_next_step              in boolean default false
 , p_execute_variable_expressions in boolean default true  -- only false for force next step
-, p_matching_object              in flow_objects.objt_bpmn_id%type default null -- only for closing parallel and inclusive gateways
+, p_matching_object              in flow_objects.objt_bpmn_id%type default null -- only for closing parallel and inclusive gateways and link events
 ) return flow_types_pkg.t_iteration_status
 is
   l_current_step_tag      flow_objects.objt_tag_name%type;
@@ -931,6 +932,7 @@ begin
     , p_matching_object   => case l_current_step_tag
                               when flow_constants_pkg.gc_bpmn_gateway_inclusive then p_matching_object
                               when flow_constants_pkg.gc_bpmn_gateway_parallel  then p_matching_object
+                              when flow_constants_pkg.gc_bpmn_intermediate_catch_event then p_matching_object
                               else null end
     , p_notes             => case p_force_next_step
                               when true then 'Step Completion was Forced. Variable Expressions were not executed.'
@@ -1450,7 +1452,7 @@ procedure flow_complete_step
 , p_recursive_call               in boolean default true
 , p_force_next_step              in boolean default false
 , p_execute_variable_expressions in boolean default true
-, p_matching_object              in flow_objects.objt_bpmn_id%type default null  -- only set when current object is a closing parallel or inclusive gateway
+, p_matching_object              in flow_objects.objt_bpmn_id%type default null  -- only set when current object is a closing parallel or inclusive gateway or link
 )
 is
   l_sbfl_rec                  flow_subflows%rowtype;

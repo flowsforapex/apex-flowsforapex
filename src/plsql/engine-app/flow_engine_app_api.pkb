@@ -250,6 +250,12 @@ as
           , p_subflow_id => apex_application.g_x03
           , p_comment    => apex_application.g_x04
           );
+        when 'REWIND-LINK-EVENT-ON-RESUME' then
+          flow_admin_api.rewind_to_matched_throwing_link_event
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
         when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
           (
