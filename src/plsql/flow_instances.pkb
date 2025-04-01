@@ -209,24 +209,12 @@ create or replace package body flow_instances as
                           ( p_config_key    => flow_constants_pkg.gc_config_logging_default_level 
                           , p_default_value => 0 );
     else
-      j_objt_attributes := sys.json_object_t.parse (l_bpmn_process_objt.objt_attributes);
-      if j_objt_attributes.has('apex') then
-        j_apex_attributes := j_objt_attributes.get_object('apex');
-        if j_apex_attributes.has('customExtension') then 
-          j_custom_extensions := j_apex_attributes.get_Object('customExtension');
-          if j_custom_extensions.has('minLoggingLevel') then 
-             l_logging_level := j_custom_Extensions.get_number('minLoggingLevel');
-             apex_debug.message (p_message => 'Logging Level set from BPMN Process Object : %0', p0 => l_logging_level);
-          else 
-             l_logging_level := flow_engine_util.get_config_value 
-                                ( p_config_key => flow_constants_pkg.gc_config_logging_default_level 
-                                , p_default_value => 0 );
-          end if;
-        else 
-             l_logging_level := flow_engine_util.get_config_value 
-                                ( p_config_key => flow_constants_pkg.gc_config_logging_default_level 
-                                , p_default_value => 0 );
-        end if;
+      -- get the logging level from the bpmn process object
+      l_logging_level := json_value (l_bpmn_process_objt.objt_attributes, '$.apex.customExtension.minLoggingLevel' returning number); -- TODO - Change when parser supports minLoggingLevel
+      if l_logging_level is null then
+        l_logging_level := flow_engine_util.get_config_value 
+                            ( p_config_key    => flow_constants_pkg.gc_config_logging_default_level 
+                            , p_default_value => 0 );
       end if;
     end if;
     l_logging_level := greatest ( nvl(p_requested_logging_level,0)

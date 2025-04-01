@@ -429,7 +429,7 @@ as
 
 -- Config Parameter Default Values
 
-  gc_config_default_logging_level               constant varchar2(2000 char) := gc_config_logging_level_standard;
+  gc_config_default_logging_level               constant varchar2(2000 char) := gc_logging_level_major_events;
   gc_config_default_logging_hide_userid         constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
   gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := gc_vcbool_false;

@@ -1884,21 +1884,24 @@ as
 
   procedure set_logging_settings(
     pi_logging_language          in flow_configuration.cfig_value%type
-  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_default_level     in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_enabled      in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_retain_days  in flow_configuration.cfig_value%type
   )
   as
   begin
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language          , p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level             , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_default_level     , p_value => pi_logging_default_level);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid       , p_value => pi_logging_hide_userid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs       , p_value => pi_logging_retain_logs);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd , p_value => pi_logging_message_flow_recd);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow   , p_value => pi_logging_retain_msg_flow);
-
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_enabled      , p_value => pi_logging_bpmn_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_retain_days  , p_value => pi_logging_bpmn_retain_days);
   end set_logging_settings;
 
 

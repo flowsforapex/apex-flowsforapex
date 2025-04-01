@@ -42,6 +42,9 @@ create or replace package body flow_log_admin as
                , prcs_status
                , prcs_init_ts
                , prcs_init_by
+               , prcs_start_ts
+               , prcs_complete_ts
+               , prcs_was_altered
                , prcs_due_on
           from   flow_processes prcs
           where  prcs_id = p_process_id               
@@ -51,17 +54,20 @@ create or replace package body flow_log_admin as
           from   flow_variable_event_log sc
         )
     select json_object (
-       'processID'    value p.prcs_id,
-       'mainDiagram'  value p.prcs_dgrm_id,
-       'processName'  value p.prcs_name,
-       'businessID'   value prov.prov_var_vc2,
-       'priority'     value p.prcs_priority,
-       'prcs_status'  value p.prcs_status,
-       'prcs_init_ts' value p.prcs_init_ts,
-       'prcs_init_by' value p.prcs_init_by,
-       'prcs_due_on'  value p.prcs_due_on,
-       'json_created' value systimestamp,
-       'diagramsUsed' value
+       'processID'        value p.prcs_id,
+       'mainDiagram'      value p.prcs_dgrm_id,
+       'processName'      value p.prcs_name,
+       'businessID'       value prov.prov_var_vc2,
+       'priority'         value p.prcs_priority,
+       'prcs_status'      value p.prcs_status,
+       'prcs_was_altered' value p.prcs_was_altered,
+       'prcs_init_ts'     value p.prcs_init_ts,
+       'prcs_init_by'     value p.prcs_init_by,
+       'prcs_due_on'      value p.prcs_due_on,
+       'prcs_start_ts'    value p.prcs_start_ts,
+       'prcs_complete_ts' value p.prcs_complete_ts,
+       'json_created'     value systimestamp,
+       'diagramsUsed'     value
             (select json_arrayagg 
                        ( json_object 
                            (
@@ -84,11 +90,14 @@ create or replace package body flow_log_admin as
                        ( json_object 
                            (
                            'event'                      value lgpr_prcs_event,
+                           'severity'                   value lgpr_severity,
                            'object'                     value lgpr_objt_id,
+                           'stepKey'                    value lgpr_step_key,
                            'diagram'                    value lgpr_dgrm_id,
                            'timestamp'                  value lgpr_timestamp,
                            'user'                       value lgpr_user,
                            'error-info'                 value lgpr_error_info,
+                           'apexTaskId'                 value lgpr_apex_task_id,
                            'comment'                    value lgpr_comment absent on null
                            ) order by lgpr_timestamp 
                         returning clob )
