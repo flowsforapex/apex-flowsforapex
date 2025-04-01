@@ -1054,6 +1054,18 @@ function rewindCallActivity( action, element ){
   });
 }
 
+function rewindLinkEvent( action, element ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_REWIND_LINK_EVENT"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getSubflowData(action, element);
+      
+      var options = {};
+      options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+      sendToServer(data, options);
+    }
+  });
+}
+
 function receiveMessage( action, element ) {
   if ( apex.jQuery( "#receive_message_dialog" ).dialog( "isOpen" ) ) {
     var data = getMessageData( action, element );
@@ -1332,6 +1344,12 @@ function initActions(){
           name: "rewind-call-activity-on-resume",
           action: function( event, focusElement ) {
             rewindCallActivity( this.name, focusElement );
+          }
+        },
+        {
+          name: "rewind-link-event-on-resume",
+          action: function( event, focusElement ) {
+            rewindLinkEvent( this.name, focusElement );
           }
         }
       ] );
@@ -1821,6 +1839,9 @@ function initPage8() {
             item.disabled = prcsStatus !== "suspended" ? true : false;
           } 
           if ( item.action === "rewind-call-activity-on-resume" ) {
+            item.disabled = prcsStatus !== "suspended" ? true : false;
+          } 
+          if ( item.action === "rewind-link-event-on-resume" ) {
             item.disabled = prcsStatus !== "suspended" ? true : false;
           } 
           return item;

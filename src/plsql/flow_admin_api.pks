@@ -205,6 +205,13 @@ Available in Flows for APEX Enterprise Edition.
   );
 /**
 **/
+  procedure rewind_to_matched_throwing_link_event
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
+  );
+/**
+**/
   procedure flow_force_next_step
   ( p_process_id                   in flow_processes.prcs_id%type
   , p_subflow_id                   in flow_subflows.sbfl_id%type

@@ -44,9 +44,5 @@ procedure get_nearest_previous_opening_parincl_gateway
   , po_num_steps               out integer
   );
 
-function get_matching_opening_gateway
-  ( pi_sbfl_rec       in flow_subflows%rowtype
-  ) return flow_objects.objt_bpmn_id%type;
-
 end flow_gateways;
 /
