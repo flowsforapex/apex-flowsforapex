@@ -68,6 +68,7 @@ as
       p_plsql_code || apex_application.lf ||
       'end;'
     ;
+  
   end execute_plsql;
 
   procedure get_runner_config
@@ -171,6 +172,13 @@ as
       , p0        => sqlerrm
       );
       raise e_plsql_script_requested_stop;     
+    when e_plsql_script_throw_bpmn_error then
+      apex_debug.error
+      (
+        p_message => 'User script run by flow_plsql_runner_pkg.run_task_script threw BPMN error.'
+      , p0        => sqlerrm
+      );
+      raise e_plsql_script_throw_bpmn_error;
     when others then
       apex_debug.error
       (

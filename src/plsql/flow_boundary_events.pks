@@ -1,4 +1,13 @@
 create or replace package flow_boundary_events
+
+/* -- Flows for APEX - flow_boundary_events.pks
+--
+-- (c) Copyright Flowquest Ltd and / or its affiliates, 2021-2025
+--
+-- Created  22-Feb-2021   Richard Allen - Flowquest Consulting Limited
+-- Modified 15-Jun-2022   Moritz Klein (MT AG)
+-- Modified 02-Apr-2025   Richard Allen (Flowquest)
+*/
   authid definer
   accessible by (flow_engine, flow_tasks, flow_timers_pkg, flow_subprocesses 
                 , flow_call_activities, flow_rewind)
@@ -27,6 +36,7 @@ is
   , p_event_type in flow_objects.objt_sub_tag_name%type
   , p_boundary_object in flow_objects.objt_bpmn_id%type default null
   );
+
   procedure process_escalation
   ( pi_sbfl_info        in  flow_subflows%rowtype
   , pi_step_info        in  flow_types_pkg.flow_step_info
@@ -34,6 +44,10 @@ is
   , pi_source_type      in  flow_types_pkg.t_bpmn_id
   , po_step_key         out flow_subflows.sbfl_step_key%type
   , po_is_interrupting  out boolean
+  );
+
+  procedure handle_task_error_boundary_event
+  (pi_sbfl_info        in  flow_subflows%rowtype
   );
 
 end flow_boundary_events;
