@@ -1,6 +1,16 @@
 create or replace package body flow_boundary_events
 is 
 
+/* -- Flows for APEX - flow_boundary_events.pkb
+--
+-- (c) Copyright Flowquest Ltd and / or its affiliates, 2021-2025
+--
+-- Created  22-Feb-2021   Richard Allen - 
+-- Modified 15-Jun-2022   Moritz Klein (MT AG)
+-- Modified 02-Apr-2025   Richard Allen (Flowquest)
+*/
+
+
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
@@ -667,6 +677,40 @@ is
     end if;
   end process_escalation;
 
+  procedure handle_task_error_boundary_event
+  ( pi_sbfl_info        in  flow_subflows%rowtype
+  )
+  is
+    l_boundary_event_bpmn_id         flow_objects.objt_bpmn_id%type;
+    l_boundary_event_is_interrupting boolean;
+    l_boundary_event_scope           flow_subflows.sbfl_scope%type;
+  begin
+    apex_debug.enter  
+    ( 'handle_task_error_boundary_event'
+    , 'current object: ', pi_sbfl_info.sbfl_current
+    );
+
+    get_boundary_event 
+    ( pi_dgrm_id            => pi_sbfl_info.sbfl_dgrm_id
+    , pi_throw_objt_bpmn_id => pi_sbfl_info.sbfl_current
+    , pi_par_sbfl           => pi_sbfl_info.sbfl_id
+    , pi_sub_tag_name       => flow_constants_pkg.gc_bpmn_error_event_definition
+    , po_boundary_objt      => l_boundary_event_bpmn_id
+    , po_is_interrupting    => l_boundary_event_is_interrupting
+    , po_par_sbfl_scope     => l_boundary_event_scope
+    );
+    apex_debug.message
+    ( p_message => 'Interrupting Error Boundary Event found: %0'  
+    , p0        => l_boundary_event_bpmn_id
+    );
+    -- handle the error event
+    handle_interrupting_boundary_event
+    ( p_process_id      => pi_sbfl_info.sbfl_prcs_id
+    , p_subflow_id      => pi_sbfl_info.sbfl_id
+    , p_event_type      => flow_constants_pkg.gc_bpmn_error_event_definition
+    , p_boundary_object => l_boundary_event_bpmn_id
+    );
+  end handle_task_error_boundary_event;
 
 end flow_boundary_events;
 /
