@@ -11,8 +11,6 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
             noDataFoundMessage,
             refreshOnLoad,
             showToolbar,
-            addHighlighting,
-            enableCallActivities,
             enableMousewheelZoom,
             useBPMNcolors,
             themePluginClass,
@@ -32,8 +30,6 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
         this.viewerElement.regionId = regionId;
         
         this.viewerElement.showToolbar = showToolbar;
-        this.viewerElement.addHighlighting = addHighlighting;
-        this.viewerElement.enableCallActivities = enableCallActivities;
         this.viewerElement.enableMousewheelZoom = enableMousewheelZoom;
         this.viewerElement.useBPMNcolors = useBPMNcolors;
         this.viewerElement.themePluginClass = themePluginClass;
@@ -78,22 +74,22 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
                 $( "#" + this.viewerElement.canvas.id ).show();
                 $( "#" + this.regionId + " span.nodatafound" ).hide();
                 
-                const diagram = this.viewerElement.loadData(pData.data);
+                this.viewerElement.loadData(pData.data);
                 
                 try {
-                    await this.viewerElement.loadDiagram(diagram);
+                    await this.viewerElement.loadDiagram();
 
                     // trigger load event
                     apex.event.trigger( "#" + this.regionId, "mtbv_diagram_loaded",
                         { 
-                            diagramIdentifier: this.viewerElement.diagramIdentifier, 
-                            callingDiagramIdentifier: this.viewerElement.callingDiagramIdentifier, 
-                            callingObjectId: this.viewerElement.callingObjectId
+                            diagramIdentifier: this.viewerElement.diagram.diagramIdentifier, 
+                            callingDiagramIdentifier: this.viewerElement.diagram.callingDiagramIdentifier, 
+                            callingObjectId: this.viewerElement.diagram.callingObjectId
                         } 
                     );
                 }
                 catch(err) {
-                    apex.debug.error('Loading Diagram failed.', err, diagram);
+                    apex.debug.error('Loading Diagram failed.', err);
                 }
             
             } else {
@@ -101,7 +97,7 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
                 
                 if (pData.message) {
                     apex.message.clearErrors();
-                    message.showErrors( [
+                    apex.message.showErrors( [
                         {
                             type: "error",
                             location: ["page"],
