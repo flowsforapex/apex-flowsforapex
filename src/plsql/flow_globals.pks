@@ -20,6 +20,11 @@ as
   rest_call     boolean;
   loop_counter  flow_subflows.sbfl_loop_counter%type;
 
+  throw_bpmn_error_event exception;
+  pragma EXCEPTION_INIT(throw_bpmn_error_event, -20001);
+  request_stop_engine exception;
+  pragma EXCEPTION_INIT(request_stop_engine, -20003);
+
   function business_ref
   (pi_scope       flow_subflows.sbfl_scope%type default 0)
   return flow_process_variables.prov_var_vc2%type;
