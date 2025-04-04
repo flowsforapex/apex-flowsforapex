@@ -105,7 +105,9 @@ as
 
     l_result   json_object_t := json_object_t();
     l_data     json_array_t  := json_array_t();
-    l_data_row json_object_t := json_object_t();
+    
+    l_data_row  json_object_t;
+    l_data_clob clob;
   begin
     apex_plugin_util.debug_region
     (
@@ -198,6 +200,8 @@ as
         l_result.put( 'found', true );
 
         while apex_exec.next_row( p_context => l_context ) loop
+
+          l_data_row := json_object_t();
           
           l_data_row.put( 'xml', apex_exec.get_clob( p_context => l_context, p_column_idx => l_diagram_col_idx ) );
 
@@ -206,48 +210,68 @@ as
           end if;
 
           if l_highlighting_data_col_idx is not null then
-            begin
-                l_data_row.put( 'highlightingData', json_object_t.parse( apex_exec.get_clob( p_context => l_context, p_column_idx => l_highlighting_data_col_idx ) ) );
-            exception
+            l_data_clob := apex_exec.get_clob( p_context => l_context, p_column_idx => l_highlighting_data_col_idx );
+
+            if l_data_clob is not null then
+              begin
+                l_data_row.put( 'highlightingData', json_object_t.parse( l_data_clob ) );
+              exception
                 when e_json_parse then
-                    l_data_row.put( 'highlightingData', json_object_t() );
-            end;
+                  l_data_row.put( 'highlightingData', json_object_t() );
+              end;
+            end if;
           end if;
 
           if l_call_activity_data_col_idx is not null then
-            begin
-                l_data_row.put( 'callActivityData', json_object_t.parse( apex_exec.get_clob( p_context => l_context, p_column_idx => l_call_activity_data_col_idx ) ) );
-            exception
+            l_data_clob := apex_exec.get_clob( p_context => l_context, p_column_idx => l_call_activity_data_col_idx );
+
+            if l_data_clob is not null then
+              begin
+                l_data_row.put( 'callActivityData', json_object_t.parse( l_data_clob ) );
+              exception
                 when e_json_parse then
                     l_data_row.put( 'callActivityData', json_object_t() );
-            end;
+              end;
+            end if;
           end if;
               
           if l_iteration_data_col_idx is not null then
-            begin
-                l_data_row.put( 'iterationData', json_object_t.parse( apex_exec.get_clob( p_context => l_context, p_column_idx => l_iteration_data_col_idx ) ) );
-            exception
+            l_data_clob := apex_exec.get_clob( p_context => l_context, p_column_idx => l_iteration_data_col_idx );
+
+            if l_data_clob is not null then
+              begin
+                l_data_row.put( 'iterationData', json_object_t.parse( l_data_clob ) );
+              exception
                 when e_json_parse then
                     l_data_row.put( 'iterationData', json_object_t() );
-            end;
+              end;
+            end if;
           end if;
               
           if l_user_task_data_col_idx is not null then
-            begin
-                l_data_row.put( 'userTaskData', json_object_t.parse( apex_exec.get_clob( p_context => l_context, p_column_idx => l_user_task_data_col_idx ) ) );
-            exception
+            l_data_clob := apex_exec.get_clob( p_context => l_context, p_column_idx => l_user_task_data_col_idx );
+
+            if l_data_clob is not null then
+              begin
+                l_data_row.put( 'userTaskData', json_object_t.parse( l_data_clob ) );
+              exception
                 when e_json_parse then
                     l_data_row.put( 'userTaskData', json_object_t() );
-            end;
+              end;
+            end if;
           end if;
               
           if l_badges_data_col_idx is not null then
-            begin
-                l_data_row.put( 'badgesData', json_object_t.parse( apex_exec.get_clob( p_context => l_context, p_column_idx => l_badges_data_col_idx ) ) );
-            exception
+            l_data_clob := apex_exec.get_clob( p_context => l_context, p_column_idx => l_badges_data_col_idx );
+
+            if l_data_clob is not null then
+              begin
+                l_data_row.put( 'badgesData', json_object_t.parse( l_data_clob ) );
+              exception
                 when e_json_parse then
                     l_data_row.put( 'badgesData', json_object_t() );
-            end;
+              end;
+            end if;
           end if;
 
           l_data.append( l_data_row );
@@ -264,7 +288,8 @@ as
     
     end if;
 
-    htp.p(l_result.to_clob());
+    -- htp.p(l_result.to_clob());
+    apex_util.prn(l_result.to_clob(), false);
 
   end ajax;
 
