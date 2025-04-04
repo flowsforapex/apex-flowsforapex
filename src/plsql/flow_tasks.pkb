@@ -234,7 +234,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -247,7 +247,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_throw_bpmn_error then
+    when flow_globals.throw_bpmn_error_event then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
@@ -410,7 +410,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PLSQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -423,7 +423,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_throw_bpmn_error then
+    when flow_globals.throw_bpmn_error_event then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
@@ -509,7 +509,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -522,7 +522,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_throw_bpmn_error then
+    when flow_globals.throw_bpmn_error_event then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
@@ -590,7 +590,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -603,7 +603,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_throw_bpmn_error then
+    when flow_globals.throw_bpmn_error_event then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'

@@ -4,8 +4,7 @@ as
 
   e_plsql_script_requested_stop exception;
   pragma EXCEPTION_INIT(e_plsql_script_requested_stop, -20000);
-  e_plsql_script_throw_bpmn_error exception;
-  pragma EXCEPTION_INIT(e_plsql_script_throw_bpmn_error, -20001);
+
   e_plsql_script_failed exception;
   pragma EXCEPTION_INIT(e_plsql_script_failed, -20002);
 

@@ -171,14 +171,21 @@ as
         p_message => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
       , p0        => sqlerrm
       );
-      raise e_plsql_script_requested_stop;     
-    when e_plsql_script_throw_bpmn_error then
+      raise flow_globals.request_stop_engine;  
+    when flow_globals.request_stop_engine then   
+      apex_debug.error
+      (
+        p_message => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
+      , p0        => sqlerrm
+      );
+      raise flow_globals.request_stop_engine;  
+    when flow_globals.throw_bpmn_error_event then
       apex_debug.error
       (
         p_message => 'User script run by flow_plsql_runner_pkg.run_task_script threw BPMN error.'
       , p0        => sqlerrm
       );
-      raise e_plsql_script_throw_bpmn_error;
+      raise flow_globals.throw_bpmn_error_event;
     when others then
       apex_debug.error
       (
