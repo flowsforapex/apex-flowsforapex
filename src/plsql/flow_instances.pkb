@@ -210,7 +210,7 @@ create or replace package body flow_instances as
                           , p_default_value => 0 );
     else
       -- get the logging level from the bpmn process object
-      l_logging_level := json_value (l_bpmn_process_objt.objt_attributes, '$.apex.customExtension.minLoggingLevel' returning number); -- TODO - Change when parser supports minLoggingLevel
+      l_logging_level := json_value (l_bpmn_process_objt.objt_attributes, '$.apex.minLoggingLevel' returning number); 
       if l_logging_level is null then
         l_logging_level := flow_engine_util.get_config_value 
                             ( p_config_key    => flow_constants_pkg.gc_config_logging_default_level 
@@ -401,7 +401,7 @@ create or replace package body flow_instances as
       -- get instance scheduling information for the process being started
       select objt.objt_attributes."apex"."priority"
            , objt.objt_attributes."apex"."dueOn"
-           , objt.objt_attributes."apex"."customExtension"."instanceName"  -- TODO - implement instanceName
+           , objt.objt_attributes."apex"."instanceName"  
         into l_priority_json
            , l_due_on_json
            , l_instance_name_def 

@@ -163,6 +163,7 @@ as
   gc_apex_process_callable            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isCallable';
   gc_apex_process_startable           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isStartable';
   gc_apex_process_min_logging_level   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'minLoggingLevel';
+  gc_apex_process_instance_name       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'instanceName';
 
   -- callActivity tags
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
