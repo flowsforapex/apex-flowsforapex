@@ -1952,7 +1952,7 @@ as
                         , proc_callable           varchar2( 50 char) path '@apex:isCallable'
                         , proc_startable          varchar2( 50 char) path '@apex:isStartable'
                         , proc_min_logging_level  varchar2( 50 char) path '@apex:minLoggingLevel'   
-                        , proc_instance_name      varchar2( 50 char) path '@apex:instanceName'
+                        , proc_instance_name      varchar2(200 char) path '@apex:instanceName'
                         , proc_application_id     varchar2( 50 char) path '@apex:applicationId'
                         , proc_page_id            varchar2( 50 char) path '@apex:pageId'
                         , proc_username           varchar2( 50 char) path '@apex:username'
