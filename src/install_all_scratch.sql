@@ -13,7 +13,6 @@ ACCEPT app_name char default 'Flows for APEX' PROMPT 'Enter Application Name: [F
 
 
 @install_db_scratch.sql
-@types/flow_t_correlated_message.sql
 
 PROMPT >> Application Installation
 PROMPT >> ========================
