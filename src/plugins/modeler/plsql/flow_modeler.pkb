@@ -519,7 +519,7 @@ as
     if (apex_application.g_x02 is not null) then
         case apex_application.g_x03
         when 'sql' then
-            v_command := upper(substr(apex_application.g_x02, 1,instr(apex_application.g_x02,' ') - 1));
+            v_command := upper(substr(ltrim(apex_application.g_x02), 1, instr(ltrim(apex_application.g_x02), ' ') - 1));
             if v_command in ( 'ALTER', 'COMPUTE', 'CREATE', 'DROP', 'GRANT', 'REVOKE') then
                 l_result := '{"message":"Forbidden DDL statement","success":"false"}';
             elsif v_command in ( 'SELECT', 'INSERT', 'UPDATE', 'DELETE' ) then
