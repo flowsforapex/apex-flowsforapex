@@ -1,13 +1,14 @@
+create or replace package flow_services
 /* 
 -- Flows for APEX - flow_services.pks
 -- 
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates. 2025.
 --
 -- Created 21-Nov-2021  Louis Moreaux (Insum, for MT AG) 
+-- Edited  09-Apr-2025  Richard Allen (Flowquest)
 --
 */
-
-create or replace package flow_services
   authid current_user
   -- accessible by ( flow_tasks )
 as
@@ -21,10 +22,15 @@ as
   e_email_failed exception;
   e_json_not_valid exception;
 
-  procedure send_email(
-      pi_prcs_id in flow_processes.prcs_id%type
-    , pi_sbfl_id in flow_subflows.sbfl_id%type
-    , pi_objt_id in flow_objects.objt_id%type
+  procedure send_email
+  ( pi_prcs_id in flow_processes.prcs_id%type
+  , pi_sbfl_id in flow_subflows.sbfl_id%type
+  , pi_objt_id in flow_objects.objt_id%type
+  );
+
+  procedure apex_AI_generate 
+  ( p_sbfl_info   in flow_subflows%rowtype  
+  , p_step_info   in flow_types_pkg.flow_step_info
   );
 
 end flow_services;

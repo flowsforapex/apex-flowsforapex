@@ -1,16 +1,17 @@
+create or replace package body flow_services
 /* 
 -- Flows for APEX - flow_services.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates. 2025.
 --
 -- Created  21-Nov-2021  Louis Moreaux (Insum, for MT AG) 
 -- Edited   13-Apr-2022  Richard Allen (Oracle)
 -- Modified 01-Jun-2022  Moritz Klein (MT AG)
+-- Edited   09-Apr-2025  Richard Allen (Flowquest)
 --
 */
-
-create or replace package body flow_services
 as
   g_workspace varchar2(100) := flow_engine_util.get_config_value(
                                    p_config_key    => 'default_workspace'
@@ -330,6 +331,65 @@ as
       raise e_email_failed;
 
     end send_email;
+
+  procedure apex_AI_generate 
+  ( p_sbfl_info   in flow_subflows%rowtype  
+  , p_step_info   in flow_types_pkg.flow_step_info
+  )
+  is
+    l_ai_model_setting         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_ai_prompt_setting        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_ai_temperature_setting   flow_types_pkg.t_bpmn_attribute_vc2; 
+    l_ai_model                 flow_types_pkg.t_bpmn_attribute_vc2;
+    l_ai_prompt                flow_types_pkg.t_bpmn_attribute_vc2;
+    l_ai_temperature           flow_types_pkg.t_bpmn_attribute_vc2;
+    l_result_var               flow_types_pkg.t_bpmn_attribute_vc2; 
+    l_result                   clob;
+  begin
+    apex_debug.enter( p_routine_name => 'service task - type apex_AI_generate' );
+
+    -- Pull all configuration from objt_attributes JSON structure
+    l_ai_model_setting       := json_query ( p_step_info.target_objt_attributes, '$.apex.customExtension.apexAIService'     returning varchar2);
+    l_ai_prompt_setting      := json_query ( p_step_info.target_objt_attributes, '$.apex.customExtension.apexAIprompt'      returning varchar2);
+    l_ai_temperature_setting := json_query ( p_step_info.target_objt_attributes, '$.apex.customExtension.apexAITemperature' returning varchar2);
+    l_result_var             := json_value ( p_step_info.target_objt_attributes, '$.apex.customExtension.resultVariable'    returning varchar2);
+
+    -- Get the AI model and prompt
+    l_ai_model       := flow_settings.get_vc2_expression ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                                                         , pi_sbfl_id => p_sbfl_info.sbfl_id
+                                                         , pi_scope   => p_sbfl_info.sbfl_scope
+                                                         , pi_expr    => l_ai_model_setting 
+                                                        );
+    l_ai_prompt      := flow_settings.get_vc2_expression ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                                                         , pi_sbfl_id => p_sbfl_info.sbfl_id
+                                                         , pi_scope   => p_sbfl_info.sbfl_scope
+                                                         , pi_expr    => l_ai_prompt_setting 
+                                                        );
+    l_ai_temperature := flow_settings.get_vc2_expression ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                                                         , pi_sbfl_id => p_sbfl_info.sbfl_id
+                                                         , pi_scope   => p_sbfl_info.sbfl_scope
+                                                         , pi_expr    => l_ai_temperature_setting 
+                                                        );
+ 
+    -- Call the AI service with the model and prompt
+    apex_debug.message (p_message => ' Calling APEX AI generate -  service: %0 with prompt: %1', p0 => l_ai_model, p1 => l_ai_prompt);
+    l_result := apex_ai.generate
+                ( p_prompt              => l_ai_prompt
+                , p_service_static_id   => l_ai_model
+                , p_temperature         => to_number(l_ai_temperature)
+                );
+    -- Set the result in the process variable
+    flow_proc_vars_int.set_var 
+    ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+    , pi_sbfl_id        => p_sbfl_info.sbfl_id
+    , pi_scope          => p_sbfl_info.sbfl_scope
+    , pi_var_name       => l_result_var
+    , pi_clob_value    => l_result
+    );
+    -- Log the result 
+
+
+  end apex_AI_generate;
 
 end flow_services;
 /

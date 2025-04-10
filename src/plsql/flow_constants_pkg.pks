@@ -133,6 +133,13 @@ as
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
+  gc_apex_servicetask_ai_generate     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexAIGenerate';
+
+  gc_apex_servicetask_ai_model        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiModel';
+  gc_apex_servicetask_ai_prompt       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiPrompt';
+  gc_apex_servicetask_ai_temperateure constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiTemperature';
+  gc_apex_servicetask_ai_result       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'resultVariable';
+
   --messageFlow messaging protocol
   gc_simple_message   constant flow_types_pkg.t_bpmn_id := 'simpleMessage';
    

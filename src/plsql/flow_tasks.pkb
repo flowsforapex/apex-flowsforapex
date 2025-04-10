@@ -252,6 +252,7 @@ create or replace package body flow_tasks as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_custom_service_task flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter 
     ( 'process_serviceTask'
@@ -269,23 +270,44 @@ create or replace package body flow_tasks as
     , p_called_internally => true
     );
 
-    case get_task_type( pi_objt_id => p_step_info.target_objt_id )
-      when flow_constants_pkg.gc_apex_task_execute_plsql then
-        flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id  => p_sbfl_info.sbfl_id
-        , pi_objt_id  => p_step_info.target_objt_id
-        , pi_step_key => p_sbfl_info.sbfl_step_key
-        );
-      when flow_constants_pkg.gc_apex_servicetask_send_mail then
-        flow_services.send_email
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
-      else
-        null;
-    end case;
+    -- check if the customExtension contains a custom service task
+    -- if so, call the custom service task
+
+    l_custom_service_task := json_value( p_step_info.target_objt_attributes, '$.apex.customExtension.customServiceTaskType' returning varchar2);
+    if l_custom_service_task is not null then
+      apex_debug.message
+      ( p_message => 'Custom service task %0 found '
+      , p0        =>  l_custom_service_task
+      );
+           flow_services.apex_AI_generate 
+           ( p_sbfl_info     => p_sbfl_info
+           , p_step_info     => p_step_info
+           );
+    else
+
+      case get_task_type( pi_objt_id => p_step_info.target_objt_id )  --TODO - uncomment when AIgenerate is suported in parser
+        when flow_constants_pkg.gc_apex_task_execute_plsql then
+              flow_plsql_runner_pkg.run_task_script
+              ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+              , pi_sbfl_id  => p_sbfl_info.sbfl_id
+              , pi_objt_id  => p_step_info.target_objt_id
+              , pi_step_key => p_sbfl_info.sbfl_step_key
+              );
+        when flow_constants_pkg.gc_apex_servicetask_send_mail then --TODO - uncomment when AIgenerate is suported in parser
+             flow_services.send_email
+             ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+             , pi_sbfl_id => p_sbfl_info.sbfl_id
+             , pi_objt_id => p_step_info.target_objt_id
+             );
+        when flow_constants_pkg.gc_apex_servicetask_ai_generate then
+             flow_services.apex_AI_generate 
+             ( p_sbfl_info     => p_sbfl_info
+             , p_step_info     => p_step_info
+             );
+        else
+          null;
+      end case;
+    end if;
 
     flow_engine.flow_complete_step 
     ( p_process_id => p_sbfl_info.sbfl_prcs_id

@@ -1317,6 +1317,8 @@ end lock_var;
              when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
              when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date, flow_constants_pkg.gc_prov_default_date_format)
              when flow_constants_pkg.gc_prov_var_type_tstz     then to_char(prov.prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format)
+             when flow_constants_pkg.gc_prov_var_type_clob     then sys.dbms_lob.substr(prov.prov_var_clob, 4000, 1)
+             when flow_constants_pkg.gc_prov_var_type_json     then sys.dbms_lob.substr(prov.prov_var_json, 4000, 1)
              else null
            end as prov_var_value
       into l_return
