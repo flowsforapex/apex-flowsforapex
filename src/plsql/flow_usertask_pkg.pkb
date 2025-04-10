@@ -290,227 +290,190 @@ $END
 
     e_priority_invalid   exception;
     e_business_ref_null  exception;
-    $IF flow_apex_env.ver_le_21 $THEN
-      -- only need this for testing as apex_approval should fail if attempt to run without apex 22.1+
-      type t_task_parameter  is record
-      ( static_id     varchar2(255)
-      , string_value  varchar2(255)
-      );
-      type t_task_parameters is table of t_task_parameter;
-      l_task_parameter    t_task_parameter;
-      l_task_parameters   t_task_parameters := t_task_parameters();
-    $else
-      -- APEX 22.1 supports Approval Components and has apex_approval package
-      l_task_parameters  apex_approval.t_task_parameters := apex_approval.t_task_parameters();
-      l_task_parameter   apex_approval.t_task_parameter;
-    $end
+
+    l_task_parameters  apex_human_task.t_task_parameters := apex_human_task.t_task_parameters();
+    l_task_parameter   apex_human_task.t_task_parameter;
   begin
     apex_debug.enter 
     ( 'process_apex_approval_task'
     , 'step_bpmn_id: ', p_step_info.target_objt_ref
     );
-    -- check that APEX is >= v22.1 (required for APEX approval component)
-    if flow_apex_env.ver_le_21_2 then 
-      apex_debug.info (p_message  => 'APEX Version v22.1 or higher required for APEX Approval tasks.');
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => l_prcs_id
-      , pi_sbfl_id        => l_sbfl_id
-      , pi_message_key    => 'apex-task-not-supported'
-      , p0 => '22.1'
-      , p1 => p_step_info.target_objt_ref
-      );  
-      -- $F4AMESSAGE 'apex-task-not-supported' || 'APEX Workflow Feature use requires Oracle APEX v%0.'
-    else
-      -- get the parameters for the Approval Task creation
-      select objt.objt_attributes."apex"."applicationId"
-           , objt.objt_attributes."apex"."taskStaticId"
-           , objt.objt_attributes."apex"."subject"
-           , objt.objt_attributes."apex"."parameters"
-           , objt.objt_attributes."apex"."businessRef"
-           , objt.objt_attributes."apex"."resultVariable"
-           , objt.objt_attributes."apex"."initiator"  
-           , objt.objt_attributes."apex"."priority"
-           , objt.objt_attributes."apex"."dueOn"
-        into l_app_id
-           , l_static_id
-           , l_subject
-           , l_parameters
-           , l_business_ref
-           , l_result_var
-           , l_initiator
-           , l_priority_setting
-           , l_due_on_setting
-        from flow_objects objt
-       where objt.objt_bpmn_id = p_step_info.target_objt_ref
-         and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
-         ;
-      apex_debug.info 
-        ( p_message => 'APEX Approval Task parameter  %0 '
-        , p0 => l_parameters
-        );
-      -- do substitutions
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_app_id);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_static_id);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_subject);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_parameters);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
-      flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
 
-      if l_priority_setting is not null then
-        l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
-                                                 , pi_sbfl_id  => l_sbfl_id
-                                                 , pi_expr     => l_priority_setting
-                                                 , pi_scope    => l_scope
-                                                 );
-      end if;
+    -- get the parameters for the Approval Task creation
+    select objt.objt_attributes."apex"."applicationId"
+         , objt.objt_attributes."apex"."taskStaticId"
+         , objt.objt_attributes."apex"."subject"
+         , objt.objt_attributes."apex"."parameters"
+         , objt.objt_attributes."apex"."businessRef"
+         , objt.objt_attributes."apex"."resultVariable"
+         , objt.objt_attributes."apex"."initiator"  
+         , objt.objt_attributes."apex"."priority"
+         , objt.objt_attributes."apex"."dueOn"
+      into l_app_id
+         , l_static_id
+         , l_subject
+         , l_parameters
+         , l_business_ref
+         , l_result_var
+         , l_initiator
+         , l_priority_setting
+         , l_due_on_setting
+      from flow_objects objt
+     where objt.objt_bpmn_id = p_step_info.target_objt_ref
+       and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
+    ;
+    apex_debug.info 
+      ( p_message => 'APEX Approval Task parameter  %0 '
+      , p0 => l_parameters
+      );
+    -- do substitutions
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_app_id);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_static_id);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_subject);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_parameters);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
 
-      if l_due_on_setting is not null then                                          
-        l_due_on :=   flow_settings.get_due_on   ( pi_prcs_id  => l_prcs_id
-                                                 , pi_sbfl_id  => l_sbfl_id
-                                                 , pi_expr     => l_due_on_setting
-                                                 , pi_scope    => l_scope
-                                                 );
-      end if; 
-
-      -- create parameters table
-      for parameters in (
-        select static_id
-             , data_type
-             , value
-        from json_table (l_parameters, '$[*]'
-                         columns(
-                                  static_id path '$.parStaticId',
-                                  data_type path '$.parDataType',
-                                  value     path '$.parValue'
-                                )
-                        )
-      )
-      loop
-        l_task_parameter.static_id    := parameters.static_id;
-        l_task_parameter.string_value := parameters.value;
-        l_task_parameters(l_task_parameters.count+1) := l_task_parameter;
-        apex_debug.info 
-        ( p_message => 'APEX Approval Task parameter created - parameter %0 value %1'
-        , p0 => parameters.static_id
-        , p1 => parameters.value
-        );
-      end loop;
-      -- check that priority is a valid priority 1-5 before passing
-      begin
-        if l_priority is not null then
-          if l_priority not between 1 and 5 then
-            raise e_priority_invalid;
-          end if;
-        end if;
-      exception
-        when value_error then
-          apex_debug.error
-          ( p_message => 'APEX Approval Task priority (%0) must be between 1 and 5'
-          , p0 => l_priority
-          );
-          raise e_priority_invalid;
-      end;
-      -- check that business_ref is not null before passing (prevents "lost" tasks in APEX)
-      l_business_ref := coalesce(l_business_ref, flow_globals.business_ref);
-      if l_business_ref is null then
-        if apex_task_pk_is_required (p_app_id => l_app_id, p_task_static_id => l_static_id) then 
-          apex_debug.error
-          ( p_message => 'APEX Approval Task business ref is null'
-          , p0 => coalesce(l_business_ref, flow_globals.business_ref)
-          );
-          raise e_business_ref_null;
-        end if;
-      end if;
-
-      $IF not flow_apex_env.ver_le_21_2 $THEN     
-        -- create the task in APEX Approvals if APEX >= v22.1
-        -- include due date if APEX >= 23.1
-        begin
-          l_apex_task_id := apex_approval.create_task
-                         ( p_application_id     => l_app_id
-                         , p_task_def_static_id => l_static_id
-                         , p_subject            => l_subject
-                         , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref) 
-                         , p_parameters         => l_task_parameters
-                         , p_initiator          => coalesce ( l_initiator
-                                                      , sys_context('apex$session','app_user') 
-                                                      , sys_context('userenv','os_user')
-                                                      , sys_context('userenv','session_user')
-                                                      ) 
-                         , p_priority           => l_priority
-                         $IF not flow_apex_env.ver_le_22_2 $THEN
-                         , p_due_date           => l_due_on
-                         $END
-                         );
-          apex_debug.info 
-          ( p_message => 'APEX Approval Task created - Approval Task Reference %0 created'
-          , p0 => l_apex_task_id
-          );  
-
---          flow_proc_vars_int.set_var 
---          ( pi_prcs_id      => l_prcs_id
---          , pi_scope        => l_scope
---          , pi_var_name     => p_step_info.target_objt_ref||flow_constants_pkg.gc_prov_suffix_task_id
---          , pi_num_value    => l_apex_task_id
---          , pi_sbfl_id      => l_sbfl_id
---          , pi_objt_bpmn_id => p_step_info.target_objt_ref
---          );
-          -- set the status to 'waiting for approval'
-          update flow_subflows sbfl
-             set sbfl.sbfl_last_update    = systimestamp
-               , sbfl.sbfl_apex_task_id   = l_apex_task_id
-               , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_approval
-               , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                      , sys_context('userenv','os_user')
-                                                      , sys_context('userenv','session_user')
-                                                      )  
-           where sbfl.sbfl_id       = l_sbfl_id
-             and sbfl.sbfl_prcs_id  = l_prcs_id
-          ;
-        exception
-          when e_priority_invalid then
-            apex_debug.info 
-            ( p_message => ' --- Error creating Approval Task.  Priority should evaluate to number between 1 and 5.  Priority: %0'
-            , p0 => l_priority
-            );  
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => l_prcs_id
-            , pi_message_key    => 'apex-task-priority-error'
-            , p0 => l_priority
-            );  
-            -- $F4AMESSAGE 'apex-task-priority-error' || 'Error creating APEX Workflow task - invalid priority %0.'    
-          when e_business_ref_null then
-            apex_debug.info
-            ( p_message => ' --- Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.'
-            );
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => l_prcs_id
-            , pi_message_key    => 'apex-task-business-ref-null'
-            );  
-            -- $F4AMESSAGE 'apex-task-business-ref-null' || 'Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.'             
-
-          when others then
-            apex_debug.info 
-            ( p_message => ' --- Error creating APEX Approval Task.  AppID %0 TaskStaticID %1 Subject %2 DetailPK %3 Initiator %4 Priority %5.'
-            , p0 => l_app_id
-            , p1 => l_static_id
-            , p2 => l_subject
-            , p3 => coalesce(l_business_ref, flow_globals.business_ref, null) 
-            , p4 => l_initiator
-            , p5 => l_priority
-            );  
-            flow_errors.handle_instance_error
-            ( pi_prcs_id        => l_prcs_id
-            , pi_sbfl_id        => l_sbfl_id
-            , pi_message_key    => 'apex-task-creation-error'
-            , p0 => l_static_id
-            , p1 => l_app_id
-            );  
-            -- $F4AMESSAGE 'apex-task-creation-error' || 'Error creating APEX Workflow task %0 in application %1.  see debug for details.' 
-        end; 
-      $END
+    if l_priority_setting is not null then
+      l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
+                                               , pi_sbfl_id  => l_sbfl_id
+                                               , pi_expr     => l_priority_setting
+                                               , pi_scope    => l_scope
+                                               );
     end if;
+
+    if l_due_on_setting is not null then                                          
+      l_due_on :=   flow_settings.get_due_on   ( pi_prcs_id  => l_prcs_id
+                                               , pi_sbfl_id  => l_sbfl_id
+                                               , pi_expr     => l_due_on_setting
+                                               , pi_scope    => l_scope
+                                               );
+    end if; 
+
+    -- create parameters table
+    for parameters in (
+      select static_id
+           , data_type
+           , value
+      from json_table (l_parameters, '$[*]'
+                       columns(
+                                static_id path '$.parStaticId',
+                                data_type path '$.parDataType',
+                                value     path '$.parValue'
+                              )
+                      )
+    )
+    loop
+      l_task_parameter.static_id    := parameters.static_id;
+      l_task_parameter.string_value := parameters.value;
+      l_task_parameters(l_task_parameters.count+1) := l_task_parameter;
+      apex_debug.info 
+      ( p_message => 'APEX Approval Task parameter created - parameter %0 value %1'
+      , p0 => parameters.static_id
+      , p1 => parameters.value
+      );
+    end loop;
+    -- check that priority is a valid priority 1-5 before passing
+    begin
+      if l_priority is not null then
+        if l_priority not between 1 and 5 then
+          raise e_priority_invalid;
+        end if;
+      end if;
+    exception
+      when value_error then
+        apex_debug.error
+        ( p_message => 'APEX Approval Task priority (%0) must be between 1 and 5'
+        , p0 => l_priority
+        );
+        raise e_priority_invalid;
+    end;
+    -- check that business_ref is not null before passing (prevents "lost" tasks in APEX)
+    l_business_ref := coalesce(l_business_ref, flow_globals.business_ref);
+    if l_business_ref is null then
+      if apex_task_pk_is_required (p_app_id => l_app_id, p_task_static_id => l_static_id) then 
+        apex_debug.error
+        ( p_message => 'APEX Approval Task business ref is null'
+        , p0 => coalesce(l_business_ref, flow_globals.business_ref)
+        );
+        raise e_business_ref_null;
+      end if;
+    end if;
+
+    begin
+      l_apex_task_id := apex_human_task.create_task
+                     ( p_application_id     => l_app_id
+                     , p_task_def_static_id => l_static_id
+                     , p_subject            => l_subject
+                     , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref) 
+                     , p_parameters         => l_task_parameters
+                     , p_initiator          => coalesce ( l_initiator
+                                                  , sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  ) 
+                     , p_priority           => l_priority
+                     , p_due_date           => l_due_on
+                     );
+      apex_debug.info 
+      ( p_message => 'APEX Human Task created - APEX Task Reference %0 created'
+      , p0 => l_apex_task_id
+      );  
+
+      -- set the status to 'waiting for approval'
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_apex_task_id   = l_apex_task_id
+           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_waiting_approval
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where sbfl.sbfl_id       = l_sbfl_id
+         and sbfl.sbfl_prcs_id  = l_prcs_id
+      ;
+    exception
+      when e_priority_invalid then
+        apex_debug.info 
+        ( p_message => ' --- Error creating Approval Task.  Priority should evaluate to number between 1 and 5.  Priority: %0'
+        , p0 => l_priority
+        );  
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => l_prcs_id
+        , pi_message_key    => 'apex-task-priority-error'
+        , p0 => l_priority
+        );  
+        -- $F4AMESSAGE 'apex-task-priority-error' || 'Error creating APEX Human task - invalid priority %0.'    
+      when e_business_ref_null then
+        apex_debug.info
+        ( p_message => ' --- Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.'
+        );
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => l_prcs_id
+        , pi_message_key    => 'apex-task-business-ref-null'
+        );  
+        -- $F4AMESSAGE 'apex-task-business-ref-null' || 'Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.'             
+      when others then
+        apex_debug.info 
+        ( p_message => ' --- Error creating APEX Approval Task.  AppID %0 TaskStaticID %1 Subject %2 DetailPK %3 Initiator %4 Priority %5.'
+        , p0 => l_app_id
+        , p1 => l_static_id
+        , p2 => l_subject
+        , p3 => coalesce(l_business_ref, flow_globals.business_ref, null) 
+        , p4 => l_initiator
+        , p5 => l_priority
+        );  
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => l_prcs_id
+        , pi_sbfl_id        => l_sbfl_id
+        , pi_message_key    => 'apex-task-creation-error'
+        , p0 => l_static_id
+        , p1 => l_app_id
+        );  
+        -- $F4AMESSAGE 'apex-task-creation-error' || 'Error creating APEX Human Task %0 in application %1.  see debug for details.' 
+    end; 
+      
   end process_apex_approval_task;
 
   procedure cancel_apex_task
@@ -524,22 +487,14 @@ $END
     ( 'cancel_apex_task'
     , 'apex task_id: ', p_apex_task_id 
     );
-    $IF flow_apex_env.ver_le_21_2 $THEN
-      null;
-      apex_debug.info 
-      ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1 -- BUT APEX VERSION HAS NO APPROVALS!'
-      , p0 => p_apex_task_id
-      , p1 => p_objt_bpmn_id
-      );
-    $ELSE
-      -- cancel task
-      apex_approval.cancel_task (p_task_id => p_apex_task_id);
-      apex_debug.info 
-      ( p_message => 'APEX Workflow Task : %0  cancelled on object : %1'
-      , p0 => p_apex_task_id
-      , p1 => p_objt_bpmn_id
-      );
-    $END
+
+    -- cancel task
+    apex_human_task.cancel_task (p_task_id => p_apex_task_id);
+    apex_debug.info 
+    ( p_message => 'APEX Human Task : %0  cancelled on object : %1'
+    , p0 => p_apex_task_id
+    , p1 => p_objt_bpmn_id
+    );
   exception
     when others then
       flow_errors.handle_instance_error
@@ -573,7 +528,7 @@ $END
       e_task_no_return_var          exception;
     begin
       apex_debug.enter
-      (p_routine_name => 'return_approval_result'
+      (p_routine_name => 'return_approval_outcome'
       );
 
       begin
