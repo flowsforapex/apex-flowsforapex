@@ -114,52 +114,50 @@ end;
 
 PROMPT >>> Table flow_processes altered 
 
-update flow_processes
-   set prcs_logging_level = ( select case nvl(cfig_value, 'none')
-                                      when 'none'     then '0'
-                                      when 'standard' then '6'
-                                      when 'secure'   then '6'
-                                      when 'full'     then '8' 
-                                      else '0'
-                                     end
-                                from flow_configuration
-                               where cfig_key = 'logging_level')
- where prcs_status in ('created', 'running', 'suspended', 'error')
-   and prcs_logging_level is null;
+PROMPT >>> Migrate logging configuration for flow_processes and flow_configuration
 
-PROMPT >>> Table flow_processes migrated with logging levels from flow_configuration
+begin
+  update flow_processes
+    set prcs_logging_level = ( select case nvl(cfig_value, 'none')
+                                        when 'none'     then '0'
+                                        when 'standard' then '6'
+                                        when 'secure'   then '6'
+                                        when 'full'     then '8' 
+                                        else '0'
+                                      end
+                                  from flow_configuration
+                                where cfig_key = 'logging_level')
+  where prcs_status in ('created', 'running', 'suspended', 'error')
+    and prcs_logging_level is null;
 
-insert into flow_configuration (cfig_key, cfig_value)
-select 'logging_default_level',  -- new key
-       case nvl(cfig_value, 'none')
-         when 'none'     then '0'
-         when 'standard' then '6'
-         when 'secure'   then '6'
-         when 'full'     then '8'
-         else '0'           -- new value
-         end
-  from flow_configuration
- where cfig_key = 'logging_level';
+  insert into flow_configuration (cfig_key, cfig_value)
+  select 'logging_default_level',  -- new key
+        case nvl(cfig_value, 'none')
+          when 'none'     then '0'
+          when 'standard' then '6'
+          when 'secure'   then '6'
+          when 'full'     then '8'
+          else '0'           -- new value
+          end
+    from flow_configuration
+  where cfig_key = 'logging_level';
 
-insert into flow_configuration (cfig_key, cfig_value)
-select 'logging_bpmn_enabled',  -- new key
-       case nvl(cfig_value, 'none')
-         when 'none'     then 'false'
-         when 'standard' then 'false'
-         when 'secure'   then 'true'
-         when 'full'     then 'true'
-         else 'false'           -- new value
-         end
-  from flow_configuration
- where cfig_key = 'logging_level';
+  insert into flow_configuration (cfig_key, cfig_value)
+  select 'logging_bpmn_enabled',  -- new key
+        case nvl(cfig_value, 'none')
+          when 'none'     then 'false'
+          when 'standard' then 'false'
+          when 'secure'   then 'true'
+          when 'full'     then 'true'
+          else 'false'           -- new value
+          end
+    from flow_configuration
+  where cfig_key = 'logging_level';
 
-insert into flow_configuration (cfig_key, cfig_value) values ('logging_bpmn_retain_days', '365');
+  insert into flow_configuration (cfig_key, cfig_value) values ('logging_bpmn_retain_days', '365');
+
+  commit;
+end;
+/
 
 PROMPT >>> Diagram logging configuration migrated based on existing settings in flow_configuration
-
-commit;
-
-
-
-
-
