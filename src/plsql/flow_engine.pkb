@@ -1987,15 +1987,7 @@ begin
                        end
     , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     );
-    flow_logging.log_step_event 
-    ( p_sbfl_rec    => l_sbfl_rec
-    , p_event       => case p_check_for_error
-                       when true then 
-                         flow_constants_pkg.gc_step_event_error_restart
-                       else 
-                         flow_constants_pkg.gc_step_event_resumed
-                       end
-    );
+
     -- see if instance can be reset to running
     select count(sbfl_id)
       into l_num_error_subflows

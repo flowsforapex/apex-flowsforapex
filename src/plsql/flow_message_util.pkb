@@ -464,7 +464,7 @@ create or replace package body flow_message_util as
         , p_scope    => l_sbfl_info.sbfl_scope
         );
       $ELSE
-        raise e_msgflow_feature_requires_ee;
+        raise flow_message_flow.e_msgflow_feature_requires_ee;
       $END
     when p_corr_msg.callback = flow_constants_pkg.gc_bpmn_start_event then
       $IF flow_apex_env.ee $THEN
@@ -472,7 +472,7 @@ create or replace package body flow_message_util as
         ( p_corr_msg     => p_corr_msg
         );
       $ELSE
-        raise e_msgflow_feature_requires_ee;
+        raise flow_message_flow.e_msgflow_feature_requires_ee;
       $END
 
     end case;
