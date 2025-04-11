@@ -11,7 +11,6 @@ PROMPT >> Install All CE Test models
 @models/sql/import.sql
 commit;
 
-
 PROMPT>> Install Emp/Dept
 
 @create_emp_dept.sql
@@ -53,4 +52,5 @@ PROMPT>> Update Config Parameters for Workspace ID, Default User, and App ID.
 
 
 spool OFF
+
 
