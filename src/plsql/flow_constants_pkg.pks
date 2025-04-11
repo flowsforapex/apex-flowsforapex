@@ -302,6 +302,8 @@ as
   gc_step_event_iteration_started     constant  varchar2(20 char) := 'iteration started';
   gc_step_event_iteration_completed   constant  varchar2(20 char) := 'iteration completed';
   gc_step_event_iteration_terminated  constant  varchar2(20 char) := 'iteration terminated';
+  gc_step_event_message_dequeued      constant  varchar2(20 char) := 'message dequeued';
+  gc_step_event_message_enqueued      constant  varchar2(20 char) := 'message enqueued';
 
   -- Process Variable Datatypes
 
