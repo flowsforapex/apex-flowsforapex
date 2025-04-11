@@ -175,7 +175,7 @@ SIGNATURE
 ## Procedure release_diagram
 
 This procedure releases a diagram, making it available for use in new process instances.
-The procedure sets the diagram status to 'released`.
+The procedure sets the diagram status to 'released'.
 If a version of this diagram already exists in 'released' status, the previous version is set to 'deprecated'.
 
 This procedure is useful for deploying new diagrams into a production environment in a scripted manner.  You can install the 
