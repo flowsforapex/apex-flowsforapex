@@ -77,7 +77,7 @@ as select
      , null
      , null
      , null
-    from table ( apex_approval.get_tasks ( p_context => 'MY_TASKS' ) )
+    from table ( apex_human_task.get_tasks ( p_context => 'MY_TASKS' ) )
     UNION ALL
     select  
        manager
