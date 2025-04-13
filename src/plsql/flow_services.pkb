@@ -332,7 +332,7 @@ as
 
     end send_email;
 
-  procedure apex_AI_generate 
+  procedure apex_AI_generation 
   ( p_sbfl_info   in flow_subflows%rowtype  
   , p_step_info   in flow_types_pkg.flow_step_info
   )
@@ -346,13 +346,13 @@ as
     l_result_var               flow_types_pkg.t_bpmn_attribute_vc2; 
     l_result                   clob;
   begin
-    apex_debug.enter( p_routine_name => 'service task - type apex_AI_generate' );
+    apex_debug.enter( p_routine_name => 'service task - type apex_AI_generation' );
 
     -- Pull all configuration from objt_attributes JSON structure
-    l_ai_model_setting       := json_query ( p_step_info.target_objt_attributes, '$.apex.customExtension.apexAIService'     returning varchar2);
-    l_ai_prompt_setting      := json_query ( p_step_info.target_objt_attributes, '$.apex.customExtension.apexAIprompt'      returning varchar2);
-    l_ai_temperature_setting := json_query ( p_step_info.target_objt_attributes, '$.apex.customExtension.apexAITemperature' returning varchar2);
-    l_result_var             := json_value ( p_step_info.target_objt_attributes, '$.apex.customExtension.resultVariable'    returning varchar2);
+    l_ai_model_setting       := json_query ( p_step_info.target_objt_attributes, '$.apex.aiService'     returning varchar2);
+    l_ai_prompt_setting      := json_query ( p_step_info.target_objt_attributes, '$.apex.aiPrompt'      returning varchar2);
+    l_ai_temperature_setting := json_query ( p_step_info.target_objt_attributes, '$.apex.aiTemperature' returning varchar2);
+    l_result_var             := json_value ( p_step_info.target_objt_attributes, '$.apex.resultVariable'    returning varchar2);
 
     -- Get the AI model and prompt
     l_ai_model       := flow_settings.get_vc2_expression ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
@@ -369,10 +369,10 @@ as
                                                          , pi_sbfl_id => p_sbfl_info.sbfl_id
                                                          , pi_scope   => p_sbfl_info.sbfl_scope
                                                          , pi_expr    => l_ai_temperature_setting 
-                                                        );
+                                                        );                                    
  
     -- Call the AI service with the model and prompt
-    apex_debug.message (p_message => ' Calling APEX AI generate -  service: %0 with prompt: %1', p0 => l_ai_model, p1 => l_ai_prompt);
+    apex_debug.message (p_message => ' Calling APEX AI generation -  service: %0 with prompt: %1', p0 => l_ai_model, p1 => l_ai_prompt);
     l_result := apex_ai.generate
                 ( p_prompt              => l_ai_prompt
                 , p_service_static_id   => l_ai_model
@@ -387,9 +387,9 @@ as
     , pi_clob_value    => l_result
     );
     -- Log the result 
+    --TODO after merge with dev (needs new logging) before production
 
-
-  end apex_AI_generate;
+  end apex_AI_generation;
 
 end flow_services;
 /

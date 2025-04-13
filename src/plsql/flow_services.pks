@@ -28,7 +28,7 @@ as
   , pi_objt_id in flow_objects.objt_id%type
   );
 
-  procedure apex_AI_generate 
+  procedure apex_AI_generation 
   ( p_sbfl_info   in flow_subflows%rowtype  
   , p_step_info   in flow_types_pkg.flow_step_info
   );
