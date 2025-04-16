@@ -29,7 +29,7 @@ begin
   add_line( '  release     constant pls_integer := ' || r || ';' );
   add_line( '  ee          constant boolean := false;');
    
-  for yr in 19..v+5 loop
+  for yr in 19..v+4 loop
     add_line('  ver_le_' || yr || '   constant boolean     := ' || add_bool(trunc(vr), yr    ) || ';');
     add_line('  ver_le_' || yr || '_1 constant boolean     := ' || add_bool(vr       , yr +.1) || ';');
     add_line('  ver_le_' || yr || '_2 constant boolean     := ' || add_bool(vr       , yr +.2) || ';');
