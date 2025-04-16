@@ -112,7 +112,7 @@ as
       ( p_process_id        => p_process_id
       , p_subflow_id        => p_sbfl_context_par.sbfl_id
       , p_step_key          => p_sbfl_context_par.step_key
-      , p_log_as_completed  => false
+      , p_log_as_completed  => true 
       );
     elsif p_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_terminate_event_definition then
       -- sub process terminate end
@@ -189,6 +189,7 @@ as
           ( p_process_id    => p_process_id
           , p_objt_bpmn_id  => p_step_info.target_objt_ref
           , p_event         => flow_constants_pkg.gc_prcs_event_leave_call
+          , p_event_level   => flow_constants_pkg.gc_logging_level_routine
           , p_comment       => 'Leaving called diagram '||
                                flow_diagram.get_diagram_name (pi_dgrm_id => p_sbfl_info.sbfl_dgrm_id) ||'.'
           );  

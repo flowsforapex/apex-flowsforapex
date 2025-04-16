@@ -1,0 +1,431 @@
+---
+# ====== Page: Configuration - Timers ========================
+id: 36
+identification: 
+  name: Configuration - Timers
+  alias: CONFIGURATION-TIMERS
+  title: Configuration - Timers
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    span.t-Form-inlineHelp ul li {
+        font-size: 1.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Additonal Installation Step Not Complete ====
+  id: 4548240290043011
+  identification: 
+    name: Additonal Installation Step Not Complete
+    type: Static Content
+
+  source: 
+    html-code: 'To use the Timers feature of Flows for APEX, you must complete additional installation step that can be found <a href="https://flowsforapex.org/latest/installation/#post-installation-task-1-additional-step-to-use-timers" target="_blank">here</a>.'
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--horizontal
+    - t-Alert--defaultIcons
+    - t-Alert--warning
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: not flow_timers_pkg.timer_job_exists
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Timers ======================================
+  id: 5273399411803742
+  identification: 
+    name: Timers
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_timers_pkg.timer_job_exists
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Breadcrumb ==================================
+  id: 24203633870580280
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+page-items: 
+- # ====== Page Item: P36_TIMER_STATUS =========================
+  id: 3249682912234740
+  identification: 
+    name: P36_TIMER_STATUS
+    type: Switch
+
+  label: 
+    label: Timers Enabled
+    alignment: Left
+
+  settings: 
+    use-defaults: false
+    on-value: TRUE
+    on-label: enabled
+    off-value: FALSE
+    off-label: disabled
+
+  layout: 
+    sequence: 10
+    region: Timers # 5273399411803742
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_timers_pkg.get_timer_status
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P36_TIMER_REPEAT_INTERVAL ================
+  id: 3250052219234740
+  identification: 
+    name: P36_TIMER_REPEAT_INTERVAL
+    type: Text Field
+
+  label: 
+    label: Timer Repeat Interval
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Timers # 5273399411803742
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_timers_pkg.get_timer_repeat_interval
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: true
+    label-1: Hourly
+    value-1: FREQ=HOURLY;INTERVAL=1
+    label-2: 10 Min
+    value-2: FREQ=MINUTELY;INTERVAL=10
+    label-3: 5 Min
+    value-3: FREQ=MINUTELY;INTERVAL=10
+    label-4: 1 Min
+    value-4: FREQ=MINUTELY;INTERVAL=10
+    label-5: 10 Sec (Production Use - not for apex.oracle.com)
+    value-5: FREQ=SECONDLY;INTERVAL=10
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P36_TIMER_MAX_CYCLES =====================
+  id: 3317563907227906
+  identification: 
+    name: P36_TIMER_MAX_CYCLES
+    type: Number Field
+
+  label: 
+    label: Timer Max Cycles
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Text
+
+  layout: 
+    sequence: 20
+    region: Timers # 5273399411803742
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      flow_engine_util.get_config_value(
+                 p_config_key =>flow_constants_pkg.gc_config_timer_max_cycles
+               , p_default_value => flow_constants_pkg.gc_config_default_timer_max_cycles
+             )
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: For cycle timers, this will defined the maximum number of execution.
+
+buttons: 
+- # ====== Button: SAVE ========================================
+  id: 3311591865325268
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 24203633870580280
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_timers_pkg.timer_job_exists
+
+processes: 
+- # ====== Process: Set Settings ===============================
+  id: 3257766356234742
+  identification: 
+    name: Set Settings
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.set_timers_settings(
+        pi_timer_max_cycles      => :P36_TIMER_MAX_CYCLES
+      , pi_timer_status          => :P36_TIMER_STATUS
+      , pi_timer_repeat_interval => :P36_TIMER_REPEAT_INTERVAL
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Changes saved.
+
+  error: 
+    display-location: Inline in Notification
+

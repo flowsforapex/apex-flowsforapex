@@ -99,11 +99,15 @@ CREATE TABLE flow_processes (
     prcs_due_on         TIMESTAMP WITH TIME ZONE,
     prcs_archived_ts    TIMESTAMP WITH TIME ZONE,
     prcs_priority       NUMBER,
+    prcs_logging_level  NUMBER,
+    prcs_was_altered    VARCHAR2(1 CHAR),
     prcs_last_update    TIMESTAMP WITH TIME ZONE,
     prcs_last_update_by VARCHAR2(255 CHAR)
 );
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );
+ALTER TABLE flow_processes ADD CONSTRAINT prcs_ck_was_altered_yn CHECK (prcs_was_altered in ('Y','N'));
+ALTER TABLE flow_processes ADD constraint prcs_logging_level_ck check (prcs_logging_level between 0 and 8)
 
 create index flow_prcs_dgrm_status_ix on flow_processes (prcs_dgrm_id, prcs_status);
 
@@ -117,6 +121,7 @@ CREATE TABLE flow_subflow_log (
     sflg_diagram_level          NUMBER,
     sflg_iter_id                NUMBER,
     sflg_last_updated           DATE,
+    sflg_matching_object        VARCHAR2(50 CHAR),
     sflg_notes                  VARCHAR2(200)
 );
 
@@ -508,19 +513,24 @@ create table flow_flow_event_log
 
 create table flow_instance_event_log
 ( lgpr_prcs_id           	NUMBER NOT NULL
-, lgpr_objt_id              VARCHAR2(50 CHAR) NULL
+, lgpr_objt_id              VARCHAR2(50 CHAR)          -- objt_bpmn_id
+, lgpr_sbfl_id      		NUMBER                     -- for step events
+, lgpr_step_key             VARCHAR2(20 CHAR)          -- for step events
 , lgpr_dgrm_id      		NUMBER NOT NULL
-, lgpr_prcs_name         	VARCHAR2(150 CHAR) NOT NULL
+, lgpr_prcs_name         	VARCHAR2(150 CHAR)
 , lgpr_business_id			VARCHAR2(4000 char)
 , lgpr_prcs_event       	VARCHAR2(20 CHAR) NOT NULL
+, lgpr_severity             NUMBER
 , lgpr_timestamp     		TIMESTAMP WITH TIME ZONE NOT NULL
 , lgpr_duration             interval day(3) to second (3)
 , lgpr_user 				VARCHAR2(255 char)
 , lgpr_comment				VARCHAR2(2000 CHAR)
+, lgpr_apex_task_id         NUMBER
 , lgpr_error_info           VARCHAR2(2000 CHAR)
 );
 
 create index flow_lgpr_ix on flow_instance_event_log (lgpr_prcs_id, lgpr_objt_id );
+-- TODO add step key to index as 3rd element?
 
 create table flow_step_event_log
 ( lgsf_prcs_id       		NUMBER NOT NULL
@@ -542,6 +552,26 @@ create table flow_step_event_log
 );
 
 create index flow_lgsf_ix on flow_step_event_log (lgsf_prcs_id, lgsf_objt_id );
+
+drop table flow_step_events;
+create table flow_step_events
+( lgse_prcs_id              NUMBER NOT NULL
+, lgse_step_key             VARCHAR2(20 CHAR) NOT NULL
+, lgse_sbfl_id              NUMBER NOT NULL
+, lgse_dgrm_id              NUMBER NOT NULL 
+, lgse_objt_bpmn_id         VARCHAR2(50 CHAR) NOT NULL
+, lgse_event_type           VARCHAR2(20 CHAR) NOT NULL
+, lgse_timestamp            TIMESTAMP WITH TIME ZONE NOT NULL
+, lgse_user                 VARCHAR2(255 CHAR)
+, lgse_apex_task_id         NUMBER
+, lgse_new_reservation      VARCHAR2(255 CHAR)
+, lgse_new_due_on           TIMESTAMP WITH TIME ZONE
+, lgse_new_priority         NUMBER
+, lgse_error_info           VARCHAR2(2000 CHAR)
+, lgse_comment              VARCHAR2(2000 CHAR)
+);
+
+create index flow_lgse_ix on flow_step_events (lgse_prcs_id, lgse_objt_bpmn_id );
 
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null

@@ -1,0 +1,2190 @@
+---
+# ====== Page: Flow Management ===============================
+id: 2
+identification: 
+  name: Flow Management
+  alias: FLOW-MANAGEMENT
+  title: Flow Management - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: initPage2();
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Action Menu =================================
+  id: 5522803511864949
+  identification: 
+    name: Action Menu
+    type: List
+
+  source: 
+    list: P2_ACTION_MENU # 7927640106409064
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: actions
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Copy Model ==================================
+  id: 7938769092499710
+  identification: 
+    name: Copy Model
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: copy_flow_reg
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Flow Management =============================
+  id: 24213241311956116
+  identification: 
+    name: Flow Management
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0002_DIAGRAMS_VW
+    include-rowid-column: false
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--hideHeader
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: parsed_drgm
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 24214476360956128
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: true
+      maximum-rows-per-page: 1000
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 26034946443441850
+      identification: 
+        name: Primary Report
+        alias: 260350
+
+    columns: 
+    - # ====== Column: INSTANCES ===================================
+      id: 20999563623516
+      identification: 
+        column-name: INSTANCES
+        type: Plain Text
+
+      heading: 
+        heading: Instances
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 270
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_SUSPENDED ==========================
+      id: 21142700623517
+      identification: 
+        column-name: INSTANCE_SUSPENDED
+        type: Plain Text
+
+      heading: 
+        heading: <i class="status_icon fa fa-pause-circle-o" data-status="suspended"></i>&APP_TEXT$APP_STATUS_SUSPENDED.
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 140
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <a href=#INSTANCE_SUSPENDED_LINK#>#INSTANCE_SUSPENDED#</a>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_SUSPENDED_LINK =====================
+      id: 21233755623518
+      identification: 
+        column-name: INSTANCE_SUSPENDED_LINK
+        type: Hidden
+
+      heading: 
+        heading: Instance Suspended Link
+
+      layout: 
+        sequence: 200
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: DGRM_STATUS_ICON ============================
+      id: 2496678063177011
+      identification: 
+        column-name: DGRM_STATUS_ICON
+        type: Hidden
+
+      heading: 
+        heading: Dgrm Status Icon
+
+      layout: 
+        sequence: 50
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: DGRM_ID =====================================
+      id: 24214554954956129
+      identification: 
+        column-name: DGRM_ID
+        type: Hidden
+
+      heading: 
+        heading: ID
+
+      layout: 
+        sequence: 10
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: DGRM_NAME ===================================
+      id: 24214647255956130
+      identification: 
+        column-name: DGRM_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_VERSION ================================
+      id: 24214759985956131
+      identification: 
+        column-name: DGRM_VERSION
+        type: Plain Text
+
+      heading: 
+        heading: Version
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_STATUS =================================
+      id: 24214844713956132
+      identification: 
+        column-name: DGRM_STATUS
+        type: Plain Text
+
+      heading: 
+        heading: Status
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <div class="ffa-dgrm-badge">
+              <i class="#DGRM_STATUS_ICON#"></i>
+              <span class="ffa-dgrm-badge-text">#DGRM_STATUS#</span>
+          </div>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_CATEGORY ===============================
+      id: 24214982358956133
+      identification: 
+        column-name: DGRM_CATEGORY
+        type: Plain Text
+
+      heading: 
+        heading: Category
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_LAST_UPDATE ============================
+      id: 24215092633956134
+      identification: 
+        column-name: DGRM_LAST_UPDATE
+        type: Plain Text
+
+      heading: 
+        heading: Last Update
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      appearance: 
+        format-mask: '&APP_DATE_TIME_FORMAT.'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: BTN =========================================
+      id: 24215123061956135
+      identification: 
+        column-name: BTN
+        type: Plain Text
+
+      heading: 
+        heading: <button type="button" title="&APP_TEXT$APP_P2_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P2_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="header-action" data-menu="header_actions_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" title="&APP_TEXT$APP_P2_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P2_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" 
+                  data-menu="row_actions_menu"
+                  data-dgrm="#DGRM_ID#">
+              <span aria-hidden="true" class="t-Icon fa fa-bars"></span>
+          </button>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: action_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: DIAGRAM_PARSED ==============================
+      id: 26092727630304614
+      identification: 
+        column-name: DIAGRAM_PARSED
+        type: Plain Text
+
+      heading: 
+        heading: Flow Parsed
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 100
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '<span aria-hidden="true" class="fa #DIAGRAM_PARSED_ICON#"></span>'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DIAGRAM_PARSED_ICON =========================
+      id: 26093269879304619
+      identification: 
+        column-name: DIAGRAM_PARSED_ICON
+        type: Hidden
+
+      heading: 
+        heading: Diagram Parsed Icon
+
+      layout: 
+        sequence: 110
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: INSTANCE_CREATED ============================
+      id: 34401608353171402
+      identification: 
+        column-name: INSTANCE_CREATED
+        type: Plain Text
+
+      heading: 
+        heading: <i class="status_icon fa fa-plus-circle-o" data-status="created"></i>&APP_TEXT$APP_STATUS_CREATED.
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 120
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <a href=#INSTANCE_CREATED_LINK#>#INSTANCE_CREATED#</a>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_RUNNING ============================
+      id: 34401735853171403
+      identification: 
+        column-name: INSTANCE_RUNNING
+        type: Plain Text
+
+      heading: 
+        heading: <i class="status_icon fa fa-play-circle-o" data-status="running"></i>&APP_TEXT$APP_STATUS_RUNNING.
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 130
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <a href=#INSTANCE_RUNNING_LINK#>#INSTANCE_RUNNING#</a>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_COMPLETED ==========================
+      id: 34401808911171404
+      identification: 
+        column-name: INSTANCE_COMPLETED
+        type: Plain Text
+
+      heading: 
+        heading: <i class="status_icon fa fa-check-circle-o" data-status="completed"></i>&APP_TEXT$APP_STATUS_COMPLETED.
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 150
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <a href=#INSTANCE_COMPLETED_LINK#>#INSTANCE_COMPLETED#</a>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_ERROR ==============================
+      id: 34401973271171405
+      identification: 
+        column-name: INSTANCE_ERROR
+        type: Plain Text
+
+      heading: 
+        heading: <i class="status_icon fa fa-exclamation-circle-o" data-status="error"></i>&APP_TEXT$APP_STATUS_ERROR.
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 170
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <a href=#INSTANCE_ERROR_LINK#>#INSTANCE_ERROR#</a>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_CREATED_LINK =======================
+      id: 34402061088171406
+      identification: 
+        column-name: INSTANCE_CREATED_LINK
+        type: Hidden
+
+      heading: 
+        heading: Instance Created Link
+
+      layout: 
+        sequence: 180
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: INSTANCE_RUNNING_LINK =======================
+      id: 34403349213171419
+      identification: 
+        column-name: INSTANCE_RUNNING_LINK
+        type: Hidden
+
+      heading: 
+        heading: Instance Running Link
+
+      layout: 
+        sequence: 190
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: INSTANCE_COMPLETED_LINK =====================
+      id: 34403481804171420
+      identification: 
+        column-name: INSTANCE_COMPLETED_LINK
+        type: Hidden
+
+      heading: 
+        heading: Instance Completed Link
+
+      layout: 
+        sequence: 210
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: INSTANCE_TERMINATED =========================
+      id: 34403520844171421
+      identification: 
+        column-name: INSTANCE_TERMINATED
+        type: Plain Text
+
+      heading: 
+        heading: <i class="status_icon fa fa-stop-circle-o" data-status="terminated"></i>&APP_TEXT$APP_STATUS_TERMINATED.
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 160
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <a href=#INSTANCE_TERMINATED_LINK#>#INSTANCE_TERMINATED#</a>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INSTANCE_TERMINATED_LINK ====================
+      id: 34403626861171422
+      identification: 
+        column-name: INSTANCE_TERMINATED_LINK
+        type: Hidden
+
+      heading: 
+        heading: Instance Terminated Link
+
+      layout: 
+        sequence: 220
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: INSTANCE_ERROR_LINK =========================
+      id: 34403765313171423
+      identification: 
+        column-name: INSTANCE_ERROR_LINK
+        type: Hidden
+
+      heading: 
+        heading: Instance Error Link
+
+      layout: 
+        sequence: 230
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: EDIT_LINK ===================================
+      id: 34631762547575819
+      identification: 
+        column-name: EDIT_LINK
+        type: Hidden
+
+      heading: 
+        heading: Edit Link
+
+      layout: 
+        sequence: 240
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CREATE_INSTANCE_LINK ========================
+      id: 34631865848575820
+      identification: 
+        column-name: CREATE_INSTANCE_LINK
+        type: Hidden
+
+      heading: 
+        heading: Create Instance Link
+
+      layout: 
+        sequence: 250
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CHECKBOX ====================================
+      id: 34632066723575822
+      identification: 
+        column-name: CHECKBOX
+        type: Plain Text
+
+      heading: 
+        heading: <input type="checkbox" id="check-all">
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 260
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: checkbox_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: false
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Flow Management
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Breadcrumb ==================================
+  id: 34402625223171412
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Row Action Menu =============================
+  id: 34634863225575850
+  identification: 
+    name: Row Action Menu
+    type: List
+
+  source: 
+    list: P2_ROW_ACTION_MENU # 39902352324857428
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes (No Grid)
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: row_actions
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Header Action Menu ==========================
+  id: 40001574962317105
+  identification: 
+    name: Header Action Menu
+    type: List
+
+  source: 
+    list: P2_HEADER_ACTION_MENU # 40402255178815218
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes (No Grid)
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: header_actions
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: New Version =================================
+  id: 71488161436297107
+  identification: 
+    name: New Version
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: new_version_reg
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P2_NEW_NAME ==============================
+  id: 7938841081499711
+  identification: 
+    name: P2_NEW_NAME
+    type: Text Field
+
+  label: 
+    label: New Name/Suffix
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Copy Model # 7938769092499710
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 10
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: In case of single model copy, the new model will have the entered name but if you have selected more than one row then the value entered will be used as a suffix.
+
+- # ====== Page Item: P2_BULK_ACTION ===========================
+  id: 15356359428942511
+  identification: 
+    name: P2_BULK_ACTION
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Flow Management # 24213241311956116
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P2_DGRM_ID ===============================
+  id: 26093937239304626
+  identification: 
+    name: P2_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Flow Management # 24213241311956116
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P2_NEW_VERSION ===========================
+  id: 26401222533737000
+  identification: 
+    name: P2_NEW_VERSION
+    type: Text Field
+
+  label: 
+    label: New Version
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: New Version # 71488161436297107
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 10
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ACTION_MENU =================================
+  id: 5522753745864948
+  identification: 
+    button-name: ACTION_MENU
+    label: Action Menu
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 34402625223171412
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-menuButton
+    icon: fa-bars
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: action-menu-btn
+    custom-attributes: 
+    - data-menu="actions_menu"
+
+- # ====== Button: COPY_MODEL ==================================
+  id: 7938939101499712
+  identification: 
+    button-name: COPY_MODEL
+    label: Copy Model
+
+  layout: 
+    sequence: 10
+    region: Copy Model # 7938769092499710
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-plus
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Page Default
+
+- # ====== Button: CREATE_MODEL ================================
+  id: 24212654778956110
+  identification: 
+    button-name: CREATE_MODEL
+    label: Create Model
+
+  layout: 
+    sequence: 10
+    region: Breadcrumb # 34402625223171412
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    - t-Button--padRight
+    icon: fa-plus
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7::'
+      page: 7 # Flow
+      clear-cache: 7
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: ADD_VERSION =================================
+  id: 26400953036736995
+  identification: 
+    button-name: ADD_VERSION
+    label: Add Version
+
+  layout: 
+    sequence: 10
+    region: New Version # 71488161436297107
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-chevron-circle-up
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Page Default
+
+- # ====== Button: RESET =======================================
+  id: 34403897960171424
+  identification: 
+    button-name: RESET
+    label: Reset
+
+  layout: 
+    sequence: 10
+    region: Flow Management # 24213241311956116
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--iconLeft
+    icon: fa-undo-alt
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:RP,2,RIR::'
+      page: 2 # Flow Management
+      clear-cache: RP,2,RIR
+
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: Flow Management Report refreshed ====
+  id: 5521840396864939
+  identification: 
+    name: Flow Management Report refreshed
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: Flow Management # 24213241311956116
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 5521906942864940
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after('<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>');
+        
+        $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
+              var status = $( this ).children("i").data("status");
+              if ( status == "created" ) {
+                $( this ).parent().addClass( "ffa-color--created" );
+              } else if ( status == "completed" ) {
+                $( this ).parent().addClass( "ffa-color--completed" );
+              } else if ( status == "running" ) {
+                $( this ).parent().addClass( "ffa-color--running" );
+              } else if ( status == "terminated" ) {
+                $( this ).parent().addClass( "ffa-color--terminated" );
+              } else if ( status == "error" ) {
+                $( this ).parent().addClass( "ffa-color--error" );
+              }
+            } );
+        
+        //if ($("li.a-IRR-controls-item--controlBreak").length > 0) {
+        if ($("th.a-IRR-header--group").length > 0) {
+            $("th").each(function(i){
+                if ( apex.jQuery(this).attr("id") === undefined) {
+                    apex.jQuery(this).find('input[type="checkbox"]').hide();
+                    apex.jQuery(this).find('button#header-action').hide();
+                } else {
+                    apex.jQuery(this).addClass("u-alignMiddle");
+                }
+            });
+        }
+
+    execution: 
+      sequence: 10
+      event: Flow Management Report refreshed # 5521840396864939
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Imported - Refresh Report ===========
+  id: 19019347638332911
+  identification: 
+    name: Imported - Refresh Report
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: jQuery Selector
+    jquery-selector: '#actions_menu'
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.data.dialogPageId == "6"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 19023277699332950
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.message.showPageSuccess(apex.lang.getMessage("APP_MODEL_IMPORTED"));
+
+    execution: 
+      sequence: 30
+      event: Imported - Refresh Report # 19019347638332911
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 26091408686304601
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Management # 24213241311956116
+
+    execution: 
+      sequence: 40
+      event: Imported - Refresh Report # 19019347638332911
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Clickable Action clicked - Forward to
+  id: 26093728782304624
+  identification: 
+    name: Clickable Action clicked - Forward to Process or Selection
+
+  execution: 
+    sequence: 80
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: jQuery Selector
+    jquery-selector: .clickable-action
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 26093894432304625
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var myElement = apex.jQuery( this.triggeringElement );
+        var myAction  = myElement.data( "action" );
+        var myDiagram = myElement.data( "dgrm" );
+        
+        apex.item( "P2_DGRM_ID" ).setValue( myDiagram );
+        
+        switch (myAction) {
+            case 'new_version': {
+                apex.item( "P2_NEW_VERSION" ).setValue( "" );
+                apex.theme.openRegion( "new_version_reg" );    
+                break;
+            }
+            case 'copy_flow': {
+                apex.item( "P2_NEW_NAME" ).setValue( "" );
+                apex.theme.openRegion( "copy_flow_reg" );    
+                break;
+            }
+        }
+        
+
+    execution: 
+      sequence: 20
+      event: Clickable Action clicked - Forward to Process or Selection # 26093728782304624
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog closed - Refresh Report & Show
+  id: 34718198447581242
+  identification: 
+    name: Dialog closed - Refresh Report & Show Success
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Flow Management # 24213241311956116
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 34718524685581254
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Management # 24213241311956116
+
+    execution: 
+      sequence: 30
+      event: Dialog closed - Refresh Report & Show Success # 34718198447581242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34719055685581256
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.successMessage !== undefined) {
+            apex.message.showPageSuccess(this.data.successMessage.text);
+        }
+
+    execution: 
+      sequence: 40
+      event: Dialog closed - Refresh Report & Show Success # 34718198447581242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change checkAll =====================
+  id: 40001392180317103
+  identification: 
+    name: Change checkAll
+
+  execution: 
+    sequence: 110
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: jQuery Selector
+    jquery-selector: '#check-all'
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40001401094317104
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($('#parsed_drgm #check-all' ).is(':checked') ) {
+              $('#parsed_drgm input[type=checkbox][name=f01]').prop('checked',true);
+             } else {
+             $('#parsed_drgm input[type=checkbox][name=f01]').prop('checked',false);
+         } 
+
+    execution: 
+      sequence: 10
+      event: Change checkAll # 40001392180317103
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Flow exists (copy) ======================
+  id: 15356425922942512
+  identification: 
+    name: Flow exists (copy)
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      return flow_engine_app_api.validate_flow_copy(
+        pi_new_name => :P2_NEW_NAME
+      );
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+    associated-item: P2_NEW_NAME # 7938841081499711
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":request = 'COPY_MODEL' and :P2_BULK_ACTION = 'N'"
+
+- # ====== Validation: Flow exists (new version) ===============
+  id: 15356574500942513
+  identification: 
+    name: Flow exists (new version)
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      return flow_engine_app_api.validate_flow_exists(
+        pi_dgrm_id => :P2_DGRM_ID
+      , pi_new_version => :P2_NEW_VERSION
+      );
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+    associated-item: P2_NEW_VERSION # 26401222533737000
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":request = 'ADD_VERSION' and :P2_BULK_ACTION = 'N'"
+
+- # ====== Validation: New name is not null ====================
+  id: 15356651838942514
+  identification: 
+    name: New name is not null
+
+  execution: 
+    sequence: 50
+
+  validation: 
+    type: Item is NOT NULL
+    item: P2_NEW_NAME
+    always-execute: false
+
+  error: 
+    error-message: '#LABEL# must have a value.'
+    display-location: Inline with Field and in Notification
+    associated-item: P2_NEW_NAME # 7938841081499711
+
+  server-side-condition: 
+    type: Request = Value
+    value: COPY_MODEL
+
+- # ====== Validation: New version is not null =================
+  id: 15356707920942515
+  identification: 
+    name: New version is not null
+
+  execution: 
+    sequence: 60
+
+  validation: 
+    type: Item is NOT NULL
+    item: P2_NEW_VERSION
+    always-execute: false
+
+  error: 
+    error-message: '#LABEL# must have a value.'
+    display-location: Inline with Field and in Notification
+    associated-item: P2_NEW_VERSION # 26401222533737000
+
+  server-side-condition: 
+    type: Request = Value
+    value: ADD_VERSION
+
+- # ====== Validation: Flow exists (bulk new version) ==========
+  id: 26401796293739221
+  identification: 
+    name: Flow exists (bulk new version)
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      return flow_engine_app_api.validate_flow_exists_bulk(
+        pi_dgrm_id_list => :P2_DGRM_ID
+      , pi_new_version => :P2_NEW_VERSION
+      );
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+    associated-item: P2_NEW_VERSION # 26401222533737000
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":request = 'ADD_VERSION' and :P2_BULK_ACTION = 'Y'"
+
+- # ====== Validation: Flow exists (bulk copy) =================
+  id: 40001878906317108
+  identification: 
+    name: Flow exists (bulk copy)
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      return flow_engine_app_api.validate_flow_copy_bulk(
+        pi_dgrm_id_list => :P2_DGRM_ID
+      , pi_new_name => :P2_NEW_NAME
+      );
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+    associated-item: P2_NEW_NAME # 7938841081499711
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":request = 'COPY_MODEL' and :P2_BULK_ACTION = 'Y'"
+
+processes: 
+- # ====== Process: Copy Model =================================
+  id: 7939199045499714
+  identification: 
+    name: Copy Model
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.copy_model(
+        pi_dgrm_id_list => :P2_DGRM_ID
+      , pi_new_name => :P2_NEW_NAME
+      );
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: '&APP_TEXT$APP_MODEL_COPIED.'
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: COPY_MODEL
+
+- # ====== Process: Add new version ============================
+  id: 26094153642304628
+  identification: 
+    name: Add new version
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.add_new_version(
+        pi_dgrm_id_list => :P2_DGRM_ID
+      , pi_new_version => :P2_NEW_VERSION
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: '&APP_TEXT$APP_NEW_VERSION_ADDED.'
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: ADD_VERSION
+
+- # ====== Process: Set Selection in Collection ================
+  id: 34632414579575826
+  identification: 
+    name: Set Selection in Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: flow_engine_app_api.copy_selection_to_collection;
+
+  execution: 
+    sequence: 10
+    point: After Submit
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: EXPORT_FLOW,ADD_VERSION,COPY_FLOW
+
+branches: 
+- # ====== Branch: Go To Page 5 ================================
+  id: 34632313238575825
+  identification: 
+    name: Go To Page 5
+
+  execution: 
+    sequence: 10
+    point: After Submit
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:5:&SESSION.::&DEBUG.:5:P5_MULTI:Y&success_msg=#SUCCESS_MSG#'
+      page: 5 # Export
+      clear-cache: 5
+      values: 
+        p5_multi: Y
+
+  server-side-condition: 
+    type: Request = Value
+    value: EXPORT_FLOW
+
+- # ====== Branch: Go To Page 7 ================================
+  id: 40001200556317102
+  identification: 
+    name: Go To Page 7
+
+  execution: 
+    sequence: 20
+    point: After Submit
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:&P2_DGRM_ID.&success_msg=#SUCCESS_MSG#'
+      page: 7 # Flow
+      clear-cache: 7
+      values: 
+        p7_dgrm_id: '&P2_DGRM_ID.'
+
+  server-side-condition: 
+    type: Request = Value
+    value: EDIT_FLOW
+

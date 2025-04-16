@@ -1,0 +1,53 @@
+---
+- # ====== Application Item: THEME_PLUGIN_CLASS ================
+  id: 6189993961233425
+  identification: 
+    name: THEME_PLUGIN_CLASS
+    scope: Application
+
+  security: 
+    session-state-protection: Restricted - May not be set from browser
+    escape-special-characters: false
+
+  subscription: 
+    version-number: 1760504921
+
+- # ====== Application Item: FSP_LANGUAGE_PREFERENCE ===========
+  id: 9614743728201348
+  identification: 
+    name: FSP_LANGUAGE_PREFERENCE
+    scope: Application
+
+  security: 
+    session-state-protection: Restricted - May not be set from browser
+    escape-special-characters: false
+
+  subscription: 
+    version-number: 1760504921
+
+- # ====== Application Item: FLOW_PAGE_TITLE ===================
+  id: 34551546825917526
+  identification: 
+    name: FLOW_PAGE_TITLE
+    scope: Application
+
+  security: 
+    session-state-protection: Restricted - May not be set from browser
+    escape-special-characters: false
+
+  subscription: 
+    version-number: 1760504921
+
+- # ====== Application Item: APP_NAME_TITLE ====================
+  id: 34570520101106514
+  identification: 
+    name: APP_NAME_TITLE
+    scope: Application
+
+  security: 
+    session-state-protection: Restricted - May not be set from browser
+    escape-special-characters: false
+
+  subscription: 
+    version-number: 1760504921
+

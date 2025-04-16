@@ -7,7 +7,7 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Consulting Limited. 2024
+-- (c) Copyright Flowquest Consulting Limited. 2024-2025
 --
 -- Created  April-2021  Richard Allen (Flowquest) - for  MT AG
 -- Modified 2022-07-18  Moritz Klein (MT AG)
@@ -62,10 +62,11 @@ as
 
   procedure get_number_of_connections
   ( pi_dgrm_id                  in flow_diagrams.dgrm_id%type
-  , pi_target_objt_id           in flow_connections.conn_tgt_objt_id%type
+  , pi_objt_bpmn_id             in flow_objects.objt_bpmn_id%type
   , pi_conn_type                in flow_connections.conn_tag_name%type 
   , po_num_forward_connections  out number
   , po_num_back_connections     out number
+  , po_objt_tag_name            out flow_objects.objt_tag_name%type
   );
   
   function get_subflow_info
@@ -130,6 +131,10 @@ as
     , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
     ) return flow_types_pkg.t_subflow_context
     ;
+
+  procedure lock_all_for_process 
+  ( p_process_id    in flow_processes.prcs_id%type
+  ); 
 
   function lock_subflow
   ( p_subflow_id    in flow_subflows.sbfl_id%type

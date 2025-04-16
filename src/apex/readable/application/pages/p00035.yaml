@@ -1,0 +1,726 @@
+---
+# ====== Page: Configuration - Engine ========================
+id: 35
+identification: 
+  name: Configuration - Engine
+  alias: CONFIGURATION-ENGINE
+  title: Configuration - Engine
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    span.t-Form-inlineHelp ul li {
+        font-size: 1.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Breadcrumb ==================================
+  id: 24202901353579047
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Engine ======================================
+  id: 65920170325464220
+  identification: 
+    name: Engine
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P35_DUPLICATE_STEP_PREVENTION ============
+  id: 3221987342231713
+  identification: 
+    name: P35_DUPLICATE_STEP_PREVENTION
+    type: Radio Group
+
+  label: 
+    label: Duplicate Step Prevention
+    alignment: Left
+
+  settings: 
+    number-of-columns: 2
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 10
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2:strict;strict,legacy;legacy'
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: |
+      <ul>
+          <li><strong>legacy</strong> - Use this option only to support applications that have been developped with Flows for APEX 21.1 and lower without additional development. The engine does not use the step key to prevent duplicate action on a single step.</li>
+          <li><strong>strict</strong> (recommended) - Use this option for new development and/or fully migrated application. The engine uses the step key to avoid duplicate actions on a single step.</li>
+      </ul>
+
+- # ====== Page Item: P35_DEFAULT_WORKSPACE ====================
+  id: 3222333263231713
+  identification: 
+    name: P35_DEFAULT_WORKSPACE
+    type: Text Field
+
+  label: 
+    label: Default Workspace
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: Should be set to your default APEX workspace used for Flows for APEX. This is used as a last-resort for scriptTasks and serviceTasks when creating an APEX session or looking for mail templates.
+
+- # ====== Page Item: P35_DEFAULT_EMAIL_SENDER =================
+  id: 3222763777231713
+  identification: 
+    name: P35_DEFAULT_EMAIL_SENDER
+    type: Text Field
+
+  label: 
+    label: Default Email Sender
+    alignment: Left
+
+  settings: 
+    subtype: E-Mail
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: Should be set to your default email sender, in case outbound mail serviceTasks do not have a sender defined.
+
+- # ====== Page Item: P35_DEFAULT_APPLICATIONID ================
+  id: 3223134552231713
+  identification: 
+    name: P35_DEFAULT_APPLICATIONID
+    type: Number Field
+
+  label: 
+    label: Default Application Id
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Text
+
+  layout: 
+    sequence: 40
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: The application ID of one of your APEX apps that will be provided to create a session
+
+- # ====== Page Item: P35_DEFAULT_PAGEID =======================
+  id: 3223533554231713
+  identification: 
+    name: P35_DEFAULT_PAGEID
+    type: Text Field
+
+  label: 
+    label: Default Page Id
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: The page ID of one of your apps that will be provided to create a session
+
+- # ====== Page Item: P35_DEFAULT_USERNAME =====================
+  id: 3223946439231713
+  identification: 
+    name: P35_DEFAULT_USERNAME
+    type: Text Field
+
+  label: 
+    label: Default Username
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: 'The username to be user on the APEX session to create a session if no other username is provided	'
+
+buttons: 
+- # ====== Button: SAVE ========================================
+  id: 3220853426231712
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: LEGACY_ORPHAN_COMPONENTS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Never
+
+- # ====== Button: REST_CONFIG =================================
+  id: 3221271791231712
+  identification: 
+    button-name: REST_CONFIG
+    label: REST Config
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: LEGACY_ORPHAN_COMPONENTS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:30:&SESSION.::&DEBUG.:RP,30::'
+      page: 30 # Configuration - REST
+      clear-cache: RP,30
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Never
+
+- # ====== Button: SAVE ========================================
+  id: 3310860026324035
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 24202901353579047
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+computations: 
+- # ====== Computation: P35_DEFAULT_WORKSPACE ==================
+  id: 3230456644231715
+  identification: 
+    item-name: P35_DEFAULT_WORKSPACE
+
+  execution: 
+    sequence: 90
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_default_workspace
+               , p_default_value => flow_constants_pkg.gc_config_default_default_workspace
+             );
+
+- # ====== Computation: P35_DEFAULT_APPLICATIONID ==============
+  id: 3230878635231716
+  identification: 
+    item-name: P35_DEFAULT_APPLICATIONID
+
+  execution: 
+    sequence: 110
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>  flow_constants_pkg.gc_config_default_application
+               , p_default_value => flow_constants_pkg.gc_config_default_default_application
+             );
+
+- # ====== Computation: P35_DEFAULT_PAGEID =====================
+  id: 3231247954231716
+  identification: 
+    item-name: P35_DEFAULT_PAGEID
+
+  execution: 
+    sequence: 120
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>flow_constants_pkg.gc_config_default_pageid
+               , p_default_value => flow_constants_pkg.gc_config_default_default_pageid
+             );
+
+- # ====== Computation: P35_DEFAULT_EMAIL_SENDER ===============
+  id: 3231617409231716
+  identification: 
+    item-name: P35_DEFAULT_EMAIL_SENDER
+
+  execution: 
+    sequence: 100
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_default_email_sender
+               , p_default_value => null 
+             );
+
+- # ====== Computation: P35_DUPLICATE_STEP_PREVENTION ==========
+  id: 3232080558231716
+  identification: 
+    item-name: P35_DUPLICATE_STEP_PREVENTION
+
+  execution: 
+    sequence: 80
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_dup_step_prevention
+               , p_default_value => flow_constants_pkg.gc_config_default_dup_step_prevention
+             );
+
+- # ====== Computation: P35_DEFAULT_USERNAME ===================
+  id: 3232449117231716
+  identification: 
+    item-name: P35_DEFAULT_USERNAME
+
+  execution: 
+    sequence: 130
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>flow_constants_pkg.gc_config_default_username
+               , p_default_value => flow_constants_pkg.gc_config_default_default_username
+             );
+
+processes: 
+- # ====== Process: Set Settings ===============================
+  id: 3233135486231716
+  identification: 
+    name: Set Settings
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.set_engine_settings(
+        pi_duplicate_step_prevention => :P35_DUPLICATE_STEP_PREVENTION
+      , pi_default_workspace         => :P35_DEFAULT_WORKSPACE
+      , pi_default_email_sender      => :P35_DEFAULT_EMAIL_SENDER
+      , pi_default_application       => :P35_DEFAULT_APPLICATIONID
+      , pi_default_pageid            => :P35_DEFAULT_PAGEID
+      , pi_default_username          => :P35_DEFAULT_USERNAME
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Changes saved.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    when-button-pressed: SAVE # 3220853426231712
+

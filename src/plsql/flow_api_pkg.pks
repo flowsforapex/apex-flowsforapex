@@ -109,7 +109,9 @@ These API functions are provided as Application Helper functions from the Flows 
 ,
       pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    ) return flow_processes.prcs_id%type;
  /**
 Function flow_create - Signature 1
@@ -118,6 +120,8 @@ If the version is not specified,
   first lookup is to use dgrm_status = 'released'
   second lookup is to use dgrm_version = '0' and dgrm_status = 'draft'
 If nothing is found based on above rules an exception will be raised.  For accuracy, it is recommended that you specify a version or use the form of flow_create specifying dgrm_id directly.
+
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
 
 This function returns the Process ID of the newly created process.
 
@@ -140,11 +144,15 @@ end;
    function flow_create (
       pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    ) return flow_processes.prcs_id%type;
  /**
 Function flow_create - Signature 2
 This function creates a new process instance based on a diagram id (process specification) and returns the Process ID of the newly created process
+
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
 
 EXAMPLE
 
@@ -166,7 +174,9 @@ end;
 ,
       pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    );
  /**
 Procedure flow_create - Signature 1
@@ -179,9 +189,11 @@ If the version is not specified:
 
 If nothing is found based on above rules an exception will be raised. For accuracy, it’s recommended that you specify a version or use the form of flow_create specifying dgrm_id directly.
 
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
+
 EXAMPLE
 
-This example will create a new process instance called “My Instance Name” based on the model “My Model” in version “0”.
+This example will create a new process instance called “My Instance Name” based on the model “My Model” in version “0”.  Logging level will be set to 4.
 
 ```sql
 begin
@@ -189,6 +201,7 @@ begin
         pi_dgrm_name    => 'My Model'
       , pi_dgrm_version => '0'
       , pi_prcs_name    => 'My Instance Name'
+      , pi_logging_level => 4 
    );
 end;
 ```
@@ -196,23 +209,27 @@ end;
    procedure flow_create (
       pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    );
  /**
 Procedure flow_create - Signature 2
 
 This procedure creates a new process instance based on a diagram id and version (process specification)
 
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
 
 EXAMPLE
 
-This example will create a new process instance called “My Instance Name” based on the model ID 1.
+This example will create a new process instance called “My Instance Name” based on the model ID 1, and with full logging.
 
 ```sql
 begin
    flow_api_pkg.flow_create(
-         pi_dgrm_id    => 1
-      , pi_prcs_name    => 'My Instance Name'
+         pi_dgrm_id      => 1
+      , pi_prcs_name     => 'My Instance Name'
+      , pi_logging_level => 8
    );
 end;
 ```
@@ -373,6 +390,10 @@ This procedure is an optional command that can be used in applications to signal
 This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
 A ‘good-practice’ app would issue this call when work is about to start on a task, for example, from a page loading process.
 
+Use this in conjunction with `flow_pause_step` to indicate that the work is paused on a task.
+
+flow_start_step requires event logging to be  running at the 'detailed` level or higher to be effective.
+
 EXAMPLE
 
 This example will use this procedure to indicate that the work is started for the task that have the subflow ID 3 in the process ID 1.
@@ -380,6 +401,37 @@ This example will use this procedure to indicate that the work is started for th
 ```sql
 begin
    flow_api_pkg.flow_start_step(
+        p_process_id => 1
+      , p_subflow_id => 3 
+      , p_step_key   => 'NqOiEHUbAF'
+   );
+end;
+```
+**/
+   procedure flow_pause_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+   );
+ /**
+Procedure flow_pause_step
+This procedure is an optional command that can be used in conjunction with flow_start_step in applications to signal that a user has paused working on a task. 
+This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
+A ‘good-practice’ app would issue this call when work on a task is saved but the workflow task is not completed, for example, from a page save process that did not include a 'flow_complete_step'.
+
+If flow_start_step has not been called, this procedure will have no effect.
+
+'flow_pause_step' requires event logging to be running at the `detailed` level or higher to be effective.
+
+EXAMPLE
+
+This example will use this procedure to indicate that the work has paused on the task that have the subflow ID 3 in the process ID 1.
+
+```sql
+begin
+   flow_api_pkg.flow_pause_step(
         p_process_id => 1
       , p_subflow_id => 3 
       , p_step_key   => 'NqOiEHUbAF'

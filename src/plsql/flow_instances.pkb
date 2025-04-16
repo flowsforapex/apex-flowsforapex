@@ -4,9 +4,11 @@ create or replace package body flow_instances as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates, 2025
 --
 -- Created  25-May-2021  Richard Allen (Flowquest) for  MT AG  - refactor from flow_engine
 -- Modified 30-May-2022  Moritz Klein (MT AG)
+-- Modified 28-Jan-2025  Richard Allen (Flowquest)
 --
 */
 
@@ -174,30 +176,119 @@ create or replace package body flow_instances as
                       );
   end create_call_structure;
 
+  procedure get_instance_attributes
+    ( p_prcs_id                     in  flow_processes.prcs_id%type
+    , p_dgrm_id                     in  flow_diagrams.dgrm_id%type
+    , p_starting_object             in  flow_objects.objt_bpmn_id%type default null
+    , p_requested_logging_level     in  flow_processes.prcs_logging_level%type default null
+    , p_calculated_logging_level    out flow_processes.prcs_logging_level%type
+    )
+  is
+    l_bpmn_process_objt flow_objects%rowtype;
+    l_logging_level     flow_processes.prcs_logging_level%type;
+    j_objt_attributes   sys.json_object_t;
+    j_apex_attributes   sys.json_object_t;
+    j_custom_extensions sys.json_object_t;
+  begin
+    -- This is used to calculate the instance logging level, taking into account
+    --    - the default logging level from the diagram
+    --    - the logging level requested from the process create call
+    --    - the default logging level set in flow configuration
+    -- We'll also use this to set the instance description / subject in a later project.
+
+    -- find the bpmn:process object for the diagram to get logging info 
+    l_bpmn_process_objt := flow_diagram.get_bpmn_process_object
+                            ( p_dgrm_id               => p_dgrm_id
+                            , p_process_id            => p_prcs_id
+                            , p_event_starting_object => p_starting_object
+                            );
+    apex_debug.message (p_message => 'BPMN Process Object : %0', p0 => l_bpmn_process_objt.objt_id);
+
+    if l_bpmn_process_objt.objt_attributes is null then
+      l_logging_level := flow_engine_util.get_config_value 
+                          ( p_config_key    => flow_constants_pkg.gc_config_logging_default_level 
+                          , p_default_value => 0 );
+    else
+      -- get the logging level from the bpmn process object
+      l_logging_level := json_value (l_bpmn_process_objt.objt_attributes, '$.apex.minLoggingLevel' returning number); 
+      if l_logging_level is null then
+        l_logging_level := flow_engine_util.get_config_value 
+                            ( p_config_key    => flow_constants_pkg.gc_config_logging_default_level 
+                            , p_default_value => 0 );
+      end if;
+    end if;
+    l_logging_level := greatest ( nvl(p_requested_logging_level,0)
+                                , l_logging_level );
+    p_calculated_logging_level := l_logging_level;
+  end get_instance_attributes;
+
+  procedure set_instance_name
+    ( p_prcs_id            in flow_processes.prcs_id%type
+    , p_sbfl_id            in flow_subflows.sbfl_id%type
+    , p_instance_name_def  in flow_types_pkg.t_bpmn_attribute_vc2
+    )
+  is
+    l_instance_name  varchar2(200) := p_instance_name_def;
+  begin
+    -- set the instance name
+    if l_instance_name is not null then
+      flow_proc_vars_int.do_substitution
+      ( pi_prcs_id => p_prcs_id
+      , pi_sbfl_id => p_sbfl_id
+      , pi_scope   => 0
+      , pio_string => l_instance_name
+      );
+      update flow_processes prcs
+         set prcs.prcs_name = l_instance_name
+       where prcs.prcs_id   = p_prcs_id
+       ;
+    end if;
+  end set_instance_name;
+
+
   function create_process
-    ( p_dgrm_id   in flow_diagrams.dgrm_id%type
-    , p_prcs_name in flow_processes.prcs_name%type
+    ( p_dgrm_id         in flow_diagrams.dgrm_id%type
+    , p_prcs_name       in flow_processes.prcs_name%type default null
+    , p_logging_level   in flow_processes.prcs_logging_level%type default null
+    , p_starting_object in flow_objects.objt_bpmn_id%type default null
     ) return flow_processes.prcs_id%type
   is
-    l_ret flow_processes.prcs_id%type;
+    l_new_prcs_id            flow_processes.prcs_id%type;
+    l_bpmn_process_objt      flow_objects%rowtype;
+    l_calc_logging_level     flow_processes.prcs_logging_level%type;
+    l_instance_name          flow_processes.prcs_name%type;
   begin
     apex_debug.enter
     ('create_process'
     , 'dgrm_id', p_dgrm_id
     , 'p_prcs_name', p_prcs_name 
+    , 'p_logging_level', p_logging_level
+    , 'p_starting_object', p_starting_object
     );
+
+    if p_prcs_name is not null then
+      l_instance_name := p_prcs_name;
+    else
+      select substr (dgrm.dgrm_name,1,50) || ' - ' || to_char(systimestamp,'DD-MON-YYYY HH24:MI:SS')
+        into l_instance_name
+        from flow_diagrams dgrm
+       where dgrm.dgrm_id = p_dgrm_id;
+    end if;
+
     insert into flow_processes prcs
           ( prcs.prcs_name
           , prcs.prcs_dgrm_id
           , prcs.prcs_status
+          , prcs.prcs_logging_level
           , prcs.prcs_init_ts
           , prcs.prcs_last_update
           , prcs.prcs_init_by
           )
     values
-          ( p_prcs_name
+          ( l_instance_name
           , p_dgrm_id
           , flow_constants_pkg.gc_prcs_status_created
+          , greatest ( nvl(p_logging_level,0), flow_constants_pkg.gc_logging_level_detailed)  -- TODO Fix this to use the default logging level from the diagram
           , systimestamp
           , systimestamp
           , coalesce  ( sys_context('apex$session','app_user') 
@@ -205,24 +296,42 @@ create or replace package body flow_instances as
                       , sys_context('userenv','session_user')
                       )  
           )
-      returning prcs.prcs_id into l_ret
+      returning prcs.prcs_id into l_new_prcs_id
     ;
     -- build the call structure for the process instance and any diagram calls 
-    create_call_structure ( p_prcs_id => l_ret, p_dgrm_id => p_dgrm_id);
+    create_call_structure ( p_prcs_id => l_new_prcs_id, p_dgrm_id => p_dgrm_id);
+
+    -- get the instance attributes
+    get_instance_attributes ( p_prcs_id                   => l_new_prcs_id
+                            , p_dgrm_id                   => p_dgrm_id
+                            , p_starting_object           => p_starting_object
+                            , p_requested_logging_level   => p_logging_level
+                            , p_calculated_logging_level  => l_calc_logging_level
+                            );
+
+    -- update the process with the logging level
+    update flow_processes prcs
+       set prcs.prcs_logging_level = l_calc_logging_level
+     where prcs.prcs_id = l_new_prcs_id
+       ;
 
     -- log the process creation
     flow_logging.log_instance_event
-    ( p_process_id => l_ret
-    , p_event      => flow_constants_pkg.gc_prcs_event_created
+    ( p_process_id  => l_new_prcs_id
+    , p_event       => flow_constants_pkg.gc_prcs_event_created
+    , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+    , p_comment     => 'Instance name set to ' || l_instance_name
     );
     commit;
 
     apex_debug.info
-    ( p_message => 'Flow Instance created.  DGRM_ID : %0, PRCS_ID : %1'
+    ( p_message => 'Flow Instance created.  DGRM_ID : %0, PRCS_ID : %1, Logging Level: %2'
     , p0 => p_dgrm_id
-    , p1 => l_ret 
+    , p1 => l_new_prcs_id 
+    , p2 => l_calc_logging_level 
     );
-    return l_ret;
+
+    return l_new_prcs_id;
   end create_process;
 
   procedure start_process
@@ -240,6 +349,7 @@ create or replace package body flow_instances as
     l_due_on_json           flow_types_pkg.t_bpmn_attribute_vc2;
     l_due_on                flow_processes.prcs_due_on%type;
     l_starting_object       flow_objects%rowtype;
+    l_instance_name_def     flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter
     ('start_process'
@@ -290,25 +400,28 @@ create or replace package body flow_instances as
                                                         , p_process_id            => p_process_id
                                                         , p_event_starting_object => p_event_starting_object);
 
-      begin
-        -- get instance scheduling information for the process being started
-        select objt.objt_attributes."apex"."priority"
-             , objt.objt_attributes."apex"."dueOn"
-          into l_priority_json
-             , l_due_on_json
-          from flow_objects objt
-         where objt.objt_dgrm_id  = l_dgrm_id
-           and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
-           and objt.objt_id       = l_starting_object.objt_objt_id
-        ;
-        if l_priority_json is not null then
-          l_priority := flow_settings.get_priority ( pi_prcs_id => p_process_id, pi_expr => l_priority_json);
-        end if;
-        if l_due_on_json is not null then 
-          l_due_on   := flow_settings.get_due_on (pi_prcs_id => p_process_id, pi_expr => l_due_on_json);
-        end if;
-        apex_debug.info (p_message => 'Process Priority : %0  Due On : %1', p0 => l_priority, p1 => l_due_on );
-      end;
+
+    begin
+      -- get instance scheduling information for the process being started
+      select objt.objt_attributes."apex"."priority"
+           , objt.objt_attributes."apex"."dueOn"
+           , objt.objt_attributes."apex"."instanceName"  
+        into l_priority_json
+           , l_due_on_json
+           , l_instance_name_def 
+        from flow_objects objt
+       where objt.objt_dgrm_id  = l_dgrm_id
+         and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         and objt.objt_id       = l_starting_object.objt_objt_id
+      ;
+      if l_priority_json is not null then
+        l_priority := flow_settings.get_priority ( pi_prcs_id => p_process_id, pi_expr => l_priority_json);
+      end if;
+      if l_due_on_json is not null then 
+        l_due_on   := flow_settings.get_due_on (pi_prcs_id => p_process_id, pi_expr => l_due_on_json);
+      end if;
+      apex_debug.info (p_message => 'Process Priority : %0  Due On : %1', p0 => l_priority, p1 => l_due_on );
+    end;
 
       if not flow_globals.get_step_error then
         -- mark process as running
@@ -327,8 +440,9 @@ create or replace package body flow_instances as
              ;    
         -- log the start
         flow_logging.log_instance_event
-        ( p_process_id => p_process_id
-        , p_event      => flow_constants_pkg.gc_prcs_event_started
+        ( p_process_id  => p_process_id
+        , p_event       => flow_constants_pkg.gc_prcs_event_started
+        , p_event_level => flow_constants_pkg.gc_logging_level_major_events
         );
         -- create the status for new subflow based on start subtype
         case
@@ -374,19 +488,34 @@ create or replace package body flow_instances as
             );
             -- test for any step errors
             if not flow_globals.get_step_error then 
-              flow_timers_pkg.start_timer
-              (
-                pi_prcs_id    => p_process_id
-              , pi_sbfl_id    => l_main_subflow.sbfl_id
-              , pi_step_key   => l_main_subflow.step_key
-              , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
-              ); 
-            else
-              -- set error status on instance and subflow
-              flow_errors.set_error_status
-              ( pi_prcs_id => p_process_id
-              , pi_sbfl_id => l_main_subflow.sbfl_id
-              );
+
+              -- set the instance name if defined
+              if l_instance_name_def is not null then
+                set_instance_name
+                ( p_prcs_id => p_process_id
+                , p_sbfl_id => l_main_subflow.sbfl_id
+                , p_instance_name_def => l_instance_name_def
+                );
+              end if;
+
+              if not flow_globals.get_step_error then
+    
+                -- start the timer
+                flow_timers_pkg.start_timer
+                (
+                  pi_prcs_id    => p_process_id
+                , pi_sbfl_id    => l_main_subflow.sbfl_id
+                , pi_step_key   => l_main_subflow.step_key
+                , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
+                ); 
+              else
+                -- set error status on instance and subflow
+                flow_errors.set_error_status
+                ( pi_prcs_id => p_process_id
+                , pi_sbfl_id => l_main_subflow.sbfl_id
+                );
+
+              end if;
             end if;       
 
           elsif (  l_starting_object.objt_sub_tag_name is null 
@@ -403,21 +532,33 @@ create or replace package body flow_instances as
             );
 
             if not flow_globals.get_step_error then 
-              -- step into first step
-              flow_engine.flow_complete_step  
-              ( p_process_id => p_process_id
-              , p_subflow_id => l_main_subflow.sbfl_id
-              , p_step_key   => l_main_subflow.step_key
-              , p_forward_route => null
-              , p_recursive_call => false
-              );
-            else 
-              -- set error status on instance and subflow
-              flow_errors.set_error_status
-              ( pi_prcs_id => p_process_id
-              , pi_sbfl_id => l_main_subflow.sbfl_id
-              );
-            end if;
+
+              -- set the instance name if defined
+              if l_instance_name_def is not null then
+                set_instance_name
+                ( p_prcs_id => p_process_id
+                , p_sbfl_id => l_main_subflow.sbfl_id
+                , p_instance_name_def => l_instance_name_def
+                );
+              end if;
+
+              if not flow_globals.get_step_error then 
+                -- step into first step
+                flow_engine.flow_complete_step  
+                ( p_process_id => p_process_id
+                , p_subflow_id => l_main_subflow.sbfl_id
+                , p_step_key   => l_main_subflow.step_key
+                , p_forward_route => null
+                , p_recursive_call => false
+                );
+              else 
+                -- set error status on instance and subflow
+                flow_errors.set_error_status
+                ( pi_prcs_id => p_process_id
+                , pi_sbfl_id => l_main_subflow.sbfl_id
+                );
+              end if;
+            end if; -- not step error processing expressions
           else 
             raise e_unsupported_start_event;
           end if;
@@ -448,19 +589,6 @@ create or replace package body flow_instances as
     )
   is
     l_return_code   number;
-    cursor c_lock_all is 
-        select prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg_id
-          from flow_subflows sbfl
-          join flow_processes prcs
-            on prcs.prcs_id = sbfl.sbfl_prcs_id 
-          join flow_subflow_log sflg 
-            on prcs.prcs_id = sflg.sflg_prcs_id
-          join flow_instance_diagrams prdg
-            on prcs.prcs_id = prdg.prdg_prcs_id
-          where prcs.prcs_id = p_process_id
-          order by sbfl.sbfl_process_level, sbfl.sbfl_id
-            for update of prcs.prcs_id, sbfl.sbfl_id, sflg.sflg_last_updated, prdg.prdg_id wait 2
-    ;
   begin
     apex_debug.enter
     ( 'reset_process'
@@ -468,10 +596,7 @@ create or replace package body flow_instances as
     );
     -- lock all objects
     begin
-      open c_lock_all;
-      flow_timers_pkg.lock_process_timers ( pi_prcs_id => p_process_id );  
-      flow_message_util.lock_instance_subscriptions ( p_process_id => p_process_id );
-      close c_lock_all;
+      flow_engine_util.lock_all_for_process (p_process_id => p_process_id);
     exception 
       when lock_timeout then
         flow_errors.handle_instance_error
@@ -534,10 +659,105 @@ create or replace package body flow_instances as
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_reset
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     , p_comment    => p_comment
     );
     commit;
   end reset_process;
+
+
+  procedure suspend_process
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    )
+  is
+    e_feature_requires_ee              exception;
+    e_prcs_not_suspendable             exception;
+    l_status                           flow_processes.prcs_status%type;
+  begin
+    $IF flow_apex_env.ee $THEN
+      -- check current process state in running or errored
+      select prcs_status
+        into l_status
+        from flow_processes
+       where prcs_id = p_process_id;
+
+      if l_status not in ( flow_constants_pkg.gc_prcs_status_running 
+                         , flow_constants_pkg.gc_prcs_status_error) then 
+        raise e_prcs_not_suspendable;
+      end if;
+
+      -- lock process, subflows, subflog log, subscriptions, prdg
+      flow_engine_util.lock_all_for_process (p_process_id => p_process_id);
+      flow_instances_util_ee.suspend_process (p_process_id => p_process_id);
+
+    $ELSE
+      raise e_feature_requires_ee;
+    $END
+    -- if process status in (running, error)
+  exception
+    when e_feature_requires_ee then
+      -- feature not supported without Enterprise Edition licence
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'feature-requires-ee'
+      );
+      raise;
+    when e_prcs_not_suspendable then
+      -- only running or errored process can be suspended
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'suspend-invalid-status'
+      );
+      raise;
+  end suspend_process;
+
+  procedure resume_process
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    )
+  is
+    e_feature_requires_ee              exception;
+    e_prcs_not_suspended               exception;
+    l_status                           flow_processes.prcs_status%type;
+  begin
+    $IF flow_apex_env.ee $THEN
+      -- check current process state is suspended
+      select prcs_status
+        into l_status
+        from flow_processes
+       where prcs_id = p_process_id;
+
+      if l_status != flow_constants_pkg.gc_prcs_status_suspended then 
+        raise e_prcs_not_suspended;
+      end if;
+
+      -- lock process, subflows, subflog log, subscriptions, prdg
+      flow_engine_util.lock_all_for_process (p_process_id => p_process_id);
+      flow_instances_util_ee.resume_process (p_process_id => p_process_id);
+
+    $ELSE
+      raise e_feature_requires_ee;
+    $END
+    -- if process status in (running, error)
+  exception
+    when e_feature_requires_ee then
+      -- feature not supported without Enterprise Edition licence
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'feature-requires-ee'
+      );
+      raise;
+    when e_prcs_not_suspended then
+      -- only suspended process can be resumed
+      flow_errors.handle_instance_error
+      ( pi_prcs_id      => p_process_id
+      , pi_message_key  => 'resume-invalid-status'
+      );
+      raise;
+  end resume_process;
 
   procedure terminate_process
     (
@@ -608,6 +828,7 @@ create or replace package body flow_instances as
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_terminated
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     , p_comment    => p_comment
     );
     -- finalize
@@ -674,6 +895,7 @@ create or replace package body flow_instances as
     flow_logging.log_instance_event
     ( p_process_id => p_process_id
     , p_event      => flow_constants_pkg.gc_prcs_event_deleted
+    , p_event_level => flow_constants_pkg.gc_logging_level_major_events
     , p_comment    => p_comment
     );
     -- kill any message subscriptions or  timers still running in the instance
@@ -739,9 +961,10 @@ create or replace package body flow_instances as
       where prcs.prcs_id = p_process_id;
       -- log the priority change
       flow_logging.log_instance_event
-      ( p_process_id => p_process_id
-      , p_event      => flow_constants_pkg.gc_prcs_event_priority_set
-      , p_comment    => 'Priority set to '||p_priority
+      ( p_process_id  => p_process_id
+      , p_event       => flow_constants_pkg.gc_prcs_event_priority_set
+      , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+      , p_comment     => 'Process priority set to '||p_priority
       );      
   end set_priority;
 
@@ -775,9 +998,10 @@ create or replace package body flow_instances as
       where prcs.prcs_id = p_process_id;
       -- log the priority change
       flow_logging.log_instance_event
-      ( p_process_id => p_process_id
-      , p_event      => flow_constants_pkg.gc_prcs_event_due_on_set
-      , p_comment    => 'Instance Due On set to '||to_char(p_due_on, flow_constants_pkg.gc_prov_default_tstz_format)
+      ( p_process_id  => p_process_id
+      , p_event       => flow_constants_pkg.gc_prcs_event_due_on_set
+      , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+      , p_comment     => 'Instance Due On set to '||to_char(p_due_on, flow_constants_pkg.gc_prov_default_tstz_format)
       );  
   end set_due_on;
 
@@ -793,6 +1017,22 @@ create or replace package body flow_instances as
        where prcs_id = p_process_id;
       return l_due_on;
   end due_on;
+
+  procedure set_was_altered
+    (
+      p_process_id  in flow_processes.prcs_id%type
+    )
+  is
+  begin 
+      update flow_processes prcs
+      set prcs.prcs_was_altered = 'Y'
+        , prcs.prcs_last_update = systimestamp
+        , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                              , sys_context('userenv','os_user')
+                                              , sys_context('userenv','session_user')
+                                              )  
+      where prcs.prcs_id = p_process_id;
+  end set_was_altered;
 
 end flow_instances;
 /

@@ -228,9 +228,10 @@ as
   /* page 11 */
 
   function create_instance(
-    pi_dgrm_id      in flow_diagrams.dgrm_id%type
-  , pi_prcs_name    in flow_processes.prcs_name%type
-  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+    pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_prcs_name      in flow_processes.prcs_name%type default null
+  , pi_business_ref   in flow_process_variables.prov_var_vc2%type
+  , pi_logging_level  in flow_processes.prcs_logging_level%type
   )
   return flow_processes.prcs_id%type;
 
@@ -262,11 +263,13 @@ as
   /* configuration */
   procedure set_logging_settings(
     pi_logging_language          in flow_configuration.cfig_value%type
-  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_default_level     in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_enabled      in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_retain_days  in flow_configuration.cfig_value%type
   );
 
   procedure set_archiving_settings(

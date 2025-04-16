@@ -191,6 +191,10 @@ as
                 p_page => 10
               , p_clear_cache => 10
           );
+        when 'SUSPEND-FLOW-INSTANCE' then 
+          flow_admin_api.suspend_process( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
+        when 'RESUME-FLOW-INSTANCE' then 
+          flow_admin_api.resume_process( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
         when 'RESERVE-STEP' then
           flow_api_pkg.flow_reserve_step
           (
@@ -208,6 +212,50 @@ as
           , p_subflow_id => apex_application.g_x03
           , p_step_key   => apex_application.g_x04
           );    
+        when 'DELETE-ON-RESUME' then
+          flow_admin_api.mark_subflow_for_deletion
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'RETURN-PREV-GW-RESUME' then
+          flow_admin_api.return_to_prior_gateway
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REPOSITION-SUBFLOW' then
+          flow_admin_api.return_to_prior_step
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_new_step   => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REWIND-LAST-STEP' then
+          flow_admin_api.return_to_last_step
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+--          , p_step_key   => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REWIND-SUBPROCESS-ON-RESUME' then
+          flow_admin_api.rewind_from_subprocess
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'REWIND-CALL-ACTIVITY-ON-RESUME' then
+          flow_admin_api.rewind_from_call_activity
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'REWIND-LINK-EVENT-ON-RESUME' then
+          flow_admin_api.rewind_to_matched_throwing_link_event
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
         when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
           (
@@ -218,6 +266,14 @@ as
                   apex_debug.message (p_message => 'ajax handler happy');
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
+          (
+            p_process_id    => apex_application.g_x02
+          , p_subflow_id    => apex_application.g_x03
+          , p_step_key      => apex_application.g_x04
+          , p_comment       => apex_application.g_x05       
+          );
+        when 'FORCE-NEXT-STEP' then 
+          flow_admin_api.flow_force_next_step 
           (
             p_process_id    => apex_application.g_x02
           , p_subflow_id    => apex_application.g_x03
@@ -1724,16 +1780,18 @@ as
 
 
   function create_instance(
-    pi_dgrm_id      in flow_diagrams.dgrm_id%type
-  , pi_prcs_name    in flow_processes.prcs_name%type
-  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+    pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_prcs_name      in flow_processes.prcs_name%type default null
+  , pi_business_ref   in flow_process_variables.prov_var_vc2%type 
+  , pi_logging_level  in flow_processes.prcs_logging_level%type
   ) return flow_processes.prcs_id%type
   as
     l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id := flow_api_pkg.flow_create( 
                    pi_dgrm_id   => pi_dgrm_id,
-                   pi_prcs_name => pi_prcs_name);
+                   pi_prcs_name => pi_prcs_name,
+                   pi_logging_level => pi_logging_level);
     
     if pi_business_ref is not null then
       flow_process_vars.set_var( 
@@ -1832,21 +1890,24 @@ as
 
   procedure set_logging_settings(
     pi_logging_language          in flow_configuration.cfig_value%type
-  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_default_level     in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_enabled      in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_retain_days  in flow_configuration.cfig_value%type
   )
   as
   begin
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language          , p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level             , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_default_level     , p_value => pi_logging_default_level);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid       , p_value => pi_logging_hide_userid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs       , p_value => pi_logging_retain_logs);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd , p_value => pi_logging_message_flow_recd);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow   , p_value => pi_logging_retain_msg_flow);
-
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_enabled      , p_value => pi_logging_bpmn_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_retain_days  , p_value => pi_logging_bpmn_retain_days);
   end set_logging_settings;
 
 

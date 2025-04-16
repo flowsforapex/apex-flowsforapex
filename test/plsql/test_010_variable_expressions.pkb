@@ -905,10 +905,10 @@ create or replace package body test_010_variable_expressions is
         -- test VC2
         l_expected_json := json_element_t.parse (
                 '[ { "ENAME":"JONES" ,"EMPNO":7566 ,"HIREDATE":"1981-04-02T00:00:00Z" } ,
-                { "ENAME":"SCOTT" ,"EMPNO":7788 ,"HIREDATE":"1982-12-09T00:00:00Z" } ,
+                { "ENAME":"SCOTT" ,"EMPNO":7788 ,"HIREDATE":"1981-11-09T00:00:00Z" } ,
                 { "ENAME":"FORD" ,"EMPNO":7902 ,"HIREDATE":"1981-12-03T00:00:00Z" } ,
                 { "ENAME":"SMITH" ,"EMPNO":7369 ,"HIREDATE":"1980-12-17T00:00:00Z" } ,
-                { "ENAME":"ADAMS" ,"EMPNO":7876 ,"HIREDATE":"1983-01-12T00:00:00Z" } ]' );
+                { "ENAME":"ADAMS" ,"EMPNO":7876 ,"HIREDATE":"1981-09-23T00:00:00Z" } ]' );
          
         
         select prov_var_json

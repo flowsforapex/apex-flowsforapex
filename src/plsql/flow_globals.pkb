@@ -38,6 +38,19 @@ as
     loop_counter  := pi_loop_counter;
   end set_context;
 
+  procedure set_context
+  ( pi_sbfl_rec   in flow_subflows%rowtype
+  )
+  is
+  begin
+    set_context ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+                , pi_sbfl_id      => pi_sbfl_rec.sbfl_id
+                , pi_step_key     => pi_sbfl_rec.sbfl_step_key
+                , pi_scope        => pi_sbfl_rec.sbfl_scope
+                , pi_loop_counter => pi_sbfl_rec.sbfl_loop_counter
+                );
+  end set_context;
+
   procedure set_step_error
   ( p_has_error  in boolean default false)
   is

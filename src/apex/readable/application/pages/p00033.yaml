@@ -1,0 +1,545 @@
+---
+# ====== Page: Configuration - Archiving =====================
+id: 33
+identification: 
+  name: Configuration - Archiving
+  alias: CONFIGURATION-ARCHIVING
+  title: Configuration - Archiving
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_IMAGES#lib/prismjs/js/prism.js'
+
+css: 
+  inline: |
+    span.t-Form-inlineHelp ul li {
+        font-size: 1.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: JSON Configuration ==========================
+  id: 3746146895530325
+  identification: 
+    name: JSON Configuration
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select json_query( (select flow_engine_util.get_config_value(
+                 p_config_key => 'logging_archive_location'
+               , p_default_value => null
+             ) from dual), '$' returning varchar2(4000) pretty) as d
+      from dual
+
+  layout: 
+    sequence: 10
+    parent-region: Archiving # 11186537419048718
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: Archive Location
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: None
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: D ===========================================
+    id: 3746305351530327
+    identification: 
+      column-name: D
+      type: Plain Text
+
+    heading: 
+      heading: D
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <pre><code class="language-json">#D#</code></pre>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Archiving ===================================
+  id: 11186537419048718
+  identification: 
+    name: Archiving
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Breadcrumb ==================================
+  id: 24201499202577457
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+page-items: 
+- # ====== Page Item: P33_LOGGING_ARCHIVE_ENABLED ==============
+  id: 3161511927223080
+  identification: 
+    name: P33_LOGGING_ARCHIVE_ENABLED
+    type: Switch
+
+  label: 
+    label: Enable Instance Summary Archiving
+    alignment: Left
+
+  settings: 
+    use-defaults: false
+    on-value: true
+    on-label: Yes
+    off-value: false
+    off-label: No
+
+  layout: 
+    sequence: 20
+    region: Archiving # 11186537419048718
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_LOGGING_ARCHIVE_LOCATION =============
+  id: 3161978411223080
+  identification: 
+    name: P33_LOGGING_ARCHIVE_LOCATION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Archiving # 11186537419048718
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SAVE ========================================
+  id: 3164119045223081
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: LEGACY_ORPHAN_COMPONENTS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Never
+
+- # ====== Button: SAVE ========================================
+  id: 3309455839322446
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 24201499202577457
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: EDIT_CONFIGURATION ==========================
+  id: 3512936201851742
+  identification: 
+    button-name: EDIT_CONFIGURATION
+    label: Edit Configuration
+
+  layout: 
+    sequence: 10
+    region: JSON Configuration # 3746146895530325
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Left
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--link
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:38:&SESSION.::&DEBUG.:38:P38_CFIG_KEY:logging_archive_location'
+      page: 38 # Configuration - Location
+      clear-cache: 38
+      values: 
+        p38_cfig_key: logging_archive_location
+
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: On dialog close =====================
+  id: 3746400769530328
+  identification: 
+    name: On dialog close
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: EDIT_CONFIGURATION # 3512936201851742
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 3746576221530329
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: JSON Configuration # 3746146895530325
+
+    execution: 
+      sequence: 10
+      event: On dialog close # 3746400769530328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Refresh JSON =====================
+  id: 3747022152530334
+  identification: 
+    name: On Refresh JSON
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: JSON Configuration # 3746146895530325
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 3747195167530335
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: Prism.highlightAll();
+
+    execution: 
+      sequence: 10
+      event: On Refresh JSON # 3747022152530334
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P33_LOGGING_ARCHIVE_ENABLED ============
+  id: 3170508084223084
+  identification: 
+    item-name: P33_LOGGING_ARCHIVE_ENABLED
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled
+               , p_default_value => flow_constants_pkg.gc_config_default_logging_archive_enabled
+             );
+
+processes: 
+- # ====== Process: Set Settings ===============================
+  id: 3176434129223085
+  identification: 
+    name: Set Settings
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.set_archiving_settings(
+        pi_archiving_enabled  => :P33_LOGGING_ARCHIVE_ENABLED
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Changes saved.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    when-button-pressed: SAVE # 3164119045223081
+

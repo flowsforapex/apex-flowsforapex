@@ -5,6 +5,7 @@ as
 
   procedure autonomous_write_to_instance_log
   ( pi_prcs_id        in flow_processes.prcs_id%type
+  , pi_sbfl_id        in flow_subflows.sbfl_id%type default null
   , pi_objt_bpmn_id   in flow_subflows.sbfl_current%type default null
   , pi_message        in flow_instance_event_log.lgpr_comment%type
   , pi_error_info     in flow_instance_event_log.lgpr_error_info%type
@@ -17,6 +18,7 @@ as
     ( p_process_id        => pi_prcs_id
     , p_objt_bpmn_id      => pi_objt_bpmn_id
     , p_event             => flow_constants_pkg.gc_prcs_event_error
+    , p_event_level       => flow_constants_pkg.gc_logging_level_abnormal_events
     , p_comment           => pi_message
     , p_error_info        => pi_error_info
     );
@@ -186,6 +188,7 @@ as
     -- add to instance_event_log
     autonomous_write_to_instance_log
     ( pi_prcs_id        => pi_prcs_id
+    , pi_sbfl_id        => pi_sbfl_id
     , pi_objt_bpmn_id   => l_current
     , pi_message        => l_message
     , pi_error_info     => l_error_info

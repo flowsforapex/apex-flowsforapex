@@ -2,6 +2,7 @@ create or replace view flow_p0014_step_log_vw
 as
   select distinct lgsf.lgsf_prcs_id
                 , coalesce(objt.objt_name, lgsf.lgsf_objt_id) as completed_object
+                , lgsf.lgsf_step_key
                 , lgsf.lgsf_sbfl_id
                 , lgsf.lgsf_sbfl_process_level
                 , lgsf.lgsf_last_completed
