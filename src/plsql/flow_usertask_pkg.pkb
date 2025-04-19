@@ -239,16 +239,14 @@ as
   ) return boolean
   is
     l_task_pk_required  boolean;
-$IF NOT flow_apex_env.ver_le_21 $THEN
     l_static_id            apex_appl_taskdefs.static_id%type;
     l_actions_table_name   apex_appl_taskdefs.actions_table_name%type;
     l_actions_sql_query    apex_appl_taskdefs.actions_sql_query%type;
-$END
   begin
     --
     --  See if  the APEX Task needs a PK to be supplied. (for Actions Source Table or Actions Source Query)
     --
-$IF NOT flow_apex_env.ver_le_21 $THEN
+
     select td.static_id
          , td.actions_table_name
          , td.actions_sql_query
@@ -260,33 +258,35 @@ $IF NOT flow_apex_env.ver_le_21 $THEN
        and td.static_id      = p_task_static_id;
   
     return (l_actions_sql_query is not null) or (l_actions_table_name is not null);
-$ELSE
-    return null;
-$END
-  end apex_task_pk_is_required;
 
+  end apex_task_pk_is_required;
 
   procedure process_apex_approval_task
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
-    l_prcs_id          flow_processes.prcs_id%type      := p_sbfl_info.sbfl_prcs_id;
-    l_sbfl_id          flow_subflows.sbfl_id%type       := p_sbfl_info.sbfl_id;
-    l_scope            flow_subflows.sbfl_scope%type    := p_sbfl_info.sbfl_scope;
-    l_step_key         flow_subflows.sbfl_step_key%type := p_sbfl_info.sbfl_step_key;
-    l_app_id           flow_types_pkg.t_bpmn_attribute_vc2;
-    l_static_id        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_subject          flow_types_pkg.t_bpmn_attribute_vc2;
-    l_parameters       flow_types_pkg.t_bpmn_attribute_vc2;
-    l_business_ref     flow_types_pkg.t_bpmn_attribute_vc2;
-    l_initiator        flow_types_pkg.t_bpmn_attribute_vc2;
-    l_priority_setting flow_types_pkg.t_bpmn_attribute_vc2;
-    l_priority         flow_subflows.sbfl_priority%type;
-    l_due_on_setting   flow_types_pkg.t_bpmn_attribute_vc2; 
-    l_due_on           flow_subflows.sbfl_due_on%type;
-    l_result_var       flow_types_pkg.t_bpmn_attribute_vc2;
-    l_apex_task_id     number;
+    l_prcs_id                 flow_processes.prcs_id%type      := p_sbfl_info.sbfl_prcs_id;
+    l_sbfl_id                 flow_subflows.sbfl_id%type       := p_sbfl_info.sbfl_id;
+    l_scope                   flow_subflows.sbfl_scope%type    := p_sbfl_info.sbfl_scope;
+    l_step_key                flow_subflows.sbfl_step_key%type := p_sbfl_info.sbfl_step_key;
+    l_app_id                  flow_types_pkg.t_bpmn_attribute_vc2;
+    l_static_id               flow_types_pkg.t_bpmn_attribute_vc2;
+    l_subject                 flow_types_pkg.t_bpmn_attribute_vc2;
+    l_parameters              flow_types_pkg.t_bpmn_attribute_vc2;
+    l_business_ref            flow_types_pkg.t_bpmn_attribute_vc2;
+    l_initiator               flow_types_pkg.t_bpmn_attribute_vc2;
+    l_initiator_can_complete  flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority_setting        flow_types_pkg.t_bpmn_attribute_vc2;
+    l_priority                flow_subflows.sbfl_priority%type;
+    l_due_on_setting          flow_types_pkg.t_bpmn_attribute_vc2; 
+    l_due_on                  flow_subflows.sbfl_due_on%type;
+    l_potential_users_setting flow_types_pkg.t_bpmn_attribute_vc2;
+    l_potential_users         flow_subflows.sbfl_potential_users%type;
+    l_business_admin_setting  flow_types_pkg.t_bpmn_attribute_vc2;
+    l_business_admin          flow_subflows.sbfl_business_admin%type;
+    l_result_var              flow_types_pkg.t_bpmn_attribute_vc2;
+    l_apex_task_id            number;
 
     e_priority_invalid   exception;
     e_business_ref_null  exception;
@@ -307,8 +307,11 @@ $END
          , objt.objt_attributes."apex"."businessRef"
          , objt.objt_attributes."apex"."resultVariable"
          , objt.objt_attributes."apex"."initiator"  
+         , objt.objt_attributes."apex"."customExtension"."initiatorCanComplete"  --TODO: Change once parser is fixed
          , objt.objt_attributes."apex"."priority"
          , objt.objt_attributes."apex"."dueOn"
+         , objt.objt_attributes."apex"."potentialUsers"
+         , objt.objt_attributes."apex"."customExtension"."businessAdmin" --TODO: Change once parser is fixed
       into l_app_id
          , l_static_id
          , l_subject
@@ -316,8 +319,11 @@ $END
          , l_business_ref
          , l_result_var
          , l_initiator
+         , l_initiator_can_complete
          , l_priority_setting
          , l_due_on_setting
+         , l_potential_users_setting
+         , l_business_admin_setting
       from flow_objects objt
      where objt.objt_bpmn_id = p_step_info.target_objt_ref
        and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
@@ -334,6 +340,7 @@ $END
     flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
     flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
     flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_admin);
 
     if l_priority_setting is not null then
       l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
@@ -350,6 +357,42 @@ $END
                                                , pi_scope    => l_scope
                                                );
     end if; 
+
+    if l_potential_users_setting is not null then 
+      l_potential_users := flow_settings.get_vc2_expression 
+                           ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                           , pi_sbfl_id => p_sbfl_info.sbfl_id
+                           , pi_expr    => l_potential_users_setting
+                           , pi_scope   => p_sbfl_info.sbfl_scope
+                           );
+    end if;
+
+    if l_business_admin_setting is not null then
+       l_business_admin := flow_settings.get_vc2_expression 
+                           ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+                           , pi_sbfl_id => p_sbfl_info.sbfl_id
+                           , pi_expr    => l_business_admin_setting
+                           , pi_scope   => p_sbfl_info.sbfl_scope
+                           );
+    end if;
+
+    -- update subflow with potential users and business admin info so that APEX Human Task can call back...
+    if l_potential_users is not null 
+    or l_business_admin is not null then
+
+      update flow_subflows sbfl
+         set sbfl.sbfl_last_update        = systimestamp
+           , sbfl.sbfl_potential_users    = l_potential_users
+           , sbfl.sbfl_business_admin     = l_business_admin
+           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where sbfl.sbfl_id       = l_sbfl_id
+         and sbfl.sbfl_prcs_id  = l_prcs_id
+      ;
+
+    end if;
 
     -- create parameters table
     for parameters in (
@@ -476,17 +519,80 @@ $END
       
   end process_apex_approval_task;
 
+  function get_task_potential_owners
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type
+  , p_separator     in varchar2 default ','
+  ) return flow_process_variables.prov_var_vc2%type
+  is
+    l_potential_owners flow_process_variables.prov_var_vc2%type;
+  begin
+    select sbfl.sbfl_potential_users
+      into l_potential_owners
+      from flow_subflows sbfl
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_id     = p_subflow_id
+       and sbfl.sbfl_step_key = p_step_key
+    ;
+    -- Flows for APEX uses default separator ':' for potential owners
+    -- but APEX uses ',' as separator for potential owners
+
+    -- so we need to replace ':' with ',' in the potential owners string
+    if l_potential_owners is not null then
+      l_potential_owners := replace ( l_potential_owners,':', p_separator);
+    end if;
+
+    return l_potential_owners;
+  end get_task_potential_owners;
+
+  function get_task_business_admin
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type
+  , p_separator     in varchar2 default ','
+  ) return flow_process_variables.prov_var_vc2%type
+    is
+    l_business_admin flow_process_variables.prov_var_vc2%type;
+  begin
+    select sbfl.sbfl_apex_business_admin
+      into l_business_admin
+      from flow_subflows sbfl
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_id     = p_subflow_id
+       and sbfl.sbfl_step_key = p_step_key
+    ;
+    -- Flows for APEX uses default separator ':' for business admins
+    -- but APEX uses ',' as separator for business admins
+
+    -- so we need to replace ':' with ',' in the business admins string
+    if l_business_admin is not null then
+      l_business_admin := replace ( l_business_admin,':', p_separator);
+    end if;
+
+    return l_business_admin;
+  end get_task_business_admin;
+
   procedure cancel_apex_task
-    ( p_process_id    in flow_processes.prcs_id%type
-    , p_objt_bpmn_id  in flow_objects.objt_bpmn_id%type
-    , p_apex_task_id  in number    
+    ( p_process_id          in flow_processes.prcs_id%type
+    , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
+    , p_apex_task_id        in number    
+    , p_apex_business_admin in flow_subflows.sbfl_business_admin%type default null
     )
   is
   begin
     apex_debug.enter 
     ( 'cancel_apex_task'
     , 'apex task_id: ', p_apex_task_id 
+    , 'apex business admin: ', p_apex_business_admin 
     );
+    -- check if current user is the task originator or business admin
+--    if p_apex_business_admin is not null then
+--      if not apex_human_task.is_task_originator ( p_task_id => p_apex_task_id, p_user => v('APP_USER') ) then
+--        raise flow_errors.e_not_authorized;
+--      end if;
+--    end if;
+
 
     -- cancel task
     apex_human_task.cancel_task (p_task_id => p_apex_task_id);

@@ -30,11 +30,26 @@ as
   ( p_sbfl_info     in flow_subflows%rowtype
   , p_step_info     in flow_types_pkg.flow_step_info
   );
+
+  function get_task_potential_owners
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type
+  , p_separator     in varchar2 default ','
+  ) return flow_process_variables.prov_var_vc2%type;
+
+  function get_task_business_admin
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type
+  , p_separator     in varchar2 default ','
+  ) return flow_process_variables.prov_var_vc2%type;
   
   procedure cancel_apex_task
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_objt_bpmn_id  in flow_objects.objt_bpmn_id%type
-  , p_apex_task_id  in number    
+  ( p_process_id          in flow_processes.prcs_id%type
+  , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
+  , p_apex_task_id        in number    
+  , p_apex_business_admin in flow_subflows.sbfl_business_admin%type default null
   );
 
   procedure return_approval_result

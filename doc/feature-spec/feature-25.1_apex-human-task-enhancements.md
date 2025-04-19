@@ -42,8 +42,8 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` so t
 
 #### Tasks:
 
- - [ ] Add system config parameter `default_business_admin` into config and migration scripts.
- - [ ] Add `default_business_admin` to Engine App Config pages.
+ - [*] Add system config parameter `default_apex_business_admin` into config and migration scripts.
+ - [ ] Add `default_apex_business_admin` to Engine App Config pages.
  - [ ] Add `apex:businessAdmin` as an in-line attribute of `BPMN:process` in Modeler ('Background Task Session' region).
  - [ ] Support `apex:processBusinessAdmin` in BPMN parser.
  - [ ] Add `apex:businessAdmin` as an attribute inside <bpmn:userTask><bpmn:extensionElements><apex:apexApproval>.
@@ -53,7 +53,7 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` so t
 
 ### 3.  Support Instigator can Complete
 
-- [ ] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task instigator to complete task.
+- [ ] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task instigator to complete task. Save in BPMN inside `apex:approvalTask` as `apex:instigatorCanComplete`.
 - [ ] Add this to `flow_create_apex_task` and its call to `apex_human_task.create_task` call.
 
 ### 4. Task Assignment
