@@ -1,0 +1,1305 @@
+---
+# ====== Page: Import ========================================
+id: 6
+identification: 
+  name: Import
+  alias: IMPORT
+  title: Import - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Import Flow =================================
+  id: 19000369704190884
+  identification: 
+    name: Import Flow
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Import Warning ==============================
+  id: 24211779219956101
+  identification: 
+    name: Import Warning
+    type: Static Content
+
+  source: 
+    html-code: We encourage you to import models that were built using Flows for APEX to make sure that they can be run by the engine.
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--colorBG
+    - t-Alert--horizontal
+    - t-Alert--defaultIcons
+    - t-Alert--info
+    - t-Alert--accessibleHeading
+    - margin-top-none
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P6_IMPORT_FROM ===========================
+  id: 10431588640468049
+  identification: 
+    name: P6_IMPORT_FROM
+    type: Radio Group
+
+  label: 
+    label: Import From
+    alignment: Left
+
+  settings: 
+    number-of-columns: 2
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 60
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: P6_IMPORT_FROM # 11250367144948655
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: file
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_DGRM_ID ===============================
+  id: 19000655987190889
+  identification: 
+    name: P6_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Import Flow # 19000369704190884
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_DGRM_NAME =============================
+  id: 19001062236190895
+  identification: 
+    name: P6_DGRM_NAME
+    type: Text Field
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+
+  validation: 
+    value-required: false
+    maximum-length: 600
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_DGRM_CONTENT ==========================
+  id: 19001433995190900
+  identification: 
+    name: P6_DGRM_CONTENT
+    type: Textarea
+
+  label: 
+    label: Paste  BPMN file content (30 000 characters max.)
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 70
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+    height: 10
+
+  validation: 
+    value-required: false
+    maximum-length: 30000
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_DGRM_VERSION ==========================
+  id: 19001891912190900
+  identification: 
+    name: P6_DGRM_VERSION
+    type: Text Field
+
+  label: 
+    label: Version
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 40
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_DGRM_CATEGORY =========================
+  id: 19002654728190900
+  identification: 
+    name: P6_DGRM_CATEGORY
+    type: Popup LOV
+
+  label: 
+    label: Category
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: true
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 30
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+
+  validation: 
+    value-required: false
+    maximum-length: 120
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: DIAGRAM_CATEGORIES_LOV # 25503316579708357
+    display-extra-values: false
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_FILE ==================================
+  id: 19018652597332904
+  identification: 
+    name: P6_FILE
+    type: File Upload
+
+  label: 
+    label: File
+    alignment: Left
+
+  display: 
+    display-as: Inline File Browse
+    capture-using: NONE
+
+  storage:: 
+    type: Table APEX_APPLICATION_TEMP_FILES
+    purge-file-at: End of Request
+    allow-multiple-files: false
+
+  layout: 
+    sequence: 80
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_FORCE_OVERWRITE =======================
+  id: 24211819068956102
+  identification: 
+    name: P6_FORCE_OVERWRITE
+    type: Switch
+
+  label: 
+    label: Force Overwrite
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 90
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: N
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_MODE ==================================
+  id: 34632505849575827
+  identification: 
+    name: P6_MODE
+    type: Radio Group
+
+  label: 
+    label: Mode
+    alignment: Left
+
+  settings: 
+    number-of-columns: 2
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 20
+    region: Import Flow # 19000369704190884
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: P6_MODE # 13102745982982601
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: single
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    help-text: |
+      <ul>
+          <li>One Model: Import a single model by providing all the attributes</li>
+          <li>Multiple Models: Import several models by providing a zip file*</li>
+      </ul>
+      <p>
+          * The zip file must contain:
+          <ul>
+              <li>The bpmn files to import</li>
+              <li>An import.json file which is an array of objects (see example below) with the following attributes:
+                  <ul>
+                      <li>dgrm_name: The model's name</li>
+                      <li>dgrm_version: The model's version</li>
+                      <li>dgrm_category: The model's category</li>
+                      <li>file: The name of the bpmn file in the archive</li>
+                  </ul>
+              </li>
+          </ul>
+      Example of an import.json file with two models<br>
+      <pre><code>[
+        {
+          "dgrm_name": "The Pizza Collaboration",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": null,
+          "file": "The Pizza Collaboration_0.bpmn"
+        },
+        {
+          "dgrm_name": "Holidays",
+          "dgrm_version": "0",
+          "dgrm_status": "draft",
+          "dgrm_category": null,
+          "file": "Holidays_0.bpmn"
+        }
+      ]
+      </code></pre>
+      </p>
+
+buttons: 
+- # ====== Button: IMPORT ======================================
+  id: 19018929080332907
+  identification: 
+    button-name: IMPORT
+    label: Import
+
+  layout: 
+    sequence: 30
+    region: Import Flow # 19000369704190884
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    - t-Button--gapTop
+    icon: fa-upload
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: IMPORT_AND_IMPORT_ANOTHER ===================
+  id: 19019657971332914
+  identification: 
+    button-name: IMPORT_AND_IMPORT_ANOTHER
+    label: Import and import another
+
+  layout: 
+    sequence: 10
+    region: Import Flow # 19000369704190884
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--gapTop
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: IMPORT_AND_EDIT =============================
+  id: 19019773259332915
+  identification: 
+    button-name: IMPORT_AND_EDIT
+    label: Import and edit
+
+  layout: 
+    sequence: 20
+    region: Import Flow # 19000369704190884
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    - t-Button--gapTop
+    icon: fa-edit
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: Show/Hide Import Options ============
+  id: 10431642957468050
+  identification: 
+    name: Show/Hide Import Options
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P6_IMPORT_FROM
+
+  client-side-condition: 
+    type: Item = Value
+    item: P6_IMPORT_FROM
+    value: text
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 19018371683332901
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_DGRM_CONTENT
+
+    execution: 
+      sequence: 10
+      event: Show/Hide Import Options # 10431642957468050
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 19018463856332902
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_DGRM_CONTENT
+
+    execution: 
+      sequence: 20
+      event: Show/Hide Import Options # 10431642957468050
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 19018502280332903
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_FILE
+
+    execution: 
+      sequence: 20
+      event: Show/Hide Import Options # 10431642957468050
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Show ========================================
+    id: 19018703760332905
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_FILE
+
+    execution: 
+      sequence: 10
+      event: Show/Hide Import Options # 10431642957468050
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Ask for confirmation ================
+  id: 24211903521956103
+  identification: 
+    name: Ask for confirmation
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P6_FORCE_OVERWRITE
+
+  client-side-condition: 
+    type: Item = Value
+    item: P6_FORCE_OVERWRITE
+    value: Y
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 24212041561956104
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.message.confirm( apex.lang.getMessage("APP_OVERWRITE_WARN"), function( okPressed ) {
+            if( !okPressed ) {
+                apex.item("P6_FORCE_OVERWRITE").setValue("N");
+            }
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: Ask for confirmation # 24211903521956103
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Mode =========================
+  id: 34632685881575828
+  identification: 
+    name: Change Mode
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P6_MODE
+
+  client-side-condition: 
+    type: Item = Value
+    item: P6_MODE
+    value: multiple
+
+  actions: 
+  - # ====== Action: Hide ========================================
+    id: 34632715356575829
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_DGRM_CATEGORY
+      - P6_DGRM_NAME
+      - P6_DGRM_VERSION
+      - P6_IMPORT_FROM
+      - P6_DGRM_CONTENT
+
+    execution: 
+      sequence: 20
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 34632977015575831
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_DGRM_CATEGORY
+      - P6_DGRM_NAME
+      - P6_DGRM_VERSION
+      - P6_IMPORT_FROM
+
+    execution: 
+      sequence: 20
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 34633042798575832
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: file
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P6_IMPORT_FROM
+
+    execution: 
+      sequence: 10
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Hide ========================================
+    id: 34633150335575833
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: IMPORT_AND_EDIT # 19019773259332915
+
+    execution: 
+      sequence: 30
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Show ========================================
+    id: 34633301884575835
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: IMPORT_AND_EDIT # 19019773259332915
+
+    execution: 
+      sequence: 30
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+validations: 
+- # ====== Validation: Validate XML ============================
+  id: 19019544229332913
+  identification: 
+    name: Validate XML
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Function Body (returning Boolean)
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_app_api.is_valid_xml(
+              pi_import_from => :P6_IMPORT_FROM,
+              pi_dgrm_content => :P6_DGRM_CONTENT,
+              pi_file_name => :P6_FILE
+          );
+    always-execute: false
+
+  error: 
+    error-message: Please check the flow provided.
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "apex_error.have_errors_occurred = false and :P6_MODE = 'single'"
+
+- # ====== Validation: File is not null ========================
+  id: 19023037485332948
+  identification: 
+    name: File is not null
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Function Body (returning Boolean)
+    language: PL/SQL
+    pl/sql-function-body: 'return flow_engine_app_api.is_file_uploaded(pi_file_name => :P6_FILE);'
+    always-execute: false
+
+  error: 
+    error-message: 'Please select a #LABEL#.'
+    display-location: Inline with Field and in Notification
+    associated-item: P6_FILE # 19018652597332904
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":P6_IMPORT_FROM = 'file' or :P6_MODE = 'multi'"
+
+- # ====== Validation: DGRM_CONTENT is not null ================
+  id: 19023151364332949
+  identification: 
+    name: DGRM_CONTENT is not null
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_DGRM_CONTENT
+    always-execute: false
+
+  error: 
+    error-message: Please paste BPMN file content
+    display-location: Inline with Field and in Notification
+    associated-item: P6_DGRM_CONTENT # 19001433995190900
+
+  server-side-condition: 
+    type: Item = Value
+    item: P6_IMPORT_FROM
+    value: text
+
+- # ====== Validation: Validate ZIP ============================
+  id: 34633435811575836
+  identification: 
+    name: Validate ZIP
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      return flow_engine_app_api.is_valid_multi_file_archive(
+              pi_file_name => :P6_FILE
+          );
+    always-execute: false
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "apex_error.have_errors_occurred = false and :P6_MODE = 'multi'"
+
+- # ====== Validation: DGRM_NAME is not null ===================
+  id: 34633545177575837
+  identification: 
+    name: DGRM_NAME is not null
+
+  execution: 
+    sequence: 50
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_DGRM_NAME
+    always-execute: false
+
+  error: 
+    error-message: '#LABEL# must have some value.'
+    display-location: Inline with Field and in Notification
+    associated-item: P6_DGRM_NAME # 19001062236190895
+
+  server-side-condition: 
+    type: Item = Value
+    item: P6_MODE
+    value: single
+
+- # ====== Validation: DGRM_VERSION is not null ================
+  id: 34633648852575838
+  identification: 
+    name: DGRM_VERSION is not null
+
+  execution: 
+    sequence: 60
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_DGRM_VERSION
+    always-execute: false
+
+  error: 
+    error-message: '#LABEL# must have some value.'
+    display-location: Inline with Field and in Notification
+    associated-item: P6_DGRM_VERSION # 19001891912190900
+
+  server-side-condition: 
+    type: Item = Value
+    item: P6_MODE
+    value: single
+
+processes: 
+- # ====== Process: Close Dialog ===============================
+  id: 19008825550190910
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P6_DGRM_ID
+    show-success-messages: false
+
+  execution: 
+    sequence: 40
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: IMPORT
+
+- # ====== Process: Upload & Parse (Single Flow) ===============
+  id: 19018865821332906
+  identification: 
+    name: Upload & Parse (Single Flow)
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_dgrm_id flow_diagrams.dgrm_id%type;
+      begin
+          l_dgrm_id := flow_engine_app_api.upload_and_parse(
+                           pi_import_from => :P6_IMPORT_FROM,
+                           pi_dgrm_name => :P6_DGRM_NAME,
+                           pi_dgrm_category => :P6_DGRM_CATEGORY,
+                           pi_dgrm_version => :P6_DGRM_VERSION,
+                           pi_dgrm_content => :P6_DGRM_CONTENT,
+                           pi_file_name => :P6_FILE,
+                           pi_force_overwrite => :P6_FORCE_OVERWRITE
+                       );
+          :P6_DGRM_ID := l_dgrm_id;
+      end;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Model imported.
+
+  error: 
+    error-message: Model already exists. Use force overwrite.
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item = Value
+    item: P6_MODE
+    value: single
+
+- # ====== Process: Clear Page =================================
+  id: 19019994508332917
+  identification: 
+    name: Clear Page
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear all Items on the Current Page
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: IMPORT_AND_IMPORT_ANOTHER
+
+- # ====== Process: Upload & Parse (Multiple Flows) ============
+  id: 34633718670575839
+  identification: 
+    name: Upload & Parse (Multiple Flows)
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.multiple_flow_import(
+          pi_file_name => :P6_FILE,
+          pi_force_overwrite => :P6_FORCE_OVERWRITE
+      );
+      
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Model imported.
+
+  error: 
+    error-message: Model already exists. Use force overwrite.
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item = Value
+    item: P6_MODE
+    value: multiple
+
+branches: 
+- # ====== Branch: Go To Page 4 ================================
+  id: 19019818946332916
+  identification: 
+    name: Go To Page 4
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4:P4_DGRM_ID:&P6_DGRM_ID.&success_msg=#SUCCESS_MSG#'
+      page: 4 # Flow Modeler
+      clear-cache: 4
+      values: 
+        p4_dgrm_id: '&P6_DGRM_ID.'
+
+  server-side-condition: 
+    type: Request = Value
+    value: IMPORT_AND_EDIT
+

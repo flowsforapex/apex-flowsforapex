@@ -1,0 +1,174 @@
+---
+# ====== Page: Configuration =================================
+id: 9
+identification: 
+  name: Configuration
+  alias: CONFIGURATION
+  title: Configuration
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    span.t-Form-inlineHelp ul li {
+        font-size: 1.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Sections ====================================
+  id: 3286177375239502
+  identification: 
+    name: Sections
+    type: List
+
+  source: 
+    list: P9_CONFIGURATION_PAGES # 3291351989268379
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Media List
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Breadcrumb ==================================
+  id: 17585395174953770
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+processes: 
+- # ====== Process: Set Settings ===============================
+  id: 8026807639825637
+  identification: 
+    name: Set Settings
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.set_settings(
+        pi_logging_language => :P9_LOGGING_LANGUAGE
+      , pi_logging_level => :P9_LOGGING_LEVEL
+      , pi_logging_hide_userid => :P9_LOGGING_HIDE_USERID
+      , pi_engine_app_mode => :P9_ENGINE_APP_MODE
+      , pi_duplicate_step_prevention => :P9_DUPLICATE_STEP_PREVENTION
+      , pi_default_workspace    => :P9_DEFAULT_WORKSPACE
+      , pi_default_email_sender => :P9_DEFAULT_EMAIL_SENDER 
+      , pi_default_application  => :P9_DEFAULT_APPLICATION 
+      , pi_default_pageid       => :P9_DEFAULT_PAGEID   
+      , pi_default_username     => :P9_DEFAULT_USERNAME
+      , pi_timer_max_cycles     => :P9_TIMER_MAX_CYCLES
+      , pi_timer_status         => :P9_TIMER_STATUS
+      , pi_timer_repeat_interval=> :P9_TIMER_REPEAT_INTERVAL
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Changes saved.
+
+  error: 
+    display-location: Inline in Notification
+

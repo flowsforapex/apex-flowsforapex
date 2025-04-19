@@ -4,16 +4,22 @@ create or replace package flow_logging
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
+
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
 -- Updated 10-Feb-2023  Richard Allen, Oracle
+-- Updated 25-Feb-2025  Richard Allen, Flowquest Limited
+
 --
 */
   authid definer
   accessible by ( flow_diagram, flow_engine, flow_instances, flow_proc_vars_int, flow_expressions 
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
                 , flow_call_activities, flow_subprocesses , flow_usertask_pkg, flow_settings
-                , flow_iteration )
+                , flow_iteration, flow_instances_util_ee, flow_rewind, flow_reservations 
+                , flow_message_util_ee)
+
 as
 
   procedure log_diagram_event
@@ -31,6 +37,7 @@ as
   ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
   , p_objt_bpmn_id      in flow_objects.objt_bpmn_id%type default null
   , p_event             in flow_instance_event_log.lgpr_prcs_event%type 
+  , p_event_level       in flow_processes.prcs_logging_level%type
   , p_comment           in flow_instance_event_log.lgpr_comment%type default null
   , p_error_info        in flow_instance_event_log.lgpr_error_info%type default null
   );
@@ -40,7 +47,32 @@ as
   , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
   , p_completed_object  in flow_subflow_log.sflg_objt_id%type
   , p_iteration_status  in flow_types_pkg.t_iteration_status default null
+  , p_matching_object   in flow_objects.objt_bpmn_id%type default null
   , p_notes             in flow_subflow_log.sflg_notes%type default null
+  );
+
+  procedure log_step_event
+  ( p_sbfl_rec         in flow_subflows%rowtype
+  , p_event            in flow_instance_event_log.lgpr_prcs_event%type
+  , p_event_level      in flow_processes.prcs_logging_level%type
+  , p_comment          in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info       in flow_instance_event_log.lgpr_error_info%type default null
+  , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
+  , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
+  , p_new_priority     in flow_subflows.sbfl_priority%type default null
+  );
+
+  -- overload for log_step_event for se when p_sbfl_rec is not available
+  procedure log_step_event
+  ( p_process_id       in flow_processes.prcs_id%type
+  , p_subflow_id       in flow_subflows.sbfl_id%type
+  , p_event            in flow_instance_event_log.lgpr_prcs_event%type
+  , p_event_level      in flow_processes.prcs_logging_level%type
+  , p_comment          in flow_instance_event_log.lgpr_comment%type default null
+  , p_error_info       in flow_instance_event_log.lgpr_error_info%type default null
+  , p_new_reservation  in flow_subflows.sbfl_reservation%type default null
+  , p_new_due_on       in flow_subflows.sbfl_due_on%type default null
+  , p_new_priority     in flow_subflows.sbfl_priority%type default null
   );
 
   procedure log_variable_event -- logs process variable set events

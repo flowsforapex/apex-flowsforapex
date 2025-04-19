@@ -1,0 +1,853 @@
+---
+# ====== Page: Process Statistics ============================
+id: 16
+identification: 
+  name: Process Statistics
+  alias: PROCESS-STATISTICS
+  title: Process Statistics
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Process Performance (Period Summaries) ======
+  id: 2143958569493923
+  identification: 
+    name: Process Performance (Period Summaries)
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |2
+       with summary_dates as
+      (
+          select trunc(sysdate) - 7 + level dt, 'DAY' as period, 8-level sort_order
+          from dual
+          connect by level <= ( sysdate - sysdate +7)
+          union
+          select trunc(sysdate,'MM') dt, 'MTD' as period, 9 sort_order
+          from dual
+          union
+          select add_months( trunc(sysdate,'MM')
+                           , - floor (months_between ( trunc ( sysdate)
+                                                     , trunc ( add_months(sysdate,-6) , 'Q')
+                                                     ) - 3
+                                      ) + level-1
+                           )
+                           ,'MONTH'
+                           , 10*(7-level)
+          from dual
+          connect by level <= ( sysdate - sysdate + floor (months_between ( trunc (sysdate)
+                                                                          , trunc (add_months ( sysdate ,-6) , 'Q')
+                                                                          ) - 2
+                                                          )
+                              )
+          union 
+          select add_months(trunc(sysdate,'Q'), -3 - (3*level)),'QUARTER', 100*level
+          from dual
+          connect by level <= (sysdate -sysdate +4)
+      )
+      select sd.dt, 
+             sd.period, 
+             case sd.period
+                when 'DAY'     then to_char(dt,'YYYY-MM-DD')|| ' DAY'
+                when 'MTD'     then to_char(dt,'YYYY-MM')|| ' MTD'
+                when 'MONTH'   then to_char(dt,'YYYY-MM')|| ' MONTH'
+                when 'QUARTER' then to_char(dt,'YYYY-"0"Q')|| ' QUARTER'
+             end PeriodLabel,
+             sd.sort_order,
+             ist.stpr_created,
+             ist.stpr_started,
+             ist.stpr_completed,
+             ist.stpr_error,
+             ist.stpr_terminated,
+             ist.stpr_reset,
+             ist.stpr_duration_10pc_sec,
+             ist.stpr_duration_50pc_sec,
+             ist.stpr_duration_90pc_sec,
+             ist.stpr_duration_max_sec
+        from summary_dates sd
+        left join flow_instance_stats ist
+          on sd.dt     = ist.stpr_period_start
+         and sd.period = ist.stpr_period
+       where ist.stpr_dgrm_id = :P16_DGRM_ID
+      union all
+         select trunc(sysdate)
+              , 'DAY'
+              , to_char (sysdate,'YYYY-MM-DD')
+              , 0
+              , sum ( case lgpr_prcs_event when 'created'    then 1 else 0 end) num_created
+              , sum ( case lgpr_prcs_event when 'started'    then 1 else 0 end) num_started
+              , sum ( case lgpr_prcs_event when 'completed'  then 1 else 0 end) num_completed
+              , sum ( case lgpr_prcs_event when 'error    '  then 1 else 0 end) num_error
+              , sum ( case lgpr_prcs_event when 'terminated' then 1 else 0 end) num_terminated
+              , sum ( case lgpr_prcs_event when 'reset'      then 1 else 0 end) num_reset
+      --        , approx_percentile (0.10 )
+      --               within group (order by (lgpr_duration) ASC) duration_10pc_ivl
+      --        , approx_percentile (0.50 )
+      --               within group (order by (lgpr_duration) ASC) duration_50pc_ivl
+      --        , approx_percentile (0.90 )
+      --               within group (order by (lgpr_duration) ASC) duration_90pc_ivl
+      --        , max (lgpr_duration) duration_Max_ivl
+              , flow_api_pkg.intervaldstosec ( approx_percentile (0.10 )
+                     within group (order by (lgpr_duration) ASC)) duration_10pc_sec
+              , flow_api_pkg.intervaldstosec ( approx_percentile (0.50 )
+                     within group (order by (lgpr_duration) ASC)) duration_50pc_sec             
+              , flow_api_pkg.intervaldstosec ( approx_percentile (0.90 )
+                     within group (order by (lgpr_duration) ASC)) duration_90pc_sec             
+              , flow_api_pkg.intervaldstosec ( max (lgpr_duration)) duration_max_sec                                  
+               from flow_instance_event_log lgpr
+              where lgpr.lgpr_prcs_event in ('created','started', 'error', 'completed', 'terminated', 'reset')
+              and   trunc (sys_extract_utc(lgpr_timestamp)) = trunc(sysdate)
+              and  lgpr_dgrm_id = :P16_DGRM_ID
+              group by lgpr_dgrm_id
+      
+    page-items-to-submit: 
+    - P16_DGRM_ID
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 2144034250493924
+    chart: 
+      type: Combination
+
+    appearance: 
+      orientation: Vertical
+      stack: true
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Instances Started ===========================
+      id: 2144120727493925
+      identification: 
+        name: Instances Started
+        type: Bar
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: PERIODLABEL
+        value-aggregation: No Aggregation
+        value: STPR_STARTED
+
+      appearance: 
+        color: '#D9B13B'
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Instances Completed =========================
+      id: 2144430910493928
+      identification: 
+        name: Instances Completed
+        type: Bar
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: PERIODLABEL
+        value-aggregation: No Aggregation
+        value: STPR_COMPLETED
+
+      appearance: 
+        color: '#8C9EB0'
+        assigned-to-y2-axis: false
+        stack-category: completions
+
+      line: 
+        style: Solid
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Instances Terminated ========================
+      id: 2144581361493929
+      identification: 
+        name: Instances Terminated
+        type: Bar
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: PERIODLABEL
+        value-aggregation: No Aggregation
+        value: STPR_TERMINATED
+
+      appearance: 
+        color: '#D76A27'
+        assigned-to-y2-axis: false
+        stack-category: completions
+
+      line: 
+        style: Solid
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Instances Errors ============================
+      id: 2144612523493930
+      identification: 
+        name: Instances Errors
+        type: Bar
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: PERIODLABEL
+        value-aggregation: No Aggregation
+        value: STPR_ERROR
+
+      appearance: 
+        color: '#D2433B'
+        assigned-to-y2-axis: false
+        stack-category: completions
+
+      line: 
+        style: Solid
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Median Duration =============================
+      id: 2144795267493931
+      identification: 
+        name: Median Duration
+        type: Line
+
+      execution: 
+        sequence: 50
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: PERIODLABEL
+        value-aggregation: No Aggregation
+        value: STPR_DURATION_50PC_SEC
+
+      appearance: 
+        color: '#000000'
+        assigned-to-y2-axis: true
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: No
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: 90pc Duration ===============================
+      id: 2144947294493933
+      identification: 
+        name: 90pc Duration
+        type: Line
+
+      execution: 
+        sequence: 60
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: PERIODLABEL
+        value-aggregation: No Aggregation
+        value: STPR_DURATION_90PC_SEC
+
+      appearance: 
+        color: '#FF3B30'
+        assigned-to-y2-axis: true
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: No
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 2144270836493926
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 2144335477493927
+      identification: 
+        name: y
+        show-axis: true
+        title: Instances
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+    - # ====== Axis: y2 ============================================
+      id: 2144842592493932
+      identification: 
+        name: y2
+        show-axis: true
+        title: sec
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+      dual-y-axes: 
+        show: Automatic
+
+- # ====== Region: Breadcrumb ==================================
+  id: 2549667804373355
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Task Step Performance (current month) - &P16_
+  id: 2550204271373356
+  identification: 
+    name: 'Task Step Performance (current month) - &P16_DGRM_NAME_VERSION. (dgrm_id : &P16_DGRM_ID. )'
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select stsf_objt_bpmn_id||' ('||stsf_tag_name || ')' label
+           , objt.objt_name name
+           , stsf_objt_bpmn_id
+           , sum(stsf_completed)
+           , avg(stsf_duration_10pc_sec)
+           , avg(stsf_duration_50pc_sec)
+           , avg(stsf_duration_90pc_sec)
+           , max(stsf_duration_max_sec)
+      from  flow_step_stats stsf
+      left join flow_objects objt
+        on objt.objt_dgrm_id = stsf.stsf_dgrm_id
+       and objt.objt_bpmn_id = stsf.stsf_objt_bpmn_id
+      where stsf_period_start >= sysdate - :P16_period
+      and stsf_period = 'DAY'
+      and stsf_dgrm_id = :P16_DGRM_ID
+      group by stsf_objt_bpmn_id||' ('||stsf_tag_name || ')', objt.objt_name, stsf_objt_bpmn_id
+      order by max(stsf_duration_max_sec) desc
+    page-items-to-submit: 
+    - P16_DGRM_ID
+    - P16_PERIOD
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 2550693860373356
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: 50 Percentile ===============================
+      id: 2143658369493920
+      identification: 
+        name: 50 Percentile
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: NAME
+        value-aggregation: No Aggregation
+        value: AVG(STSF_DURATION_50PC_SEC)
+        label-tooltip: LABEL
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
+          page: 17 # Task Statistics
+          clear-cache: 17
+          values: 
+            p17_dgrm_id: '&P16_DGRM_ID.'
+            p17_objt_bpmn_id: '&STSF_OBJT_BPMN_ID.'
+            p17_objt_name: '&NAME.'
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: 90 Percentile ===============================
+      id: 2143732834493921
+      identification: 
+        name: 90 Percentile
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: NAME
+        value-aggregation: No Aggregation
+        value: AVG(STSF_DURATION_90PC_SEC)
+        label-tooltip: LABEL
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
+          page: 17 # Task Statistics
+          clear-cache: 17
+          values: 
+            p17_dgrm_id: '&P16_DGRM_ID.'
+            p17_objt_bpmn_id: '&STSF_OBJT_BPMN_ID.'
+            p17_objt_name: '&NAME.'
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Max =========================================
+      id: 2143869603493922
+      identification: 
+        name: Max
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: NAME
+        value-aggregation: No Aggregation
+        value: MAX(STSF_DURATION_MAX_SEC)
+        label-tooltip: LABEL
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
+          page: 17 # Task Statistics
+          clear-cache: 17
+          values: 
+            p17_dgrm_id: '&P16_DGRM_ID.'
+            p17_objt_bpmn_id: '&STSF_OBJT_BPMN_ID.'
+            p17_objt_name: '&NAME.'
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: 10 Percentile ===============================
+      id: 2552379943373356
+      identification: 
+        name: 10 Percentile
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        label: NAME
+        value-aggregation: No Aggregation
+        value: AVG(STSF_DURATION_10PC_SEC)
+        label-tooltip: LABEL
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:17:&SESSION.::&DEBUG.:17:P17_DGRM_ID,P17_OBJT_BPMN_ID,P17_OBJT_NAME:&P16_DGRM_ID.,&STSF_OBJT_BPMN_ID.,&NAME.'
+          page: 17 # Task Statistics
+          clear-cache: 17
+          values: 
+            p17_dgrm_id: '&P16_DGRM_ID.'
+            p17_objt_bpmn_id: '&STSF_OBJT_BPMN_ID.'
+            p17_objt_name: '&NAME.'
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 2551102899373356
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 2551732940373356
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+page-items: 
+- # ====== Page Item: P16_DGRM_ID ==============================
+  id: 2143450803493918
+  identification: 
+    name: P16_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: 'Task Step Performance (current month) - &P16_DGRM_NAME_VERSION. (dgrm_id : &P16_DGRM_ID. )' # 2550204271373356
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P16_DGRM_NAME_VERSION ====================
+  id: 2143539142493919
+  identification: 
+    name: P16_DGRM_NAME_VERSION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: 'Task Step Performance (current month) - &P16_DGRM_NAME_VERSION. (dgrm_id : &P16_DGRM_ID. )' # 2550204271373356
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+

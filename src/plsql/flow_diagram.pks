@@ -125,6 +125,20 @@ as
     p_event_starting_object in flow_objects.objt_bpmn_id%type default null)
   return flow_objects%rowtype;
 
+  -- get_bpmn_process_object
+  --
+  -- gets the starting bpmn:process object for a diagram. returning the object as a flow_objects rowtype
+  -- if p_event_starting_object is null (default), this will return the main starting bpmn:process in the diagram
+  -- if p_event_starting_object is specified, it will return the bpmn:process containing that start object.   You would use this if, for example, 
+  -- you were getting the bpmn:process started by a bpmn:messageStart event from a model containing multiple start events.
+  --
+
+  function get_bpmn_process_object
+  ( p_dgrm_id                 in flow_diagrams.dgrm_id%type
+  , p_process_id              in flow_processes.prcs_id%type
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null
+  ) return flow_objects%rowtype;
+
 -- get the current dgrm_id to be used for a diagram name.
 -- returns the current 'released' diagram or a 'draft' of version '0' 
   function get_current_diagram

@@ -3,8 +3,10 @@ create or replace package body test_005_engine_misc as
 -- Flows for APEX - test_005_engine_misc.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 31-Mar-2023   Richard Allen - Oracle
+-- Edited  20-Jan-2025   Richard Allen - Flowquest
 --
 */
 
@@ -678,7 +680,7 @@ create or replace package body test_005_engine_misc as
     , p_key_value    => '1'
     , p_payload      => 'MyPayload'
     );
-
+    dbms_session.sleep(2); -- wait for message delivery
     open l_expected for
        select
           l_prcs_id as sbfl_prcs_id,

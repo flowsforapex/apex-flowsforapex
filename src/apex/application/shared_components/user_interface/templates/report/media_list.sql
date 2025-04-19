@@ -4,8 +4,8 @@ begin
 --     ROW TEMPLATE: MEDIA_LIST
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -18,7 +18,7 @@ wwv_flow_imp_shared.create_row_template(
 ,p_row_template1=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<li class="t-MediaList-item #LIST_CLASS#">',
 '  <a href="#LINK#" class="t-MediaList-itemWrap #LINK_CLASS#" #LINK_ATTR#>',
-'    <div class="t-MediaList-iconWrap" aria-hidden"true">',
+'    <div class="t-MediaList-iconWrap" aria-hidden="true">',
 '      <span class="t-MediaList-icon u-color #ICON_COLOR_CLASS#"><span class="t-Icon #ICON_CLASS#"></span></span>',
 '    </div>',
 '    <div class="t-MediaList-body">',
@@ -35,7 +35,7 @@ wwv_flow_imp_shared.create_row_template(
 ,p_row_template2=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<li class="t-MediaList-item #LIST_CLASS#">',
 '  <div class="t-MediaList-itemWrap #LINK_CLASS#" #LINK_ATTR#>',
-'    <div class="t-MediaList-iconWrap" aria-hidden"true">',
+'    <div class="t-MediaList-iconWrap" aria-hidden="true">',
 '      <span class="t-MediaList-icon u-color #ICON_COLOR_CLASS#"><span class="t-Icon #ICON_CLASS#"></span></span>',
 '    </div>',
 '    <div class="t-MediaList-body">',
@@ -76,7 +76,7 @@ wwv_flow_imp_shared.create_row_template(
 '</a>'))
 ,p_theme_id=>42
 ,p_theme_class_id=>1
-,p_default_template_options=>'t-MediaList--showDesc:t-MediaList--showIcons'
+,p_default_template_options=>'t-MediaList--showIcons:t-MediaList--showDesc'
 ,p_preset_template_options=>'t-MediaList--stack'
 ,p_reference_id=>2092157460408299055
 ,p_translate_this_template=>'N'

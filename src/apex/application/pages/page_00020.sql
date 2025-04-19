@@ -4,8 +4,8 @@ begin
 --     PAGE: 00020
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>20
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Instance Timeline - &P20_PRCS_NAME.'
 ,p_alias=>'INSTANCE-TIMELINE-P20-PRCS-NAME'
 ,p_step_title=>'Instance Timeline - &P20_PRCS_NAME.'
@@ -21,8 +20,6 @@ wwv_flow_imp_page.create_page(
 ,p_step_template=>wwv_flow_imp.id(12495635610083880376)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_component_map=>'22'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
 wwv_flow_imp_page.create_report_region(
  p_id=>wwv_flow_imp.id(2033643917569015)
@@ -57,6 +54,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>1
 ,p_column_alias=>'PRCS_ID'
 ,p_column_display_sequence=>80
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -153,6 +151,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>10
 ,p_column_alias=>'OPERATION'
 ,p_column_display_sequence=>10
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -161,6 +160,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>11
 ,p_column_alias=>'OBJT'
 ,p_column_display_sequence=>20
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -169,6 +169,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>12
 ,p_column_alias=>'PROC_VAR'
 ,p_column_display_sequence=>50
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -177,6 +178,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>13
 ,p_column_alias=>'VALUE'
 ,p_column_display_sequence=>60
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -185,6 +187,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>14
 ,p_column_alias=>'SUBFLOW'
 ,p_column_display_sequence=>30
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -193,6 +196,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>15
 ,p_column_alias=>'PROCESS_LEVEL'
 ,p_column_display_sequence=>40
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -201,6 +205,7 @@ wwv_flow_imp_page.create_report_columns(
 ,p_query_column_id=>16
 ,p_column_alias=>'PERFORMED_BY'
 ,p_column_display_sequence=>70
+,p_use_as_row_header=>'N'
 ,p_hidden_column=>'Y'
 ,p_derived_column=>'N'
 );
@@ -213,13 +218,13 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_point=>'REGION_POSITION_02'
 ,p_plug_source_type=>'NATIVE_FACETED_SEARCH'
 ,p_filtered_region_id=>wwv_flow_imp.id(2033643917569015)
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_06=>'N'
-,p_attribute_09=>'N'
-,p_attribute_12=>'10000'
-,p_attribute_13=>'Y'
-,p_attribute_15=>'10'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'batch_facet_search', 'N',
+  'compact_numbers_threshold', '10000',
+  'display_chart_for_top_n_values', '10',
+  'show_charts', 'Y',
+  'show_current_facets', 'N',
+  'show_total_row_count', 'N')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(2116559170571265)
@@ -260,6 +265,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'OPERATION'
 ,p_source_type=>'FACET_COLUMN'
 ,p_display_as=>'NATIVE_CHECKBOX'
+,p_lov_sort_direction=>'ASC'
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
 ,p_fc_collapsible=>true
@@ -286,6 +292,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'OBJT'
 ,p_source_type=>'FACET_COLUMN'
 ,p_display_as=>'NATIVE_CHECKBOX'
+,p_lov_sort_direction=>'ASC'
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
 ,p_fc_collapsible=>true
@@ -312,6 +319,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'PROC_VAR'
 ,p_source_type=>'FACET_COLUMN'
 ,p_display_as=>'NATIVE_CHECKBOX'
+,p_lov_sort_direction=>'ASC'
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
 ,p_fc_collapsible=>true
@@ -339,6 +347,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source_type=>'FACET_COLUMN'
 ,p_display_as=>'NATIVE_CHECKBOX'
 ,p_lov_display_null=>'YES'
+,p_lov_sort_direction=>'ASC'
 ,p_lov_null_text=>'No Subflow Logged'
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
@@ -367,6 +376,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source_type=>'FACET_COLUMN'
 ,p_display_as=>'NATIVE_CHECKBOX'
 ,p_lov_display_null=>'YES'
+,p_lov_sort_direction=>'ASC'
 ,p_lov_null_text=>'No Process Level Logged'
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
@@ -394,6 +404,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'PERFORMED_BY'
 ,p_source_type=>'FACET_COLUMN'
 ,p_display_as=>'NATIVE_CHECKBOX'
+,p_lov_sort_direction=>'ASC'
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
 ,p_fc_collapsible=>true

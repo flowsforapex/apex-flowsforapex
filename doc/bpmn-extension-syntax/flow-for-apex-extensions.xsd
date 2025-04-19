@@ -1,0 +1,122 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+           xmlns:apex="http://flowsforapex.com/bpmn"
+           targetNamespace="http://flowsforapex.com/bpmn"
+           elementFormDefault="qualified">
+
+    <!-- Extensions for Start Events -->
+    <xs:complexType name="StartEventExtensions">
+        <xs:sequence>
+            <xs:element name="onEvent" type="xs:string" minOccurs="0"/>
+            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Extensions for Message Throw Events -->
+    <xs:complexType name="MessageThrowEventExtensions">
+        <xs:sequence>
+            <xs:element name="messageName" type="xs:string" minOccurs="1"/>
+            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
+            <xs:element name="correlationValue" type="xs:string" minOccurs="0"/>
+            <xs:element name="payload" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Extensions for Message Catch Events -->
+    <xs:complexType name="MessageCatchEventExtensions">
+        <xs:sequence>
+            <xs:element name="messageName" type="xs:string" minOccurs="1"/>
+            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
+            <xs:element name="correlationValue" type="xs:string" minOccurs="0"/>
+            <xs:element name="payloadVariable" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Extensions for Timer Events -->
+    <xs:complexType name="TimerEventExtensions">
+        <xs:sequence>
+            <xs:element name="dueOn" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Extensions for Message Flows -->
+    <xs:complexType name="MessageFlowExtensions">
+        <xs:sequence>
+            <xs:element name="messageFlowName" type="xs:string" minOccurs="1"/>
+            <xs:element name="sourceProcess" type="xs:string" minOccurs="0"/>
+            <xs:element name="targetProcess" type="xs:string" minOccurs="0"/>
+            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Define extensionElements and restrict them by BPMN type -->
+    <xs:element name="extensionElements">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="1">
+                <xs:element name="startEventExtensions" type="StartEventExtensions"/>
+                <xs:element name="messageThrowEventExtensions" type="MessageThrowEventExtensions"/>
+                <xs:element name="messageCatchEventExtensions" type="MessageCatchEventExtensions"/>
+                <xs:element name="timerEventExtensions" type="TimerEventExtensions"/>
+                <xs:element name="messageFlowExtensions" type="MessageFlowExtensions"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Additional BPMN Extensions Found Across All Files -->
+    <xs:element name="beforeTask">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="onEvent">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="apexApproval">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="priority">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="dueOn">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="customExtension">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="executePlsql">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="apexPage">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="endpoint">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="messageName">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="correlationKey">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="correlationValue">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="payload">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+    <xs:element name="payloadVariable">
+        <xs:complexType></xs:complexType>
+    </xs:element>
+
+</xs:schema>

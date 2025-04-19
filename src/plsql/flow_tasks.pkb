@@ -4,12 +4,12 @@ create or replace package body flow_tasks as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Limited and/or its affiliates. 2025.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2021-2025.
 --
 -- Created 13-May-2021  Richard Allen (Flowquest Consuting, for MT AG) 
 -- Edited  13-Apr-2022  Richard Allen (Oracle)
 -- Edited  23-May-2022  Moritz Klein (MT AG)
--- Edited  09-Apr-2025  Richard Allen (Flowquest)
+-- Edited  02-Apr-2025  Richard Allen (Flowquest)
 --
 */
   function get_task_type
@@ -43,7 +43,7 @@ create or replace package body flow_tasks as
     return l_return;
   end get_task_type;
 
-  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error
+/*  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error (appears not to be used)
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_script_object in flow_objects.objt_bpmn_id%type 
@@ -91,10 +91,10 @@ create or replace package body flow_tasks as
        where prcs.prcs_id = p_process_id
       ;
       -- log error as instance event
-      flow_logging.log_instance_event
+      flow_logging.log_step_event
       ( p_process_id  => p_process_id 
       , p_objt_bpmn_id => p_script_object
-      , p_event       => flow_constants_pkg.gc_prcs_event_error
+      , p_event       => flow_constants_pkg.gc_step_event_error
       , p_comment     => case p_error_type
                          when 'failed'      then 'ScriptTask failed on object '
                          when 'stop_engine' then 'User Script Requested ScriptTask Stop on object '
@@ -107,7 +107,7 @@ create or replace package body flow_tasks as
       , p0        => p_script_object
       , p_level   => 2
       );
-  end handle_script_error;
+  end handle_script_error;*/
 
   procedure process_task
     ( p_sbfl_info     in flow_subflows%rowtype
@@ -234,7 +234,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -247,6 +247,13 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
+
   end process_scriptTask;
 
   procedure process_serviceTask 
@@ -409,7 +416,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PLSQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -422,6 +429,12 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
 
   end process_serviceTask;
 
@@ -502,7 +515,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -515,6 +528,12 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
   end process_businessRuleTask;
 
   procedure process_sendTask
@@ -577,7 +596,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -590,6 +609,12 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
   end process_sendTask;  
 
   procedure process_receiveTask

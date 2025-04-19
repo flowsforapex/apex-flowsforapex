@@ -5,17 +5,18 @@ create or replace view flow_instance_summary_json_vw as
                     )
 select prcs_id, prcs_status, systimestamp as json_created_date, 
         json_object (
-    'processID'    : p.prcs_id,
-    'mainDiagram'  : p.prcs_dgrm_id,
-    'processName'  : p.prcs_name,
-    'businessID'   : prov.prov.prov_var_vc2,
-    'priority'     : p.prcs_priority,
-    'prcs_status'  : p.prcs_status,
-    'json_created' : systimestamp,
-    'prcs_init_ts' : p.prcs_init_ts,
-    'prcs_init_by' : p.prcs_init_by,
-    'prcs_due_on'  : p.prcs_due_on,
-    'diagramsUsed' :
+    'processID'        : p.prcs_id,
+    'mainDiagram'      : p.prcs_dgrm_id,
+    'processName'      : p.prcs_name,
+    'businessID'       : prov.prov.prov_var_vc2,
+    'priority'         : p.prcs_priority,
+    'prcs_status'      : p.prcs_status,
+    'prcs_was_altered' : p.prcs_was_altered,
+    'json_created'     : systimestamp,
+    'prcs_init_ts'     : p.prcs_init_ts,
+    'prcs_init_by'     : p.prcs_init_by,
+    'prcs_due_on'      : p.prcs_due_on,
+    'diagramsUsed'     :
          (select json_arrayagg 
                     ( json_object 
                         (

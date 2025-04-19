@@ -10,8 +10,10 @@ as
         , prcs_status
         , prcs_dgrm_status_icon
         , prcs_priority
+        , prcs_logging_level
         , prcs_status_icon
         , prcs_due_on
+        , prcs_was_altered
         , prcs_init_date
         , prcs_last_update
         , prcs_business_ref
@@ -31,15 +33,18 @@ as
                   when 'archived' then 'fa fa-archive'
                 end as prcs_dgrm_status_icon
                  , prcs_priority
+                 , prcs_logging_level
                  , dgrm_category as prcs_dgrm_category
                  , prcs_status
                  , prcs_due_on at time zone sessiontimezone as prcs_due_on
+                 , prcs_was_altered
                  , prcs_init_ts at time zone sessiontimezone as prcs_init_date
                  , prcs_last_update at time zone sessiontimezone as prcs_last_update
                  , prcs_business_ref
                  , case prcs_status
                      when 'running' then 'fa-play-circle-o'
                      when 'created' then 'fa-plus-circle-o'
+                     when 'suspended' then 'fa-pause-circle-o'
                      when 'completed' then 'fa-check-circle-o'
                      when 'terminated' then 'fa-stop-circle-o'
                      when 'error' then 'fa-exclamation-circle-o'

@@ -4,8 +4,8 @@ begin
 --     PAGE: 00006
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.8'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>6
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Import'
 ,p_alias=>'IMPORT'
 ,p_page_mode=>'MODAL'
@@ -23,8 +22,6 @@ wwv_flow_imp_page.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'16'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(19000369704190884)
@@ -32,9 +29,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(12495609856182880263)
 ,p_plug_display_sequence=>10
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(24211779219956101)
@@ -45,9 +42,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
 ,p_plug_source=>'We encourage you to import models that were built using Flows for APEX to make sure that they can be run by the engine.'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(19019657971332914)
@@ -59,6 +56,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(12495521767510880126)
 ,p_button_image_alt=>'Import and import another'
 ,p_button_position=>'BELOW_BOX'
+,p_button_alignment=>'RIGHT'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(19019773259332915)
@@ -70,6 +68,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(12495521691135880126)
 ,p_button_image_alt=>'Import and edit'
 ,p_button_position=>'BELOW_BOX'
+,p_button_alignment=>'RIGHT'
 ,p_icon_css_classes=>'fa-edit'
 );
 wwv_flow_imp_page.create_page_button(
@@ -83,6 +82,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Import'
 ,p_button_position=>'BELOW_BOX'
+,p_button_alignment=>'RIGHT'
 ,p_icon_css_classes=>'fa-upload'
 );
 wwv_flow_imp_page.create_page_branch(
@@ -191,7 +191,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_encrypt_session_state_yn=>'N'
 ,p_attribute_01=>'POPUP'
 ,p_attribute_02=>'FIRST_ROWSET'
-,p_attribute_03=>'N'
 ,p_attribute_04=>'Y'
 ,p_attribute_05=>'N'
 );
@@ -376,6 +375,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_condition_type=>'EQUALS'
 ,p_triggering_expression=>'text'
 ,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
 );
 wwv_flow_imp_page.create_page_da_action(
@@ -428,6 +428,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_condition_type=>'EQUALS'
 ,p_triggering_expression=>'Y'
 ,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
 );
 wwv_flow_imp_page.create_page_da_action(
@@ -455,6 +456,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_condition_type=>'EQUALS'
 ,p_triggering_expression=>'multiple'
 ,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
 );
 wwv_flow_imp_page.create_page_da_action(
@@ -539,6 +541,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_process_when2=>'single'
 ,p_process_success_message=>'Model imported.'
+,p_internal_uid=>19018865821332906
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(34633718670575839)
@@ -559,6 +562,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 ,p_process_when2=>'multiple'
 ,p_process_success_message=>'Model imported.'
+,p_internal_uid=>34633718670575839
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(19019994508332917)
@@ -570,6 +574,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'IMPORT_AND_IMPORT_ANOTHER'
 ,p_process_when_type=>'REQUEST_EQUALS_CONDITION'
+,p_internal_uid=>19019994508332917
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(19008825550190910)
@@ -578,9 +583,11 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
 ,p_attribute_01=>'P6_DGRM_ID'
+,p_attribute_02=>'N'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'IMPORT'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'
+,p_internal_uid=>19008825550190910
 );
 wwv_flow_imp.component_end;
 end;

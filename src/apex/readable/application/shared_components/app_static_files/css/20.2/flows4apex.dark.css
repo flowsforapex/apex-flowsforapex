@@ -1,0 +1,26 @@
+/*Button in Flow Edit page next to version and status fiels*/
+
+.t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning) {
+  background-color: #4c4e50 !important;
+  color: #fff!important;
+}
+
+.t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning).is-active, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):focus, .t-Button--simple:not(.t-Button--hot):not(.t-Button--danger):not(.t-Button--primary):not(.t-Button--success):not(.t-Button--warning):hover {
+  background-color: #65686a !important;
+}
+
+/* Disabled menu items*/
+.a-Menu .a-Menu-item.is-disabled.is-focused {
+  color: rgba(254, 254, 254, 0.5);
+  background-color: #6c6c6c75;
+}
+.a-Menu .a-Menu-item.is-disabled.is-focused > .a-Menu-inner .a-Menu-statusCol,
+.a-Menu .a-Menu-item.is-disabled.is-focused > .a-Menu-inner .a-Menu-accel {
+  color: rgb(144, 146, 147);
+  opacity: 1;
+}
+
+/*IR Row selector label*/
+.a-IRR-rowSelector label {
+ color:#ffffff !important;
+}
