@@ -123,6 +123,123 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./modules/badgeModule/BadgeModule.js":
+/*!********************************************!*\
+  !*** ./modules/badgeModule/BadgeModule.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BadgeModule: () => (/* binding */ BadgeModule)
+/* harmony export */ });
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+
+
+class BadgeModule {
+
+  constructor(canvas, eventBus, elementRegistry, translate, overlays, component) {
+    this._canvas = canvas;
+    this._eventBus = eventBus;
+    this._elementRegistry = elementRegistry;
+    this._translate = translate;
+    this._overlays = overlays;
+    this._component = component;
+  }
+
+  addOverlays() {
+
+    const { badgesData } = this._component.diagram;
+
+    this._elementRegistry.filter(element => badgesData && badgesData[element.id])
+    .forEach((element) => {
+      this.addOverlay(element, badgesData[element.id]);
+    });
+  }
+
+  addOverlay(element, badges) {
+
+    badges.forEach((b) => {
+
+      if (b.label || b.icon) {
+
+        let position;
+        
+        if (b.position === 'TopLeft') position = { top: -12.5, left: 10 };
+        else if (b.position === 'TopRight') position = { top: -12.5, right: 10 };
+        else if (b.position === 'BottomLeft') position = { bottom: 12.5, left: 10 };
+        // else if (b.position === 'BottomRight') position = { bottom: -2, right: 0 };
+        
+        const badge = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(
+          `<div class="element-badge">
+            ${b.icon ? `<span class="element-badge-icon fa ${b.icon}"></span>` : ''}
+            ${b.label ? `<span class="element-badge-text">${b.label}</span>` : ''}
+          </div>`);
+
+        if (b.textColor) badge.querySelector('.element-badge-text').style.color = b.textColor;
+        if (b.iconColor) badge.querySelector('.element-badge-icon').style.color = b.iconColor;
+        if (b.borderColor) badge.style.border = `1px solid ${b.borderColor}`;
+        if (b.backgroundColor) badge.style.backgroundColor = b.backgroundColor;
+
+        const i = this._overlays.add(element, 'iterations', {
+            position: position,
+            html: badge,
+          });
+
+        // align badge position based on content after rendering
+        if (b.position === 'TopLeft' || b.position === 'BottomLeft') {
+
+          const {offsetWidth} = badge;
+          const overlay = this._overlays.get(i);
+
+          if (b.position === 'TopLeft') {
+            if (b.icon) overlay.position = { top: overlay.position.top, left: overlay.position.left - offsetWidth };
+            else overlay.position = { top: overlay.position.top, left: overlay.position.left - offsetWidth };
+          } else if (b.position === 'BottomLeft') {
+            if (b.icon) overlay.position = { bottom: overlay.position.bottom, left: overlay.position.left - offsetWidth };
+            else overlay.position = { bottom: overlay.position.bottom, left: overlay.position.left - offsetWidth };
+          }
+
+          this._overlays._updateOverlay(overlay);
+        }
+      }
+    });
+  }
+}
+
+BadgeModule.$inject = [
+  'canvas',
+  'eventBus',
+  'elementRegistry',
+  'translate',
+  'overlays',
+  'config.component'
+];
+
+/***/ }),
+
+/***/ "./modules/badgeModule/index.js":
+/*!**************************************!*\
+  !*** ./modules/badgeModule/index.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _BadgeModule__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BadgeModule */ "./modules/badgeModule/BadgeModule.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['badgeModule'],
+  badgeModule: ['type', _BadgeModule__WEBPACK_IMPORTED_MODULE_0__.BadgeModule],
+});
+
+/***/ }),
+
 /***/ "./modules/callActivityModule/CallActivityModule.js":
 /*!**********************************************************!*\
   !*** ./modules/callActivityModule/CallActivityModule.js ***!
@@ -180,25 +297,19 @@ class CallActivityModule {
       const objectId = element.id;
 
       // retrieve hieracry + current diagram
-      const { data, diagramIdentifier } = this._component;
+      const { data, diagram } = this._component;
 
       // get new diagram from hierarchy
       const newDiagram = data.find(
-        d => d.callingDiagramIdentifier === diagramIdentifier &&
-          d.callingObjectId === objectId
+        d => d.callActivityData.callingDiagramIdentifier === diagram.diagramIdentifier &&
+          d.callActivityData.callingObjectId === objectId
       );
 
       // if insight allowed
-      if (newDiagram && newDiagram.insight === 1) {
+      if (newDiagram && newDiagram.callActivityData.insight === 1) {
 
         // set new diagram properties
-        this._component.diagramIdentifier = newDiagram.diagramIdentifier;
-        this._component.callingDiagramIdentifier = newDiagram.callingDiagramIdentifier;
-        this._component.callingObjectId = newDiagram.callingObjectId;
-
-        this._component.current = newDiagram.current;
-        this._component.completed = newDiagram.completed;
-        this._component.error = newDiagram.error;
+        this._component.diagram = newDiagram;
 
         // update breadcrumb
         this.updateBreadcrumb();
@@ -208,15 +319,15 @@ class CallActivityModule {
         subProcessBreadcrumb.style.top = '60px';
 
         // invoke loadDiagram of component
-        this._component.loadDiagram(newDiagram.diagram);
+        this._component.loadDiagram();
       }
     });
 
     // add overlay
-    this._overlays.add(element, 'drilldown', {
+    this._overlays.add(element, 'ca-drilldown', {
       position: {
-        bottom: -7,
-        right: -8
+        bottom: -2,
+        right: -20
       },
       html: button
     });
@@ -233,14 +344,11 @@ class CallActivityModule {
   updateBreadcrumb() {
 
     // retrieve hierarchy
-    const { data, diagramIdentifier, callingDiagramIdentifier, callingObjectId } = this._component;
+    const { diagram } = this._component;
 
     // retrieve properties of current diagram
-    const { breadcrumb } = data.find(
-      d => d.diagramIdentifier === diagramIdentifier &&
-        d.callingDiagramIdentifier === callingDiagramIdentifier &&
-        d.callingObjectId === callingObjectId
-    );
+    const { diagramIdentifier } = diagram;
+    const { breadcrumb, callingDiagramIdentifier, callingObjectId } = diagram.callActivityData;
 
     // breadcrumb list entry
     const link = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(
@@ -273,16 +381,10 @@ class CallActivityModule {
         this.trimBreadcrumbTo(index);
 
         // set new diagram properties
-        this._component.diagramIdentifier = newDiagram.diagramIdentifier;
-        this._component.callingDiagramIdentifier = newDiagram.callingDiagramIdentifier;
-        this._component.callingObjectId = newDiagram.callingObjectId;
-
-        this._component.current = newDiagram.current;
-        this._component.completed = newDiagram.completed;
-        this._component.error = newDiagram.error;
+        this._component.diagram = newDiagram;
 
         // invoke loadDiagram of component
-        this._component.loadDiagram(newDiagram.diagram);
+        this._component.loadDiagram();
       }
     });
 
@@ -375,54 +477,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   __init__: ['callActivityModule'],
   callActivityModule: ['type', _CallActivityModule__WEBPACK_IMPORTED_MODULE_0__.CallActivityModule],
-});
-
-/***/ }),
-
-/***/ "./modules/drilldownCentering/DrilldownCentering.js":
-/*!**********************************************************!*\
-  !*** ./modules/drilldownCentering/DrilldownCentering.js ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ DrilldownCentering)
-/* harmony export */ });
-/**
- * Move collapsed subprocesses into view when drilling down.
- *
- * Overwrite default behaviour where zoom and scroll are saved in a session.
- * Zoom always reset to fit-viewport & centered when drilling down / moving up
- *
- * @param {eventBus} eventBus
- * @param {canvas} canvas
- */
-function DrilldownCentering(eventBus, canvas) {
-
-  eventBus.on('root.set', () => { canvas.zoom('fit-viewport', 'auto'); });
-}
-
-DrilldownCentering.$inject = ['eventBus', 'canvas'];
-
-/***/ }),
-
-/***/ "./modules/drilldownCentering/index.js":
-/*!*********************************************!*\
-  !*** ./modules/drilldownCentering/index.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _DrilldownCentering__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DrilldownCentering */ "./modules/drilldownCentering/DrilldownCentering.js");
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: ['drilldownCentering'],
-  drilldownCentering: ['type', _DrilldownCentering__WEBPACK_IMPORTED_MODULE_0__["default"]],
 });
 
 /***/ }),
@@ -535,12 +589,20 @@ class MultiInstanceModule {
     // get parent iteration from breadcrumb
     const parentIteration = this.breadcrumbSelection[this.getLastBreadcrumbIndex() - 1];
 
-    // retrieve data from component by using id and stepKey
-    return (this._component.iterationData &&
-      this._component.iterationData[id] &&
-      this._component.iterationData[id].filter(
-        i => ((!parentIteration && !i.parentStepKey) || (parentIteration && i.parentStepKey === parentIteration.stepKey))
-      )) || [];
+    const { iterationData } = this._component.diagram;
+
+    if (iterationData) {
+      const entry = this._component.diagram.iterationData[id];
+
+      if (entry) {
+        // retrieve data from component by using id and stepKey
+        return this._component.diagram.iterationData[id].filter(
+          i => ((!parentIteration && !i.parentStepKey) || (parentIteration && i.parentStepKey === parentIteration.stepKey))
+        );
+      }
+    }
+    
+    return [];
   }
 
   /* Overlays */
@@ -566,8 +628,8 @@ class MultiInstanceModule {
     // add overlay
     this._overlays.add(element, 'iterations', {
       position: {
-        bottom: -7,
-        right: -8
+        bottom: -2,
+        right: -20
       },
       html: button
     });
@@ -747,16 +809,13 @@ class MultiInstanceModule {
   
   updateHighlighting() {
 
-    if (this._component) {
+    const currentIteration = this.breadcrumbSelection[this.getLastBreadcrumbIndex()];
 
-      const currentIteration = this.breadcrumbSelection[this.getLastBreadcrumbIndex()];
-
-      if (currentIteration) {
-        const { current, completed, error } = currentIteration.highlighting;
-        this._component.updateColors(current, completed, error);
-      } else {
-        this._component.resetColors();
-      }
+    if (currentIteration) {
+      const { current, completed, error } = currentIteration.highlighting;
+      this._component.updateColors(current, completed, error);
+    } else {
+      this._component.resetColors();
     }
   }
 }
@@ -927,6 +986,69 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./modules/subProcessTweaks/SubProcessTweaks.js":
+/*!******************************************************!*\
+  !*** ./modules/subProcessTweaks/SubProcessTweaks.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SubProcessTweaks: () => (/* binding */ SubProcessTweaks)
+/* harmony export */ });
+class SubProcessTweaks {
+
+  constructor(eventBus, canvas, overlays) {
+    this._eventBus = eventBus;
+    this._canvas = canvas;
+    this._overlays = overlays;
+  }
+
+  /**
+   * Move collapsed subprocesses into view when drilling down.
+   *
+   * Overwrite default behaviour where zoom and scroll are saved in a session.
+   * Zoom always reset to fit-viewport & centered when drilling down / moving up
+   */
+  centerAfterDrilldown() {
+    this._eventBus.on('root.set', () => { this._canvas.zoom('fit-viewport', 'auto'); });
+  }
+
+  alignDrilldownButtons() {
+      
+    // move drilldown buttons for sub processes to default button position (bottom right)
+    this._overlays.get({ type: 'drilldown' })
+    .forEach((d) => {
+      d.position = { bottom: -2, right: -20 };
+      this._overlays._updateOverlay(d);
+    });
+  }
+}
+
+SubProcessTweaks.$inject = ['eventBus', 'canvas', 'overlays'];
+
+/***/ }),
+
+/***/ "./modules/subProcessTweaks/index.js":
+/*!*******************************************!*\
+  !*** ./modules/subProcessTweaks/index.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SubProcessTweaks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SubProcessTweaks */ "./modules/subProcessTweaks/SubProcessTweaks.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ['subProcessTweaks'],
+  subProcessTweaks: ['type', _SubProcessTweaks__WEBPACK_IMPORTED_MODULE_0__.SubProcessTweaks]
+});
+
+/***/ }),
+
 /***/ "./modules/userTaskModule/UserTaskModule.js":
 /*!**************************************************!*\
   !*** ./modules/userTaskModule/UserTaskModule.js ***!
@@ -957,7 +1079,7 @@ class UserTaskModule {
 
   addOverlays() {
 
-    const { userTaskData } = this._component;
+    const { userTaskData } = this._component.diagram;
 
     this._elementRegistry.filter((element) => {
       const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
@@ -982,10 +1104,10 @@ class UserTaskModule {
     });
 
     // add overlay
-    this._overlays.add(element, 'iterations', {
+    this._overlays.add(element, 'external-link', {
       position: {
-        bottom: -7,
-        right: -8
+        bottom: -2,
+        right: -20
       },
       html: button
     });
@@ -8731,7 +8853,19 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/**
   border: 1px solid var(--breadcrumbs-item-color);
   border-radius: 2px;
   padding: 1px;
-}`, "",{"version":3,"sources":["webpack://./assets/css/style.css"],"names":[],"mappings":"AAAA;;EAEE;AACF;EACE,gCAAgC;AAClC;AACA;EACE,YAAY;EACZ,sDAAsD;AACxD;AACA;EACE,6CAA6C;EAC7C,iDAAiD;AACnD;AACA;;EAEE;AACF;EACE,sCAAsC;EACtC,8CAA8C;EAC9C,iCAAiC;EACjC,6CAA6C;EAC7C,8BAA8B;AAChC;AACA;;EAEE;AACF;EACE,2DAA2D;AAC7D;AACA;EACE,kDAAkD;EAClD,sDAAsD;AACxD;AACA;EACE,mCAAmC;AACrC;AACA;EACE,8CAA8C;AAChD;AACA;EACE,8DAA8D;EAC9D,mDAAmD;AACrD;AACA;EACE,4DAA4D;AAC9D;AACA;EACE,+CAA+C;AACjD;AACA;EACE,+CAA+C;AACjD;AACA,mDAAmD;AACnD;EACE,6BAA6B;AAC/B;AACA,sBAAsB;AACtB;;;;EAIE,0CAA0C;EAC1C,8CAA8C;AAChD;AACA;EACE,4CAA4C;AAC9C;AACA;;EAEE;AACF;;;;EAIE,gDAAgD;AAClD;AACA;;;EAGE,oDAAoD;AACtD;AACA;EACE,iDAAiD;AACnD;AACA;EACE,mDAAmD;AACrD;AACA;;EAEE;AACF;;;;EAIE,8CAA8C;AAChD;AACA;;;EAGE,kDAAkD;AACpD;AACA;EACE,+CAA+C;AACjD;AACA;EACE,iDAAiD;AACnD;AACA;;EAEE;AACF;;;;EAIE,4CAA4C;AAC9C;AACA;;;EAGE,gDAAgD;AAClD;AACA;EACE,6CAA6C;AAC/C;AACA;EACE,+CAA+C;AACjD;AACA,iBAAiB;AACjB;EACE,kBAAkB;;EAElB,4DAA4D;EAC5D,kCAAkC;;EAElC,iDAAiD;AACnD;;AAEA;EACE,gBAAgB;EAChB,eAAe;EACf,YAAY;;EAEZ,uBAAuB;EACvB,eAAe;EACf,mBAAmB;AACrB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,cAAc;EACd,qBAAqB;AACvB;AACA,yDAAyD;AACzD;EACE,0BAA0B;AAC5B;AACA,qBAAqB;AACrB;EACE,aAAa;EACb,eAAe;EACf,YAAY;EACZ,OAAO;EACP,MAAM;EACN,WAAW;EACX,YAAY;EACZ,cAAc;EACd,iCAAiC;;EAEjC,uBAAuB;AACzB;AACA;EACE,YAAY;EACZ,aAAa;;EAEb,YAAY;;EAEZ,uBAAuB;EACvB,iDAAiD;AACnD;AACA;EACE,aAAa;EACb,8BAA8B;;EAE9B,YAAY;AACd;AACA;EACE,eAAe;EACf,kCAAkC;AACpC;AACA;EACE,YAAY;EACZ,WAAW;;EAEX,oCAAoC;EACpC,kCAAkC;;EAElC,iDAAiD;EACjD,kBAAkB;;EAElB,eAAe;AACjB;AACA;EACE,qCAAqC;AACvC;AACA;EACE,YAAY;AACd;AACA;EACE,6BAA6B;EAC7B,gBAAgB;EAChB,aAAa;;EAEb,oCAAoC;EACpC,kCAAkC;;EAElC,iDAAiD;AACnD;AACA;EACE,aAAa;EACb,gBAAgB;AAClB;AACA;EACE,WAAW;;EAEX,kCAAkC;;EAElC,oBAAoB;AACtB;AACA;EACE,gBAAgB;AAClB;AACA;EACE,eAAe;AACjB;AACA,eAAe;AACf,4CAA4C;AAC5C;EACE,2BAA2B;AAC7B;AACA,mDAAmD;AACnD;EACE,YAAY;AACd;AACA,8EAA8E;AAC9E;;;EAGE,gBAAgB;AAClB;AACA;;EAEE,oCAAoC;EACpC,eAAe;AACjB;AACA;EACE,+CAA+C;EAC/C,kBAAkB;EAClB,YAAY;AACd","sourcesContent":["/**\r\n * general\r\n */\r\n.flows4apex-viewer {\r\n  --color-flows-modal-border: #888;\r\n}\r\n.canvas {\r\n  height: 80vh;\r\n  background-color: var(--color-flows-canvas-background);\r\n}\r\n.bjs-container {\r\n  --default-fill-color: var(--color-flows-fill);\r\n  --default-stroke-color: var(--color-flows-stroke);\r\n}\r\n/**\r\n * dark mode\r\n */\r\n.FLOWS-DARK {\r\n  --color-flows-dark-background: #2b3035;\r\n  --color-flows-lighter-dark-background: #32383d;\r\n  --color-flows-dark-input: #282c30;\r\n  --color-flows-dark-input-hover-focus: #1e2328;\r\n  --color-flows-dark-text: white;\r\n}\r\n/**\r\n * custom dark mode colors\r\n */  \r\n.FLOWS-DARK .canvas {\r\n  background-color: var(--color-flows-dark-canvas-background);\r\n}\r\n.FLOWS-DARK .bjs-container {\r\n  --default-fill-color: var(--color-flows-dark-fill);\r\n  --default-stroke-color: var(--color-flows-dark-stroke);\r\n}\r\n.FLOWS-DARK .bjs-breadcrumbs li:last-of-type span {\r\n  color: var(--color-flows-dark-text);\r\n}\r\n.FLOWS-DARK .bjs-powered-by {\r\n  color: var(--color-flows-dark-text) !important;\r\n}\r\n.FLOWS-DARK .djs-palette {\r\n  --palette-background-color: var(--color-flows-dark-background);\r\n  --palette-entry-color: var(--color-flows-dark-text);\r\n}\r\n.FLOWS-DARK #modal-content {\r\n  background-color: var(--color-flows-lighter-dark-background);\r\n}\r\n.FLOWS-DARK #iteration-title button.fa-times {\r\n  background-color: var(--color-flows-dark-input);\r\n}\r\n.FLOWS-DARK #iteration-search input {\r\n  background-color: var(--color-flows-dark-input);\r\n}\r\n/* Overwrite text color when using bpmn extension */\r\n.djs-visual:not(.reset-bpmn-colors) > *:not([style*=\"stroke: var(--default-stroke-color);\"]) + text {\r\n  --default-stroke-color: black;\r\n}\r\n/* Reset BPMN Colors */\r\n.djs-visual.reset-bpmn-colors rect,\r\n.djs-visual.reset-bpmn-colors circle,\r\n.djs-visual.reset-bpmn-colors polygon,\r\n.djs-visual.reset-bpmn-colors path {\r\n  fill: var(--default-fill-color) !important;\r\n  stroke: var(--default-stroke-color) !important;\r\n}\r\n.djs-visual.reset-bpmn-colors text {\r\n  fill: var(--default-stroke-color) !important;\r\n}\r\n/**\r\n * Highlighting: Completed\r\n */\r\n.djs-visual.highlight-completed rect,\r\n.djs-visual.highlight-completed circle,\r\n.djs-visual.highlight-completed polygon,\r\n.djs-visual.highlight-completed path {\r\n  fill: var(--highlight-completed-fill) !important;\r\n}\r\n.djs-visual.highlight-completed rect,\r\n.djs-visual.highlight-completed circle,\r\n.djs-visual.highlight-completed polygon {\r\n  stroke: var(--highlight-completed-border) !important;\r\n}\r\n.djs-visual.highlight-completed text {\r\n  fill: var(--highlight-completed-label) !important;\r\n}\r\n.djs-visual.highlight-completed path {\r\n  stroke: var(--highlight-completed-label) !important;\r\n}\r\n/**\r\n * Highlighting: Current\r\n */\r\n.djs-visual.highlight-current rect,\r\n.djs-visual.highlight-current circle,\r\n.djs-visual.highlight-current polygon,\r\n.djs-visual.highlight-current path {\r\n  fill: var(--highlight-current-fill) !important;\r\n}\r\n.djs-visual.highlight-current rect,\r\n.djs-visual.highlight-current circle,\r\n.djs-visual.highlight-current polygon {\r\n  stroke: var(--highlight-current-border) !important;\r\n}\r\n.djs-visual.highlight-current text {\r\n  fill: var(--highlight-current-label) !important;\r\n}\r\n.djs-visual.highlight-current path {\r\n  stroke: var(--highlight-current-label) !important;\r\n}\r\n/**\r\n * Highlighting: Error\r\n */\r\n.djs-visual.highlight-error rect,\r\n.djs-visual.highlight-error circle,\r\n.djs-visual.highlight-error polygon,\r\n.djs-visual.highlight-error path {\r\n  fill: var(--highlight-error-fill) !important;\r\n}\r\n.djs-visual.highlight-error rect,\r\n.djs-visual.highlight-error circle,\r\n.djs-visual.highlight-error polygon {\r\n  stroke: var(--highlight-error-border) !important;\r\n}\r\n.djs-visual.highlight-error text {\r\n  fill: var(--highlight-error-label) !important;\r\n}\r\n.djs-visual.highlight-error path {\r\n  stroke: var(--highlight-error-label) !important;\r\n}\r\n/* Context menu */\r\n#context-menu {\r\n  position: absolute;\r\n  \r\n  background-color: var(--color-flows-lighter-dark-background);\r\n  color: var(--default-stroke-color);\r\n\r\n  border: 1px solid var(--color-flows-modal-border);\r\n}\r\n\r\n#context-menu .menu-options {\r\n  list-style: none;\r\n  padding-left: 0;\r\n  margin: 10px;\r\n\r\n  font-family: sans-serif;\r\n  font-size: 12px;\r\n  font-weight: normal;\r\n}\r\n\r\n#context-menu .menu-option {\r\n  cursor: pointer;\r\n}\r\n\r\n#context-menu .menu-option a {\r\n  color: inherit;\r\n  text-decoration: none;\r\n}\r\n/* Disable crosshair cursor when hovering over elements */\r\n.djs-hit, .djs-hit-all {\r\n  cursor: default !important;\r\n}\r\n/* Iteration dialog */\r\n#modal {\r\n  display: none;\r\n  position: fixed;\r\n  z-index: 999;\r\n  left: 0;\r\n  top: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  overflow: auto;\r\n  background-color: rgba(0,0,0,0.4);\r\n\r\n  font-family: sans-serif;\r\n}\r\n#modal-content {\r\n  width: 750px;\r\n  height: 500px;\r\n\r\n  margin: auto;\r\n\r\n  background-color: white;\r\n  border: 1px solid var(--color-flows-modal-border);\r\n}\r\n#iteration-title {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  \r\n  margin: 10px;\r\n}\r\n#iteration-title span {\r\n  font-size: 24px;\r\n  color: var(--default-stroke-color);\r\n}\r\n#iteration-title button.fa-times {\r\n  height: 30px;\r\n  width: 30px;\r\n\r\n  background-color: hsl(225, 10%, 97%);\r\n  color: var(--default-stroke-color);\r\n\r\n  border: 1px solid var(--color-flows-modal-border);\r\n  border-radius: 2px;\r\n\r\n  cursor: pointer;\r\n}\r\n#iteration-title button.fa-times:hover {\r\n  color: var(--color-flows-button-link);\r\n}\r\n#iteration-search {\r\n  margin: 10px;\r\n}\r\n#iteration-search input {\r\n  width: -webkit-fill-available;\r\n  min-height: 20px;\r\n  padding: 10px;\r\n  \r\n  background-color: hsl(225, 10%, 97%);\r\n  color: var(--default-stroke-color);\r\n\r\n  border: 1px solid var(--color-flows-modal-border);\r\n}\r\n#iteration-list {\r\n  height: 400px;\r\n  overflow-y: auto;\r\n}\r\n#iteration-list table {\r\n  width: 100%;\r\n  \r\n  color: var(--default-stroke-color);\r\n\r\n  border-spacing: 10px;\r\n}\r\n#iteration-list th {\r\n  text-align: left;\r\n}\r\n#iteration-list tr.clickable {\r\n  cursor: pointer;\r\n}\r\n/* Breadcrumb */\r\n/* Overwrite default setting of line break */\r\n.bjs-breadcrumbs .bjs-crumb {\r\n  max-width: 400px !important;\r\n}\r\n/* White color for icons inside drilldown buttons */\r\n.bjs-drilldown.fa-list, .bjs-drilldown.fa-external-link {\r\n  color: white;\r\n}\r\n/* Left margin for drilldown buttons and iteration description in breadcrumb */\r\n.bjs-crumb + .bjs-drilldown,\r\n.bjs-crumb.iteration-desc,\r\n.bjs-crumb.iteration-button {\r\n  margin-left: 8px;\r\n}\r\n.bjs-breadcrumbs li:not(:last-child) .bjs-crumb.iteration-desc,\r\n.bjs-breadcrumbs li:not(:last-child) .bjs-crumb.iteration-button {\r\n  color: var(--breadcrumbs-item-color);\r\n  cursor: pointer;\r\n}\r\n.bjs-crumb.iteration-button {\r\n  border: 1px solid var(--breadcrumbs-item-color);\r\n  border-radius: 2px;\r\n  padding: 1px;\r\n}"],"sourceRoot":""}]);
+}
+
+.element-badge {
+  font-family: sans-serif;
+  font-size: 1em;
+  text-align: center;
+  white-space: nowrap;
+  padding: 0.25em;
+  border-radius: 0.25em;
+
+  color: var(--default-stroke-color);
+  background-color: var(--default-fill-color);
+}`, "",{"version":3,"sources":["webpack://./assets/css/style.css"],"names":[],"mappings":"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","sourcesContent":["/**\r\n * general\r\n */\r\n.flows4apex-viewer {\r\n  --color-flows-modal-border: #888;\r\n}\r\n.canvas {\r\n  height: 80vh;\r\n  background-color: var(--color-flows-canvas-background);\r\n}\r\n.bjs-container {\r\n  --default-fill-color: var(--color-flows-fill);\r\n  --default-stroke-color: var(--color-flows-stroke);\r\n}\r\n/**\r\n * dark mode\r\n */\r\n.FLOWS-DARK {\r\n  --color-flows-dark-background: #2b3035;\r\n  --color-flows-lighter-dark-background: #32383d;\r\n  --color-flows-dark-input: #282c30;\r\n  --color-flows-dark-input-hover-focus: #1e2328;\r\n  --color-flows-dark-text: white;\r\n}\r\n/**\r\n * custom dark mode colors\r\n */  \r\n.FLOWS-DARK .canvas {\r\n  background-color: var(--color-flows-dark-canvas-background);\r\n}\r\n.FLOWS-DARK .bjs-container {\r\n  --default-fill-color: var(--color-flows-dark-fill);\r\n  --default-stroke-color: var(--color-flows-dark-stroke);\r\n}\r\n.FLOWS-DARK .bjs-breadcrumbs li:last-of-type span {\r\n  color: var(--color-flows-dark-text);\r\n}\r\n.FLOWS-DARK .bjs-powered-by {\r\n  color: var(--color-flows-dark-text) !important;\r\n}\r\n.FLOWS-DARK .djs-palette {\r\n  --palette-background-color: var(--color-flows-dark-background);\r\n  --palette-entry-color: var(--color-flows-dark-text);\r\n}\r\n.FLOWS-DARK #modal-content {\r\n  background-color: var(--color-flows-lighter-dark-background);\r\n}\r\n.FLOWS-DARK #iteration-title button.fa-times {\r\n  background-color: var(--color-flows-dark-input);\r\n}\r\n.FLOWS-DARK #iteration-search input {\r\n  background-color: var(--color-flows-dark-input);\r\n}\r\n/* Overwrite text color when using bpmn extension */\r\n.djs-visual:not(.reset-bpmn-colors) > *:not([style*=\"stroke: var(--default-stroke-color);\"]) + text {\r\n  --default-stroke-color: black;\r\n}\r\n/* Reset BPMN Colors */\r\n.djs-visual.reset-bpmn-colors rect,\r\n.djs-visual.reset-bpmn-colors circle,\r\n.djs-visual.reset-bpmn-colors polygon,\r\n.djs-visual.reset-bpmn-colors path {\r\n  fill: var(--default-fill-color) !important;\r\n  stroke: var(--default-stroke-color) !important;\r\n}\r\n.djs-visual.reset-bpmn-colors text {\r\n  fill: var(--default-stroke-color) !important;\r\n}\r\n/**\r\n * Highlighting: Completed\r\n */\r\n.djs-visual.highlight-completed rect,\r\n.djs-visual.highlight-completed circle,\r\n.djs-visual.highlight-completed polygon,\r\n.djs-visual.highlight-completed path {\r\n  fill: var(--highlight-completed-fill) !important;\r\n}\r\n.djs-visual.highlight-completed rect,\r\n.djs-visual.highlight-completed circle,\r\n.djs-visual.highlight-completed polygon {\r\n  stroke: var(--highlight-completed-border) !important;\r\n}\r\n.djs-visual.highlight-completed text {\r\n  fill: var(--highlight-completed-label) !important;\r\n}\r\n.djs-visual.highlight-completed path {\r\n  stroke: var(--highlight-completed-label) !important;\r\n}\r\n/**\r\n * Highlighting: Current\r\n */\r\n.djs-visual.highlight-current rect,\r\n.djs-visual.highlight-current circle,\r\n.djs-visual.highlight-current polygon,\r\n.djs-visual.highlight-current path {\r\n  fill: var(--highlight-current-fill) !important;\r\n}\r\n.djs-visual.highlight-current rect,\r\n.djs-visual.highlight-current circle,\r\n.djs-visual.highlight-current polygon {\r\n  stroke: var(--highlight-current-border) !important;\r\n}\r\n.djs-visual.highlight-current text {\r\n  fill: var(--highlight-current-label) !important;\r\n}\r\n.djs-visual.highlight-current path {\r\n  stroke: var(--highlight-current-label) !important;\r\n}\r\n/**\r\n * Highlighting: Error\r\n */\r\n.djs-visual.highlight-error rect,\r\n.djs-visual.highlight-error circle,\r\n.djs-visual.highlight-error polygon,\r\n.djs-visual.highlight-error path {\r\n  fill: var(--highlight-error-fill) !important;\r\n}\r\n.djs-visual.highlight-error rect,\r\n.djs-visual.highlight-error circle,\r\n.djs-visual.highlight-error polygon {\r\n  stroke: var(--highlight-error-border) !important;\r\n}\r\n.djs-visual.highlight-error text {\r\n  fill: var(--highlight-error-label) !important;\r\n}\r\n.djs-visual.highlight-error path {\r\n  stroke: var(--highlight-error-label) !important;\r\n}\r\n/* Context menu */\r\n#context-menu {\r\n  position: absolute;\r\n  \r\n  background-color: var(--color-flows-lighter-dark-background);\r\n  color: var(--default-stroke-color);\r\n\r\n  border: 1px solid var(--color-flows-modal-border);\r\n}\r\n\r\n#context-menu .menu-options {\r\n  list-style: none;\r\n  padding-left: 0;\r\n  margin: 10px;\r\n\r\n  font-family: sans-serif;\r\n  font-size: 12px;\r\n  font-weight: normal;\r\n}\r\n\r\n#context-menu .menu-option {\r\n  cursor: pointer;\r\n}\r\n\r\n#context-menu .menu-option a {\r\n  color: inherit;\r\n  text-decoration: none;\r\n}\r\n/* Disable crosshair cursor when hovering over elements */\r\n.djs-hit, .djs-hit-all {\r\n  cursor: default !important;\r\n}\r\n/* Iteration dialog */\r\n#modal {\r\n  display: none;\r\n  position: fixed;\r\n  z-index: 999;\r\n  left: 0;\r\n  top: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  overflow: auto;\r\n  background-color: rgba(0,0,0,0.4);\r\n\r\n  font-family: sans-serif;\r\n}\r\n#modal-content {\r\n  width: 750px;\r\n  height: 500px;\r\n\r\n  margin: auto;\r\n\r\n  background-color: white;\r\n  border: 1px solid var(--color-flows-modal-border);\r\n}\r\n#iteration-title {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  \r\n  margin: 10px;\r\n}\r\n#iteration-title span {\r\n  font-size: 24px;\r\n  color: var(--default-stroke-color);\r\n}\r\n#iteration-title button.fa-times {\r\n  height: 30px;\r\n  width: 30px;\r\n\r\n  background-color: hsl(225, 10%, 97%);\r\n  color: var(--default-stroke-color);\r\n\r\n  border: 1px solid var(--color-flows-modal-border);\r\n  border-radius: 2px;\r\n\r\n  cursor: pointer;\r\n}\r\n#iteration-title button.fa-times:hover {\r\n  color: var(--color-flows-button-link);\r\n}\r\n#iteration-search {\r\n  margin: 10px;\r\n}\r\n#iteration-search input {\r\n  width: -webkit-fill-available;\r\n  min-height: 20px;\r\n  padding: 10px;\r\n  \r\n  background-color: hsl(225, 10%, 97%);\r\n  color: var(--default-stroke-color);\r\n\r\n  border: 1px solid var(--color-flows-modal-border);\r\n}\r\n#iteration-list {\r\n  height: 400px;\r\n  overflow-y: auto;\r\n}\r\n#iteration-list table {\r\n  width: 100%;\r\n  \r\n  color: var(--default-stroke-color);\r\n\r\n  border-spacing: 10px;\r\n}\r\n#iteration-list th {\r\n  text-align: left;\r\n}\r\n#iteration-list tr.clickable {\r\n  cursor: pointer;\r\n}\r\n/* Breadcrumb */\r\n/* Overwrite default setting of line break */\r\n.bjs-breadcrumbs .bjs-crumb {\r\n  max-width: 400px !important;\r\n}\r\n/* White color for icons inside drilldown buttons */\r\n.bjs-drilldown.fa-list, .bjs-drilldown.fa-external-link {\r\n  color: white;\r\n}\r\n/* Left margin for drilldown buttons and iteration description in breadcrumb */\r\n.bjs-crumb + .bjs-drilldown,\r\n.bjs-crumb.iteration-desc,\r\n.bjs-crumb.iteration-button {\r\n  margin-left: 8px;\r\n}\r\n.bjs-breadcrumbs li:not(:last-child) .bjs-crumb.iteration-desc,\r\n.bjs-breadcrumbs li:not(:last-child) .bjs-crumb.iteration-button {\r\n  color: var(--breadcrumbs-item-color);\r\n  cursor: pointer;\r\n}\r\n.bjs-crumb.iteration-button {\r\n  border: 1px solid var(--breadcrumbs-item-color);\r\n  border-radius: 2px;\r\n  padding: 1px;\r\n}\r\n\r\n.element-badge {\r\n  font-family: sans-serif;\r\n  font-size: 1em;\r\n  text-align: center;\r\n  white-space: nowrap;\r\n  padding: 0.25em;\r\n  border-radius: 0.25em;\r\n\r\n  color: var(--default-stroke-color);\r\n  background-color: var(--default-fill-color);\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31825,25 +31959,27 @@ var __webpack_exports__ = {};
   !*** ./index.js ***!
   \******************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
-/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
-/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! bpmn-js/lib/Viewer */ "./node_modules/bpmn-js/lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "./node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "./node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
 /* harmony import */ var _lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/viewerPalette */ "./lib/viewerPalette/index.js");
-/* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
-/* harmony import */ var _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/drilldownCentering */ "./modules/drilldownCentering/index.js");
+/* harmony import */ var _modules_badgeModule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/badgeModule */ "./modules/badgeModule/index.js");
+/* harmony import */ var _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/callActivityModule */ "./modules/callActivityModule/index.js");
 /* harmony import */ var _modules_multiInstanceModule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/multiInstanceModule */ "./modules/multiInstanceModule/index.js");
 /* harmony import */ var _modules_styleModule__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/styleModule */ "./modules/styleModule/index.js");
-/* harmony import */ var _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/userTaskModule/ */ "./modules/userTaskModule/index.js");
-/* harmony import */ var bpmn_js_dist_assets_bpmn_js_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-js/dist/assets/bpmn-js.css */ "./node_modules/bpmn-js/dist/assets/bpmn-js.css");
-/* harmony import */ var bpmn_js_dist_assets_diagram_js_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! bpmn-js/dist/assets/diagram-js.css */ "./node_modules/bpmn-js/dist/assets/diagram-js.css");
-/* harmony import */ var _assets_css_style_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./assets/css/style.css */ "./assets/css/style.css");
-/* harmony import */ var _assets_css_bpmn_embedded_font_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./assets/css/bpmn-embedded-font.css */ "./assets/css/bpmn-embedded-font.css");
-/* harmony import */ var _assets_css_bpmn_embedded_rules_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./assets/css/bpmn-embedded-rules.css */ "./assets/css/bpmn-embedded-rules.css");
+/* harmony import */ var _modules_subProcessTweaks__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/subProcessTweaks */ "./modules/subProcessTweaks/index.js");
+/* harmony import */ var _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/userTaskModule/ */ "./modules/userTaskModule/index.js");
+/* harmony import */ var bpmn_js_dist_assets_bpmn_js_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! bpmn-js/dist/assets/bpmn-js.css */ "./node_modules/bpmn-js/dist/assets/bpmn-js.css");
+/* harmony import */ var bpmn_js_dist_assets_diagram_js_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! bpmn-js/dist/assets/diagram-js.css */ "./node_modules/bpmn-js/dist/assets/diagram-js.css");
+/* harmony import */ var _assets_css_style_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./assets/css/style.css */ "./assets/css/style.css");
+/* harmony import */ var _assets_css_bpmn_embedded_font_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./assets/css/bpmn-embedded-font.css */ "./assets/css/bpmn-embedded-font.css");
+/* harmony import */ var _assets_css_bpmn_embedded_rules_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./assets/css/bpmn-embedded-rules.css */ "./assets/css/bpmn-embedded-rules.css");
 
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 // eslint-disable-next-line import/no-extraneous-dependencies
+
 
 
 
@@ -31868,8 +32004,6 @@ class Viewer extends HTMLElement {
     this.themePluginClass = this.getAttribute('themePluginClass');
 
     this.showToolbar = (this.getAttribute('showToolbar') === 'true');
-    this.addHighlighting = (this.getAttribute('addHighlighting') === 'true');
-    this.enableCallActivities = (this.getAttribute('enableCallActivities') === 'true');
     this.enableMousewheelZoom = (this.getAttribute('enableMousewheelZoom') === 'true');
     this.useBPMNcolors = (this.getAttribute('useBPMNcolors') === 'true');
 
@@ -31883,7 +32017,7 @@ class Viewer extends HTMLElement {
 
     // copy bpmn @font-face declaration into global dom
     const styleGlobal = document.createElement('style');
-    styleGlobal.innerHTML = _assets_css_bpmn_embedded_font_css__WEBPACK_IMPORTED_MODULE_9__["default"].toString();
+    styleGlobal.innerHTML = _assets_css_bpmn_embedded_font_css__WEBPACK_IMPORTED_MODULE_10__["default"].toString();
     document.head.appendChild(styleGlobal);
 
     // copy apex font file from global page to shadow dom
@@ -31898,10 +32032,10 @@ class Viewer extends HTMLElement {
     // import general css files into shadow dom
     const sheets = await Promise.all(
       [
-        _assets_css_style_css__WEBPACK_IMPORTED_MODULE_8__["default"],
-        bpmn_js_dist_assets_bpmn_js_css__WEBPACK_IMPORTED_MODULE_6__["default"],
-        bpmn_js_dist_assets_diagram_js_css__WEBPACK_IMPORTED_MODULE_7__["default"],
-        _assets_css_bpmn_embedded_rules_css__WEBPACK_IMPORTED_MODULE_10__["default"],
+        _assets_css_style_css__WEBPACK_IMPORTED_MODULE_9__["default"],
+        bpmn_js_dist_assets_bpmn_js_css__WEBPACK_IMPORTED_MODULE_7__["default"],
+        bpmn_js_dist_assets_diagram_js_css__WEBPACK_IMPORTED_MODULE_8__["default"],
+        _assets_css_bpmn_embedded_rules_css__WEBPACK_IMPORTED_MODULE_11__["default"],
       ]
       .map((file) => {
         const sheet = new CSSStyleSheet();
@@ -31932,18 +32066,19 @@ class Viewer extends HTMLElement {
   }
 
   initViewer() {
-    this.viewer = new bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_11__["default"]({
+    this.viewer = new bpmn_js_lib_Viewer__WEBPACK_IMPORTED_MODULE_12__["default"]({
       component: this,
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
       additionalModules: [
-        ...(this.showToolbar || this.enableMousewheelZoom) ? [diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_12__["default"]] : [],
-        ...(this.enableMousewheelZoom) ? [diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_13__["default"]] : [],
-        _modules_drilldownCentering__WEBPACK_IMPORTED_MODULE_2__["default"],
-        ...(this.enableCallActivities) ? [_modules_callActivityModule__WEBPACK_IMPORTED_MODULE_1__["default"]] : [],
+        ...(this.showToolbar || this.enableMousewheelZoom) ? [diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_13__["default"]] : [],
+        ...(this.enableMousewheelZoom) ? [diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_14__["default"]] : [],
+        _modules_subProcessTweaks__WEBPACK_IMPORTED_MODULE_5__["default"],
+        _modules_callActivityModule__WEBPACK_IMPORTED_MODULE_2__["default"],
         _modules_multiInstanceModule__WEBPACK_IMPORTED_MODULE_3__["default"],
-        ...(this.addHighlighting || this.useBPMNcolors) ? [_modules_styleModule__WEBPACK_IMPORTED_MODULE_4__["default"]] : [],
+        _modules_styleModule__WEBPACK_IMPORTED_MODULE_4__["default"],
         ...(this.showToolbar) ? [_lib_viewerPalette__WEBPACK_IMPORTED_MODULE_0__["default"]] : [],
-        _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_5__["default"]
+        _modules_userTaskModule___WEBPACK_IMPORTED_MODULE_6__["default"],
+        _modules_badgeModule__WEBPACK_IMPORTED_MODULE_1__["default"]
       ],
       bpmnRenderer: {
         defaultFillColor: 'var(--default-fill-color)',
@@ -31989,24 +32124,21 @@ class Viewer extends HTMLElement {
 
   loadData(data) {
 
-    let diagram;
     let oldLoaded = true;
 
-    // if call activities option enabled
-    if (this.enableCallActivities) {
+    if (this.diagramIdentifier) {
       // load old diagram (if possible)
-      diagram = data.find(d => d.diagramIdentifier === this.diagramIdentifier);
+      this.diagram = data.find(d => d.diagramIdentifier === this.diagramIdentifier);
+    } else {
       // otherwise: get root entry
-      if (!diagram) {
-        oldLoaded = false;
-        diagram = data.find(d => typeof d.callingDiagramIdentifier === 'undefined');
-      } 
-      // set references to hierarchy + current diagram
-      this.data = data;
-      this.diagramIdentifier = diagram.diagramIdentifier;
-      this.callingDiagramIdentifier = diagram.callingDiagramIdentifier;
-      this.callingObjectId = diagram.callingObjectId;
+      oldLoaded = false;
+      this.diagram = data.find(d => !d.callActivityData || d.callActivityData.callingDiagramIdentifier === null);
+    }
 
+    if (this.diagram && this.diagram.callActivityData) {
+      // set references to hierarchy
+      this.data = data;
+      
       const callActivityModule = this.viewer.get('callActivityModule');
 
       // reset & update breadcrumb
@@ -32014,40 +32146,33 @@ class Viewer extends HTMLElement {
         callActivityModule.resetBreadcrumb();
         callActivityModule.updateBreadcrumb();
       }
-    // call activities not activated
-    } else {
-      // get first (only) entry
-      [diagram] = data;
-      this.diagramIdentifier = diagram.diagramIdentifier;
     }
 
-    // add highlighting if option is enabled
-    if (this.addHighlighting) {
-      this.current = diagram.current;
-      this.completed = diagram.completed;
-      this.error = diagram.error;
-    }
+    // // add highlighting if option is enabled
+    // if (this.addHighlighting) {
+    //   this.current = this.diagram.current;
+    //   this.completed = this.diagram.completed;
+    //   this.error = this.diagram.error;
+    // }
 
-    // parse iterationData and attach to instance
-    try {
-      this.iterationData = JSON.parse(diagram.iterationData);
-    } catch (e) {
-      this.iterationData = null;
-    }
+    // // parse iterationData and attach to instance
+    // try {
+    //   this.iterationData = JSON.parse(this.diagram.iterationData);
+    // } catch (e) {
+    //   this.iterationData = null;
+    // }
     
-    // parse userTaskData and attach to instance
-    try {
-      this.userTaskData = JSON.parse(diagram.userTaskData);
-    } catch (e) {
-      this.userTaskData = null;
-    }
-
-    return diagram.diagram;
+    // // parse userTaskData and attach to instance
+    // try {
+    //   this.userTaskData = JSON.parse(this.diagram.userTaskData);
+    // } catch (e) {
+    //   this.userTaskData = null;
+    // }
   }
 
-  async loadDiagram(diagramContent) {
+  async loadDiagram() {
     
-    const result = await this.viewer.importXML(diagramContent);
+    const result = await this.viewer.importXML(this.diagram.xml);
     const { warnings } = result;
       
     if (warnings.length > 0) {
@@ -32060,48 +32185,63 @@ class Viewer extends HTMLElement {
     const eventBus = this.viewer.get('eventBus');
     const multiInstanceModule = this.viewer.get('multiInstanceModule');
     const userTaskModule = this.viewer.get('userTaskModule');
+    const subProcessTweaks = this.viewer.get('subProcessTweaks');
+    const badgeModule = this.viewer.get('badgeModule');
 
     // update colors with the current highlighting info
-    this.updateColors(this.current, this.completed, this.error);
+    this.updateColors();
       
     // root.set -> drilled down into or moved out from sub process
     eventBus.on('root.set', (event) => {
       const {element} = event;
+      // set zoom to center
+      subProcessTweaks.centerAfterDrilldown();
       // if current element is not iterating -> iterating elements are handled inside module
       if (!multiInstanceModule.constructor.isMultiInstanceSubProcess(element)) {
         // update colors
-        this.updateColors(this.current, this.completed, this.error);
+        this.updateColors();
       }
     });
 
     // add overlays if iterationData is existing
-    if (this.iterationData) {
+    if (this.diagram.iterationData) {
       multiInstanceModule.addOverlays();
     }
 
     // add overlays if userTaskData is existing
-    if (this.userTaskData) {
+    if (this.diagram.userTaskData) {
       userTaskModule.addOverlays();
     }
+    
+    // add overlays if badgesData is existing
+    if (this.diagram.badgesData) {
+      badgeModule.addOverlays();
+    }
+
+    subProcessTweaks.alignDrilldownButtons();
   }
 
   updateColors(current, completed, error) {
     // if any color option is enabled
-    if (this.addHighlighting || this.useBPMNcolors) {
+    if (this.diagram.highlightingData || this.useBPMNcolors) {
       // get viewer module
       const styleModule = this.viewer.get('styleModule');
       // reset current colors
       this.resetColors();
       // add highlighting if option is enabled
-      if (this.addHighlighting) {
-        styleModule.highlightElements(current, completed, error);
+      if (this.diagram.highlightingData) {
+        styleModule.highlightElements(
+          current || this.diagram.highlightingData.current,
+          completed || this.diagram.highlightingData.completed,
+          error || this.diagram.highlightingData.error
+        );
       }
     }
   }
   
   resetColors() {
     // if any color option is enabled
-    if (this.addHighlighting || this.useBPMNcolors) {
+    if (this.diagram.highlightingData || this.useBPMNcolors) {
       // get viewer module
       const styleModule = this.viewer.get('styleModule');
       // reset bpmn colors if option is not enabled
