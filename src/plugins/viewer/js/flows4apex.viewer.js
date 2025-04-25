@@ -272,13 +272,14 @@ class CallActivityModule {
     this._breadcrumb = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<ul class="bjs-breadcrumbs" id="callActivityBreadcrumb"></ul>');
     this._container = this._canvas.getContainer();
     this._container.appendChild(this._breadcrumb);
+  }
 
-    // add overlay for drilldown-able elements
-    this._eventBus.on('import.render.complete', () => {
-      this._elementRegistry
-        .filter(e => (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(e, 'bpmn:CallActivity'))
-        .forEach(e => this.addOverlay(e));
-    });
+  /* Overlays */
+  
+  addOverlays() {
+    this._elementRegistry
+    .filter(e => (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(e, 'bpmn:CallActivity'))
+    .forEach(e => this.addOverlay(e));
   }
 
   addOverlay(element) {
@@ -1159,7 +1160,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var diagram_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js */ "./node_modules/diagram-js/lib/Diagram.js");
-/* harmony import */ var bpmn_moddle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-moddle */ "./node_modules/bpmn-moddle/dist/index.esm.js");
+/* harmony import */ var bpmn_moddle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! bpmn-moddle */ "./node_modules/bpmn-moddle/dist/index.js");
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
 /* harmony import */ var _import_Importer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./import/Importer */ "./node_modules/bpmn-js/lib/import/Importer.js");
 /* harmony import */ var _util_PoweredByUtil__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./util/PoweredByUtil */ "./node_modules/bpmn-js/lib/util/PoweredByUtil.js");
@@ -1308,13 +1309,13 @@ function BaseViewer(options) {
    */
   this._container = this._createContainer(options);
 
+  this._init(this._container, this._moddle, options);
+
   /* <project-logo> */
 
   addProjectLogo(this._container);
 
   /* </project-logo> */
-
-  this._init(this._container, this._moddle, options);
 }
 
 (0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(BaseViewer, diagram_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
@@ -2017,12 +2018,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "./node_modules/inherits-browser/dist/index.es.js");
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core */ "./node_modules/bpmn-js/lib/core/index.js");
 /* harmony import */ var _features_drilldown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./features/drilldown */ "./node_modules/bpmn-js/lib/features/drilldown/index.js");
-/* harmony import */ var _features_outline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./features/outline */ "./node_modules/bpmn-js/lib/features/outline/index.js");
-/* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "./node_modules/diagram-js/lib/features/overlays/index.js");
-/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "./node_modules/diagram-js/lib/features/selection/index.js");
-/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js");
+/* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "./node_modules/diagram-js/lib/features/overlays/index.js");
+/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "./node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "./node_modules/diagram-js/lib/i18n/translate/index.js");
 /* harmony import */ var _BaseViewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BaseViewer */ "./node_modules/bpmn-js/lib/BaseViewer.js");
-
 
 
 
@@ -2093,10 +2092,9 @@ function Viewer(options) {
 Viewer.prototype._modules = [
   _core__WEBPACK_IMPORTED_MODULE_2__["default"],
   _features_drilldown__WEBPACK_IMPORTED_MODULE_3__["default"],
-  _features_outline__WEBPACK_IMPORTED_MODULE_4__["default"],
-  diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_5__["default"],
-  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__["default"],
-  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_7__["default"]
+  diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_4__["default"],
+  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_5__["default"],
+  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_6__["default"]
 ];
 
 // default moddle extensions the viewer is composed of
@@ -2483,6 +2481,8 @@ var DEFAULT_OPACITY = 0.95,
 
 /**
  * @typedef { import('../model/Types').Element } Element
+ * @typedef { import('../model/Types').Shape } Shape
+ * @typedef { import('../model/Types').Connection } Connection
  */
 
 /**
@@ -2850,8 +2850,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_MESSAGE', {
         xScaleFactor: 0.9,
         yScaleFactor: 0.9,
-        containerWidth: element.width,
-        containerHeight: element.height,
+        containerWidth: attrs.width || element.width,
+        containerHeight: attrs.height || element.height,
         position: {
           mx: 0.235,
           my: 0.315
@@ -2875,17 +2875,23 @@ function BpmnRenderer(
       return messagePath;
     },
     'bpmn:TimerEventDefinition': function(parentGfx, element, attrs = {}) {
-      var circle = drawCircle(parentGfx, element.width, element.height, 0.2 * element.height, {
+      var baseWidth = attrs.width || element.width;
+      var baseHeight = attrs.height || element.height;
+
+      // use a lighter stroke for event suprocess icons
+      var strokeWidth = attrs.width ? 1 : 2;
+
+      var circle = drawCircle(parentGfx, baseWidth, baseHeight, 0.2 * baseHeight, {
         fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(element, defaultFillColor, attrs.fill),
         stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
-        strokeWidth: 2
+        strokeWidth: strokeWidth
       });
 
       var pathData = pathMap.getScaledPath('EVENT_TIMER_WH', {
         xScaleFactor: 0.75,
         yScaleFactor: 0.75,
-        containerWidth: element.width,
-        containerHeight: element.height,
+        containerWidth: baseWidth,
+        containerHeight: baseHeight,
         position: {
           mx: 0.5,
           my: 0.5
@@ -2894,23 +2900,23 @@ function BpmnRenderer(
 
       drawPath(parentGfx, pathData, {
         stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(element, defaultStrokeColor, attrs.stroke),
-        strokeWidth: 2
+        strokeWidth: strokeWidth
       });
 
       for (var i = 0; i < 12; i++) {
         var linePathData = pathMap.getScaledPath('EVENT_TIMER_LINE', {
           xScaleFactor: 0.75,
           yScaleFactor: 0.75,
-          containerWidth: element.width,
-          containerHeight: element.height,
+          containerWidth: baseWidth,
+          containerHeight: baseHeight,
           position: {
             mx: 0.5,
             my: 0.5
           }
         });
 
-        var width = element.width / 2,
-            height = element.height / 2;
+        var width = baseWidth / 2,
+            height = baseHeight / 2;
 
         drawPath(parentGfx, linePathData, {
           strokeWidth: 1,
@@ -2925,8 +2931,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_ESCALATION', {
         xScaleFactor: 1,
         yScaleFactor: 1,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
           mx: 0.5,
           my: 0.2
@@ -2947,8 +2953,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_CONDITIONAL', {
         xScaleFactor: 1,
         yScaleFactor: 1,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
           mx: 0.5,
           my: 0.222
@@ -2987,8 +2993,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_ERROR', {
         xScaleFactor: 1.1,
         yScaleFactor: 1.1,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
           mx: 0.2,
           my: 0.722
@@ -3033,8 +3039,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_COMPENSATION', {
         xScaleFactor: 1,
         yScaleFactor: 1,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
           mx: 0.22,
           my: 0.5
@@ -3055,8 +3061,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_SIGNAL', {
         xScaleFactor: 0.9,
         yScaleFactor: 0.9,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
           mx: 0.5,
           my: 0.2
@@ -3077,10 +3083,10 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_MULTIPLE', {
         xScaleFactor: 1.1,
         yScaleFactor: 1.1,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
-          mx: 0.222,
+          mx: 0.211,
           my: 0.36
         }
       });
@@ -3091,6 +3097,7 @@ function BpmnRenderer(
 
       return drawPath(parentGfx, pathData, {
         fill,
+        stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(event, defaultStrokeColor, attrs.stroke),
         strokeWidth: 1
       });
     },
@@ -3098,8 +3105,8 @@ function BpmnRenderer(
       var pathData = pathMap.getScaledPath('EVENT_PARALLEL_MULTIPLE', {
         xScaleFactor: 1.2,
         yScaleFactor: 1.2,
-        containerWidth: event.width,
-        containerHeight: event.height,
+        containerWidth: attrs.width || event.width,
+        containerHeight: attrs.height || event.height,
         position: {
           mx: 0.458,
           my: 0.194
@@ -3123,57 +3130,59 @@ function BpmnRenderer(
     }
   };
 
-  function renderEventIcon(element, parentGfx, attrs = {}) {
+  function renderEventIcon(element, parentGfx, attrs = {}, proxyElement) {
     var semantic = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element),
         isThrowing = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isThrowEvent)(semantic);
 
+    var nodeElement = proxyElement || element;
+
     if (semantic.get('eventDefinitions') && semantic.get('eventDefinitions').length > 1) {
       if (semantic.get('parallelMultiple')) {
-        return eventIconRenderers[ 'bpmn:ParallelMultipleEventDefinition' ](parentGfx, element, attrs, isThrowing);
+        return eventIconRenderers[ 'bpmn:ParallelMultipleEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
       }
       else {
-        return eventIconRenderers[ 'bpmn:MultipleEventDefinition' ](parentGfx, element, attrs, isThrowing);
+        return eventIconRenderers[ 'bpmn:MultipleEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
       }
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:MessageEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:MessageEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:MessageEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:TimerEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:TimerEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:TimerEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:ConditionalEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:ConditionalEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:ConditionalEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:SignalEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:SignalEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:SignalEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:EscalationEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:EscalationEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:EscalationEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:LinkEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:LinkEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:LinkEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:ErrorEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:ErrorEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:ErrorEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:CancelEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:CancelEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:CancelEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:CompensateEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:CompensateEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:CompensateEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.isTypedEvent)(semantic, 'bpmn:TerminateEventDefinition')) {
-      return eventIconRenderers[ 'bpmn:TerminateEventDefinition' ](parentGfx, element, attrs, isThrowing);
+      return eventIconRenderers[ 'bpmn:TerminateEventDefinition' ](parentGfx, nodeElement, attrs, isThrowing);
     }
 
     return null;
@@ -3595,14 +3604,23 @@ function BpmnRenderer(
   function renderSubProcess(parentGfx, element, attrs = {}) {
     var activity = renderActivity(parentGfx, element, attrs);
 
+    var expanded = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element);
+
     if ((0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isEventSubProcess)(element)) {
       (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(activity, {
         strokeDasharray: '0, 5.5',
         strokeWidth: 2.5
       });
-    }
 
-    var expanded = (0,_util_DiUtil__WEBPACK_IMPORTED_MODULE_10__.isExpanded)(element);
+      if (!expanded) {
+        var flowElements = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(element).flowElements || [];
+        var startEvents = flowElements.filter(e => (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(e, 'bpmn:StartEvent'));
+
+        if (startEvents.length === 1) {
+          renderEventSubProcessIcon(startEvents[0], parentGfx, attrs, element);
+        }
+      }
+    }
 
     renderEmbeddedLabel(parentGfx, element, expanded ? 'center-top' : 'center-middle', attrs);
 
@@ -3613,6 +3631,39 @@ function BpmnRenderer(
     }
 
     return activity;
+  }
+
+  function renderEventSubProcessIcon(startEvent, parentGfx, attrs, proxyElement) {
+    var iconSize = 22;
+
+    // match the colors of the enclosing subprocess
+    var proxyAttrs = {
+      fill: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getFillColor)(proxyElement, defaultFillColor, attrs.fill),
+      stroke: (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getStrokeColor)(proxyElement, defaultStrokeColor, attrs.stroke),
+      width: iconSize,
+      height: iconSize
+    };
+
+    var interrupting = (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.getBusinessObject)(startEvent).isInterrupting;
+    var strokeDasharray = interrupting ? 0 : 3;
+
+    // better visibility for non-interrupting events
+    var strokeWidth = interrupting ? 1 : 1.2;
+
+    // make the icon look larger by drawing a smaller circle
+    var circleSize = 20;
+    var shift = (iconSize - circleSize) / 2;
+    var transform = 'translate(' + shift + ',' + shift + ')';
+
+    drawCircle(parentGfx, circleSize, circleSize, {
+      fill: proxyAttrs.fill,
+      stroke: proxyAttrs.stroke,
+      strokeWidth,
+      strokeDasharray,
+      transform
+    });
+
+    renderEventIcon(startEvent, parentGfx, proxyAttrs, proxyElement);
   }
 
   function renderTask(parentGfx, element, attrs = {}) {
@@ -4656,57 +4707,57 @@ BpmnRenderer.prototype.canRender = function(element) {
  * Draw shape into parentGfx.
  *
  * @param {SVGElement} parentGfx
- * @param {Element} element
+ * @param {Shape} shape
  * @param {Attrs} [attrs]
  *
  * @return {SVGElement} mainGfx
  */
-BpmnRenderer.prototype.drawShape = function(parentGfx, element, attrs = {}) {
-  var { type } = element;
+BpmnRenderer.prototype.drawShape = function(parentGfx, shape, attrs = {}) {
+  var { type } = shape;
 
   var handler = this._renderer(type);
 
-  return handler(parentGfx, element, attrs);
+  return handler(parentGfx, shape, attrs);
 };
 
 /**
  * Draw connection into parentGfx.
  *
  * @param {SVGElement} parentGfx
- * @param {Element} element
+ * @param {Connection} connection
  * @param {Attrs} [attrs]
  *
  * @return {SVGElement} mainGfx
  */
-BpmnRenderer.prototype.drawConnection = function(parentGfx, element, attrs = {}) {
-  var { type } = element;
+BpmnRenderer.prototype.drawConnection = function(parentGfx, connection, attrs = {}) {
+  var { type } = connection;
 
   var handler = this._renderer(type);
 
-  return handler(parentGfx, element, attrs);
+  return handler(parentGfx, connection, attrs);
 };
 
 /**
  * Get shape path.
  *
- * @param {Element} element
+ * @param {Shape} shape
  *
  * @return {string} path
  */
-BpmnRenderer.prototype.getShapePath = function(element) {
-  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:Event')) {
-    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getCirclePath)(element);
+BpmnRenderer.prototype.getShapePath = function(shape) {
+  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(shape, 'bpmn:Event')) {
+    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getCirclePath)(shape);
   }
 
-  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:Activity')) {
-    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRoundRectPath)(element, TASK_BORDER_RADIUS);
+  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(shape, 'bpmn:Activity')) {
+    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRoundRectPath)(shape, TASK_BORDER_RADIUS);
   }
 
-  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(element, 'bpmn:Gateway')) {
-    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getDiamondPath)(element);
+  if ((0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_8__.is)(shape, 'bpmn:Gateway')) {
+    return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getDiamondPath)(shape);
   }
 
-  return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRectPath)(element);
+  return (0,_BpmnRenderUtil__WEBPACK_IMPORTED_MODULE_2__.getRectPath)(shape);
 };
 
 /**
@@ -6249,266 +6300,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/bpmn-js/lib/features/outline/OutlineProvider.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/bpmn-js/lib/features/outline/OutlineProvider.js ***!
-  \**********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ OutlineProvider)
-/* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/LabelUtil */ "./node_modules/diagram-js/lib/util/ModelUtil.js");
-/* harmony import */ var _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./OutlineUtil */ "./node_modules/bpmn-js/lib/features/outline/OutlineUtil.js");
-
-
-
-
-
-
-
-
-
-
-const DEFAULT_OFFSET = 5;
-
-/**
- * BPMN-specific outline provider.
- *
- * @implements {BaseOutlineProvider}
- *
- * @param {Outline} outline
- * @param {Styles} styles
- */
-function OutlineProvider(outline, styles) {
-
-  this._styles = styles;
-  outline.registerProvider(this);
-}
-
-OutlineProvider.$inject = [
-  'outline',
-  'styles'
-];
-
-/**
- * Returns outline for a given element.
- *
- * @param {Element} element
- *
- * @return {Outline}
- */
-OutlineProvider.prototype.getOutline = function(element) {
-
-  const OUTLINE_STYLE = this._styles.cls('djs-outline', [ 'no-fill' ]);
-
-  var outline;
-
-  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.isLabel)(element)) {
-    return;
-  }
-
-  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Gateway')) {
-    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
-
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(outline.style, {
-      'transform-box': 'fill-box',
-      'transform': 'rotate(45deg)',
-      'transform-origin': 'center'
-    });
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
-      x: 2,
-      y: 2,
-      rx: 4,
-      width: element.width - 4,
-      height: element.height - 4,
-    }, OUTLINE_STYLE));
-
-  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, [ 'bpmn:Task', 'bpmn:SubProcess', 'bpmn:Group', 'bpmn:CallActivity' ])) {
-    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
-      x: -DEFAULT_OFFSET,
-      y: -DEFAULT_OFFSET,
-      rx: 14,
-      width: element.width + DEFAULT_OFFSET * 2,
-      height: element.height + DEFAULT_OFFSET * 2
-    }, OUTLINE_STYLE));
-
-  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:EndEvent')) {
-
-    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('circle');
-
-    // Extra 1px offset needed due to increased stroke-width of end event
-    // which makes it bigger than other events.
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
-      cx: element.width / 2,
-      cy: element.height / 2,
-      r: element.width / 2 + DEFAULT_OFFSET + 1
-    }, OUTLINE_STYLE));
-
-  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Event')) {
-    outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('circle');
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({
-      cx: element.width / 2,
-      cy: element.height / 2,
-      r: element.width / 2 + DEFAULT_OFFSET
-    }, OUTLINE_STYLE));
-
-  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:DataObjectReference') && isStandardSize(element, 'bpmn:DataObjectReference')) {
-
-    outline = (0,_OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.createPath)(
-      _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_OBJECT_REFERENCE_OUTLINE_PATH,
-      { x: -6, y: -6 },
-      OUTLINE_STYLE
-    );
-
-  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:DataStoreReference') && isStandardSize(element, 'bpmn:DataStoreReference')) {
-
-    outline = (0,_OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.createPath)(
-      _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_STORE_REFERENCE_OUTLINE_PATH,
-      { x: -6, y: -6 },
-      OUTLINE_STYLE
-    );
-  }
-
-  return outline;
-};
-
-/**
- * Updates the outline for a given element.
- * Returns true if the update for the given element was handled by this provider.
- *
- * @param {Element} element
- * @param {Outline} outline
- * @returns {boolean}
- */
-OutlineProvider.prototype.updateOutline = function(element, outline) {
-
-  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.isLabel)(element)) {
-    return;
-  }
-
-  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, [ 'bpmn:SubProcess', 'bpmn:Group' ])) {
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(outline, {
-      width: element.width + DEFAULT_OFFSET * 2,
-      height: element.height + DEFAULT_OFFSET * 2
-    });
-
-    return true;
-
-  } else if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, [
-    'bpmn:Event',
-    'bpmn:Gateway',
-    'bpmn:DataStoreReference',
-    'bpmn:DataObjectReference'
-  ])) {
-    return true;
-  }
-
-  return false;
-};
-
-
-// helpers //////////
-
-function isStandardSize(element, type) {
-  var standardSize;
-
-  if (type === 'bpmn:DataObjectReference') {
-    standardSize = _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_OBJECT_REFERENCE_STANDARD_SIZE;
-  } else if (type === 'bpmn:DataStoreReference') {
-    standardSize = _OutlineUtil__WEBPACK_IMPORTED_MODULE_4__.DATA_STORE_REFERENCE_STANDARD_SIZE;
-  }
-
-  return element.width === standardSize.width
-          && element.height === standardSize.height;
-}
-
-/***/ }),
-
-/***/ "./node_modules/bpmn-js/lib/features/outline/OutlineUtil.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/bpmn-js/lib/features/outline/OutlineUtil.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DATA_OBJECT_REFERENCE_OUTLINE_PATH: () => (/* binding */ DATA_OBJECT_REFERENCE_OUTLINE_PATH),
-/* harmony export */   DATA_OBJECT_REFERENCE_STANDARD_SIZE: () => (/* binding */ DATA_OBJECT_REFERENCE_STANDARD_SIZE),
-/* harmony export */   DATA_STORE_REFERENCE_OUTLINE_PATH: () => (/* binding */ DATA_STORE_REFERENCE_OUTLINE_PATH),
-/* harmony export */   DATA_STORE_REFERENCE_STANDARD_SIZE: () => (/* binding */ DATA_STORE_REFERENCE_STANDARD_SIZE),
-/* harmony export */   createPath: () => (/* binding */ createPath)
-/* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
-
-
-const DATA_OBJECT_REFERENCE_OUTLINE_PATH = 'M44.7648 11.3263L36.9892 2.64074C36.0451 1.58628 34.5651 0.988708 33.1904 0.988708H5.98667C3.22688 0.988708 0.989624 3.34892 0.989624 6.26039V55.0235C0.989624 57.9349 3.22688 60.2952 5.98667 60.2952H40.966C43.7257 60.2952 45.963 57.9349 45.963 55.0235V14.9459C45.963 13.5998 45.6407 12.3048 44.7648 11.3263Z';
-const DATA_STORE_REFERENCE_OUTLINE_PATH = 'M1.03845 48.1347C1.03845 49.3511 1.07295 50.758 1.38342 52.064C1.69949 53.3938 2.32428 54.7154 3.56383 55.6428C6.02533 57.4841 10.1161 58.7685 14.8212 59.6067C19.5772 60.4538 25.1388 60.8738 30.6831 60.8738C36.2276 60.8738 41.7891 60.4538 46.545 59.6067C51.2504 58.7687 55.3412 57.4842 57.8028 55.6429C59.0424 54.7156 59.6673 53.3938 59.9834 52.064C60.2938 50.7579 60.3285 49.351 60.3285 48.1344V13.8415C60.3285 12.6249 60.2938 11.218 59.9834 9.91171C59.6673 8.58194 59.0423 7.2602 57.8027 6.33294C55.341 4.49168 51.2503 3.20723 46.545 2.36914C41.7891 1.522 36.2276 1.10204 30.6831 1.10205C25.1388 1.10206 19.5772 1.52206 14.8213 2.36923C10.1162 3.20734 6.02543 4.49183 3.5639 6.33314C2.32433 7.26038 1.69951 8.58206 1.38343 9.91181C1.07295 11.2179 1.03845 12.6247 1.03845 13.8411V48.1347Z';
-
-/**
- * @type {Dimensions}
- */
-const DATA_OBJECT_REFERENCE_STANDARD_SIZE = { width: 36, height: 50 };
-
-/**
- * @type {Dimensions}
- */
-const DATA_STORE_REFERENCE_STANDARD_SIZE = { width: 50, height: 50 };
-
-/**
- * Create a path element with given attributes.
- * @param {string} path
- * @param {Object} attrs
- * @param {Object} OUTLINE_STYLE
- * @return {SVGElement}
- */
-function createPath(path, attrs, OUTLINE_STYLE) {
-  return (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('path', {
-    d: path,
-    strokeWidth: 2,
-    transform: `translate(${attrs.x}, ${attrs.y})`,
-    ...OUTLINE_STYLE
-  });
-}
-
-/***/ }),
-
-/***/ "./node_modules/bpmn-js/lib/features/outline/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/bpmn-js/lib/features/outline/index.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var diagram_js_lib_features_outline__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/outline */ "./node_modules/diagram-js/lib/features/outline/index.js");
-/* harmony import */ var _OutlineProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OutlineProvider */ "./node_modules/bpmn-js/lib/features/outline/OutlineProvider.js");
-
-
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __depends__: [
-    diagram_js_lib_features_outline__WEBPACK_IMPORTED_MODULE_0__["default"]
-  ],
-  __init__: [ 'outlineProvider' ],
-  outlineProvider: [ 'type', _OutlineProvider__WEBPACK_IMPORTED_MODULE_1__["default"] ]
-});
-
-
-/***/ }),
-
 /***/ "./node_modules/bpmn-js/lib/import/BpmnImporter.js":
 /*!*********************************************************!*\
   !*** ./node_modules/bpmn-js/lib/import/BpmnImporter.js ***!
@@ -7317,12 +7108,11 @@ function BpmnTreeWalker(handler) {
 
     (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(collaboration.participants, contextual(handleParticipant, context));
 
-    handleArtifacts(collaboration.artifacts, context);
-
-    // handle message flows latest in the process
     deferred.push(function() {
       handleMessageFlows(collaboration.messageFlows, context);
     });
+
+    handleArtifacts(collaboration.artifacts, context);
   }
 
 
@@ -8165,7 +7955,11 @@ function setLabel(element, text) {
   if (attr) {
 
     if (attr === 'categoryValueRef') {
-      semantic['categoryValueRef'].value = text;
+      if (!semantic[attr]) {
+        return element;
+      }
+
+      semantic[attr].value = text;
     } else {
       semantic[attr] = text;
     }
@@ -9143,14 +8937,16 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/**
   --resizer-fill-color: var(--color-blue-205-100-45);
   --resizer-stroke-color: var(--canvas-fill-color);
 
-  --search-container-background-color: var(--color-grey-225-10-97);
-  --search-container-border-color: var(--color-blue-205-100-50);
-  --search-container-box-shadow-color: var(--color-blue-205-100-95);
-  --search-container-box-shadow-inset-color: var(--color-grey-225-10-80);
+  --search-font-family: "IBM Plex Sans", sans-serif;
+  --search-font-size: 14px;
+  --search-container-background-color: var(--color-white);
+  --search-shadow-color: var(--color-black-opacity-30);
   --search-input-border-color: var(--color-grey-225-10-75);
-  --search-result-border-color: var(--color-grey-225-10-75);
-  --search-result-highlight-color: var(--color-black);
-  --search-result-selected-color: var(--color-blue-205-100-45-opacity-30);
+  --search-input-focus-border-color: var(--color-blue-205-100-50);
+  --search-input-focus-background-color: var(--color-blue-205-100-95);
+  --search-result-hover-background-color: var(--color-grey-225-10-95);
+  --search-result-secondary-color: var(--color-grey-225-10-55);
+  --search-preselected-background-color: var(--color-blue-205-100-50-opacity-15);
 
   --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);
   --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);
@@ -9165,6 +8961,18 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/**
   --tooltip-error-background-color: var(--color-red-360-100-97);
   --tooltip-error-border-color: var(--color-red-360-100-45);
   --tooltip-error-color: var(--color-red-360-100-45);
+}
+
+/**
+ * SVG styles
+ */
+
+.djs-container svg.drop-not-ok {
+  background: var(--shape-drop-not-allowed-fill-color) !important;
+}
+
+.djs-container svg.new-parent {
+  background: var(--shape-drop-allowed-fill-color) !important;
 }
 
 /**
@@ -9212,14 +9020,6 @@ ___CSS_LOADER_EXPORT___.push([module.id, `/**
 
 .djs-shape.new-parent .djs-visual > :nth-child(1) {
   fill: var(--shape-drop-allowed-fill-color) !important;
-}
-
-svg.drop-not-ok {
-  background: var(--shape-drop-not-allowed-fill-color) !important;
-}
-
-svg.new-parent {
-  background: var(--shape-drop-allowed-fill-color) !important;
 }
 
 
@@ -9601,7 +9401,7 @@ svg.new-parent {
   width: 100%;
   box-sizing: border-box;
   font-size: var(--popup-font-size);
-  padding: 3px 6px;
+  padding: 3px 6px 3px 28px;
   border-radius: 2px;
   border: solid 1px var(--popup-search-border-color);
   line-height: 21px;
@@ -9662,6 +9462,8 @@ svg.new-parent {
 }
 
 .djs-popup-search {
+  position: relative;
+  width: auto;
   margin: 10px 12px;
 }
 
@@ -9672,19 +9474,10 @@ svg.new-parent {
   margin: 0;
 }
 
-.djs-popup-search {
-  position: relative;
-  width: auto;
-}
-
 .djs-popup-search-icon {
   position: absolute;
   left: 8px;
   top: 7px;
-}
-
-.djs-popup-search input {
-  padding-left: 25px;
 }
 
 .djs-popup-results {
@@ -9958,6 +9751,14 @@ svg.new-parent {
 /**
  * search pad
  */
+.djs-search-open .djs-context-pad {
+  display: none;
+}
+
+.djs-search-open .djs-connection.selected .djs-outline {
+  display: block;
+}
+
 .djs-search-container {
   position: absolute;
   top: 20px;
@@ -9971,76 +9772,83 @@ svg.new-parent {
   max-width: 400px;
   z-index: 10;
 
-  font-size: 1.05em;
-  opacity: 0.9;
-  background: var(--search-container-background-color);
-  border: solid 1px var(--search-container-border-color);
+  font-family: var(--search-font-family);
+  font-size: var(--search-font-size);
   border-radius: 2px;
-  box-shadow: 0 0 0 2px var(--search-container-box-shadow-color), 0 0 0 1px var(--search-container-box-shadow-inset-color) inset;
+  box-shadow: 0px 2px 6px var(--search-shadow-color);
 }
 
 .djs-search-container:not(.open) {
   display: none;
 }
 
+.djs-search-input {
+  position: relative;
+}
+
+.djs-search-input svg {
+  position: absolute;
+  left: 8px;
+  top: 7px;
+}
+
 .djs-search-input input {
-  font-size: 1.05em;
+  font-size: var(--search-font-size);
   width: 100%;
-  padding: 6px 10px;
+  padding: 3px 6px 3px 28px;
   border: 1px solid var(--search-input-border-color);
+  border-radius: 2px;
   box-sizing: border-box;
+  line-height: 21px;
 }
 
 .djs-search-input input:focus {
+  background-color: var(--search-input-focus-background-color);
+  border: solid 1px var(--search-input-focus-border-color);
   outline: none;
-  border-color: var(--search-input-border-color);
 }
 
 .djs-search-results {
   position: relative;
   overflow-y: auto;
   max-height: 200px;
-}
-
-.djs-search-results:hover {
-  cursor: pointer;
+  background: var(--search-container-background-color);
 }
 
 .djs-search-result {
-  width: 100%;
-  padding: 6px 10px;
-  background: white;
-  border-bottom: solid 1px var(--search-result-border-color);
-  border-radius: 1px;
-}
-
-.djs-search-highlight {
-  color: var(--search-result-highlight-color);
+  padding: 6px 8px;
 }
 
 .djs-search-result-primary {
-  margin: 0 0 10px;
+  margin: 0 0 3px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .djs-search-result-secondary {
   font-family: monospace;
   margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--search-result-secondary-color);
 }
 
 .djs-search-result:hover {
-  background: var(--search-result-selected-color);
+  background: var(--search-result-hover-background-color);
 }
 
 .djs-search-result-selected {
-  background: var(--search-result-selected-color);
+  background: var(--search-result-hover-background-color);
 }
 
 .djs-search-result-selected:hover {
-  background: var(--search-result-selected-color);
+  background: var(--search-result-hover-background-color);
 }
 
-.djs-search-overlay {
-  background: var(--search-result-selected-color);
+.djs-search-open .djs-element .djs-outline {
+  fill: var(--search-preselected-background-color) !important;
 }
 
 /**
@@ -10057,7 +9865,7 @@ svg.new-parent {
 .djs-element .djs-hit-click-stroke,
 .djs-element .djs-hit-all {
   cursor: move;
-}`, "",{"version":3,"sources":["webpack://./node_modules/bpmn-js/dist/assets/diagram-js.css"],"names":[],"mappings":"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","sourcesContent":["/**\n * color definitions\n */\n.djs-parent {\n  --color-grey-225-10-15: hsl(225, 10%, 15%);\n  --color-grey-225-10-35: hsl(225, 10%, 35%);\n  --color-grey-225-10-55: hsl(225, 10%, 55%);\n  --color-grey-225-10-75: hsl(225, 10%, 75%);\n  --color-grey-225-10-80: hsl(225, 10%, 80%);\n  --color-grey-225-10-85: hsl(225, 10%, 85%);\n  --color-grey-225-10-90: hsl(225, 10%, 90%);\n  --color-grey-225-10-95: hsl(225, 10%, 95%);\n  --color-grey-225-10-97: hsl(225, 10%, 97%);\n\n  --color-blue-205-100-45: hsl(205, 100%, 45%);\n  --color-blue-205-100-45-opacity-30: hsla(205, 100%, 45%, 30%);\n  --color-blue-205-100-50: hsl(205, 100%, 50%);\n  --color-blue-205-100-50-opacity-15: hsla(205, 100%, 50%, 15%);\n  --color-blue-205-100-70: hsl(205, 100%, 75%);\n  --color-blue-205-100-95: hsl(205, 100%, 95%);\n\n  --color-green-150-86-44: hsl(150, 86%, 44%);\n\n  --color-red-360-100-40: hsl(360, 100%, 40%);\n  --color-red-360-100-45: hsl(360, 100%, 45%);\n  --color-red-360-100-92: hsl(360, 100%, 92%);\n  --color-red-360-100-97: hsl(360, 100%, 97%);\n\n  --color-white: hsl(0, 0%, 100%);\n  --color-black: hsl(0, 0%, 0%);\n  --color-black-opacity-10: hsla(0, 0%, 0%, 10%);\n  --color-black-opacity-30: hsla(0, 0%, 0%, 30%);\n\n  --canvas-fill-color: var(--color-white);\n\n  --bendpoint-fill-color: var(--color-blue-205-100-45);\n  --bendpoint-stroke-color: var(--canvas-fill-color);\n\n  --context-pad-entry-background-color: var(--color-white);\n  --context-pad-entry-hover-background-color: var(--color-grey-225-10-95);\n\n  --element-dragger-color: var(--color-blue-205-100-50);\n  --element-hover-outline-fill-color: var(--color-blue-205-100-45);\n  --element-selected-outline-stroke-color: var(--color-blue-205-100-50);\n  --element-selected-outline-secondary-stroke-color: var(--color-blue-205-100-70);\n\n  --lasso-fill-color: var(--color-blue-205-100-50-opacity-15);\n  --lasso-stroke-color: var(--element-selected-outline-stroke-color);\n\n  --palette-entry-color: var(--color-grey-225-10-15);\n  --palette-entry-hover-color: var(--color-blue-205-100-45);\n  --palette-entry-selected-color: var(--color-blue-205-100-50);\n  --palette-separator-color: var(--color-grey-225-10-75);\n  --palette-toggle-hover-background-color: var(--color-grey-225-10-55);\n  --palette-background-color: var(--color-grey-225-10-97);\n  --palette-border-color: var(--color-grey-225-10-75);\n\n  --popup-font-family: \"IBM Plex Sans\", sans-serif;\n  --popup-font-size: 14px;\n  --popup-header-entry-selected-color: var(--color-blue-205-100-50);\n  --popup-header-font-weight: bolder;\n  --popup-header-group-divider-color: var(--color-grey-225-10-75);\n  --popup-background-color: var(--color-white);\n  --popup-border-color: transparent;\n  --popup-shadow-color: var(--color-black-opacity-30);\n  --popup-description-color: var(--color-grey-225-10-55);\n  --popup-no-results-color: var(--color-grey-225-10-55);\n  --popup-entry-title-color: var(--color-grey-225-10-55);\n  --popup-entry-hover-color:  var(--color-grey-225-10-95);\n  --popup-search-border-color: var(--color-grey-225-10-75);\n  --popup-search-focus-border-color: var(--color-blue-205-100-50);\n  --popup-search-focus-background-color: var(--color-blue-205-100-95);\n\n  --resizer-fill-color: var(--color-blue-205-100-45);\n  --resizer-stroke-color: var(--canvas-fill-color);\n\n  --search-container-background-color: var(--color-grey-225-10-97);\n  --search-container-border-color: var(--color-blue-205-100-50);\n  --search-container-box-shadow-color: var(--color-blue-205-100-95);\n  --search-container-box-shadow-inset-color: var(--color-grey-225-10-80);\n  --search-input-border-color: var(--color-grey-225-10-75);\n  --search-result-border-color: var(--color-grey-225-10-75);\n  --search-result-highlight-color: var(--color-black);\n  --search-result-selected-color: var(--color-blue-205-100-45-opacity-30);\n\n  --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);\n  --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-not-allowed-fill-color: var(--color-red-360-100-97);\n  --shape-resize-preview-stroke-color: var(--color-blue-205-100-50);\n\n  --snap-line-stroke-color: var(--color-blue-205-100-45-opacity-30);\n\n  --space-tool-crosshair-stroke-color: var(--color-black);\n\n  --tooltip-error-background-color: var(--color-red-360-100-97);\n  --tooltip-error-border-color: var(--color-red-360-100-45);\n  --tooltip-error-color: var(--color-red-360-100-45);\n}\n\n/**\n * outline styles\n */\n\n.djs-outline,\n.djs-selection-outline {\n  fill: none;\n  shape-rendering: geometricPrecision;\n  stroke-width: 2px;\n}\n\n.djs-outline {\n  visibility: hidden;\n}\n\n.djs-selection-outline {\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-element.selected .djs-outline {\n  visibility: visible;\n\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-connection.selected .djs-outline {\n  display: none;\n}\n\n.djs-multi-select .djs-element.selected .djs-outline {\n  stroke: var(--element-selected-outline-secondary-stroke-color);\n  display: block;\n}\n\n.djs-shape.connect-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-connect-allowed-fill-color) !important;\n}\n\n.djs-shape.connect-not-ok .djs-visual > :nth-child(1),\n.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-shape.new-parent .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-allowed-fill-color) !important;\n}\n\nsvg.drop-not-ok {\n  background: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\nsvg.new-parent {\n  background: var(--shape-drop-allowed-fill-color) !important;\n}\n\n\n/* Override move cursor during drop and connect */\n.drop-not-ok,\n.connect-not-ok,\n.drop-not-ok *,\n.connect-not-ok * {\n  cursor: not-allowed !important;\n}\n\n.drop-ok,\n.connect-ok,\n.drop-ok *,\n.connect-ok * {\n  cursor: default !important;\n}\n\n.djs-element.attach-ok .djs-visual > :nth-child(1) {\n  stroke-width: 5px !important;\n  stroke: var(--shape-attach-allowed-stroke-color) !important;\n}\n\n.djs-frame.connect-not-ok .djs-visual > :nth-child(1),\n.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke-width: 3px !important;\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n  fill: none !important;\n}\n\n/**\n* Selection box style\n*\n*/\n.djs-lasso-overlay {\n  fill: var(--lasso-fill-color);\n  stroke: var(--lasso-stroke-color);\n  stroke-width: 2px;\n  shape-rendering: geometricPrecision;\n  pointer-events: none;\n}\n\n/**\n * Resize styles\n */\n.djs-resize-overlay {\n  fill: none;\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--shape-resize-preview-stroke-color);\n\n  pointer-events: none;\n}\n\n.djs-resizer-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-resizer-visual {\n  fill: var(--resizer-fill-color);\n  stroke-width: 1px;\n  stroke: var(--resizer-stroke-color);\n  shape-rendering: geometricPrecision;\n}\n\n.djs-resizer:hover .djs-resizer-visual {\n  stroke: var(--resizer-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-cursor-resize-ns,\n.djs-resizer-n,\n.djs-resizer-s {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew,\n.djs-resizer-e,\n.djs-resizer-w {\n  cursor: ew-resize;\n}\n\n.djs-cursor-resize-nwse,\n.djs-resizer-nw,\n.djs-resizer-se {\n  cursor: nwse-resize;\n}\n\n.djs-cursor-resize-nesw,\n.djs-resizer-ne,\n.djs-resizer-sw {\n  cursor: nesw-resize;\n}\n\n.djs-shape.djs-resizing > .djs-outline {\n  visibility: hidden !important;\n}\n\n.djs-shape.djs-resizing > .djs-resizer {\n  visibility: hidden;\n}\n\n.djs-dragger > .djs-resizer {\n  visibility: hidden;\n}\n\n/**\n * drag styles\n */\n.djs-dragger * {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragger tspan,\n.djs-dragger text {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\n.djs-dragger marker circle,\n.djs-dragger marker path,\n.djs-dragger marker polygon,\n.djs-dragger marker polyline,\n.djs-dragger marker rect {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\n.djs-dragger marker text,\n.djs-dragger marker tspan {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragging,\n.djs-dragging > * {\n  opacity: 0.3 !important;\n  pointer-events: none !important;\n}\n\n/**\n * no pointer events for visual\n */\n.djs-visual,\n.djs-outline {\n  pointer-events: none;\n}\n\n.djs-element.attach-ok .djs-hit {\n  stroke-width: 60px !important;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-element > .djs-hit-all,\n.djs-element > .djs-hit-no-move {\n  pointer-events: all;\n}\n\n.djs-element > .djs-hit-stroke,\n.djs-element > .djs-hit-click-stroke {\n  pointer-events: stroke;\n}\n\n/**\n * shape / connection basic styles\n */\n.djs-connection .djs-visual {\n  stroke-width: 2px;\n  fill: none;\n}\n\n.djs-cursor-grab {\n  cursor: -webkit-grab;\n  cursor: -moz-grab;\n  cursor: grab;\n}\n\n.djs-cursor-grabbing {\n  cursor: -webkit-grabbing;\n  cursor: -moz-grabbing;\n  cursor: grabbing;\n}\n\n.djs-cursor-crosshair {\n  cursor: crosshair;\n}\n\n.djs-cursor-move {\n  cursor: move;\n}\n\n.djs-cursor-resize-ns {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew {\n  cursor: ew-resize;\n}\n\n\n/**\n * snapping\n */\n.djs-snap-line {\n  stroke: var(--snap-line-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 2px;\n  pointer-events: none;\n}\n\n/**\n * snapping\n */\n.djs-crosshair {\n  stroke: var(--space-tool-crosshair-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 1px;\n  pointer-events: none;\n  shape-rendering: geometricPrecision;\n  stroke-dasharray: 5, 5;\n}\n\n/**\n * palette\n */\n\n.djs-palette {\n  position: absolute;\n  left: 20px;\n  top: 20px;\n\n  box-sizing: border-box;\n  width: 48px;\n}\n\n.djs-palette .separator {\n  margin: 5px;\n  padding-top: 5px;\n\n  border: none;\n  border-bottom: solid 1px var(--palette-separator-color);\n\n  clear: both;\n}\n\n.djs-palette .entry:before {\n  vertical-align: initial;\n}\n\n.djs-palette .djs-palette-toggle {\n  cursor: pointer;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  color: var(--palette-entry-color);\n  font-size: 30px;\n\n  text-align: center;\n}\n\n.djs-palette .entry {\n  float: left;\n}\n\n.djs-palette .entry img {\n  max-width: 100%;\n}\n\n.djs-palette .djs-palette-entries:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.djs-palette .djs-palette-toggle:hover {\n  background: var(--palette-toggle-hover-background-color);\n}\n\n.djs-palette .entry:hover {\n  color: var(--palette-entry-hover-color);\n}\n\n.djs-palette .highlighted-entry {\n  color: var(--palette-entry-selected-color) !important;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n  cursor: default;\n}\n\n/**\n * Palette open / two-column layout is controlled via\n * classes on the palette. Events to hook into palette\n * changed life-cycle are available in addition.\n */\n.djs-palette.two-column.open {\n  width: 94px;\n}\n\n.djs-palette:not(.open) .djs-palette-entries {\n  display: none;\n}\n\n.djs-palette:not(.open) {\n  overflow: hidden;\n}\n\n.djs-palette.open .djs-palette-toggle {\n  display: none;\n}\n\n/**\n * context-pad\n */\n.djs-context-pad {\n  position: absolute;\n  display: none;\n  pointer-events: none;\n  line-height: 1;\n  width: 72px;\n  z-index: 100;\n}\n\n.djs-context-pad .entry {\n  width: 22px;\n  height: 22px;\n  text-align: center;\n  display: inline-block;\n  font-size: 22px;\n  margin: 0 2px 2px 0;\n\n  border-radius: 3px;\n\n  cursor: default;\n\n  background-color: var(--context-pad-entry-background-color);\n  box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);\n  pointer-events: all;\n  vertical-align: middle;\n}\n\n.djs-context-pad .entry:hover {\n  background: var(--context-pad-entry-hover-background-color);\n}\n\n.djs-context-pad.open {\n  display: block;\n}\n\n/**\n * popup styles\n */\n.djs-popup {\n  line-height: 1;\n  box-sizing: border-box;\n  width: min-content;\n  background: var(--popup-background-color);\n  overflow: hidden;\n  position: fixed;\n  z-index: 200;\n  box-shadow: 0px 2px 6px var(--popup-shadow-color);\n  border: solid 1px var(--popup-border-color);\n  min-width: 120px;\n  outline: none;\n  font-size: var(--popup-font-size);\n  font-family: var(--popup-font-family);\n}\n\n.djs-popup-search input {\n  width: 100%;\n  box-sizing: border-box;\n  font-size: var(--popup-font-size);\n  padding: 3px 6px;\n  border-radius: 2px;\n  border: solid 1px var(--popup-search-border-color);\n  line-height: 21px;\n}\n\n.djs-popup-search input:focus {\n  background-color: var(--popup-search-focus-background-color);\n  border: solid 1px var(--popup-search-focus-border-color);\n  outline: none;\n}\n\n.djs-popup-header {\n  display: flex;\n  align-items: stretch;\n  line-height: 20px;\n  margin: 10px 12px 10px 12px;\n}\n\n.djs-popup-header .entry {\n  border-radius: 2px;\n}\n\n.djs-popup button.entry {\n  padding: 0;\n  background: transparent;\n  border: 0;\n}\n\n.djs-popup-header .entry.active {\n  color: var(--popup-header-entry-selected-color);\n}\n\n.djs-popup-header .entry.disabled {\n  color: inherit;\n}\n\n.djs-popup-header-group {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n.djs-popup-header-group .entry {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n}\n\n.djs-popup-header-group + .djs-popup-header-group:before {\n  content: '';\n  width: 1px;\n  height: 20px;\n  background: var(--popup-header-group-divider-color);\n  margin: 0 5px;\n}\n\n.djs-popup-search {\n  margin: 10px 12px;\n}\n\n.djs-popup-title {\n  font-size: var(--popup-font-size);\n  font-weight: var(--popup-header-font-weight);\n  flex: 1;\n  margin: 0;\n}\n\n.djs-popup-search {\n  position: relative;\n  width: auto;\n}\n\n.djs-popup-search-icon {\n  position: absolute;\n  left: 8px;\n  top: 7px;\n}\n\n.djs-popup-search input {\n  padding-left: 25px;\n}\n\n.djs-popup-results {\n  margin: 7px 3px 7px 12px;\n  list-style: none;\n  max-height: 280px;\n  overflow: auto;\n  padding-right: 9px;\n}\n\n.djs-popup-group {\n  margin: 0;\n  padding: 0;\n  width: 100%;\n}\n\n.djs-popup-body .entry,\n.djs-popup-body .entry-header {\n  padding: 5px 7px;\n  cursor: default;\n  border-radius: 4px;\n}\n\n.djs-popup-body .entry-header {\n  font-weight: var(--popup-header-font-weight);\n  color: var(--popup-entry-title-color);\n  padding-left: 0;\n}\n\n.djs-popup [class*=\"icon\"] .djs-popup-label,\n.djs-popup-label:not(:first-child) {\n  margin-left: .5em;\n}\n\n.djs-popup [class*=\"icon\"]:before,\n.djs-popup-entry-icon {\n  width: 1em;\n  height: 1em;\n  display: inline-block;\n  font-size: 1.4em;\n  vertical-align: middle;\n}\n\n.djs-popup-body .entry-header:not(:first-child) {\n  margin-top: 8px;\n  margin-bottom: 2px;\n}\n\n.djs-popup-body .entry {\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  height: min-content;\n}\n\n.djs-popup .entry.selected {\n  background-color: var(--popup-entry-hover-color);\n}\n\n.djs-popup-body .entry:not(:first-child) {\n  margin-top: 2px;\n}\n\n.djs-popup-entry-content {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow: hidden;\n}\n\n.djs-popup-entry-description {\n  color: var(--popup-description-color);\n}\n\n.djs-popup-label,\n.djs-popup-entry-description {\n  line-height: 1.4em;\n}\n\n.djs-popup .entry,\n.djs-popup .entry-header {\n  margin: 1px;\n}\n\n.djs-popup-title,\n.djs-popup-label,\n.djs-popup-entry-description,\n.djs-popup .entry-header {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.djs-popup-entry-name {\n  display: flex;\n}\n\n.djs-popup-body {\n  flex-direction: column;\n  width: auto;\n}\n\n.djs-popup *::-webkit-scrollbar {\n  width: 6px;\n}\n\n.djs-popup *::-webkit-scrollbar-thumb {\n  border-radius: 3px;\n  background-color: rgba(0, 0, 0, 0.2);\n}\n\n.djs-popup *::-webkit-scrollbar-track {\n  box-shadow: none;\n  background: transparent;\n  margin: 0;\n  padding: 5px;\n}\n\n.djs-popup-no-results {\n  padding: 0 12px 12px 12px;\n  color: var(--popup-no-results-color);\n}\n\n.djs-popup-entry-docs {\n  flex: 0;\n  flex-direction: row;\n  align-items: center;\n  padding-left: 5px;\n  display: none;\n}\n\n.djs-popup-body .entry:hover .djs-popup-entry-docs {\n  display: flex;\n}\n\n.djs-popup-entry-docs svg {\n  vertical-align: middle;\n  margin: auto 2px auto 5px;\n}\n\n/**\n *  palette styles\n */\n.djs-palette {\n  background: var(--palette-background-color);\n  border: solid 1px var(--palette-border-color);\n  border-radius: 2px;\n}\n\n/**\n * bendpoints\n */\n.djs-segment-dragger,\n.djs-bendpoint {\n  display: none;\n}\n\n.djs-segment-dragger .djs-visual {\n  display: none;\n\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 1;\n}\n\n.djs-segment-dragger:hover .djs-visual {\n  display: block;\n}\n\n.djs-bendpoint .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n}\n\n.djs-segment-dragger:hover,\n.djs-bendpoints.hover .djs-segment-dragger,\n.djs-bendpoints.selected .djs-segment-dragger,\n.djs-bendpoint:hover,\n.djs-bendpoints.hover .djs-bendpoint,\n.djs-bendpoints.selected .djs-bendpoint {\n  display: block;\n}\n\n.djs-drag-active .djs-bendpoints * {\n  display: none;\n}\n\n.djs-bendpoints:not(.hover) .floating {\n  display: none;\n}\n\n.djs-segment-dragger:hover .djs-visual,\n.djs-segment-dragger.djs-dragging .djs-visual,\n.djs-bendpoint:hover .djs-visual,\n.djs-bendpoint.floating .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-bendpoint.floating .djs-hit {\n  pointer-events: none;\n}\n\n.djs-segment-dragger .djs-hit,\n.djs-bendpoint .djs-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-segment-dragger.horizontal .djs-hit {\n  cursor: ns-resize;\n}\n\n.djs-segment-dragger.vertical .djs-hit {\n  cursor: ew-resize;\n}\n\n.djs-segment-dragger.djs-dragging .djs-hit {\n  pointer-events: none;\n}\n\n.djs-updating,\n.djs-updating > * {\n  pointer-events: none !important;\n}\n\n.djs-updating .djs-context-pad,\n.djs-updating .djs-outline,\n.djs-updating .djs-bendpoint,\n.djs-multi-select .djs-bendpoint,\n.djs-multi-select .djs-segment-dragger,\n.connect-ok .djs-bendpoint,\n.connect-not-ok .djs-bendpoint,\n.drop-ok .djs-bendpoint,\n.drop-not-ok .djs-bendpoint {\n  display: none !important;\n}\n\n.djs-segment-dragger.djs-dragging,\n.djs-bendpoint.djs-dragging {\n  display: block;\n  opacity: 1.0;\n}\n\n\n/**\n * tooltips\n */\n.djs-tooltip-error {\n  width: 160px;\n  padding: 6px;\n\n  background: var(--tooltip-error-background-color);\n  border: solid 1px var(--tooltip-error-border-color);\n  border-radius: 2px;\n  color: var(--tooltip-error-color);\n  font-size: 12px;\n  line-height: 16px;\n\n  opacity: 0.75;\n}\n\n.djs-tooltip-error:hover {\n  opacity: 1;\n}\n\n\n/**\n * search pad\n */\n.djs-search-container {\n  position: absolute;\n  top: 20px;\n  left: 0;\n  right: 0;\n  margin-left: auto;\n  margin-right: auto;\n\n  width: 25%;\n  min-width: 300px;\n  max-width: 400px;\n  z-index: 10;\n\n  font-size: 1.05em;\n  opacity: 0.9;\n  background: var(--search-container-background-color);\n  border: solid 1px var(--search-container-border-color);\n  border-radius: 2px;\n  box-shadow: 0 0 0 2px var(--search-container-box-shadow-color), 0 0 0 1px var(--search-container-box-shadow-inset-color) inset;\n}\n\n.djs-search-container:not(.open) {\n  display: none;\n}\n\n.djs-search-input input {\n  font-size: 1.05em;\n  width: 100%;\n  padding: 6px 10px;\n  border: 1px solid var(--search-input-border-color);\n  box-sizing: border-box;\n}\n\n.djs-search-input input:focus {\n  outline: none;\n  border-color: var(--search-input-border-color);\n}\n\n.djs-search-results {\n  position: relative;\n  overflow-y: auto;\n  max-height: 200px;\n}\n\n.djs-search-results:hover {\n  cursor: pointer;\n}\n\n.djs-search-result {\n  width: 100%;\n  padding: 6px 10px;\n  background: white;\n  border-bottom: solid 1px var(--search-result-border-color);\n  border-radius: 1px;\n}\n\n.djs-search-highlight {\n  color: var(--search-result-highlight-color);\n}\n\n.djs-search-result-primary {\n  margin: 0 0 10px;\n}\n\n.djs-search-result-secondary {\n  font-family: monospace;\n  margin: 0;\n}\n\n.djs-search-result:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-overlay {\n  background: var(--search-result-selected-color);\n}\n\n/**\n * hidden styles\n */\n.djs-element-hidden,\n.djs-element-hidden .djs-hit,\n.djs-element-hidden .djs-outline,\n.djs-label-hidden .djs-label {\n  display: none !important;\n}\n\n.djs-element .djs-hit-stroke,\n.djs-element .djs-hit-click-stroke,\n.djs-element .djs-hit-all {\n  cursor: move;\n}"],"sourceRoot":""}]);
+}`, "",{"version":3,"sources":["webpack://./node_modules/bpmn-js/dist/assets/diagram-js.css"],"names":[],"mappings":"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","sourcesContent":["/**\n * color definitions\n */\n.djs-parent {\n  --color-grey-225-10-15: hsl(225, 10%, 15%);\n  --color-grey-225-10-35: hsl(225, 10%, 35%);\n  --color-grey-225-10-55: hsl(225, 10%, 55%);\n  --color-grey-225-10-75: hsl(225, 10%, 75%);\n  --color-grey-225-10-80: hsl(225, 10%, 80%);\n  --color-grey-225-10-85: hsl(225, 10%, 85%);\n  --color-grey-225-10-90: hsl(225, 10%, 90%);\n  --color-grey-225-10-95: hsl(225, 10%, 95%);\n  --color-grey-225-10-97: hsl(225, 10%, 97%);\n\n  --color-blue-205-100-45: hsl(205, 100%, 45%);\n  --color-blue-205-100-45-opacity-30: hsla(205, 100%, 45%, 30%);\n  --color-blue-205-100-50: hsl(205, 100%, 50%);\n  --color-blue-205-100-50-opacity-15: hsla(205, 100%, 50%, 15%);\n  --color-blue-205-100-70: hsl(205, 100%, 75%);\n  --color-blue-205-100-95: hsl(205, 100%, 95%);\n\n  --color-green-150-86-44: hsl(150, 86%, 44%);\n\n  --color-red-360-100-40: hsl(360, 100%, 40%);\n  --color-red-360-100-45: hsl(360, 100%, 45%);\n  --color-red-360-100-92: hsl(360, 100%, 92%);\n  --color-red-360-100-97: hsl(360, 100%, 97%);\n\n  --color-white: hsl(0, 0%, 100%);\n  --color-black: hsl(0, 0%, 0%);\n  --color-black-opacity-10: hsla(0, 0%, 0%, 10%);\n  --color-black-opacity-30: hsla(0, 0%, 0%, 30%);\n\n  --canvas-fill-color: var(--color-white);\n\n  --bendpoint-fill-color: var(--color-blue-205-100-45);\n  --bendpoint-stroke-color: var(--canvas-fill-color);\n\n  --context-pad-entry-background-color: var(--color-white);\n  --context-pad-entry-hover-background-color: var(--color-grey-225-10-95);\n\n  --element-dragger-color: var(--color-blue-205-100-50);\n  --element-hover-outline-fill-color: var(--color-blue-205-100-45);\n  --element-selected-outline-stroke-color: var(--color-blue-205-100-50);\n  --element-selected-outline-secondary-stroke-color: var(--color-blue-205-100-70);\n\n  --lasso-fill-color: var(--color-blue-205-100-50-opacity-15);\n  --lasso-stroke-color: var(--element-selected-outline-stroke-color);\n\n  --palette-entry-color: var(--color-grey-225-10-15);\n  --palette-entry-hover-color: var(--color-blue-205-100-45);\n  --palette-entry-selected-color: var(--color-blue-205-100-50);\n  --palette-separator-color: var(--color-grey-225-10-75);\n  --palette-toggle-hover-background-color: var(--color-grey-225-10-55);\n  --palette-background-color: var(--color-grey-225-10-97);\n  --palette-border-color: var(--color-grey-225-10-75);\n\n  --popup-font-family: \"IBM Plex Sans\", sans-serif;\n  --popup-font-size: 14px;\n  --popup-header-entry-selected-color: var(--color-blue-205-100-50);\n  --popup-header-font-weight: bolder;\n  --popup-header-group-divider-color: var(--color-grey-225-10-75);\n  --popup-background-color: var(--color-white);\n  --popup-border-color: transparent;\n  --popup-shadow-color: var(--color-black-opacity-30);\n  --popup-description-color: var(--color-grey-225-10-55);\n  --popup-no-results-color: var(--color-grey-225-10-55);\n  --popup-entry-title-color: var(--color-grey-225-10-55);\n  --popup-entry-hover-color:  var(--color-grey-225-10-95);\n  --popup-search-border-color: var(--color-grey-225-10-75);\n  --popup-search-focus-border-color: var(--color-blue-205-100-50);\n  --popup-search-focus-background-color: var(--color-blue-205-100-95);\n\n  --resizer-fill-color: var(--color-blue-205-100-45);\n  --resizer-stroke-color: var(--canvas-fill-color);\n\n  --search-font-family: \"IBM Plex Sans\", sans-serif;\n  --search-font-size: 14px;\n  --search-container-background-color: var(--color-white);\n  --search-shadow-color: var(--color-black-opacity-30);\n  --search-input-border-color: var(--color-grey-225-10-75);\n  --search-input-focus-border-color: var(--color-blue-205-100-50);\n  --search-input-focus-background-color: var(--color-blue-205-100-95);\n  --search-result-hover-background-color: var(--color-grey-225-10-95);\n  --search-result-secondary-color: var(--color-grey-225-10-55);\n  --search-preselected-background-color: var(--color-blue-205-100-50-opacity-15);\n\n  --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);\n  --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-not-allowed-fill-color: var(--color-red-360-100-97);\n  --shape-resize-preview-stroke-color: var(--color-blue-205-100-50);\n\n  --snap-line-stroke-color: var(--color-blue-205-100-45-opacity-30);\n\n  --space-tool-crosshair-stroke-color: var(--color-black);\n\n  --tooltip-error-background-color: var(--color-red-360-100-97);\n  --tooltip-error-border-color: var(--color-red-360-100-45);\n  --tooltip-error-color: var(--color-red-360-100-45);\n}\n\n/**\n * SVG styles\n */\n\n.djs-container svg.drop-not-ok {\n  background: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-container svg.new-parent {\n  background: var(--shape-drop-allowed-fill-color) !important;\n}\n\n/**\n * outline styles\n */\n\n.djs-outline,\n.djs-selection-outline {\n  fill: none;\n  shape-rendering: geometricPrecision;\n  stroke-width: 2px;\n}\n\n.djs-outline {\n  visibility: hidden;\n}\n\n.djs-selection-outline {\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-element.selected .djs-outline {\n  visibility: visible;\n\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-connection.selected .djs-outline {\n  display: none;\n}\n\n.djs-multi-select .djs-element.selected .djs-outline {\n  stroke: var(--element-selected-outline-secondary-stroke-color);\n  display: block;\n}\n\n.djs-shape.connect-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-connect-allowed-fill-color) !important;\n}\n\n.djs-shape.connect-not-ok .djs-visual > :nth-child(1),\n.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-shape.new-parent .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-allowed-fill-color) !important;\n}\n\n\n/* Override move cursor during drop and connect */\n.drop-not-ok,\n.connect-not-ok,\n.drop-not-ok *,\n.connect-not-ok * {\n  cursor: not-allowed !important;\n}\n\n.drop-ok,\n.connect-ok,\n.drop-ok *,\n.connect-ok * {\n  cursor: default !important;\n}\n\n.djs-element.attach-ok .djs-visual > :nth-child(1) {\n  stroke-width: 5px !important;\n  stroke: var(--shape-attach-allowed-stroke-color) !important;\n}\n\n.djs-frame.connect-not-ok .djs-visual > :nth-child(1),\n.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke-width: 3px !important;\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n  fill: none !important;\n}\n\n/**\n* Selection box style\n*\n*/\n.djs-lasso-overlay {\n  fill: var(--lasso-fill-color);\n  stroke: var(--lasso-stroke-color);\n  stroke-width: 2px;\n  shape-rendering: geometricPrecision;\n  pointer-events: none;\n}\n\n/**\n * Resize styles\n */\n.djs-resize-overlay {\n  fill: none;\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--shape-resize-preview-stroke-color);\n\n  pointer-events: none;\n}\n\n.djs-resizer-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-resizer-visual {\n  fill: var(--resizer-fill-color);\n  stroke-width: 1px;\n  stroke: var(--resizer-stroke-color);\n  shape-rendering: geometricPrecision;\n}\n\n.djs-resizer:hover .djs-resizer-visual {\n  stroke: var(--resizer-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-cursor-resize-ns,\n.djs-resizer-n,\n.djs-resizer-s {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew,\n.djs-resizer-e,\n.djs-resizer-w {\n  cursor: ew-resize;\n}\n\n.djs-cursor-resize-nwse,\n.djs-resizer-nw,\n.djs-resizer-se {\n  cursor: nwse-resize;\n}\n\n.djs-cursor-resize-nesw,\n.djs-resizer-ne,\n.djs-resizer-sw {\n  cursor: nesw-resize;\n}\n\n.djs-shape.djs-resizing > .djs-outline {\n  visibility: hidden !important;\n}\n\n.djs-shape.djs-resizing > .djs-resizer {\n  visibility: hidden;\n}\n\n.djs-dragger > .djs-resizer {\n  visibility: hidden;\n}\n\n/**\n * drag styles\n */\n.djs-dragger * {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragger tspan,\n.djs-dragger text {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\n.djs-dragger marker circle,\n.djs-dragger marker path,\n.djs-dragger marker polygon,\n.djs-dragger marker polyline,\n.djs-dragger marker rect {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\n.djs-dragger marker text,\n.djs-dragger marker tspan {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragging,\n.djs-dragging > * {\n  opacity: 0.3 !important;\n  pointer-events: none !important;\n}\n\n/**\n * no pointer events for visual\n */\n.djs-visual,\n.djs-outline {\n  pointer-events: none;\n}\n\n.djs-element.attach-ok .djs-hit {\n  stroke-width: 60px !important;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-element > .djs-hit-all,\n.djs-element > .djs-hit-no-move {\n  pointer-events: all;\n}\n\n.djs-element > .djs-hit-stroke,\n.djs-element > .djs-hit-click-stroke {\n  pointer-events: stroke;\n}\n\n/**\n * shape / connection basic styles\n */\n.djs-connection .djs-visual {\n  stroke-width: 2px;\n  fill: none;\n}\n\n.djs-cursor-grab {\n  cursor: -webkit-grab;\n  cursor: -moz-grab;\n  cursor: grab;\n}\n\n.djs-cursor-grabbing {\n  cursor: -webkit-grabbing;\n  cursor: -moz-grabbing;\n  cursor: grabbing;\n}\n\n.djs-cursor-crosshair {\n  cursor: crosshair;\n}\n\n.djs-cursor-move {\n  cursor: move;\n}\n\n.djs-cursor-resize-ns {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew {\n  cursor: ew-resize;\n}\n\n\n/**\n * snapping\n */\n.djs-snap-line {\n  stroke: var(--snap-line-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 2px;\n  pointer-events: none;\n}\n\n/**\n * snapping\n */\n.djs-crosshair {\n  stroke: var(--space-tool-crosshair-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 1px;\n  pointer-events: none;\n  shape-rendering: geometricPrecision;\n  stroke-dasharray: 5, 5;\n}\n\n/**\n * palette\n */\n\n.djs-palette {\n  position: absolute;\n  left: 20px;\n  top: 20px;\n\n  box-sizing: border-box;\n  width: 48px;\n}\n\n.djs-palette .separator {\n  margin: 5px;\n  padding-top: 5px;\n\n  border: none;\n  border-bottom: solid 1px var(--palette-separator-color);\n\n  clear: both;\n}\n\n.djs-palette .entry:before {\n  vertical-align: initial;\n}\n\n.djs-palette .djs-palette-toggle {\n  cursor: pointer;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  color: var(--palette-entry-color);\n  font-size: 30px;\n\n  text-align: center;\n}\n\n.djs-palette .entry {\n  float: left;\n}\n\n.djs-palette .entry img {\n  max-width: 100%;\n}\n\n.djs-palette .djs-palette-entries:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.djs-palette .djs-palette-toggle:hover {\n  background: var(--palette-toggle-hover-background-color);\n}\n\n.djs-palette .entry:hover {\n  color: var(--palette-entry-hover-color);\n}\n\n.djs-palette .highlighted-entry {\n  color: var(--palette-entry-selected-color) !important;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n  cursor: default;\n}\n\n/**\n * Palette open / two-column layout is controlled via\n * classes on the palette. Events to hook into palette\n * changed life-cycle are available in addition.\n */\n.djs-palette.two-column.open {\n  width: 94px;\n}\n\n.djs-palette:not(.open) .djs-palette-entries {\n  display: none;\n}\n\n.djs-palette:not(.open) {\n  overflow: hidden;\n}\n\n.djs-palette.open .djs-palette-toggle {\n  display: none;\n}\n\n/**\n * context-pad\n */\n.djs-context-pad {\n  position: absolute;\n  display: none;\n  pointer-events: none;\n  line-height: 1;\n  width: 72px;\n  z-index: 100;\n}\n\n.djs-context-pad .entry {\n  width: 22px;\n  height: 22px;\n  text-align: center;\n  display: inline-block;\n  font-size: 22px;\n  margin: 0 2px 2px 0;\n\n  border-radius: 3px;\n\n  cursor: default;\n\n  background-color: var(--context-pad-entry-background-color);\n  box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);\n  pointer-events: all;\n  vertical-align: middle;\n}\n\n.djs-context-pad .entry:hover {\n  background: var(--context-pad-entry-hover-background-color);\n}\n\n.djs-context-pad.open {\n  display: block;\n}\n\n/**\n * popup styles\n */\n.djs-popup {\n  line-height: 1;\n  box-sizing: border-box;\n  width: min-content;\n  background: var(--popup-background-color);\n  overflow: hidden;\n  position: fixed;\n  z-index: 200;\n  box-shadow: 0px 2px 6px var(--popup-shadow-color);\n  border: solid 1px var(--popup-border-color);\n  min-width: 120px;\n  outline: none;\n  font-size: var(--popup-font-size);\n  font-family: var(--popup-font-family);\n}\n\n.djs-popup-search input {\n  width: 100%;\n  box-sizing: border-box;\n  font-size: var(--popup-font-size);\n  padding: 3px 6px 3px 28px;\n  border-radius: 2px;\n  border: solid 1px var(--popup-search-border-color);\n  line-height: 21px;\n}\n\n.djs-popup-search input:focus {\n  background-color: var(--popup-search-focus-background-color);\n  border: solid 1px var(--popup-search-focus-border-color);\n  outline: none;\n}\n\n.djs-popup-header {\n  display: flex;\n  align-items: stretch;\n  line-height: 20px;\n  margin: 10px 12px 10px 12px;\n}\n\n.djs-popup-header .entry {\n  border-radius: 2px;\n}\n\n.djs-popup button.entry {\n  padding: 0;\n  background: transparent;\n  border: 0;\n}\n\n.djs-popup-header .entry.active {\n  color: var(--popup-header-entry-selected-color);\n}\n\n.djs-popup-header .entry.disabled {\n  color: inherit;\n}\n\n.djs-popup-header-group {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n.djs-popup-header-group .entry {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n}\n\n.djs-popup-header-group + .djs-popup-header-group:before {\n  content: '';\n  width: 1px;\n  height: 20px;\n  background: var(--popup-header-group-divider-color);\n  margin: 0 5px;\n}\n\n.djs-popup-search {\n  position: relative;\n  width: auto;\n  margin: 10px 12px;\n}\n\n.djs-popup-title {\n  font-size: var(--popup-font-size);\n  font-weight: var(--popup-header-font-weight);\n  flex: 1;\n  margin: 0;\n}\n\n.djs-popup-search-icon {\n  position: absolute;\n  left: 8px;\n  top: 7px;\n}\n\n.djs-popup-results {\n  margin: 7px 3px 7px 12px;\n  list-style: none;\n  max-height: 280px;\n  overflow: auto;\n  padding-right: 9px;\n}\n\n.djs-popup-group {\n  margin: 0;\n  padding: 0;\n  width: 100%;\n}\n\n.djs-popup-body .entry,\n.djs-popup-body .entry-header {\n  padding: 5px 7px;\n  cursor: default;\n  border-radius: 4px;\n}\n\n.djs-popup-body .entry-header {\n  font-weight: var(--popup-header-font-weight);\n  color: var(--popup-entry-title-color);\n  padding-left: 0;\n}\n\n.djs-popup [class*=\"icon\"] .djs-popup-label,\n.djs-popup-label:not(:first-child) {\n  margin-left: .5em;\n}\n\n.djs-popup [class*=\"icon\"]:before,\n.djs-popup-entry-icon {\n  width: 1em;\n  height: 1em;\n  display: inline-block;\n  font-size: 1.4em;\n  vertical-align: middle;\n}\n\n.djs-popup-body .entry-header:not(:first-child) {\n  margin-top: 8px;\n  margin-bottom: 2px;\n}\n\n.djs-popup-body .entry {\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  height: min-content;\n}\n\n.djs-popup .entry.selected {\n  background-color: var(--popup-entry-hover-color);\n}\n\n.djs-popup-body .entry:not(:first-child) {\n  margin-top: 2px;\n}\n\n.djs-popup-entry-content {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow: hidden;\n}\n\n.djs-popup-entry-description {\n  color: var(--popup-description-color);\n}\n\n.djs-popup-label,\n.djs-popup-entry-description {\n  line-height: 1.4em;\n}\n\n.djs-popup .entry,\n.djs-popup .entry-header {\n  margin: 1px;\n}\n\n.djs-popup-title,\n.djs-popup-label,\n.djs-popup-entry-description,\n.djs-popup .entry-header {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.djs-popup-entry-name {\n  display: flex;\n}\n\n.djs-popup-body {\n  flex-direction: column;\n  width: auto;\n}\n\n.djs-popup *::-webkit-scrollbar {\n  width: 6px;\n}\n\n.djs-popup *::-webkit-scrollbar-thumb {\n  border-radius: 3px;\n  background-color: rgba(0, 0, 0, 0.2);\n}\n\n.djs-popup *::-webkit-scrollbar-track {\n  box-shadow: none;\n  background: transparent;\n  margin: 0;\n  padding: 5px;\n}\n\n.djs-popup-no-results {\n  padding: 0 12px 12px 12px;\n  color: var(--popup-no-results-color);\n}\n\n.djs-popup-entry-docs {\n  flex: 0;\n  flex-direction: row;\n  align-items: center;\n  padding-left: 5px;\n  display: none;\n}\n\n.djs-popup-body .entry:hover .djs-popup-entry-docs {\n  display: flex;\n}\n\n.djs-popup-entry-docs svg {\n  vertical-align: middle;\n  margin: auto 2px auto 5px;\n}\n\n/**\n *  palette styles\n */\n.djs-palette {\n  background: var(--palette-background-color);\n  border: solid 1px var(--palette-border-color);\n  border-radius: 2px;\n}\n\n/**\n * bendpoints\n */\n.djs-segment-dragger,\n.djs-bendpoint {\n  display: none;\n}\n\n.djs-segment-dragger .djs-visual {\n  display: none;\n\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 1;\n}\n\n.djs-segment-dragger:hover .djs-visual {\n  display: block;\n}\n\n.djs-bendpoint .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n}\n\n.djs-segment-dragger:hover,\n.djs-bendpoints.hover .djs-segment-dragger,\n.djs-bendpoints.selected .djs-segment-dragger,\n.djs-bendpoint:hover,\n.djs-bendpoints.hover .djs-bendpoint,\n.djs-bendpoints.selected .djs-bendpoint {\n  display: block;\n}\n\n.djs-drag-active .djs-bendpoints * {\n  display: none;\n}\n\n.djs-bendpoints:not(.hover) .floating {\n  display: none;\n}\n\n.djs-segment-dragger:hover .djs-visual,\n.djs-segment-dragger.djs-dragging .djs-visual,\n.djs-bendpoint:hover .djs-visual,\n.djs-bendpoint.floating .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-bendpoint.floating .djs-hit {\n  pointer-events: none;\n}\n\n.djs-segment-dragger .djs-hit,\n.djs-bendpoint .djs-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-segment-dragger.horizontal .djs-hit {\n  cursor: ns-resize;\n}\n\n.djs-segment-dragger.vertical .djs-hit {\n  cursor: ew-resize;\n}\n\n.djs-segment-dragger.djs-dragging .djs-hit {\n  pointer-events: none;\n}\n\n.djs-updating,\n.djs-updating > * {\n  pointer-events: none !important;\n}\n\n.djs-updating .djs-context-pad,\n.djs-updating .djs-outline,\n.djs-updating .djs-bendpoint,\n.djs-multi-select .djs-bendpoint,\n.djs-multi-select .djs-segment-dragger,\n.connect-ok .djs-bendpoint,\n.connect-not-ok .djs-bendpoint,\n.drop-ok .djs-bendpoint,\n.drop-not-ok .djs-bendpoint {\n  display: none !important;\n}\n\n.djs-segment-dragger.djs-dragging,\n.djs-bendpoint.djs-dragging {\n  display: block;\n  opacity: 1.0;\n}\n\n\n/**\n * tooltips\n */\n.djs-tooltip-error {\n  width: 160px;\n  padding: 6px;\n\n  background: var(--tooltip-error-background-color);\n  border: solid 1px var(--tooltip-error-border-color);\n  border-radius: 2px;\n  color: var(--tooltip-error-color);\n  font-size: 12px;\n  line-height: 16px;\n\n  opacity: 0.75;\n}\n\n.djs-tooltip-error:hover {\n  opacity: 1;\n}\n\n\n/**\n * search pad\n */\n.djs-search-open .djs-context-pad {\n  display: none;\n}\n\n.djs-search-open .djs-connection.selected .djs-outline {\n  display: block;\n}\n\n.djs-search-container {\n  position: absolute;\n  top: 20px;\n  left: 0;\n  right: 0;\n  margin-left: auto;\n  margin-right: auto;\n\n  width: 25%;\n  min-width: 300px;\n  max-width: 400px;\n  z-index: 10;\n\n  font-family: var(--search-font-family);\n  font-size: var(--search-font-size);\n  border-radius: 2px;\n  box-shadow: 0px 2px 6px var(--search-shadow-color);\n}\n\n.djs-search-container:not(.open) {\n  display: none;\n}\n\n.djs-search-input {\n  position: relative;\n}\n\n.djs-search-input svg {\n  position: absolute;\n  left: 8px;\n  top: 7px;\n}\n\n.djs-search-input input {\n  font-size: var(--search-font-size);\n  width: 100%;\n  padding: 3px 6px 3px 28px;\n  border: 1px solid var(--search-input-border-color);\n  border-radius: 2px;\n  box-sizing: border-box;\n  line-height: 21px;\n}\n\n.djs-search-input input:focus {\n  background-color: var(--search-input-focus-background-color);\n  border: solid 1px var(--search-input-focus-border-color);\n  outline: none;\n}\n\n.djs-search-results {\n  position: relative;\n  overflow-y: auto;\n  max-height: 200px;\n  background: var(--search-container-background-color);\n}\n\n.djs-search-result {\n  padding: 6px 8px;\n}\n\n.djs-search-result-primary {\n  margin: 0 0 3px;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n}\n\n.djs-search-result-secondary {\n  font-family: monospace;\n  margin: 0;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n  color: var(--search-result-secondary-color);\n}\n\n.djs-search-result:hover {\n  background: var(--search-result-hover-background-color);\n}\n\n.djs-search-result-selected {\n  background: var(--search-result-hover-background-color);\n}\n\n.djs-search-result-selected:hover {\n  background: var(--search-result-hover-background-color);\n}\n\n.djs-search-open .djs-element .djs-outline {\n  fill: var(--search-preselected-background-color) !important;\n}\n\n/**\n * hidden styles\n */\n.djs-element-hidden,\n.djs-element-hidden .djs-hit,\n.djs-element-hidden .djs-outline,\n.djs-label-hidden .djs-label {\n  display: none !important;\n}\n\n.djs-element .djs-hit-stroke,\n.djs-element .djs-hit-click-stroke,\n.djs-element .djs-hit-all {\n  cursor: move;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10769,6 +10577,7 @@ __webpack_require__.r(__webpack_exports__);
  *   deferUpdate?: boolean;
  *   width?: number;
  *   height?: number;
+ *   autoFocus?: boolean;
  * } } CanvasConfig
  * @typedef { {
  *   group: SVGElement;
@@ -10910,6 +10719,11 @@ function Canvas(config, eventBus, graphicsFactory, elementRegistry) {
    */
   this._rootElement = null;
 
+  /**
+   * @type {boolean}
+   */
+  this._focused = false;
+
   this._init(config || {});
 }
 
@@ -10936,14 +10750,35 @@ Canvas.$inject = [
  * @param {CanvasConfig} config
  */
 Canvas.prototype._init = function(config) {
-
   const eventBus = this._eventBus;
 
   // html container
   const container = this._container = createContainer(config);
 
   const svg = this._svg = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('svg');
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(svg, { width: '100%', height: '100%' });
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(svg, {
+    width: '100%',
+    height: '100%'
+  });
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(svg, 'tabindex', 0);
+
+  config.autoFocus && eventBus.on('element.hover', () => {
+    this.restoreFocus();
+  });
+
+  eventBus.on('element.mousedown', 500, (event) => {
+    this.focus();
+  });
+
+  svg.addEventListener('focusin', () => {
+    this._setFocused(true);
+  });
+
+  svg.addEventListener('focusout', () => {
+    this._setFocused(false);
+  });
 
   (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(container, svg);
 
@@ -11012,6 +10847,17 @@ Canvas.prototype._destroy = function() {
   delete this._viewport;
 };
 
+Canvas.prototype._setFocused = function(focused) {
+
+  if (focused == this._focused) {
+    return;
+  }
+
+  this._focused = focused;
+
+  this._eventBus.fire('canvas.focus.changed', { focused });
+};
+
 Canvas.prototype._clear = function() {
 
   const allElements = this._elementRegistry.getAll();
@@ -11033,6 +10879,33 @@ Canvas.prototype._clear = function() {
 
   // force recomputation of view box
   delete this._cachedViewbox;
+};
+
+/**
+ * Sets focus on the canvas SVG element.
+ */
+Canvas.prototype.focus = function() {
+  this._svg.focus({ preventScroll: true });
+
+  this._setFocused(true);
+};
+
+/**
+* Sets focus on the canvas SVG element if `document.body` is currently focused.
+*/
+Canvas.prototype.restoreFocus = function() {
+  if (document.activeElement === document.body) {
+    this.focus();
+  }
+};
+
+/**
+* Returns true if the canvas is focused.
+*
+* @return {boolean}
+*/
+Canvas.prototype.isFocused = function() {
+  return this._focused;
 };
 
 /**
@@ -11874,7 +11747,7 @@ Canvas.prototype._viewboxChanged = function() {
 Canvas.prototype.viewbox = function(box) {
 
   if (box === undefined && this._cachedViewbox) {
-    return this._cachedViewbox;
+    return structuredClone(this._cachedViewbox);
   }
 
   const viewport = this._viewport,
@@ -12932,7 +12805,7 @@ EventBus.prototype.once = function(events, priority, callback, that) {
  * If no callback is given, all listeners for a given event name are being removed.
  *
  * @param {string|string[]} events
- * @param {EventBusEventCallback} [callback]
+ * @param {EventBusEventCallback<unknown>} [callback]
  */
 EventBus.prototype.off = function(events, callback) {
 
@@ -14669,239 +14542,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/diagram-js/lib/features/outline/Outline.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/diagram-js/lib/features/outline/Outline.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ Outline)
-/* harmony export */ });
-/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Elements */ "./node_modules/diagram-js/lib/util/Elements.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-
-
-var LOW_PRIORITY = 500;
-
-
-
-
-
-
-
-var DEFAULT_PRIORITY = 1000;
-
-/**
- * @typedef {import('../../model/Types').Element} Element
- *
- * @typedef {import('./OutlineProvider').default} OutlineProvider
- * @typedef {import('../../core/EventBus').default} EventBus
- * @typedef {import('../../draw/Styles').default} Styles
- */
-
-/**
- * @class
- *
- * A plugin that adds an outline to shapes and connections that may be activated and styled
- * via CSS classes.
- *
- * @param {EventBus} eventBus
- * @param {Styles} styles
- */
-function Outline(eventBus, styles) {
-
-  this._eventBus = eventBus;
-
-  this.offset = 5;
-
-  var OUTLINE_STYLE = styles.cls('djs-outline', [ 'no-fill' ]);
-
-  var self = this;
-
-  /**
-   * @param {SVGElement} gfx
-   *
-   * @return {SVGElement} outline
-   */
-  function createOutline(gfx) {
-    var outline = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('rect');
-
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({
-      x: 0,
-      y: 0,
-      rx: 4,
-      width: 100,
-      height: 100
-    }, OUTLINE_STYLE));
-
-    return outline;
-  }
-
-  // A low priortity is necessary, because outlines of labels have to be updated
-  // after the label bounds have been updated in the renderer.
-  eventBus.on([ 'shape.added', 'shape.changed' ], LOW_PRIORITY, function(event) {
-    var element = event.element,
-        gfx = event.gfx;
-
-    var outline = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.djs-outline', gfx);
-
-    if (!outline) {
-      outline = self.getOutline(element) || createOutline(gfx);
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(gfx, outline);
-    }
-
-    self.updateShapeOutline(outline, element);
-  });
-
-  eventBus.on([ 'connection.added', 'connection.changed' ], function(event) {
-    var element = event.element,
-        gfx = event.gfx;
-
-    var outline = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.djs-outline', gfx);
-
-    if (!outline) {
-      outline = createOutline(gfx);
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(gfx, outline);
-    }
-
-    self.updateConnectionOutline(outline, element);
-  });
-}
-
-
-/**
- * Updates the outline of a shape respecting the dimension of the
- * element and an outline offset.
- *
- * @param {SVGElement} outline
- * @param {Element} element
- */
-Outline.prototype.updateShapeOutline = function(outline, element) {
-
-  var updated = false;
-  var providers = this._getProviders();
-
-  if (providers.length) {
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(providers, function(provider) {
-      updated = updated || provider.updateOutline(element, outline);
-    });
-  }
-
-  if (!updated) {
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, {
-      x: -this.offset,
-      y: -this.offset,
-      width: element.width + this.offset * 2,
-      height: element.height + this.offset * 2
-    });
-  }
-};
-
-/**
- * Updates the outline of a connection respecting the bounding box of
- * the connection and an outline offset.
- * Register an outline provider with the given priority.
- *
- * @param {SVGElement} outline
- * @param {Element} connection
- */
-Outline.prototype.updateConnectionOutline = function(outline, connection) {
-  var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_3__.getBBox)(connection);
-
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, {
-    x: bbox.x - this.offset,
-    y: bbox.y - this.offset,
-    width: bbox.width + this.offset * 2,
-    height: bbox.height + this.offset * 2
-  });
-};
-
-/**
- * Register an outline provider with the given priority.
- *
- * @param {number} priority
- * @param {OutlineProvider} provider
- */
-Outline.prototype.registerProvider = function(priority, provider) {
-  if (!provider) {
-    provider = priority;
-    priority = DEFAULT_PRIORITY;
-  }
-
-  this._eventBus.on('outline.getProviders', priority, function(event) {
-    event.providers.push(provider);
-  });
-};
-
-/**
- * Returns the registered outline providers.
- *
- * @returns {OutlineProvider[]}
- */
-Outline.prototype._getProviders = function() {
-  var event = this._eventBus.createEvent({
-    type: 'outline.getProviders',
-    providers: []
-  });
-
-  this._eventBus.fire(event);
-
-  return event.providers;
-};
-
-/**
- * Returns the outline for an element.
- *
- * @param {Element} element
- */
-Outline.prototype.getOutline = function(element) {
-  var outline;
-  var providers = this._getProviders();
-
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(providers, function(provider) {
-
-    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isFunction)(provider.getOutline)) {
-      return;
-    }
-
-    outline = outline || provider.getOutline(element);
-  });
-
-  return outline;
-};
-
-Outline.$inject = [ 'eventBus', 'styles', 'elementRegistry' ];
-
-/***/ }),
-
-/***/ "./node_modules/diagram-js/lib/features/outline/index.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/diagram-js/lib/features/outline/index.js ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _Outline__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Outline */ "./node_modules/diagram-js/lib/features/outline/Outline.js");
-
-
-
-/**
- * @type { import('didi').ModuleDeclaration }
- */
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: [ 'outline' ],
-  outline: [ 'type', _Outline__WEBPACK_IMPORTED_MODULE_0__["default"] ]
-});
-
-/***/ }),
-
 /***/ "./node_modules/diagram-js/lib/features/overlays/Overlays.js":
 /*!*******************************************************************!*\
   !*** ./node_modules/diagram-js/lib/features/overlays/Overlays.js ***!
@@ -16561,25 +16201,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ SelectionVisuals)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "./node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "./node_modules/diagram-js/lib/util/Elements.js");
-
-
-
-
 
 
 /**
  * @typedef {import('../../core/Canvas').default} Canvas
  * @typedef {import('../../core/EventBus').default} EventBus
- * @typedef {import('./Selection').default} Selection
  */
 
 var MARKER_HOVER = 'hover',
     MARKER_SELECTED = 'selected';
-
-var SELECTION_OUTLINE_PADDING = 6;
-
 
 /**
  * A plugin that adds a visible selection UI to shapes and connections
@@ -16591,14 +16221,9 @@ var SELECTION_OUTLINE_PADDING = 6;
  *
  * @param {Canvas} canvas
  * @param {EventBus} eventBus
- * @param {Selection} selection
  */
-function SelectionVisuals(canvas, eventBus, selection) {
+function SelectionVisuals(canvas, eventBus) {
   this._canvas = canvas;
-
-  var self = this;
-
-  this._multiSelectionBox = null;
 
   function addMarker(e, cls) {
     canvas.addMarker(e, cls);
@@ -16640,62 +16265,14 @@ function SelectionVisuals(canvas, eventBus, selection) {
         select(e);
       }
     });
-
-    self._updateSelectionOutline(newSelection);
-  });
-
-
-  eventBus.on('element.changed', function(event) {
-    if (selection.isSelected(event.element)) {
-      self._updateSelectionOutline(selection.get());
-    }
   });
 }
 
 SelectionVisuals.$inject = [
   'canvas',
-  'eventBus',
-  'selection'
+  'eventBus'
 ];
 
-SelectionVisuals.prototype._updateSelectionOutline = function(selection) {
-  var layer = this._canvas.getLayer('selectionOutline');
-
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.clear)(layer);
-
-  var enabled = selection.length > 1;
-
-  var container = this._canvas.getContainer();
-
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(container)[enabled ? 'add' : 'remove']('djs-multi-select');
-
-  if (!enabled) {
-    return;
-  }
-
-  var bBox = addSelectionOutlinePadding((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(selection));
-
-  var rect = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('rect');
-
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(rect, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
-    rx: 3
-  }, bBox));
-
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(rect).add('djs-selection-outline');
-
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(layer, rect);
-};
-
-// helpers //////////
-
-function addSelectionOutlinePadding(bBox) {
-  return {
-    x: bBox.x - SELECTION_OUTLINE_PADDING,
-    y: bBox.y - SELECTION_OUTLINE_PADDING,
-    width: bBox.width + SELECTION_OUTLINE_PADDING * 2,
-    height: bBox.height + SELECTION_OUTLINE_PADDING * 2
-  };
-}
 
 /***/ }),
 
@@ -16710,11 +16287,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _interaction_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../interaction-events */ "./node_modules/diagram-js/lib/features/interaction-events/index.js");
-/* harmony import */ var _outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../outline */ "./node_modules/diagram-js/lib/features/outline/index.js");
-/* harmony import */ var _Selection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Selection */ "./node_modules/diagram-js/lib/features/selection/Selection.js");
-/* harmony import */ var _SelectionVisuals__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./SelectionVisuals */ "./node_modules/diagram-js/lib/features/selection/SelectionVisuals.js");
-/* harmony import */ var _SelectionBehavior__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./SelectionBehavior */ "./node_modules/diagram-js/lib/features/selection/SelectionBehavior.js");
-
+/* harmony import */ var _Selection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Selection */ "./node_modules/diagram-js/lib/features/selection/Selection.js");
+/* harmony import */ var _SelectionVisuals__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SelectionVisuals */ "./node_modules/diagram-js/lib/features/selection/SelectionVisuals.js");
+/* harmony import */ var _SelectionBehavior__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./SelectionBehavior */ "./node_modules/diagram-js/lib/features/selection/SelectionBehavior.js");
 
 
 
@@ -16729,11 +16304,10 @@ __webpack_require__.r(__webpack_exports__);
   __init__: [ 'selectionVisuals', 'selectionBehavior' ],
   __depends__: [
     _interaction_events__WEBPACK_IMPORTED_MODULE_0__["default"],
-    _outline__WEBPACK_IMPORTED_MODULE_1__["default"]
   ],
-  selection: [ 'type', _Selection__WEBPACK_IMPORTED_MODULE_2__["default"] ],
-  selectionVisuals: [ 'type', _SelectionVisuals__WEBPACK_IMPORTED_MODULE_3__["default"] ],
-  selectionBehavior: [ 'type', _SelectionBehavior__WEBPACK_IMPORTED_MODULE_4__["default"] ]
+  selection: [ 'type', _Selection__WEBPACK_IMPORTED_MODULE_1__["default"] ],
+  selectionVisuals: [ 'type', _SelectionVisuals__WEBPACK_IMPORTED_MODULE_2__["default"] ],
+  selectionBehavior: [ 'type', _SelectionBehavior__WEBPACK_IMPORTED_MODULE_3__["default"] ]
 });
 
 
@@ -17531,12 +17105,19 @@ function MoveCanvas(eventBus, canvas) {
 
   var context;
 
+  function handleMousedown(event) {
+    return handleStart(event.originalEvent);
+  }
 
   // listen for move on element mouse down;
   // allow others to hook into the event before us though
   // (dragging / element moving will do this)
-  eventBus.on('element.mousedown', 500, function(e) {
-    return handleStart(e.originalEvent);
+  eventBus.on('canvas.focus.changed', function(event) {
+    if (event.focused) {
+      eventBus.on('element.mousedown', 500, handleMousedown);
+    } else {
+      eventBus.off('element.mousedown', handleMousedown);
+    }
   });
 
 
@@ -17668,10 +17249,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ZoomScroll)
 /* harmony export */ });
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "./node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _ZoomUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ZoomUtil */ "./node_modules/diagram-js/lib/navigation/zoomscroll/ZoomUtil.js");
-/* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/Math */ "./node_modules/diagram-js/lib/util/Math.js");
-/* harmony import */ var _util_Platform__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Platform */ "./node_modules/diagram-js/lib/util/Platform.js");
+/* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Math */ "./node_modules/diagram-js/lib/util/Math.js");
+/* harmony import */ var _util_Platform__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Platform */ "./node_modules/diagram-js/lib/util/Platform.js");
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
 
 
@@ -17731,8 +17312,8 @@ function ZoomScroll(config, eventBus, canvas) {
 
   var self = this;
 
-  eventBus.on('canvas.init', function(e) {
-    self._init(config.enabled !== false);
+  eventBus.on('canvas.focus.changed', function(event) {
+    self._init(event.focused && config.enabled !== false);
   });
 }
 
@@ -17779,8 +17360,7 @@ ZoomScroll.prototype.zoom = function zoom(delta, position) {
 
 ZoomScroll.prototype._handleWheel = function handleWheel(event) {
 
-  // event is already handled by '.djs-scrollable'
-  if ((0,min_dom__WEBPACK_IMPORTED_MODULE_2__.closest)(event.target, '.djs-scrollable', true)) {
+  if (!this._canvas.isFocused()) {
     return;
   }
 
@@ -17791,7 +17371,7 @@ ZoomScroll.prototype._handleWheel = function handleWheel(event) {
   // pinch to zoom is mapped to wheel + ctrlKey = true
   // in modern browsers (!)
 
-  var isZoom = event.ctrlKey || ((0,_util_Platform__WEBPACK_IMPORTED_MODULE_3__.isMac)() && event.metaKey);
+  var isZoom = event.ctrlKey || ((0,_util_Platform__WEBPACK_IMPORTED_MODULE_2__.isMac)() && event.metaKey);
 
   var isHorizontalScroll = event.shiftKey;
 
@@ -17865,7 +17445,7 @@ ZoomScroll.prototype._zoom = function(delta, position, stepSize) {
 
   var direction = delta > 0 ? 1 : -1;
 
-  var currentLinearZoomLevel = (0,_util_Math__WEBPACK_IMPORTED_MODULE_4__.log10)(canvas.zoom());
+  var currentLinearZoomLevel = (0,_util_Math__WEBPACK_IMPORTED_MODULE_3__.log10)(canvas.zoom());
 
   // snap to a proximate zoom step
   var newLinearZoomLevel = Math.round(currentLinearZoomLevel / stepSize) * stepSize;
@@ -17902,7 +17482,7 @@ ZoomScroll.prototype.toggle = function toggle(newEnabled) {
 
     // add or remove wheel listener based on
     // changed enabled state
-    min_dom__WEBPACK_IMPORTED_MODULE_2__.event[newEnabled ? 'bind' : 'unbind'](element, 'wheel', handleWheel, false);
+    min_dom__WEBPACK_IMPORTED_MODULE_4__.event[newEnabled ? 'bind' : 'unbind'](element, 'wheel', handleWheel, false);
   }
 
   this._enabled = newEnabled;
@@ -19191,7 +18771,7 @@ __webpack_require__.r(__webpack_exports__);
  * @return {string}
  */
 function componentsToPath(elements) {
-  return elements.flat().join(',').replace(/,?([A-z]),?/g, '$1');
+  return elements.flat().join(',').replace(/,?([A-Za-z]),?/g, '$1');
 }
 
 /**
@@ -19565,6 +19145,8 @@ function getTextBBox(text, fakeText) {
 
     return bbox;
   } catch (e) {
+    console.log(e);
+
     return { width: 0, height: 0 };
   }
 }
@@ -20661,1103 +20243,6 @@ function remove(el) {
 
 /***/ }),
 
-/***/ "./node_modules/saxen/dist/index.esm.js":
-/*!**********************************************!*\
-  !*** ./node_modules/saxen/dist/index.esm.js ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Parser: () => (/* binding */ Parser),
-/* harmony export */   decode: () => (/* binding */ decodeEntities)
-/* harmony export */ });
-var fromCharCode = String.fromCharCode;
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-var ENTITY_PATTERN = /&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig;
-
-var ENTITY_MAPPING = {
-  'amp': '&',
-  'apos': '\'',
-  'gt': '>',
-  'lt': '<',
-  'quot': '"'
-};
-
-// map UPPERCASE variants of supported special chars
-Object.keys(ENTITY_MAPPING).forEach(function(k) {
-  ENTITY_MAPPING[k.toUpperCase()] = ENTITY_MAPPING[k];
-});
-
-
-function replaceEntities(_, d, x, z) {
-
-  // reserved names, i.e. &nbsp;
-  if (z) {
-    if (hasOwnProperty.call(ENTITY_MAPPING, z)) {
-      return ENTITY_MAPPING[z];
-    } else {
-
-      // fall back to original value
-      return '&' + z + ';';
-    }
-  }
-
-  // decimal encoded char
-  if (d) {
-    return fromCharCode(d);
-  }
-
-  // hex encoded char
-  return fromCharCode(parseInt(x, 16));
-}
-
-
-/**
- * A basic entity decoder that can decode a minimal
- * sub-set of reserved names (&amp;) as well as
- * hex (&#xaaf;) and decimal (&#1231;) encoded characters.
- *
- * @param {string} str
- *
- * @return {string} decoded string
- */
-function decodeEntities(s) {
-  if (s.length > 3 && s.indexOf('&') !== -1) {
-    return s.replace(ENTITY_PATTERN, replaceEntities);
-  }
-
-  return s;
-}
-
-var XSI_URI = 'http://www.w3.org/2001/XMLSchema-instance';
-var XSI_PREFIX = 'xsi';
-var XSI_TYPE = 'xsi:type';
-
-var NON_WHITESPACE_OUTSIDE_ROOT_NODE = 'non-whitespace outside of root node';
-
-function error(msg) {
-  return new Error(msg);
-}
-
-function missingNamespaceForPrefix(prefix) {
-  return 'missing namespace for prefix <' + prefix + '>';
-}
-
-function getter(getFn) {
-  return {
-    'get': getFn,
-    'enumerable': true
-  };
-}
-
-function cloneNsMatrix(nsMatrix) {
-  var clone = {}, key;
-  for (key in nsMatrix) {
-    clone[key] = nsMatrix[key];
-  }
-  return clone;
-}
-
-function uriPrefix(prefix) {
-  return prefix + '$uri';
-}
-
-function buildNsMatrix(nsUriToPrefix) {
-  var nsMatrix = {},
-      uri,
-      prefix;
-
-  for (uri in nsUriToPrefix) {
-    prefix = nsUriToPrefix[uri];
-    nsMatrix[prefix] = prefix;
-    nsMatrix[uriPrefix(prefix)] = uri;
-  }
-
-  return nsMatrix;
-}
-
-function noopGetContext() {
-  return { 'line': 0, 'column': 0 };
-}
-
-function throwFunc(err) {
-  throw err;
-}
-
-/**
- * Creates a new parser with the given options.
- *
- * @constructor
- *
- * @param  {!Object<string, ?>=} options
- */
-function Parser(options) {
-
-  if (!this) {
-    return new Parser(options);
-  }
-
-  var proxy = options && options['proxy'];
-
-  var onText,
-      onOpenTag,
-      onCloseTag,
-      onCDATA,
-      onError = throwFunc,
-      onWarning,
-      onComment,
-      onQuestion,
-      onAttention;
-
-  var getContext = noopGetContext;
-
-  /**
-   * Do we need to parse the current elements attributes for namespaces?
-   *
-   * @type {boolean}
-   */
-  var maybeNS = false;
-
-  /**
-   * Do we process namespaces at all?
-   *
-   * @type {boolean}
-   */
-  var isNamespace = false;
-
-  /**
-   * The caught error returned on parse end
-   *
-   * @type {Error}
-   */
-  var returnError = null;
-
-  /**
-   * Should we stop parsing?
-   *
-   * @type {boolean}
-   */
-  var parseStop = false;
-
-  /**
-   * A map of { uri: prefix } used by the parser.
-   *
-   * This map will ensure we can normalize prefixes during processing;
-   * for each uri, only one prefix will be exposed to the handlers.
-   *
-   * @type {!Object<string, string>}}
-   */
-  var nsUriToPrefix;
-
-  /**
-   * Handle parse error.
-   *
-   * @param  {string|Error} err
-   */
-  function handleError(err) {
-    if (!(err instanceof Error)) {
-      err = error(err);
-    }
-
-    returnError = err;
-
-    onError(err, getContext);
-  }
-
-  /**
-   * Handle parse error.
-   *
-   * @param  {string|Error} err
-   */
-  function handleWarning(err) {
-
-    if (!onWarning) {
-      return;
-    }
-
-    if (!(err instanceof Error)) {
-      err = error(err);
-    }
-
-    onWarning(err, getContext);
-  }
-
-  /**
-   * Register parse listener.
-   *
-   * @param  {string}   name
-   * @param  {Function} cb
-   *
-   * @return {Parser}
-   */
-  this['on'] = function(name, cb) {
-
-    if (typeof cb !== 'function') {
-      throw error('required args <name, cb>');
-    }
-
-    switch (name) {
-    case 'openTag': onOpenTag = cb; break;
-    case 'text': onText = cb; break;
-    case 'closeTag': onCloseTag = cb; break;
-    case 'error': onError = cb; break;
-    case 'warn': onWarning = cb; break;
-    case 'cdata': onCDATA = cb; break;
-    case 'attention': onAttention = cb; break; // <!XXXXX zzzz="eeee">
-    case 'question': onQuestion = cb; break; // <? ....  ?>
-    case 'comment': onComment = cb; break;
-    default:
-      throw error('unsupported event: ' + name);
-    }
-
-    return this;
-  };
-
-  /**
-   * Set the namespace to prefix mapping.
-   *
-   * @example
-   *
-   * parser.ns({
-   *   'http://foo': 'foo',
-   *   'http://bar': 'bar'
-   * });
-   *
-   * @param  {!Object<string, string>} nsMap
-   *
-   * @return {Parser}
-   */
-  this['ns'] = function(nsMap) {
-
-    if (typeof nsMap === 'undefined') {
-      nsMap = {};
-    }
-
-    if (typeof nsMap !== 'object') {
-      throw error('required args <nsMap={}>');
-    }
-
-    var _nsUriToPrefix = {}, k;
-
-    for (k in nsMap) {
-      _nsUriToPrefix[k] = nsMap[k];
-    }
-
-    // FORCE default mapping for schema instance
-    _nsUriToPrefix[XSI_URI] = XSI_PREFIX;
-
-    isNamespace = true;
-    nsUriToPrefix = _nsUriToPrefix;
-
-    return this;
-  };
-
-  /**
-   * Parse xml string.
-   *
-   * @param  {string} xml
-   *
-   * @return {Error} returnError, if not thrown
-   */
-  this['parse'] = function(xml) {
-    if (typeof xml !== 'string') {
-      throw error('required args <xml=string>');
-    }
-
-    returnError = null;
-
-    parse(xml);
-
-    getContext = noopGetContext;
-    parseStop = false;
-
-    return returnError;
-  };
-
-  /**
-   * Stop parsing.
-   */
-  this['stop'] = function() {
-    parseStop = true;
-  };
-
-  /**
-   * Parse string, invoking configured listeners on element.
-   *
-   * @param  {string} xml
-   */
-  function parse(xml) {
-    var nsMatrixStack = isNamespace ? [] : null,
-        nsMatrix = isNamespace ? buildNsMatrix(nsUriToPrefix) : null,
-        _nsMatrix,
-        nodeStack = [],
-        anonymousNsCount = 0,
-        tagStart = false,
-        tagEnd = false,
-        i = 0, j = 0,
-        x, y, q, w, v,
-        xmlns,
-        elementName,
-        _elementName,
-        elementProxy
-        ;
-
-    var attrsString = '',
-        attrsStart = 0,
-        cachedAttrs // false = parsed with errors, null = needs parsing
-        ;
-
-    /**
-     * Parse attributes on demand and returns the parsed attributes.
-     *
-     * Return semantics: (1) `false` on attribute parse error,
-     * (2) object hash on extracted attrs.
-     *
-     * @return {boolean|Object}
-     */
-    function getAttrs() {
-      if (cachedAttrs !== null) {
-        return cachedAttrs;
-      }
-
-      var nsUri,
-          nsUriPrefix,
-          nsName,
-          defaultAlias = isNamespace && nsMatrix['xmlns'],
-          attrList = isNamespace && maybeNS ? [] : null,
-          i = attrsStart,
-          s = attrsString,
-          l = s.length,
-          hasNewMatrix,
-          newalias,
-          value,
-          alias,
-          name,
-          attrs = {},
-          seenAttrs = {},
-          skipAttr,
-          w,
-          j;
-
-      parseAttr:
-      for (; i < l; i++) {
-        skipAttr = false;
-        w = s.charCodeAt(i);
-
-        if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE={ \f\n\r\t\v}
-          continue;
-        }
-
-        // wait for non whitespace character
-        if (w < 65 || w > 122 || (w > 90 && w < 97)) {
-          if (w !== 95 && w !== 58) { // char 95"_" 58":"
-            handleWarning('illegal first char attribute name');
-            skipAttr = true;
-          }
-        }
-
-        // parse attribute name
-        for (j = i + 1; j < l; j++) {
-          w = s.charCodeAt(j);
-
-          if (
-            w > 96 && w < 123 ||
-            w > 64 && w < 91 ||
-            w > 47 && w < 59 ||
-            w === 46 || // '.'
-            w === 45 || // '-'
-            w === 95 // '_'
-          ) {
-            continue;
-          }
-
-          // unexpected whitespace
-          if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
-            handleWarning('missing attribute value');
-            i = j;
-
-            continue parseAttr;
-          }
-
-          // expected "="
-          if (w === 61) { // "=" == 61
-            break;
-          }
-
-          handleWarning('illegal attribute name char');
-          skipAttr = true;
-        }
-
-        name = s.substring(i, j);
-
-        if (name === 'xmlns:xmlns') {
-          handleWarning('illegal declaration of xmlns');
-          skipAttr = true;
-        }
-
-        w = s.charCodeAt(j + 1);
-
-        if (w === 34) { // '"'
-          j = s.indexOf('"', i = j + 2);
-
-          if (j === -1) {
-            j = s.indexOf('\'', i);
-
-            if (j !== -1) {
-              handleWarning('attribute value quote missmatch');
-              skipAttr = true;
-            }
-          }
-
-        } else if (w === 39) { // "'"
-          j = s.indexOf('\'', i = j + 2);
-
-          if (j === -1) {
-            j = s.indexOf('"', i);
-
-            if (j !== -1) {
-              handleWarning('attribute value quote missmatch');
-              skipAttr = true;
-            }
-          }
-
-        } else {
-          handleWarning('missing attribute value quotes');
-          skipAttr = true;
-
-          // skip to next space
-          for (j = j + 1; j < l; j++) {
-            w = s.charCodeAt(j + 1);
-
-            if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
-              break;
-            }
-          }
-
-        }
-
-        if (j === -1) {
-          handleWarning('missing closing quotes');
-
-          j = l;
-          skipAttr = true;
-        }
-
-        if (!skipAttr) {
-          value = s.substring(i, j);
-        }
-
-        i = j;
-
-        // ensure SPACE follows attribute
-        // skip illegal content otherwise
-        // example a="b"c
-        for (; j + 1 < l; j++) {
-          w = s.charCodeAt(j + 1);
-
-          if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
-            break;
-          }
-
-          // FIRST ILLEGAL CHAR
-          if (i === j) {
-            handleWarning('illegal character after attribute end');
-            skipAttr = true;
-          }
-        }
-
-        // advance cursor to next attribute
-        i = j + 1;
-
-        if (skipAttr) {
-          continue parseAttr;
-        }
-
-        // check attribute re-declaration
-        if (name in seenAttrs) {
-          handleWarning('attribute <' + name + '> already defined');
-          continue;
-        }
-
-        seenAttrs[name] = true;
-
-        if (!isNamespace) {
-          attrs[name] = value;
-          continue;
-        }
-
-        // try to extract namespace information
-        if (maybeNS) {
-          newalias = (
-            name === 'xmlns'
-              ? 'xmlns'
-              : (name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:')
-                ? name.substr(6)
-                : null
-          );
-
-          // handle xmlns(:alias) assignment
-          if (newalias !== null) {
-            nsUri = decodeEntities(value);
-            nsUriPrefix = uriPrefix(newalias);
-
-            alias = nsUriToPrefix[nsUri];
-
-            if (!alias) {
-
-              // no prefix defined or prefix collision
-              if (
-                (newalias === 'xmlns') ||
-                (nsUriPrefix in nsMatrix && nsMatrix[nsUriPrefix] !== nsUri)
-              ) {
-
-                // alocate free ns prefix
-                do {
-                  alias = 'ns' + (anonymousNsCount++);
-                } while (typeof nsMatrix[alias] !== 'undefined');
-              } else {
-                alias = newalias;
-              }
-
-              nsUriToPrefix[nsUri] = alias;
-            }
-
-            if (nsMatrix[newalias] !== alias) {
-              if (!hasNewMatrix) {
-                nsMatrix = cloneNsMatrix(nsMatrix);
-                hasNewMatrix = true;
-              }
-
-              nsMatrix[newalias] = alias;
-              if (newalias === 'xmlns') {
-                nsMatrix[uriPrefix(alias)] = nsUri;
-                defaultAlias = alias;
-              }
-
-              nsMatrix[nsUriPrefix] = nsUri;
-            }
-
-            // expose xmlns(:asd)="..." in attributes
-            attrs[name] = value;
-            continue;
-          }
-
-          // collect attributes until all namespace
-          // declarations are processed
-          attrList.push(name, value);
-          continue;
-
-        } /** end if (maybeNs) */
-
-        // handle attributes on element without
-        // namespace declarations
-        w = name.indexOf(':');
-        if (w === -1) {
-          attrs[name] = value;
-          continue;
-        }
-
-        // normalize ns attribute name
-        if (!(nsName = nsMatrix[name.substring(0, w)])) {
-          handleWarning(missingNamespaceForPrefix(name.substring(0, w)));
-          continue;
-        }
-
-        name = defaultAlias === nsName
-          ? name.substr(w + 1)
-          : nsName + name.substr(w);
-
-        // end: normalize ns attribute name
-
-        // normalize xsi:type ns attribute value
-        if (name === XSI_TYPE) {
-          w = value.indexOf(':');
-
-          if (w !== -1) {
-            nsName = value.substring(0, w);
-
-            // handle default prefixes, i.e. xs:String gracefully
-            nsName = nsMatrix[nsName] || nsName;
-            value = nsName + value.substring(w);
-          } else {
-            value = defaultAlias + ':' + value;
-          }
-        }
-
-        // end: normalize xsi:type ns attribute value
-
-        attrs[name] = value;
-      }
-
-
-      // handle deferred, possibly namespaced attributes
-      if (maybeNS) {
-
-        // normalize captured attributes
-        for (i = 0, l = attrList.length; i < l; i++) {
-
-          name = attrList[i++];
-          value = attrList[i];
-
-          w = name.indexOf(':');
-
-          if (w !== -1) {
-
-            // normalize ns attribute name
-            if (!(nsName = nsMatrix[name.substring(0, w)])) {
-              handleWarning(missingNamespaceForPrefix(name.substring(0, w)));
-              continue;
-            }
-
-            name = defaultAlias === nsName
-              ? name.substr(w + 1)
-              : nsName + name.substr(w);
-
-            // end: normalize ns attribute name
-
-            // normalize xsi:type ns attribute value
-            if (name === XSI_TYPE) {
-              w = value.indexOf(':');
-
-              if (w !== -1) {
-                nsName = value.substring(0, w);
-
-                // handle default prefixes, i.e. xs:String gracefully
-                nsName = nsMatrix[nsName] || nsName;
-                value = nsName + value.substring(w);
-              } else {
-                value = defaultAlias + ':' + value;
-              }
-            }
-
-            // end: normalize xsi:type ns attribute value
-          }
-
-          attrs[name] = value;
-        }
-
-        // end: normalize captured attributes
-      }
-
-      return cachedAttrs = attrs;
-    }
-
-    /**
-     * Extract the parse context { line, column, part }
-     * from the current parser position.
-     *
-     * @return {Object} parse context
-     */
-    function getParseContext() {
-      var splitsRe = /(\r\n|\r|\n)/g;
-
-      var line = 0;
-      var column = 0;
-      var startOfLine = 0;
-      var endOfLine = j;
-      var match;
-      var data;
-
-      while (i >= startOfLine) {
-
-        match = splitsRe.exec(xml);
-
-        if (!match) {
-          break;
-        }
-
-        // end of line = (break idx + break chars)
-        endOfLine = match[0].length + match.index;
-
-        if (endOfLine > i) {
-          break;
-        }
-
-        // advance to next line
-        line += 1;
-
-        startOfLine = endOfLine;
-      }
-
-      // EOF errors
-      if (i == -1) {
-        column = endOfLine;
-        data = xml.substring(j);
-      } else
-
-      // start errors
-      if (j === 0) {
-        data = xml.substring(j, i);
-      }
-
-      // other errors
-      else {
-        column = i - startOfLine;
-        data = (j == -1 ? xml.substring(i) : xml.substring(i, j + 1));
-      }
-
-      return {
-        'data': data,
-        'line': line,
-        'column': column
-      };
-    }
-
-    getContext = getParseContext;
-
-
-    if (proxy) {
-      elementProxy = Object.create({}, {
-        'name': getter(function() {
-          return elementName;
-        }),
-        'originalName': getter(function() {
-          return _elementName;
-        }),
-        'attrs': getter(getAttrs),
-        'ns': getter(function() {
-          return nsMatrix;
-        })
-      });
-    }
-
-    // actual parse logic
-    while (j !== -1) {
-
-      if (xml.charCodeAt(j) === 60) { // "<"
-        i = j;
-      } else {
-        i = xml.indexOf('<', j);
-      }
-
-      // parse end
-      if (i === -1) {
-        if (nodeStack.length) {
-          return handleError('unexpected end of file');
-        }
-
-        if (j === 0) {
-          return handleError('missing start tag');
-        }
-
-        if (j < xml.length) {
-          if (xml.substring(j).trim()) {
-            handleWarning(NON_WHITESPACE_OUTSIDE_ROOT_NODE);
-          }
-        }
-
-        return;
-      }
-
-      // parse text
-      if (j !== i) {
-
-        if (nodeStack.length) {
-          if (onText) {
-            onText(xml.substring(j, i), decodeEntities, getContext);
-
-            if (parseStop) {
-              return;
-            }
-          }
-        } else {
-          if (xml.substring(j, i).trim()) {
-            handleWarning(NON_WHITESPACE_OUTSIDE_ROOT_NODE);
-
-            if (parseStop) {
-              return;
-            }
-          }
-        }
-      }
-
-      w = xml.charCodeAt(i+1);
-
-      // parse comments + CDATA
-      if (w === 33) { // "!"
-        q = xml.charCodeAt(i+2);
-
-        // CDATA section
-        if (q === 91 && xml.substr(i + 3, 6) === 'CDATA[') { // 91 == "["
-          j = xml.indexOf(']]>', i);
-          if (j === -1) {
-            return handleError('unclosed cdata');
-          }
-
-          if (onCDATA) {
-            onCDATA(xml.substring(i + 9, j), getContext);
-            if (parseStop) {
-              return;
-            }
-          }
-
-          j += 3;
-          continue;
-        }
-
-        // comment
-        if (q === 45 && xml.charCodeAt(i + 3) === 45) { // 45 == "-"
-          j = xml.indexOf('-->', i);
-          if (j === -1) {
-            return handleError('unclosed comment');
-          }
-
-
-          if (onComment) {
-            onComment(xml.substring(i + 4, j), decodeEntities, getContext);
-            if (parseStop) {
-              return;
-            }
-          }
-
-          j += 3;
-          continue;
-        }
-      }
-
-      // parse question <? ... ?>
-      if (w === 63) { // "?"
-        j = xml.indexOf('?>', i);
-        if (j === -1) {
-          return handleError('unclosed question');
-        }
-
-        if (onQuestion) {
-          onQuestion(xml.substring(i, j + 2), getContext);
-          if (parseStop) {
-            return;
-          }
-        }
-
-        j += 2;
-        continue;
-      }
-
-      // find matching closing tag for attention or standard tags
-      // for that we must skip through attribute values
-      // (enclosed in single or double quotes)
-      for (x = i + 1; ; x++) {
-        v = xml.charCodeAt(x);
-        if (isNaN(v)) {
-          j = -1;
-          return handleError('unclosed tag');
-        }
-
-        // [10] AttValue ::= '"' ([^<&"] | Reference)* '"' | "'" ([^<&'] | Reference)* "'"
-        // skips the quoted string
-        // (double quotes) does not appear in a literal enclosed by (double quotes)
-        // (single quote) does not appear in a literal enclosed by (single quote)
-        if (v === 34) { //  '"'
-          q = xml.indexOf('"', x + 1);
-          x = q !== -1 ? q : x;
-        } else if (v === 39) { // "'"
-          q = xml.indexOf("'", x + 1);
-          x = q !== -1 ? q : x;
-        } else if (v === 62) { // '>'
-          j = x;
-          break;
-        }
-      }
-
-
-      // parse attention <! ...>
-      // previously comment and CDATA have already been parsed
-      if (w === 33) { // "!"
-
-        if (onAttention) {
-          onAttention(xml.substring(i, j + 1), decodeEntities, getContext);
-          if (parseStop) {
-            return;
-          }
-        }
-
-        j += 1;
-        continue;
-      }
-
-      // don't process attributes;
-      // there are none
-      cachedAttrs = {};
-
-      // if (xml.charCodeAt(i+1) === 47) { // </...
-      if (w === 47) { // </...
-        tagStart = false;
-        tagEnd = true;
-
-        if (!nodeStack.length) {
-          return handleError('missing open tag');
-        }
-
-        // verify open <-> close tag match
-        x = elementName = nodeStack.pop();
-        q = i + 2 + x.length;
-
-        if (xml.substring(i + 2, q) !== x) {
-          return handleError('closing tag mismatch');
-        }
-
-        // verify chars in close tag
-        for (; q < j; q++) {
-          w = xml.charCodeAt(q);
-
-          if (w === 32 || (w > 8 && w < 14)) { // \f\n\r\t\v space
-            continue;
-          }
-
-          return handleError('close tag');
-        }
-
-      } else {
-        if (xml.charCodeAt(j - 1) === 47) { // .../>
-          x = elementName = xml.substring(i + 1, j - 1);
-
-          tagStart = true;
-          tagEnd = true;
-
-        } else {
-          x = elementName = xml.substring(i + 1, j);
-
-          tagStart = true;
-          tagEnd = false;
-        }
-
-        if (!(w > 96 && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
-          return handleError('illegal first char nodeName');
-        }
-
-        for (q = 1, y = x.length; q < y; q++) {
-          w = x.charCodeAt(q);
-
-          if (w > 96 && w < 123 || w > 64 && w < 91 || w > 47 && w < 59 || w === 45 || w === 95 || w == 46) {
-            continue;
-          }
-
-          if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v space
-            elementName = x.substring(0, q);
-
-            // maybe there are attributes
-            cachedAttrs = null;
-            break;
-          }
-
-          return handleError('invalid nodeName');
-        }
-
-        if (!tagEnd) {
-          nodeStack.push(elementName);
-        }
-      }
-
-      if (isNamespace) {
-
-        _nsMatrix = nsMatrix;
-
-        if (tagStart) {
-
-          // remember old namespace
-          // unless we're self-closing
-          if (!tagEnd) {
-            nsMatrixStack.push(_nsMatrix);
-          }
-
-          if (cachedAttrs === null) {
-
-            // quick check, whether there may be namespace
-            // declarations on the node; if that is the case
-            // we need to eagerly parse the node attributes
-            if ((maybeNS = x.indexOf('xmlns', q) !== -1)) {
-              attrsStart = q;
-              attrsString = x;
-
-              getAttrs();
-
-              maybeNS = false;
-            }
-          }
-        }
-
-        _elementName = elementName;
-
-        w = elementName.indexOf(':');
-        if (w !== -1) {
-          xmlns = nsMatrix[elementName.substring(0, w)];
-
-          // prefix given; namespace must exist
-          if (!xmlns) {
-            return handleError('missing namespace on <' + _elementName + '>');
-          }
-
-          elementName = elementName.substr(w + 1);
-        } else {
-          xmlns = nsMatrix['xmlns'];
-
-          // if no default namespace is defined,
-          // we'll import the element as anonymous.
-          //
-          // it is up to users to correct that to the document defined
-          // targetNamespace, or whatever their undersanding of the
-          // XML spec mandates.
-        }
-
-        // adjust namespace prefixs as configured
-        if (xmlns) {
-          elementName = xmlns + ':' + elementName;
-        }
-
-      }
-
-      if (tagStart) {
-        attrsStart = q;
-        attrsString = x;
-
-        if (onOpenTag) {
-          if (proxy) {
-            onOpenTag(elementProxy, decodeEntities, tagEnd, getContext);
-          } else {
-            onOpenTag(elementName, getAttrs, decodeEntities, tagEnd, getContext);
-          }
-
-          if (parseStop) {
-            return;
-          }
-        }
-
-      }
-
-      if (tagEnd) {
-
-        if (onCloseTag) {
-          onCloseTag(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
-
-          if (parseStop) {
-            return;
-          }
-        }
-
-        // restore old namespace
-        if (isNamespace) {
-          if (!tagStart) {
-            nsMatrix = nsMatrixStack.pop();
-          } else {
-            nsMatrix = _nsMatrix;
-          }
-        }
-      }
-
-      j += 1;
-    }
-  } /** end parse */
-
-}
-
-
-
-
-/***/ }),
-
 /***/ "./node_modules/tiny-svg/dist/index.esm.js":
 /*!*************************************************!*\
   !*** ./node_modules/tiny-svg/dist/index.esm.js ***!
@@ -22309,7 +20794,7 @@ function createTransform(matrix) {
  */
 
 var TEXT_ENTITIES = /([&<>]{1})/g;
-var ATTR_ENTITIES = /([\n\r"]{1})/g;
+var ATTR_ENTITIES = /([&<>\n\r"]{1})/g;
 
 var ENTITY_REPLACEMENT = {
   '&': '&amp;',
@@ -22603,19 +21088,19 @@ module.exports = "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/sv
 
 /***/ }),
 
-/***/ "./node_modules/bpmn-moddle/dist/index.esm.js":
-/*!****************************************************!*\
-  !*** ./node_modules/bpmn-moddle/dist/index.esm.js ***!
-  \****************************************************/
+/***/ "./node_modules/bpmn-moddle/dist/index.js":
+/*!************************************************!*\
+  !*** ./node_modules/bpmn-moddle/dist/index.js ***!
+  \************************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ simple)
+/* harmony export */   "default": () => (/* binding */ SimpleBpmnModdle)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var moddle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moddle */ "./node_modules/moddle/dist/index.esm.js");
-/* harmony import */ var moddle_xml__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moddle-xml */ "./node_modules/moddle-xml/dist/index.esm.js");
+/* harmony import */ var moddle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moddle */ "./node_modules/moddle/dist/index.js");
+/* harmony import */ var moddle_xml__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moddle-xml */ "./node_modules/moddle-xml/dist/index.js");
 
 
 
@@ -26346,7 +24831,7 @@ var BpmnInColorPackage = {
 	associations: associations
 };
 
-var packages = {
+const packages = {
   bpmn: BpmnPackage,
   bpmndi: BpmnDiPackage,
   dc: DcPackage,
@@ -26355,13 +24840,14 @@ var packages = {
   color: BpmnInColorPackage
 };
 
-function simple(additionalPackages, options) {
-  var pks = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({}, packages, additionalPackages);
+function SimpleBpmnModdle(additionalPackages, options) {
+  const pks = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({}, packages, additionalPackages);
 
   return new BpmnModdle(pks, options);
 }
 
 
+//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -27010,7 +25496,7 @@ function ensureArray(obj) {
  * @return {Boolean}
  */
 function has(target, key) {
-  return nativeHasOwnProperty.call(target, key);
+  return !isNil(target) && nativeHasOwnProperty.call(target, key);
 }
 
 /**
@@ -27099,7 +25585,7 @@ function find(collection, matcher) {
  * @param {Collection<T>} collection
  * @param {Matcher<T>} matcher
  *
- * @return {number}
+ * @return {number | string | undefined}
  */
 function findIndex(collection, matcher) {
 
@@ -27801,10 +26287,10 @@ function merge(target, ...sources) {
 
 /***/ }),
 
-/***/ "./node_modules/moddle-xml/dist/index.esm.js":
-/*!***************************************************!*\
-  !*** ./node_modules/moddle-xml/dist/index.esm.js ***!
-  \***************************************************/
+/***/ "./node_modules/moddle-xml/dist/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/moddle-xml/dist/index.js ***!
+  \***********************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -27813,8 +26299,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Writer: () => (/* binding */ Writer)
 /* harmony export */ });
 /* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var saxen__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! saxen */ "./node_modules/saxen/dist/index.esm.js");
-/* harmony import */ var moddle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moddle */ "./node_modules/moddle/dist/index.esm.js");
+/* harmony import */ var saxen__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! saxen */ "./node_modules/saxen/dist/index.js");
+/* harmony import */ var moddle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moddle */ "./node_modules/moddle/dist/index.js");
 
 
 
@@ -27828,18 +26314,16 @@ var DEFAULT_NS_MAP = {
   'xml': 'http://www.w3.org/XML/1998/namespace'
 };
 
-var XSI_TYPE = 'xsi:type';
+var SERIALIZE_PROPERTY = 'property';
 
-function serializeFormat(element) {
+function getSerialization(element) {
   return element.xml && element.xml.serialize;
 }
 
-function serializeAsType(element) {
-  return serializeFormat(element) === XSI_TYPE;
-}
+function getSerializationType(element) {
+  const type = getSerialization(element);
 
-function serializeAsProperty(element) {
-  return serializeFormat(element) === 'property';
+  return type !== SERIALIZE_PROPERTY && (type || null);
 }
 
 function capitalize(str) {
@@ -27855,12 +26339,20 @@ function aliasToName(aliasNs, pkg) {
   return aliasNs.prefix + ':' + capitalize(aliasNs.localName);
 }
 
+/**
+ * Un-prefix a potentially prefixed type name.
+ *
+ * @param {NsName} nameNs
+ * @param {Object} [pkg]
+ *
+ * @return {string}
+ */
 function prefixedToName(nameNs, pkg) {
 
   var name = nameNs.name,
       localName = nameNs.localName;
 
-  var typePrefix = pkg.xml && pkg.xml.typePrefix;
+  var typePrefix = pkg && pkg.xml && pkg.xml.typePrefix;
 
   if (typePrefix && localName.indexOf(typePrefix) === 0) {
     return nameNs.prefix + ':' + localName.slice(typePrefix.length);
@@ -27869,12 +26361,19 @@ function prefixedToName(nameNs, pkg) {
   }
 }
 
-function normalizeXsiTypeName(name, model) {
+function normalizeTypeName(name, nsMap, model) {
 
-  var nameNs = (0,moddle__WEBPACK_IMPORTED_MODULE_1__.parseNameNS)(name);
-  var pkg = model.getPackage(nameNs.prefix);
+  // normalize against actual NS
+  const nameNs = (0,moddle__WEBPACK_IMPORTED_MODULE_1__.parseNameNS)(name, nsMap.xmlns);
 
-  return prefixedToName(nameNs, pkg);
+  const normalizedName = `${ nsMap[nameNs.prefix] || nameNs.prefix }:${ nameNs.localName }`;
+
+  const normalizedNameNs = (0,moddle__WEBPACK_IMPORTED_MODULE_1__.parseNameNS)(normalizedName);
+
+  // determine actual type name, based on package-defined prefix
+  var pkg = model.getPackage(normalizedNameNs.prefix);
+
+  return prefixedToName(normalizedNameNs, pkg);
 }
 
 function error(message) {
@@ -28163,8 +26662,9 @@ ElementHandler.prototype.createElement = function(node) {
     } else {
       if (prop) {
         value = (0,moddle__WEBPACK_IMPORTED_MODULE_1__.coerceType)(prop.type, value);
-      } else
-      if (name !== 'xmlns') {
+      } else if (name === 'xmlns') {
+        name = ':' + name;
+      } else {
         propNameNs = (0,moddle__WEBPACK_IMPORTED_MODULE_1__.parseNameNS)(name, descriptor.ns.prefix);
 
         // check whether attribute is defined in a well-known namespace
@@ -28197,26 +26697,27 @@ ElementHandler.prototype.getPropertyForNode = function(node) {
       descriptor = getModdleDescriptor(type);
 
   var propertyName = nameNs.name,
-      property = descriptor.propertiesByName[propertyName],
-      elementTypeName,
-      elementType;
+      property = descriptor.propertiesByName[propertyName];
 
   // search for properties by name first
 
   if (property && !property.isAttr) {
 
-    if (serializeAsType(property)) {
-      elementTypeName = node.attributes[XSI_TYPE];
+    const serializationType = getSerializationType(property);
 
-      // xsi type is optional, if it does not exists the
+    if (serializationType) {
+      const elementTypeName = node.attributes[serializationType];
+
+      // type is optional, if it does not exists the
       // default type is assumed
       if (elementTypeName) {
 
+        // convert the prefix used to the mapped form, but also
         // take possible type prefixes from XML
-        // into account, i.e.: xsi:type="t{ActualType}"
-        elementTypeName = normalizeXsiTypeName(elementTypeName, model);
+        // into account, i.e.: xsi:type="t{ActualType}",
+        const normalizedTypeName = normalizeTypeName(elementTypeName, node.ns, model);
 
-        elementType = model.getType(elementTypeName);
+        const elementType = model.getType(normalizedTypeName);
 
         return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({}, property, {
           effectiveType: getModdleDescriptor(elementType).name
@@ -28231,8 +26732,8 @@ ElementHandler.prototype.getPropertyForNode = function(node) {
   var pkg = model.getPackage(nameNs.prefix);
 
   if (pkg) {
-    elementTypeName = aliasToName(nameNs, pkg);
-    elementType = model.getType(elementTypeName);
+    const elementTypeName = aliasToName(nameNs, pkg);
+    const elementType = model.getType(elementTypeName);
 
     // search for collection members later
     property = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.find)(descriptor.properties, function(p) {
@@ -28654,9 +27155,12 @@ Reader.prototype.fromXML = function(xml, options, done) {
     uriMap[p.uri] = p.prefix;
 
     return uriMap;
-  }, {
-    'http://www.w3.org/XML/1998/namespace': 'xml' // add default xml ns
-  });
+  }, Object.entries(DEFAULT_NS_MAP).reduce(function(map, [ prefix, url ]) {
+    map[url] = prefix;
+
+    return map;
+  }, model.config && model.config.nsMap || {}));
+
   parser
     .ns(uriMap)
     .on('openTag', function(obj, decodeStr, selfClosing, getContext) {
@@ -28757,75 +27261,82 @@ var ESCAPE_CHARS = /<|>|&/g;
 
 function Namespaces(parent) {
 
-  var prefixMap = {};
-  var uriMap = {};
-  var used = {};
+  this.prefixMap = {};
+  this.uriMap = {};
+  this.used = {};
 
-  var wellknown = [];
-  var custom = [];
+  this.wellknown = [];
+  this.custom = [];
+  this.parent = parent;
 
-  // API
+  this.defaultPrefixMap = parent && parent.defaultPrefixMap || {};
+}
 
-  this.byUri = function(uri) {
-    return uriMap[uri] || (
-      parent && parent.byUri(uri)
-    );
-  };
+Namespaces.prototype.mapDefaultPrefixes = function(defaultPrefixMap) {
+  this.defaultPrefixMap = defaultPrefixMap;
+};
 
-  this.add = function(ns, isWellknown) {
+Namespaces.prototype.defaultUriByPrefix = function(prefix) {
+  return this.defaultPrefixMap[prefix];
+};
 
-    uriMap[ns.uri] = ns;
+Namespaces.prototype.byUri = function(uri) {
+  return this.uriMap[uri] || (
+    this.parent && this.parent.byUri(uri)
+  );
+};
 
-    if (isWellknown) {
-      wellknown.push(ns);
-    } else {
-      custom.push(ns);
-    }
+Namespaces.prototype.add = function(ns, isWellknown) {
 
-    this.mapPrefix(ns.prefix, ns.uri);
-  };
+  this.uriMap[ns.uri] = ns;
 
-  this.uriByPrefix = function(prefix) {
-    return prefixMap[prefix || 'xmlns'];
-  };
+  if (isWellknown) {
+    this.wellknown.push(ns);
+  } else {
+    this.custom.push(ns);
+  }
 
-  this.mapPrefix = function(prefix, uri) {
-    prefixMap[prefix || 'xmlns'] = uri;
-  };
+  this.mapPrefix(ns.prefix, ns.uri);
+};
 
-  this.getNSKey = function(ns) {
-    return (ns.prefix !== undefined) ? (ns.uri + '|' + ns.prefix) : ns.uri;
-  };
+Namespaces.prototype.uriByPrefix = function(prefix) {
+  return this.prefixMap[prefix || 'xmlns'] || (
+    this.parent && this.parent.uriByPrefix(prefix)
+  );
+};
 
-  this.logUsed = function(ns) {
+Namespaces.prototype.mapPrefix = function(prefix, uri) {
+  this.prefixMap[prefix || 'xmlns'] = uri;
+};
 
-    var uri = ns.uri;
+Namespaces.prototype.getNSKey = function(ns) {
+  return (ns.prefix !== undefined) ? (ns.uri + '|' + ns.prefix) : ns.uri;
+};
+
+Namespaces.prototype.logUsed = function(ns) {
+
+  var uri = ns.uri;
+  var nsKey = this.getNSKey(ns);
+
+  this.used[nsKey] = this.byUri(uri);
+
+  // Inform parent recursively about the usage of this NS
+  if (this.parent) {
+    this.parent.logUsed(ns);
+  }
+};
+
+Namespaces.prototype.getUsed = function(ns) {
+
+  var allNs = [].concat(this.wellknown, this.custom);
+
+  return allNs.filter(ns => {
     var nsKey = this.getNSKey(ns);
 
-    used[nsKey] = this.byUri(uri);
+    return this.used[nsKey];
+  });
+};
 
-    // Inform parent recursively about the usage of this NS
-    if (parent) {
-      parent.logUsed(ns);
-    }
-  };
-
-  this.getUsed = function(ns) {
-
-    function isUsed(ns) {
-      var nsKey = self.getNSKey(ns);
-
-      return used[nsKey];
-    }
-
-    var self = this;
-
-    var allNs = [].concat(wellknown, custom);
-
-    return allNs.filter(isUsed);
-  };
-
-}
 
 function lower(string) {
   return string.charAt(0).toLowerCase() + string.slice(1);
@@ -29040,7 +27551,7 @@ ElementSerializer.prototype.build = function(element) {
   var isGeneric = elementDescriptor.isGeneric;
 
   if (isGeneric) {
-    otherAttrs = this.parseGeneric(element);
+    otherAttrs = this.parseGenericNsAttributes(element);
   } else {
     otherAttrs = this.parseNsAttributes(element);
   }
@@ -29054,7 +27565,9 @@ ElementSerializer.prototype.build = function(element) {
   // compute tag name
   this.tagName = this.addTagName(this.ns);
 
-  if (!isGeneric) {
+  if (isGeneric) {
+    this.parseGenericContainments(element);
+  } else {
     properties = getSerializableProperties(element);
 
     this.parseAttributes(filterAttributes(properties));
@@ -29117,35 +27630,29 @@ ElementSerializer.prototype.nsAttributeName = function(element) {
   }
 };
 
-ElementSerializer.prototype.parseGeneric = function(element) {
+ElementSerializer.prototype.parseGenericNsAttributes = function(element) {
 
-  var self = this,
-      body = this.body;
+  return Object.entries(element).filter(
+    ([ key, value ]) => !key.startsWith('$') && this.parseNsAttribute(element, key, value)
+  ).map(
+    ([ key, value ]) => ({ name: key, value: value })
+  );
+};
 
-  var attributes = [];
+ElementSerializer.prototype.parseGenericContainments = function(element) {
+  var body = element.$body;
 
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(element, function(val, key) {
+  if (body) {
+    this.body.push(new BodySerializer().build({ type: 'String' }, body));
+  }
 
-    var nonNsAttr;
+  var children = element.$children;
 
-    if (key === '$body') {
-      body.push(new BodySerializer().build({ type: 'String' }, val));
-    } else
-    if (key === '$children') {
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(val, function(child) {
-        body.push(new ElementSerializer(self).build(child));
-      });
-    } else
-    if (key.indexOf('$') !== 0) {
-      nonNsAttr = self.parseNsAttribute(element, key, val);
-
-      if (nonNsAttr) {
-        attributes.push({ name: key, value: val });
-      }
-    }
-  });
-
-  return attributes;
+  if (children) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(children, child => {
+      this.body.push(new ElementSerializer(this).build(child));
+    });
+  }
 };
 
 ElementSerializer.prototype.parseNsAttribute = function(element, name, value) {
@@ -29192,7 +27699,7 @@ ElementSerializer.prototype.parseNsAttribute = function(element, name, value) {
  * @param  {Object} element
  * @return {Array<Object>}
  */
-ElementSerializer.prototype.parseNsAttributes = function(element, attrs) {
+ElementSerializer.prototype.parseNsAttributes = function(element) {
   var self = this;
 
   var genericAttrs = element.$attrs;
@@ -29220,21 +27727,16 @@ ElementSerializer.prototype.parseGenericAttributes = function(element, attribute
 
   (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attributes, function(attr) {
 
-    // do not serialize xsi:type attribute
-    // it is set manually based on the actual implementation type
-    if (attr.name === XSI_TYPE) {
-      return;
-    }
-
     try {
       self.addAttribute(self.nsAttributeName(attr.name), attr.value);
     } catch (e) {
-      /* global console */
 
-      console.warn(
-        'missing namespace information for ',
-        attr.name, '=', attr.value, 'on', element,
-        e);
+      // eslint-disable-next-line no-undef
+      typeof console !== 'undefined' && console.warn(
+        `missing namespace information for <${
+          attr.name
+        }=${ attr.value }> on`, element, e
+      );
     }
   });
 };
@@ -29256,13 +27758,11 @@ ElementSerializer.prototype.parseContainments = function(properties) {
 
     if (p.isBody) {
       body.push(new BodySerializer().build(p, value[0]));
-    } else
-    if ((0,moddle__WEBPACK_IMPORTED_MODULE_1__.isSimpleType)(p.type)) {
+    } else if ((0,moddle__WEBPACK_IMPORTED_MODULE_1__.isSimpleType)(p.type)) {
       (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(value, function(v) {
         body.push(new ValueSerializer(self.addTagName(self.nsPropertyTagName(p))).build(p, v));
       });
-    } else
-    if (isReference) {
+    } else if (isReference) {
       (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(value, function(v) {
         body.push(new ReferenceSerializer(self.addTagName(self.nsPropertyTagName(p))).build(v));
       });
@@ -29270,17 +27770,17 @@ ElementSerializer.prototype.parseContainments = function(properties) {
 
       // allow serialization via type
       // rather than element name
-      var asType = serializeAsType(p),
-          asProperty = serializeAsProperty(p);
+      var serialization = getSerialization(p);
 
       (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(value, function(v) {
         var serializer;
 
-        if (asType) {
-          serializer = new TypeSerializer(self, p);
-        } else
-        if (asProperty) {
-          serializer = new ElementSerializer(self, p);
+        if (serialization) {
+          if (serialization === SERIALIZE_PROPERTY) {
+            serializer = new ElementSerializer(self, p);
+          } else {
+            serializer = new TypeSerializer(self, p, serialization);
+          }
         } else {
           serializer = new ElementSerializer(self);
         }
@@ -29328,9 +27828,7 @@ ElementSerializer.prototype.logNamespace = function(ns, wellknown, local) {
 };
 
 ElementSerializer.prototype.logNamespaceUsed = function(ns, local) {
-  var element = this.element,
-      model = element.$model,
-      namespaces = this.getNamespaces(local);
+  var namespaces = this.getNamespaces(local);
 
   // ns may be
   //
@@ -29348,7 +27846,7 @@ ElementSerializer.prototype.logNamespaceUsed = function(ns, local) {
     return { localName: ns.localName };
   }
 
-  wellknownUri = DEFAULT_NS_MAP[prefix] || model && (model.getPackage(prefix) || {}).uri;
+  wellknownUri = namespaces.defaultUriByPrefix(prefix);
 
   uri = uri || wellknownUri || namespaces.uriByPrefix(prefix);
 
@@ -29357,6 +27855,11 @@ ElementSerializer.prototype.logNamespaceUsed = function(ns, local) {
   }
 
   ns = namespaces.byUri(uri);
+
+  // register new default prefix <xmlns> in local scope
+  if (!ns && !prefix) {
+    ns = this.logNamespace({ uri }, wellknownUri === uri, true);
+  }
 
   if (!ns) {
     newPrefix = prefix;
@@ -29389,8 +27892,7 @@ ElementSerializer.prototype.parseAttributes = function(properties) {
 
       if (!p.isMany) {
         value = value.id;
-      }
-      else {
+      } else {
         var values = [];
         (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(value, function(v) {
           values.push(v.id);
@@ -29494,20 +27996,25 @@ ElementSerializer.prototype.serializeTo = function(writer) {
 /**
  * A serializer for types that handles serialization of data types
  */
-function TypeSerializer(parent, propertyDescriptor) {
+function TypeSerializer(parent, propertyDescriptor, serialization) {
   ElementSerializer.call(this, parent, propertyDescriptor);
+
+  this.serialization = serialization;
 }
 
 inherits(TypeSerializer, ElementSerializer);
 
 TypeSerializer.prototype.parseNsAttributes = function(element) {
 
-  // extracted attributes
-  var attributes = ElementSerializer.prototype.parseNsAttributes.call(this, element);
+  // extracted attributes with serialization attribute
+  // <type=typeName> stripped; it may be later
+  var attributes = ElementSerializer.prototype.parseNsAttributes.call(this, element).filter(
+    attr => attr.name !== this.serialization
+  );
 
   var descriptor = element.$descriptor;
 
-  // only serialize xsi:type if necessary
+  // only serialize <type=typeName> if necessary
   if (descriptor.name === this.propertyDescriptor.type) {
     return attributes;
   }
@@ -29522,7 +28029,7 @@ TypeSerializer.prototype.parseNsAttributes = function(element) {
       typePrefix = (pkg.xml && pkg.xml.typePrefix) || '';
 
   this.addAttribute(
-    this.nsAttributeName(XSI_TYPE),
+    this.nsAttributeName(this.serialization),
     (typeNs.prefix ? typeNs.prefix + ':' : '') + typePrefix + descriptor.ns.localName
   );
 
@@ -29595,7 +28102,13 @@ function Writer(options) {
       formatingWriter.append(XML_PREAMBLE);
     }
 
-    new ElementSerializer().build(tree).serializeTo(formatingWriter);
+    var serializer = new ElementSerializer();
+
+    var model = tree.$model;
+
+    serializer.getNamespaces().mapDefaultPrefixes(getDefaultPrefixMappings(model));
+
+    serializer.build(tree).serializeTo(formatingWriter);
 
     if (!writer) {
       return internalWriter.value;
@@ -29608,15 +28121,48 @@ function Writer(options) {
 }
 
 
-//# sourceMappingURL=index.esm.js.map
+// helpers ///////////
+
+/**
+ * @param {Moddle} model
+ *
+ * @return { Record<string, string> } map from prefix to URI
+ */
+function getDefaultPrefixMappings(model) {
+
+  const nsMap = model.config && model.config.nsMap || {};
+
+  const prefixMap = {};
+
+  // { prefix -> uri }
+  for (const prefix in DEFAULT_NS_MAP) {
+    prefixMap[prefix] = DEFAULT_NS_MAP[prefix];
+  }
+
+  // { uri -> prefix }
+  for (const uri in nsMap) {
+    const prefix = nsMap[uri];
+
+    prefixMap[prefix] = uri;
+  }
+
+  for (const pkg of model.getPackages()) {
+    prefixMap[pkg.prefix] = pkg.uri;
+  }
+
+  return prefixMap;
+}
+
+
+//# sourceMappingURL=index.js.map
 
 
 /***/ }),
 
-/***/ "./node_modules/moddle/dist/index.esm.js":
-/*!***********************************************!*\
-  !*** ./node_modules/moddle/dist/index.esm.js ***!
-  \***********************************************/
+/***/ "./node_modules/moddle/dist/index.js":
+/*!*******************************************!*\
+  !*** ./node_modules/moddle/dist/index.js ***!
+  \*******************************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -29764,13 +28310,15 @@ function parseName(name, defaultPrefix) {
   if (parts.length === 1) {
     localName = name;
     prefix = defaultPrefix;
-  } else
+  }
 
   // prefix + local name
-  if (parts.length === 2) {
+  else if (parts.length === 2) {
     localName = parts[1];
     prefix = parts[0];
-  } else {
+  }
+
+  else {
     throw new Error('expected <prefix:localName> or <localName>, got ' + name);
   }
 
@@ -30625,7 +29173,7 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 };
 
 
-//# sourceMappingURL=index.esm.js.map
+//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -31855,6 +30403,1063 @@ function pathToCurve(path) {
   return curvedPath;
 }
 
+/***/ }),
+
+/***/ "./node_modules/saxen/dist/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/saxen/dist/index.js ***!
+  \******************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Parser: () => (/* binding */ Parser),
+/* harmony export */   decode: () => (/* binding */ decodeEntities)
+/* harmony export */ });
+var fromCharCode = String.fromCharCode;
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+var ENTITY_PATTERN = /&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig;
+
+var ENTITY_MAPPING = {
+  'amp': '&',
+  'apos': '\'',
+  'gt': '>',
+  'lt': '<',
+  'quot': '"'
+};
+
+// map UPPERCASE variants of supported special chars
+Object.keys(ENTITY_MAPPING).forEach(function(k) {
+  ENTITY_MAPPING[k.toUpperCase()] = ENTITY_MAPPING[k];
+});
+
+
+function replaceEntities(_, d, x, z) {
+
+  // reserved names, i.e. &nbsp;
+  if (z) {
+    if (hasOwnProperty.call(ENTITY_MAPPING, z)) {
+      return ENTITY_MAPPING[z];
+    } else {
+
+      // fall back to original value
+      return '&' + z + ';';
+    }
+  }
+
+  // decimal encoded char
+  if (d) {
+    return fromCharCode(d);
+  }
+
+  // hex encoded char
+  return fromCharCode(parseInt(x, 16));
+}
+
+
+/**
+ * A basic entity decoder that can decode a minimal
+ * sub-set of reserved names (&amp;) as well as
+ * hex (&#xaaf;) and decimal (&#1231;) encoded characters.
+ *
+ * @param {string} s
+ *
+ * @return {string} decoded string
+ */
+function decodeEntities(s) {
+  if (s.length > 3 && s.indexOf('&') !== -1) {
+    return s.replace(ENTITY_PATTERN, replaceEntities);
+  }
+
+  return s;
+}
+
+var NON_WHITESPACE_OUTSIDE_ROOT_NODE = 'non-whitespace outside of root node';
+
+function error(msg) {
+  return new Error(msg);
+}
+
+function missingNamespaceForPrefix(prefix) {
+  return 'missing namespace for prefix <' + prefix + '>';
+}
+
+function getter(getFn) {
+  return {
+    'get': getFn,
+    'enumerable': true
+  };
+}
+
+function cloneNsMatrix(nsMatrix) {
+  var clone = {}, key;
+  for (key in nsMatrix) {
+    clone[key] = nsMatrix[key];
+  }
+  return clone;
+}
+
+function uriPrefix(prefix) {
+  return prefix + '$uri';
+}
+
+function buildNsMatrix(nsUriToPrefix) {
+  var nsMatrix = {},
+      uri,
+      prefix;
+
+  for (uri in nsUriToPrefix) {
+    prefix = nsUriToPrefix[uri];
+    nsMatrix[prefix] = prefix;
+    nsMatrix[uriPrefix(prefix)] = uri;
+  }
+
+  return nsMatrix;
+}
+
+function noopGetContext() {
+  return { line: 0, column: 0 };
+}
+
+function throwFunc(err) {
+  throw err;
+}
+
+/**
+ * Creates a new parser with the given options.
+ *
+ * @constructor
+ *
+ * @param  {!Object<string, ?>=} options
+ */
+function Parser(options) {
+
+  if (!this) {
+    return new Parser(options);
+  }
+
+  var proxy = options && options['proxy'];
+
+  var onText,
+      onOpenTag,
+      onCloseTag,
+      onCDATA,
+      onError = throwFunc,
+      onWarning,
+      onComment,
+      onQuestion,
+      onAttention;
+
+  var getContext = noopGetContext;
+
+  /**
+   * Do we need to parse the current elements attributes for namespaces?
+   *
+   * @type {boolean}
+   */
+  var maybeNS = false;
+
+  /**
+   * Do we process namespaces at all?
+   *
+   * @type {boolean}
+   */
+  var isNamespace = false;
+
+  /**
+   * The caught error returned on parse end
+   *
+   * @type {Error}
+   */
+  var returnError = null;
+
+  /**
+   * Should we stop parsing?
+   *
+   * @type {boolean}
+   */
+  var parseStop = false;
+
+  /**
+   * A map of { uri: prefix } used by the parser.
+   *
+   * This map will ensure we can normalize prefixes during processing;
+   * for each uri, only one prefix will be exposed to the handlers.
+   *
+   * @type {!Object<string, string>}}
+   */
+  var nsUriToPrefix;
+
+  /**
+   * Handle parse error.
+   *
+   * @param  {string|Error} err
+   */
+  function handleError(err) {
+    if (!(err instanceof Error)) {
+      err = error(err);
+    }
+
+    returnError = err;
+
+    onError(err, getContext);
+  }
+
+  /**
+   * Handle parse error.
+   *
+   * @param  {string|Error} err
+   */
+  function handleWarning(err) {
+
+    if (!onWarning) {
+      return;
+    }
+
+    if (!(err instanceof Error)) {
+      err = error(err);
+    }
+
+    onWarning(err, getContext);
+  }
+
+  /**
+   * Register parse listener.
+   *
+   * @param  {string}   name
+   * @param  {Function} cb
+   *
+   * @return {Parser}
+   */
+  this['on'] = function(name, cb) {
+
+    if (typeof cb !== 'function') {
+      throw error('required args <name, cb>');
+    }
+
+    switch (name) {
+    case 'openTag': onOpenTag = cb; break;
+    case 'text': onText = cb; break;
+    case 'closeTag': onCloseTag = cb; break;
+    case 'error': onError = cb; break;
+    case 'warn': onWarning = cb; break;
+    case 'cdata': onCDATA = cb; break;
+    case 'attention': onAttention = cb; break; // <!XXXXX zzzz="eeee">
+    case 'question': onQuestion = cb; break; // <? ....  ?>
+    case 'comment': onComment = cb; break;
+    default:
+      throw error('unsupported event: ' + name);
+    }
+
+    return this;
+  };
+
+  /**
+   * Set the namespace to prefix mapping.
+   *
+   * @example
+   *
+   * parser.ns({
+   *   'http://foo': 'foo',
+   *   'http://bar': 'bar'
+   * });
+   *
+   * @param  {!Object<string, string>} nsMap
+   *
+   * @return {Parser}
+   */
+  this['ns'] = function(nsMap) {
+
+    if (typeof nsMap === 'undefined') {
+      nsMap = {};
+    }
+
+    if (typeof nsMap !== 'object') {
+      throw error('required args <nsMap={}>');
+    }
+
+    var _nsUriToPrefix = {}, k;
+
+    for (k in nsMap) {
+      _nsUriToPrefix[k] = nsMap[k];
+    }
+
+    isNamespace = true;
+    nsUriToPrefix = _nsUriToPrefix;
+
+    return this;
+  };
+
+  /**
+   * Parse xml string.
+   *
+   * @param  {string} xml
+   *
+   * @return {Error} returnError, if not thrown
+   */
+  this['parse'] = function(xml) {
+    if (typeof xml !== 'string') {
+      throw error('required args <xml=string>');
+    }
+
+    returnError = null;
+
+    parse(xml);
+
+    getContext = noopGetContext;
+    parseStop = false;
+
+    return returnError;
+  };
+
+  /**
+   * Stop parsing.
+   */
+  this['stop'] = function() {
+    parseStop = true;
+  };
+
+  /**
+   * Parse string, invoking configured listeners on element.
+   *
+   * @param  {string} xml
+   */
+  function parse(xml) {
+    var nsMatrixStack = isNamespace ? [] : null,
+        nsMatrix = isNamespace ? buildNsMatrix(nsUriToPrefix) : null,
+        _nsMatrix,
+        nodeStack = [],
+        anonymousNsCount = 0,
+        tagStart = false,
+        tagEnd = false,
+        i = 0, j = 0,
+        x, y, q, w, v,
+        xmlns,
+        elementName,
+        _elementName,
+        elementProxy
+        ;
+
+    var attrsString = '',
+        attrsStart = 0,
+        cachedAttrs // false = parsed with errors, null = needs parsing
+        ;
+
+    /**
+     * Parse attributes on demand and returns the parsed attributes.
+     *
+     * Return semantics: (1) `false` on attribute parse error,
+     * (2) object hash on extracted attrs.
+     *
+     * @return {boolean|Object}
+     */
+    function getAttrs() {
+      if (cachedAttrs !== null) {
+        return cachedAttrs;
+      }
+
+      var nsUri,
+          nsUriPrefix,
+          nsName,
+          defaultAlias = isNamespace && nsMatrix['xmlns'],
+          attrList = isNamespace && maybeNS ? [] : null,
+          i = attrsStart,
+          s = attrsString,
+          l = s.length,
+          hasNewMatrix,
+          newalias,
+          value,
+          alias,
+          name,
+          attrs = {},
+          seenAttrs = {},
+          skipAttr,
+          w,
+          j;
+
+      parseAttr:
+      for (; i < l; i++) {
+        skipAttr = false;
+        w = s.charCodeAt(i);
+
+        if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE={ \f\n\r\t\v}
+          continue;
+        }
+
+        // wait for non whitespace character
+        if (w < 65 || w > 122 || (w > 90 && w < 97)) {
+          if (w !== 95 && w !== 58) { // char 95"_" 58":"
+            handleWarning('illegal first char attribute name');
+            skipAttr = true;
+          }
+        }
+
+        // parse attribute name
+        for (j = i + 1; j < l; j++) {
+          w = s.charCodeAt(j);
+
+          if (
+            w > 96 && w < 123 ||
+            w > 64 && w < 91 ||
+            w > 47 && w < 59 ||
+            w === 46 || // '.'
+            w === 45 || // '-'
+            w === 95 // '_'
+          ) {
+            continue;
+          }
+
+          // unexpected whitespace
+          if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
+            handleWarning('missing attribute value');
+            i = j;
+
+            continue parseAttr;
+          }
+
+          // expected "="
+          if (w === 61) { // "=" == 61
+            break;
+          }
+
+          handleWarning('illegal attribute name char');
+          skipAttr = true;
+        }
+
+        name = s.substring(i, j);
+
+        if (name === 'xmlns:xmlns') {
+          handleWarning('illegal declaration of xmlns');
+          skipAttr = true;
+        }
+
+        w = s.charCodeAt(j + 1);
+
+        if (w === 34) { // '"'
+          j = s.indexOf('"', i = j + 2);
+
+          if (j === -1) {
+            j = s.indexOf('\'', i);
+
+            if (j !== -1) {
+              handleWarning('attribute value quote missmatch');
+              skipAttr = true;
+            }
+          }
+
+        } else if (w === 39) { // "'"
+          j = s.indexOf('\'', i = j + 2);
+
+          if (j === -1) {
+            j = s.indexOf('"', i);
+
+            if (j !== -1) {
+              handleWarning('attribute value quote missmatch');
+              skipAttr = true;
+            }
+          }
+
+        } else {
+          handleWarning('missing attribute value quotes');
+          skipAttr = true;
+
+          // skip to next space
+          for (j = j + 1; j < l; j++) {
+            w = s.charCodeAt(j + 1);
+
+            if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
+              break;
+            }
+          }
+
+        }
+
+        if (j === -1) {
+          handleWarning('missing closing quotes');
+
+          j = l;
+          skipAttr = true;
+        }
+
+        if (!skipAttr) {
+          value = s.substring(i, j);
+        }
+
+        i = j;
+
+        // ensure SPACE follows attribute
+        // skip illegal content otherwise
+        // example a="b"c
+        for (; j + 1 < l; j++) {
+          w = s.charCodeAt(j + 1);
+
+          if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
+            break;
+          }
+
+          // FIRST ILLEGAL CHAR
+          if (i === j) {
+            handleWarning('illegal character after attribute end');
+            skipAttr = true;
+          }
+        }
+
+        // advance cursor to next attribute
+        i = j + 1;
+
+        if (skipAttr) {
+          continue parseAttr;
+        }
+
+        // check attribute re-declaration
+        if (name in seenAttrs) {
+          handleWarning('attribute <' + name + '> already defined');
+          continue;
+        }
+
+        seenAttrs[name] = true;
+
+        if (!isNamespace) {
+          attrs[name] = value;
+          continue;
+        }
+
+        // try to extract namespace information
+        if (maybeNS) {
+          newalias = (
+            name === 'xmlns'
+              ? 'xmlns'
+              : (name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:')
+                ? name.substr(6)
+                : null
+          );
+
+          // handle xmlns(:alias) assignment
+          if (newalias !== null) {
+            nsUri = decodeEntities(value);
+            nsUriPrefix = uriPrefix(newalias);
+
+            alias = nsUriToPrefix[nsUri];
+
+            if (!alias) {
+
+              // no prefix defined or prefix collision
+              if (
+                (newalias === 'xmlns') ||
+                (nsUriPrefix in nsMatrix && nsMatrix[nsUriPrefix] !== nsUri)
+              ) {
+
+                // alocate free ns prefix
+                do {
+                  alias = 'ns' + (anonymousNsCount++);
+                } while (typeof nsMatrix[alias] !== 'undefined');
+              } else {
+                alias = newalias;
+              }
+
+              nsUriToPrefix[nsUri] = alias;
+            }
+
+            if (nsMatrix[newalias] !== alias) {
+              if (!hasNewMatrix) {
+                nsMatrix = cloneNsMatrix(nsMatrix);
+                hasNewMatrix = true;
+              }
+
+              nsMatrix[newalias] = alias;
+              if (newalias === 'xmlns') {
+                nsMatrix[uriPrefix(alias)] = nsUri;
+                defaultAlias = alias;
+              }
+
+              nsMatrix[nsUriPrefix] = nsUri;
+            }
+
+            // expose xmlns(:asd)="..." in attributes
+            attrs[name] = value;
+            continue;
+          }
+
+          // collect attributes until all namespace
+          // declarations are processed
+          attrList.push(name, value);
+          continue;
+
+        } /** end if (maybeNs) */
+
+        // handle attributes on element without
+        // namespace declarations
+        w = name.indexOf(':');
+        if (w === -1) {
+          attrs[name] = value;
+          continue;
+        }
+
+        // normalize ns attribute name
+        if (!(nsName = nsMatrix[name.substring(0, w)])) {
+          handleWarning(missingNamespaceForPrefix(name.substring(0, w)));
+          continue;
+        }
+
+        name = defaultAlias === nsName
+          ? name.substr(w + 1)
+          : nsName + name.substr(w);
+
+        // end: normalize ns attribute name
+
+        attrs[name] = value;
+      }
+
+
+      // handle deferred, possibly namespaced attributes
+      if (maybeNS) {
+
+        // normalize captured attributes
+        for (i = 0, l = attrList.length; i < l; i++) {
+
+          name = attrList[i++];
+          value = attrList[i];
+
+          w = name.indexOf(':');
+
+          if (w !== -1) {
+
+            // normalize ns attribute name
+            if (!(nsName = nsMatrix[name.substring(0, w)])) {
+              handleWarning(missingNamespaceForPrefix(name.substring(0, w)));
+              continue;
+            }
+
+            name = defaultAlias === nsName
+              ? name.substr(w + 1)
+              : nsName + name.substr(w);
+
+            // end: normalize ns attribute name
+          }
+
+          attrs[name] = value;
+        }
+
+        // end: normalize captured attributes
+      }
+
+      return cachedAttrs = attrs;
+    }
+
+    /**
+     * Extract the parse context { line, column, part }
+     * from the current parser position.
+     *
+     * @return {Object} parse context
+     */
+    function getParseContext() {
+      var splitsRe = /(\r\n|\r|\n)/g;
+
+      var line = 0;
+      var column = 0;
+      var startOfLine = 0;
+      var endOfLine = j;
+      var match;
+      var data;
+
+      while (i >= startOfLine) {
+
+        match = splitsRe.exec(xml);
+
+        if (!match) {
+          break;
+        }
+
+        // end of line = (break idx + break chars)
+        endOfLine = match[0].length + match.index;
+
+        if (endOfLine > i) {
+          break;
+        }
+
+        // advance to next line
+        line += 1;
+
+        startOfLine = endOfLine;
+      }
+
+      // EOF errors
+      if (i == -1) {
+        column = endOfLine;
+        data = xml.substring(j);
+      } else
+
+      // start errors
+      if (j === 0) {
+        data = xml.substring(j, i);
+      }
+
+      // other errors
+      else {
+        column = i - startOfLine;
+        data = (j == -1 ? xml.substring(i) : xml.substring(i, j + 1));
+      }
+
+      return {
+        'data': data,
+        'line': line,
+        'column': column
+      };
+    }
+
+    getContext = getParseContext;
+
+
+    if (proxy) {
+      elementProxy = Object.create({}, {
+        'name': getter(function() {
+          return elementName;
+        }),
+        'originalName': getter(function() {
+          return _elementName;
+        }),
+        'attrs': getter(getAttrs),
+        'ns': getter(function() {
+          return nsMatrix;
+        })
+      });
+    }
+
+    // actual parse logic
+    while (j !== -1) {
+
+      if (xml.charCodeAt(j) === 60) { // "<"
+        i = j;
+      } else {
+        i = xml.indexOf('<', j);
+      }
+
+      // parse end
+      if (i === -1) {
+        if (nodeStack.length) {
+          return handleError('unexpected end of file');
+        }
+
+        if (j === 0) {
+          return handleError('missing start tag');
+        }
+
+        if (j < xml.length) {
+          if (xml.substring(j).trim()) {
+            handleWarning(NON_WHITESPACE_OUTSIDE_ROOT_NODE);
+          }
+        }
+
+        return;
+      }
+
+      // parse text
+      if (j !== i) {
+
+        if (nodeStack.length) {
+          if (onText) {
+            onText(xml.substring(j, i), decodeEntities, getContext);
+
+            if (parseStop) {
+              return;
+            }
+          }
+        } else {
+          if (xml.substring(j, i).trim()) {
+            handleWarning(NON_WHITESPACE_OUTSIDE_ROOT_NODE);
+
+            if (parseStop) {
+              return;
+            }
+          }
+        }
+      }
+
+      w = xml.charCodeAt(i + 1);
+
+      // parse comments + CDATA
+      if (w === 33) { // "!"
+        q = xml.charCodeAt(i + 2);
+
+        // CDATA section
+        if (q === 91 && xml.substr(i + 3, 6) === 'CDATA[') { // 91 == "["
+          j = xml.indexOf(']]>', i);
+          if (j === -1) {
+            return handleError('unclosed cdata');
+          }
+
+          if (onCDATA) {
+            onCDATA(xml.substring(i + 9, j), getContext);
+            if (parseStop) {
+              return;
+            }
+          }
+
+          j += 3;
+          continue;
+        }
+
+        // comment
+        if (q === 45 && xml.charCodeAt(i + 3) === 45) { // 45 == "-"
+          j = xml.indexOf('-->', i);
+          if (j === -1) {
+            return handleError('unclosed comment');
+          }
+
+
+          if (onComment) {
+            onComment(xml.substring(i + 4, j), decodeEntities, getContext);
+            if (parseStop) {
+              return;
+            }
+          }
+
+          j += 3;
+          continue;
+        }
+      }
+
+      // parse question <? ... ?>
+      if (w === 63) { // "?"
+        j = xml.indexOf('?>', i);
+        if (j === -1) {
+          return handleError('unclosed question');
+        }
+
+        if (onQuestion) {
+          onQuestion(xml.substring(i, j + 2), getContext);
+          if (parseStop) {
+            return;
+          }
+        }
+
+        j += 2;
+        continue;
+      }
+
+      // find matching closing tag for attention or standard tags
+      // for that we must skip through attribute values
+      // (enclosed in single or double quotes)
+      for (x = i + 1; ; x++) {
+        v = xml.charCodeAt(x);
+        if (isNaN(v)) {
+          j = -1;
+          return handleError('unclosed tag');
+        }
+
+        // [10] AttValue ::= '"' ([^<&"] | Reference)* '"' | "'" ([^<&'] | Reference)* "'"
+        // skips the quoted string
+        // (double quotes) does not appear in a literal enclosed by (double quotes)
+        // (single quote) does not appear in a literal enclosed by (single quote)
+        if (v === 34) { //  '"'
+          q = xml.indexOf('"', x + 1);
+          x = q !== -1 ? q : x;
+        } else if (v === 39) { // "'"
+          q = xml.indexOf("'", x + 1);
+          x = q !== -1 ? q : x;
+        } else if (v === 62) { // '>'
+          j = x;
+          break;
+        }
+      }
+
+
+      // parse attention <! ...>
+      // previously comment and CDATA have already been parsed
+      if (w === 33) { // "!"
+
+        if (onAttention) {
+          onAttention(xml.substring(i, j + 1), decodeEntities, getContext);
+          if (parseStop) {
+            return;
+          }
+        }
+
+        j += 1;
+        continue;
+      }
+
+      // don't process attributes;
+      // there are none
+      cachedAttrs = {};
+
+      // if (xml.charCodeAt(i+1) === 47) { // </...
+      if (w === 47) { // </...
+        tagStart = false;
+        tagEnd = true;
+
+        if (!nodeStack.length) {
+          return handleError('missing open tag');
+        }
+
+        // verify open <-> close tag match
+        x = elementName = nodeStack.pop();
+        q = i + 2 + x.length;
+
+        if (xml.substring(i + 2, q) !== x) {
+          return handleError('closing tag mismatch');
+        }
+
+        // verify chars in close tag
+        for (; q < j; q++) {
+          w = xml.charCodeAt(q);
+
+          if (w === 32 || (w > 8 && w < 14)) { // \f\n\r\t\v space
+            continue;
+          }
+
+          return handleError('close tag');
+        }
+
+      } else {
+        if (xml.charCodeAt(j - 1) === 47) { // .../>
+          x = elementName = xml.substring(i + 1, j - 1);
+
+          tagStart = true;
+          tagEnd = true;
+
+        } else {
+          x = elementName = xml.substring(i + 1, j);
+
+          tagStart = true;
+          tagEnd = false;
+        }
+
+        if (!(w > 96 && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
+          return handleError('illegal first char nodeName');
+        }
+
+        for (q = 1, y = x.length; q < y; q++) {
+          w = x.charCodeAt(q);
+
+          if (w > 96 && w < 123 || w > 64 && w < 91 || w > 47 && w < 59 || w === 45 || w === 95 || w == 46) {
+            continue;
+          }
+
+          if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v space
+            elementName = x.substring(0, q);
+
+            // maybe there are attributes
+            cachedAttrs = null;
+            break;
+          }
+
+          return handleError('invalid nodeName');
+        }
+
+        if (!tagEnd) {
+          nodeStack.push(elementName);
+        }
+      }
+
+      if (isNamespace) {
+
+        _nsMatrix = nsMatrix;
+
+        if (tagStart) {
+
+          // remember old namespace
+          // unless we're self-closing
+          if (!tagEnd) {
+            nsMatrixStack.push(_nsMatrix);
+          }
+
+          if (cachedAttrs === null) {
+
+            // quick check, whether there may be namespace
+            // declarations on the node; if that is the case
+            // we need to eagerly parse the node attributes
+            if ((maybeNS = x.indexOf('xmlns', q) !== -1)) {
+              attrsStart = q;
+              attrsString = x;
+
+              getAttrs();
+
+              maybeNS = false;
+            }
+          }
+        }
+
+        _elementName = elementName;
+
+        w = elementName.indexOf(':');
+        if (w !== -1) {
+          xmlns = nsMatrix[elementName.substring(0, w)];
+
+          // prefix given; namespace must exist
+          if (!xmlns) {
+            return handleError('missing namespace on <' + _elementName + '>');
+          }
+
+          elementName = elementName.substr(w + 1);
+        } else {
+          xmlns = nsMatrix['xmlns'];
+
+          // if no default namespace is defined,
+          // we'll import the element as anonymous.
+          //
+          // it is up to users to correct that to the document defined
+          // targetNamespace, or whatever their undersanding of the
+          // XML spec mandates.
+        }
+
+        // adjust namespace prefixs as configured
+        if (xmlns) {
+          elementName = xmlns + ':' + elementName;
+        }
+
+      }
+
+      if (tagStart) {
+        attrsStart = q;
+        attrsString = x;
+
+        if (onOpenTag) {
+          if (proxy) {
+            onOpenTag(elementProxy, decodeEntities, tagEnd, getContext);
+          } else {
+            onOpenTag(elementName, getAttrs, decodeEntities, tagEnd, getContext);
+          }
+
+          if (parseStop) {
+            return;
+          }
+        }
+
+      }
+
+      if (tagEnd) {
+
+        if (onCloseTag) {
+          onCloseTag(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
+
+          if (parseStop) {
+            return;
+          }
+        }
+
+        // restore old namespace
+        if (isNamespace) {
+          if (!tagStart) {
+            nsMatrix = nsMatrixStack.pop();
+          } else {
+            nsMatrix = _nsMatrix;
+          }
+        }
+      }
+
+      j += 1;
+    }
+  } /** end parse */
+
+}
+
+
+//# sourceMappingURL=index.js.map
+
+
 /***/ })
 
 /******/ 	});
@@ -32147,27 +31752,6 @@ class Viewer extends HTMLElement {
         callActivityModule.updateBreadcrumb();
       }
     }
-
-    // // add highlighting if option is enabled
-    // if (this.addHighlighting) {
-    //   this.current = this.diagram.current;
-    //   this.completed = this.diagram.completed;
-    //   this.error = this.diagram.error;
-    // }
-
-    // // parse iterationData and attach to instance
-    // try {
-    //   this.iterationData = JSON.parse(this.diagram.iterationData);
-    // } catch (e) {
-    //   this.iterationData = null;
-    // }
-    
-    // // parse userTaskData and attach to instance
-    // try {
-    //   this.userTaskData = JSON.parse(this.diagram.userTaskData);
-    // } catch (e) {
-    //   this.userTaskData = null;
-    // }
   }
 
   async loadDiagram() {
@@ -32176,13 +31760,14 @@ class Viewer extends HTMLElement {
     const { warnings } = result;
       
     if (warnings.length > 0) {
-      apex.debug.warn('Warnings during XML Import', warnings); // TODO emit event
+      apex.debug.warn('Warnings during XML Import', warnings);
     }
       
     this.zoom('fit-viewport');
       
     // get viewer modules
     const eventBus = this.viewer.get('eventBus');
+    const callActivityModule = this.viewer.get('callActivityModule');
     const multiInstanceModule = this.viewer.get('multiInstanceModule');
     const userTaskModule = this.viewer.get('userTaskModule');
     const subProcessTweaks = this.viewer.get('subProcessTweaks');
@@ -32203,6 +31788,11 @@ class Viewer extends HTMLElement {
       }
     });
 
+    // add overlays if callActivityData is existing
+    if (this.diagram.callActivityData) {
+      callActivityModule.addOverlays();
+    }
+    
     // add overlays if iterationData is existing
     if (this.diagram.iterationData) {
       multiInstanceModule.addOverlays();
@@ -32221,7 +31811,15 @@ class Viewer extends HTMLElement {
     subProcessTweaks.alignDrilldownButtons();
   }
 
-  updateColors(current, completed, error) {
+  /*
+   * Parameters used inside MultiInstanceModule
+   * Utilizes diagram highlighting data by default
+   */
+  updateColors(
+    current = this.diagram.highlightingData?.current,
+    completed = this.diagram.highlightingData?.completed,
+    error = this.diagram.highlightingData?.error
+  ) {
     // if any color option is enabled
     if (this.diagram.highlightingData || this.useBPMNcolors) {
       // get viewer module
@@ -32230,11 +31828,7 @@ class Viewer extends HTMLElement {
       this.resetColors();
       // add highlighting if option is enabled
       if (this.diagram.highlightingData) {
-        styleModule.highlightElements(
-          current || this.diagram.highlightingData.current,
-          completed || this.diagram.highlightingData.completed,
-          error || this.diagram.highlightingData.error
-        );
+        styleModule.highlightElements(current, completed, error);
       }
     }
   }
