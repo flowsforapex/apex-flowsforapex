@@ -655,7 +655,12 @@ as
         for update of sbfl.sbfl_step_key wait 5;
       exception
         when no_data_found then
-          raise e_task_not_current_step;
+          if p_state_code != apex_human_task.c_task_state_cancelled then
+            -- task was cancelled - do nothing
+            l_cancelled_not_current := true;
+          else
+            raise e_task_id_not_found;
+          end if;
         when too_many_rows then
           raise e_task_id_duplicate_found;
         when e_lock_timeout then
