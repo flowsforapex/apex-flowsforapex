@@ -309,6 +309,7 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type default null
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2 default null
   , pi_scope         flow_subflows.sbfl_scope%type default 0
+  , pi_step_key      flow_subflows.sbfl_step_key%type default null
   ) return flow_types_pkg.t_bpmn_attribute_vc2
   is
     l_expr_details expression_details_t;
@@ -336,6 +337,7 @@ as
         ( pi_prcs_id   => pi_prcs_id
         , pi_sbfl_id   => pi_sbfl_id
         , pi_scope     => pi_scope
+        , pi_step_key  => pi_step_key
         , pio_string   => l_expr_details.expr_value
         );
         l_return_value := l_expr_details.expr_value;
@@ -421,6 +423,7 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type
   , pi_expr          clob
   , pi_scope         flow_subflows.sbfl_scope%type default 0
+  , pi_step_key      flow_subflows.sbfl_step_key%type default null
   ) return clob
   is
     l_expr_details expression_details_t;
@@ -444,6 +447,7 @@ as
         ( pi_prcs_id   => pi_prcs_id
         , pi_sbfl_id   => pi_sbfl_id
         , pi_scope     => pi_scope
+        , pi_step_key  => pi_step_key
         , pio_string   => l_expr_details.expr_value
         );
         l_return_value := l_expr_details.expr_value;

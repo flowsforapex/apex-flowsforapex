@@ -284,7 +284,7 @@ as
     l_potential_users_setting flow_types_pkg.t_bpmn_attribute_vc2;
     l_potential_users         flow_subflows.sbfl_potential_users%type;
     l_business_admin_setting  flow_types_pkg.t_bpmn_attribute_vc2;
-    l_business_admin          flow_subflows.sbfl_business_admin%type;
+    l_business_admin          flow_subflows.sbfl_apex_business_admin%type;
     l_result_var              flow_types_pkg.t_bpmn_attribute_vc2;
     l_apex_task_id            number;
 
@@ -333,14 +333,14 @@ as
       , p0 => l_parameters
       );
     -- do substitutions
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_app_id);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_static_id);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_subject);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_parameters);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_ref);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_result_var);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_initiator);
-    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pio_string => l_business_admin);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_app_id);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_static_id);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_subject);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_parameters);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_business_ref);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_result_var);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_initiator);
+    flow_proc_vars_int.do_substitution( pi_prcs_id => l_prcs_id, pi_sbfl_id => l_sbfl_id, pi_scope => l_scope, pi_step_key => l_step_key, pio_string => l_business_admin);
 
     if l_priority_setting is not null then
       l_priority := flow_settings.get_priority ( pi_prcs_id  => l_prcs_id
@@ -381,9 +381,9 @@ as
     or l_business_admin is not null then
 
       update flow_subflows sbfl
-         set sbfl.sbfl_last_update        = systimestamp
-           , sbfl.sbfl_potential_users    = l_potential_users
-           , sbfl.sbfl_business_admin     = l_business_admin
+         set sbfl.sbfl_last_update          = systimestamp
+           , sbfl.sbfl_potential_users      = l_potential_users
+           , sbfl.sbfl_apex_business_admin  = l_business_admin
            , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
                                                   , sys_context('userenv','os_user')
                                                   , sys_context('userenv','session_user')
@@ -528,7 +528,7 @@ as
   is
     l_potential_owners flow_process_variables.prov_var_vc2%type;
   begin
-    select sbfl.sbfl_potential_users
+    select UPPER(sbfl.sbfl_potential_users)
       into l_potential_owners
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
@@ -539,14 +539,14 @@ as
     -- but APEX uses ',' as separator for potential owners
 
     -- so we need to replace ':' with ',' in the potential owners string
-    if l_potential_owners is not null then
+    if l_potential_owners is not null and p_separator != ':' then
       l_potential_owners := replace ( l_potential_owners,':', p_separator);
     end if;
 
     return l_potential_owners;
   end get_task_potential_owners;
 
-  function get_task_business_admin
+  function get_task_business_admins
   ( p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
   , p_step_key      in flow_subflows.sbfl_step_key%type
@@ -555,7 +555,7 @@ as
     is
     l_business_admin flow_process_variables.prov_var_vc2%type;
   begin
-    select sbfl.sbfl_apex_business_admin
+    select UPPER(sbfl.sbfl_apex_business_admin)
       into l_business_admin
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
@@ -566,98 +566,362 @@ as
     -- but APEX uses ',' as separator for business admins
 
     -- so we need to replace ':' with ',' in the business admins string
-    if l_business_admin is not null then
+    if l_business_admin is not null and p_separator != ':' then
       l_business_admin := replace ( l_business_admin,':', p_separator);
     end if;
 
     return l_business_admin;
-  end get_task_business_admin;
+  end get_task_business_admins;
+
+  procedure schedule_background_task_cancelation
+  ( p_process_id          in flow_processes.prcs_id%type
+  , p_apex_task_id        in number 
+  , p_apex_user           in flow_subflows.sbfl_apex_business_admin%type default null
+  , p_dgrm_id             in flow_diagrams.dgrm_id%type
+  , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
+  ) 
+  is
+    l_job_name              varchar2(100);
+  begin
+    -- Generate a unique job name (optional but helpful)
+    l_job_name := 'APEX_FLOW_CANCEL_APEX_TASK_J_' || p_apex_task_id || '_' || p_apex_user || '_' || to_char(sysdate, 'YYYYMMDD_HH24MISS');
+  
+    -- Create the job (do NOT enable yet)
+    sys.dbms_scheduler.create_job (
+      job_name      => l_job_name,
+      program_name  => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+      start_date    => NULL,            -- don't use scheduled start
+      enabled       => FALSE,
+      auto_drop     => TRUE             -- clean up after execution
+    );
+  
+    -- Set the argument values
+    sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
+                                          , argument_position => 1
+                                          , argument_value => p_process_id); -- p_process_id
+    sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
+                                          , argument_position => 2
+                                          , argument_value => p_apex_task_id); -- p_apex_task_id
+    sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
+                                          , argument_position => 3
+                                          , argument_value => p_apex_user);-- p_apex_user
+    sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
+                                          , argument_position => 4
+                                          , argument_value => p_dgrm_id); -- p_dgrm_id
+    sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
+                                          , argument_position => 5
+                                          , argument_value => p_objt_bpmn_id);  -- p_objt_bpmn_id
+  
+    -- Run the job immediately
+    sys.dbms_scheduler.run_job(l_job_name, use_current_session => FALSE);  -- TRUE = sync; FALSE = async
+                
+  end schedule_background_task_cancelation;
 
   procedure cancel_apex_task
     ( p_process_id          in flow_processes.prcs_id%type
     , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
+    , p_dgrm_id             in flow_diagrams.dgrm_id%type
     , p_apex_task_id        in number    
-    , p_apex_business_admin in flow_subflows.sbfl_business_admin%type default null
+    , p_apex_business_admin in flow_subflows.sbfl_apex_business_admin%type default null
     )
   is
+    l_is_allowed            boolean;
+    l_task_initiator        apex_tasks.initiator%type;
+    l_business_admins       apex_t_varchar2;
+    l_business_admin        varchar2(255);
+    l_job_name              varchar2(100);
   begin
     apex_debug.enter 
     ( 'cancel_apex_task'
     , 'apex task_id: ', p_apex_task_id 
     , 'apex business admin: ', p_apex_business_admin 
     );
-    -- check if current user is the task originator or business admin
---    if p_apex_business_admin is not null then
---      if not apex_human_task.is_task_originator ( p_task_id => p_apex_task_id, p_user => v('APP_USER') ) then
---        raise flow_errors.e_not_authorized;
---      end if;
---    end if;
-
-
-    -- cancel task
-    apex_human_task.cancel_task (p_task_id => p_apex_task_id);
-    apex_debug.info 
-    ( p_message => 'APEX Human Task : %0  cancelled on object : %1'
-    , p0 => p_apex_task_id
-    , p1 => p_objt_bpmn_id
-    );
-  exception
-    when others then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id     => p_process_id
-      , pi_message_key => 'apex-task-cancelation-error'
-      , p0 => p_objt_bpmn_id
-      , p1 => p_apex_task_id
-      , p2 => sqlerrm
+    -- check if current user is allowed  to cancel the task
+    l_is_allowed := apex_human_task.is_allowed
+      ( p_task_id         => p_apex_task_id
+      , p_operation       => apex_human_task.c_task_op_cancel
       );
-      -- $F4AMESSAGE 'apex-task-cancelation-error' || 'Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)' 
+    if l_is_allowed then
+      apex_debug.info 
+      ( p_message => '...Current  user can delete APEX Human Task : %0  - cancelling now ...'
+      , p0 => p_apex_task_id
+      );
+      apex_human_task.cancel_task (p_task_id => p_apex_task_id);
+    elsif p_apex_business_admin is not null then
+      apex_debug.info 
+      ( p_message => '...Current  user cannot delete APEX Human Task : %0  - user dbms_scheduler job to cancel ...'
+      , p0 => p_apex_task_id
+      );
+      -- start with business admins recorded on the subflow
+      l_business_admins := apex_string.split ( p_str => p_apex_business_admin
+                                             , p_sep => ':'
+                                             );
+      for i in 1 .. l_business_admins.count loop
+        l_business_admin := l_business_admins(i);
+        if l_business_admin is not null then
+          -- check if the business admin is allowed to cancel the task
+          l_is_allowed := apex_human_task.is_allowed
+            ( p_task_id         => p_apex_task_id
+            , p_operation       => apex_human_task.c_task_op_cancel
+            , p_user            => l_business_admin
+            );
+          if l_is_allowed then 
+            apex_debug.info 
+            ( p_message => '...Business Admin %0 can delete APEX Human Task : %1  - cancelling now ...'
+            , p0 => l_business_admin
+            , p1 => p_apex_task_id
+            );
+            schedule_background_task_cancelation
+              ( p_process_id          => p_process_id
+              , p_apex_task_id        => p_apex_task_id
+              , p_apex_user           => l_business_admin
+              , p_dgrm_id             => p_dgrm_id
+              , p_objt_bpmn_id        => p_objt_bpmn_id
+              );
+            continue;
+          end if; -- business admin allowed to cancel task
+        end if; -- bus admin not null  
+      end loop;
+    else -- last chance to cancel the task - do it as the task originator
+      -- get the task initiator.  
+      select task.initiator
+        into l_task_initiator
+        from apex_tasks task
+       where task.task_id = p_apex_task_id;  
+
+      apex_debug.info 
+      ( p_message => '...Task Originator %0 deleting APEX Human Task : %1  - scheduling cancel job now ...'
+      , p0 => l_task_initiator
+      , p1 => p_apex_task_id
+      );
+      schedule_background_task_cancelation
+        ( p_process_id          => p_process_id
+        , p_apex_task_id        => p_apex_task_id
+        , p_apex_user           => l_task_initiator
+        , p_dgrm_id             => p_dgrm_id
+        , p_objt_bpmn_id        => p_objt_bpmn_id
+        );
+    end if;
   end cancel_apex_task;
 
+  procedure cancel_apex_task_from_scheduler
+  ( p_process_id          in varchar2
+  , p_apex_task_id        in varchar2 
+  , p_apex_user           in varchar2
+  , p_dgrm_id             in varchar2
+  , p_objt_bpmn_id        in varchar2 default null
+  )
+  is
+    l_objt_bpmn_id        flow_objects.objt_bpmn_id%type;
+    l_session_id          number;
+    l_process_id          flow_processes.prcs_id%type := to_number(p_process_id);
+    l_apex_task_id        number := to_number(p_apex_task_id);  
+    l_dgrm_id             flow_objects.objt_dgrm_id%type := to_number(p_dgrm_id);
+  begin
+    -- create apex session as the task originator
+    l_session_id :=  flow_apex_session.create_api_session
+                        ( p_dgrm_id             => l_dgrm_id
+                        , p_prcs_id             => l_process_id
+                        , p_as_business_admin   => true
+                        , p_business_admin      => p_apex_user
+                        );
+    apex_debug.enter 
+        ( 'cancel_apex_task_from_scheduler'
+        , 'apex task_id: ', l_apex_task_id
+        , 'apex user: ', p_apex_user
+        );
+    -- cancel the  task
+    begin
+      apex_human_task.cancel_task (p_task_id => l_apex_task_id);
+      apex_debug.info 
+      ( p_message => 'APEX Human Task : %0  cancelled on object : %1'
+      , p0 => l_apex_task_id
+      , p1 => p_objt_bpmn_id
+      );
+    exception
+      when others then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id     => l_process_id
+        , pi_message_key => 'apex-task-cancelation-error'
+        , p0 => p_objt_bpmn_id
+        , p1 => l_apex_task_id
+        , p2 => sqlerrm
+        );
+        -- $F4AMESSAGE 'apex-task-cancelation-error' || 'Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)'
+    end; 
+    -- delete apex session
+    apex_session.delete_session ( p_session_id => l_session_id);
+  
+  end cancel_apex_task_from_scheduler;
+
   procedure return_approval_result
+  ( p_process_id    in flow_processes.prcs_id%type
+  , p_apex_task_id  in number
+  , p_result        in flow_process_variables.prov_var_vc2%type default null
+  )
+  is
+    l_sbfl_id             flow_subflows.sbfl_id%type;
+    l_dgrm_id             flow_subflows.sbfl_dgrm_id%type;
+    l_current_bpmn_id     flow_objects.objt_bpmn_id%type;
+    l_scope               flow_subflows.sbfl_scope%type;
+    l_step_key            flow_subflows.sbfl_step_key%type;
+    l_var_name            flow_process_variables.prov_var_name%type;
+    l_potential_current   flow_objects.objt_bpmn_id%type;
+    l_result_var          flow_process_variables.prov_var_name%type;
+    e_task_id_proc_var_not_found  exception;
+    e_task_id_duplicate_found     exception;
+    e_task_not_current_step       exception;
+    e_task_no_return_var          exception;
+  begin
+    apex_debug.enter
+    (p_routine_name => 'return_approval_result'
+    );
+    begin
+      -- find and lock the subflow
+      select sbfl.sbfl_id
+           , sbfl.sbfl_step_key
+           , sbfl.sbfl_dgrm_id
+           , sbfl.sbfl_scope
+           , sbfl.sbfl_current
+        into l_sbfl_id
+           , l_step_key
+           , l_dgrm_id
+           , l_scope
+           , l_current_bpmn_id 
+        from flow_subflows sbfl
+       where sbfl.sbfl_prcs_id = p_process_id
+         and sbfl.sbfl_apex_task_id = p_apex_task_id
+      for update of sbfl.sbfl_step_key wait 5;
+    exception
+      when no_data_found then
+        raise e_task_not_current_step;
+      when too_many_rows then
+        raise e_task_id_duplicate_found;
+      when e_lock_timeout then
+        raise e_lock_timeout;
+    end;
+    apex_debug.info 
+    ( p_message => '--- Returning Approval Outcome - Found Subflow %0 step Key %1 Diagram %2'
+    , p0 => l_sbfl_id
+    , p1 => l_step_key
+    , p2 => l_dgrm_id
+    );
+    -- get name of return variable
+    begin
+      select objt.objt_attributes."apex"."resultVariable"
+        into l_result_var
+        from flow_objects objt
+       where objt.objt_bpmn_id = l_current_bpmn_id 
+         and objt.objt_dgrm_id = l_dgrm_id;
+      apex_debug.info 
+      ( p_message => '--- Returning Approval Outcome - Found result variable id %0'
+      , p0 => l_result_var
+      );
+    exception
+      when no_data_found then
+        raise e_task_no_return_var;
+    end;
+    -- create result variable
+    flow_proc_vars_int.set_var
+     ( pi_prcs_id       => p_process_id
+     , pi_var_name      => l_result_var
+     , pi_scope         => l_scope
+     , pi_vc2_value     => p_result
+     , pi_sbfl_id       => l_sbfl_id
+     , pi_objt_bpmn_id  => l_potential_current
+     );
+    -- do next step
+    flow_engine.flow_complete_step
+      ( p_process_id    => p_process_id
+      , p_subflow_id    => l_sbfl_id
+      , p_step_key      => l_step_key
+      );
+  exception
+    when e_lock_timeout then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_sbfl_id
+      , pi_message_key => 'timeout_locking_subflow'
+      , p0 => l_sbfl_id
+      );
+    when e_task_id_proc_var_not_found then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_sbfl_id
+      , pi_message_key => 'apex-task-not-found'
+      , p0 => p_apex_task_id 
+      );
+    when e_task_id_duplicate_found then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_sbfl_id
+      , pi_message_key => 'apex-task-on-multiple-steps'
+      , p0 => p_apex_task_id
+      );
+    when e_task_not_current_step then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_sbfl_id
+      , pi_message_key => 'apex-task-not-current-step'
+      , p0 => p_apex_task_id
+      );
+    when e_task_no_return_var then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => l_sbfl_id
+      , pi_message_key => 'apex-task-invalid-return-var'
+      , p0 => p_apex_task_id
+      );      
+  end return_approval_result;
+
+  procedure return_task_state_outcome
     ( p_process_id    in flow_processes.prcs_id%type
+    , p_subflow_id    in flow_subflows.sbfl_id%type
+    , p_step_key      in flow_subflows.sbfl_step_key%type
     , p_apex_task_id  in number
-    , p_result        in flow_process_variables.prov_var_vc2%type default null
+    , p_state_code    in apex_tasks.state_code%type 
+    , p_outcome       in flow_process_variables.prov_var_vc2%type default null
     )
     is
-      l_sbfl_id             flow_subflows.sbfl_id%type;
-      l_dgrm_id             flow_subflows.sbfl_dgrm_id%type;
-      l_current_bpmn_id     flow_objects.objt_bpmn_id%type;
-      l_scope               flow_subflows.sbfl_scope%type;
-      l_step_key            flow_subflows.sbfl_step_key%type;
-      l_var_name            flow_process_variables.prov_var_name%type;
-      l_potential_current   flow_objects.objt_bpmn_id%type;
-      l_result_var          flow_process_variables.prov_var_name%type;
+      l_dgrm_id                      flow_subflows.sbfl_dgrm_id%type;
+      l_current_bpmn_id              flow_objects.objt_bpmn_id%type;
+      l_scope                        flow_subflows.sbfl_scope%type;
+      l_var_name                     flow_process_variables.prov_var_name%type;
+      l_result_var                   flow_process_variables.prov_var_name%type;
+      l_cancelled_task_not_current   boolean := false;
+      l_do_next_step                 boolean := false;
 
-      e_task_id_proc_var_not_found  exception;
+      e_task_id_not_found           exception;
       e_task_id_duplicate_found     exception;
       e_task_not_current_step       exception;
       e_task_no_return_var          exception;
     begin
       apex_debug.enter
-      (p_routine_name => 'return_approval_outcome'
+      ( 'return_task_state_outcome'
+      , 'APEX task id: ', p_apex_task_id
+      , 'outcome: ', p_outcome
+      , 'state_code: ', p_state_code
       );
 
       begin
         -- find and lock the subflow
-        select sbfl.sbfl_id
-             , sbfl.sbfl_step_key
-             , sbfl.sbfl_dgrm_id
+        select sbfl.sbfl_dgrm_id
              , sbfl.sbfl_scope
              , sbfl.sbfl_current
-          into l_sbfl_id
-             , l_step_key
-             , l_dgrm_id
+          into l_dgrm_id
              , l_scope
              , l_current_bpmn_id 
           from flow_subflows sbfl
-         where sbfl.sbfl_prcs_id = p_process_id
+         where sbfl.sbfl_prcs_id      = p_process_id
+           and sbfl.sbfl_id           = p_subflow_id
+           and sbfl.sbfl_step_key     = p_step_key
            and sbfl.sbfl_apex_task_id = p_apex_task_id
         for update of sbfl.sbfl_step_key wait 5;
       exception
         when no_data_found then
           if p_state_code != apex_human_task.c_task_state_cancelled then
-            -- task was cancelled - do nothing
-            l_cancelled_not_current := true;
+            -- task already cancelled in Flows - do nothing
+            l_cancelled_task_not_current := true;
           else
             raise e_task_id_not_found;
           end if;
@@ -667,79 +931,123 @@ as
           raise e_lock_timeout;
       end;
       apex_debug.info 
-      ( p_message => '--- Returning Approval Outcome - Found Subflow %0 step Key %1 Diagram %2'
-      , p0 => l_sbfl_id
-      , p1 => l_step_key
-      , p2 => l_dgrm_id
+      ( p_message => '--- Returning Approval Outcome - Found  Diagram %0'
+      , p0 => l_dgrm_id
       );
-      -- get name of return variable
-      begin
-        select objt.objt_attributes."apex"."resultVariable"
-          into l_result_var
-          from flow_objects objt
-         where objt.objt_bpmn_id = l_current_bpmn_id 
-           and objt.objt_dgrm_id = l_dgrm_id;
-        apex_debug.info 
-        ( p_message => '--- Returning Approval Outcome - Found result variable id %0'
-        , p0 => l_result_var
-        );
-      exception
-        when no_data_found then
-          raise e_task_no_return_var;
-      end;
+      if p_outcome is not null then
+        -- get name of return variable
+        begin
+          select objt.objt_attributes."apex"."resultVariable"
+            into l_result_var
+            from flow_objects objt
+           where objt.objt_bpmn_id = l_current_bpmn_id 
+             and objt.objt_dgrm_id = l_dgrm_id;
+          apex_debug.info 
+          ( p_message => '--- Returning Approval Outcome - Found result variable id %0'
+          , p0 => l_result_var
+          );
+        exception
+          when no_data_found then
+            raise e_task_no_return_var;
+        end;
+  
+        -- create result variable
+        flow_proc_vars_int.set_var
+         ( pi_prcs_id       => p_process_id
+         , pi_var_name      => l_result_var
+         , pi_scope         => l_scope
+         , pi_vc2_value     => p_outcome
+         , pi_sbfl_id       => p_subflow_id
+         , pi_objt_bpmn_id  => l_current_bpmn_id
+         );
+      end if;
+      case p_state_code
+        when apex_human_task.c_task_state_cancelled then
+          -- cancel task
+          if l_cancelled_task_not_current then
+            apex_debug.info 
+            ( p_message => 'APEX Human Task : %0  already cancelled - not current task '
+            , p0 => p_apex_task_id
+            );
+          else
+            flow_logging.log_instance_event
+            ( p_process_id => p_process_id
+            --, p_subflow_id => p_subflow_id
+            , p_objt_bpmn_id => l_current_bpmn_id
+            , p_event => flow_constants_pkg.gc_prcs_event_error
+            );   --todo Add 25.1 logging calls
+            l_do_next_step := true;
+          end if;
+        when apex_human_task.c_task_state_completed then
+          -- complete task
+          l_do_next_step := true;
+        when apex_human_task.c_task_state_errored then
+          -- error task
+          flow_logging.log_instance_event
+          ( p_process_id => p_process_id
+          --, p_subflow_id => p_subflow_id
+          , p_objt_bpmn_id => l_current_bpmn_id
+          , p_event => flow_constants_pkg.gc_prcs_event_error
+          );   --todo Add 25.1 logging calls
+          l_do_next_step := true; --TODO Change this to allow step restart
+        when apex_human_task.c_task_state_expired then
+          -- expire task
+          flow_logging.log_instance_event
+          ( p_process_id => p_process_id
+          --, p_subflow_id => p_subflow_id
+          , p_objt_bpmn_id => l_current_bpmn_id
+          , p_event => flow_constants_pkg.gc_prcs_event_error
+          );   --todo Add 25.1 logging calls
+          l_do_next_step := true; --TODO Change this to allow step restart
+        else
+          null;
+      end case;
 
-      -- create result variable
-      flow_proc_vars_int.set_var
-       ( pi_prcs_id       => p_process_id
-       , pi_var_name      => l_result_var
-       , pi_scope         => l_scope
-       , pi_vc2_value     => p_result
-       , pi_sbfl_id       => l_sbfl_id
-       , pi_objt_bpmn_id  => l_potential_current
-       );
-      -- do next step
-      flow_engine.flow_complete_step
-        ( p_process_id    => p_process_id
-        , p_subflow_id    => l_sbfl_id
-        , p_step_key      => l_step_key
-        );
+      if l_do_next_step then      
+        -- do next step
+        flow_engine.flow_complete_step
+          ( p_process_id    => p_process_id
+          , p_subflow_id    => p_subflow_id
+          , p_step_key      => p_step_key
+          );
+      end if;
     exception
       when e_lock_timeout then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
-        , pi_sbfl_id     => l_sbfl_id
+        , pi_sbfl_id     => p_subflow_id
         , pi_message_key => 'timeout_locking_subflow'
-        , p0 => l_sbfl_id
+        , p0 => p_subflow_id
         );
-      when e_task_id_proc_var_not_found then
+      when e_task_id_not_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
-        , pi_sbfl_id     => l_sbfl_id
+        , pi_sbfl_id     => p_subflow_id
         , pi_message_key => 'apex-task-not-found'
         , p0 => p_apex_task_id 
         );
       when e_task_id_duplicate_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
-        , pi_sbfl_id     => l_sbfl_id
+        , pi_sbfl_id     => p_subflow_id
         , pi_message_key => 'apex-task-on-multiple-steps'
         , p0 => p_apex_task_id
         );
       when e_task_not_current_step then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
-        , pi_sbfl_id     => l_sbfl_id
+        , pi_sbfl_id     => p_subflow_id
         , pi_message_key => 'apex-task-not-current-step'
         , p0 => p_apex_task_id
         );
       when e_task_no_return_var then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
-        , pi_sbfl_id     => l_sbfl_id
+        , pi_sbfl_id     => p_subflow_id
         , pi_message_key => 'apex-task-invalid-return-var'
         , p0 => p_apex_task_id
         );      
-    end return_approval_result;
+    end return_task_state_outcome;
 
 end flow_usertask_pkg;
 /

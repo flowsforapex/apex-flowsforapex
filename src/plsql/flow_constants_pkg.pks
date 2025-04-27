@@ -353,6 +353,7 @@ as
   gc_config_default_application         constant varchar2(50 char) := 'default_application';
   gc_config_default_pageid              constant varchar2(50 char) := 'default_pageid';
   gc_config_default_username            constant varchar2(50 char) := 'default_username';
+  gc_config_default_apex_business_admin constant varchar2(50 char) := 'default_apex_business_admin';
   gc_config_default_email_sender        constant varchar2(50 char) := 'default_email_sender';
   gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
   gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';

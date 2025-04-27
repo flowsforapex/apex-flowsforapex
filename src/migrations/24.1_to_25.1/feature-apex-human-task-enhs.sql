@@ -31,4 +31,12 @@ begin
         )';
   end if;
 end;
+
+PROMPT >> Add DBMS_SCHEDULER job to cancel APEX tasks
+-- This job will be used to cancel APEX tasks created or administered by users
+-- other  than the current user.ALTER
+
+-- TODO
+
+
 /

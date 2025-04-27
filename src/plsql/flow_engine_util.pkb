@@ -634,6 +634,7 @@ end get_object_tag;
           select sbfl.sbfl_id
                , sbfl.sbfl_current
                , sbfl.sbfl_scope
+               , sbfl.sbfl_dgrm_id
                , sbfl.sbfl_apex_task_id
                , sbfl.sbfl_apex_business_admin
                , objt.objt_tag_name
@@ -657,6 +658,7 @@ end get_object_tag;
             flow_usertask_pkg.cancel_apex_task
             ( p_process_id          => p_process_id
             , p_objt_bpmn_id        => subflows_with_tasks.sbfl_current
+            , p_dgrm_id             => subflows_with_tasks.sbfl_dgrm_id
             , p_apex_task_id        => subflows_with_tasks.sbfl_apex_task_id
             , p_apex_business_admin => subflows_with_tasks.sbfl_apex_business_admin
             );
