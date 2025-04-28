@@ -32,11 +32,12 @@ begin
         )';
       execute immediate 'alter table flow_ai_prompts
         add constraint flow_aipr_pk primary key ( aipr_id )';
-      execute immediate 'alter table flow_aipr_uk unique ( aipr_prompt_key
-                                                         , aipr_lang
-                                                         , aipr_provider_type_code
-                                                         , aipr_model_name
-                                                         )';
+      execute immediate 'alter table flow_ai_prompts
+        add constraint flow_aipr_uk unique ( aipr_prompt_key
+                                           , aipr_lang
+                                           , aipr_provider_type_code
+                                           , aipr_model_name
+                                           )';
   end if;
 end;
 / 

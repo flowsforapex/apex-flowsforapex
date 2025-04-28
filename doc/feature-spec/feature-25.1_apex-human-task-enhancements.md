@@ -36,9 +36,9 @@ As with Async sessions run from timers currently, we need a 3 tier definition of
   
 The Business Admin shall be evaluated at task creation time by looking for a Task-level definition.   If that is not successful, then look for a bpmn:process level one from the diagram, then a system-wide configuration parameter if that is not successful.
 
-The Business Admin selected for a task should be validated using `APEX_HUMAN_TASK.IS_OF_PARTICIPANT_TYPE` to ensure it is a valid Business Admin after any substitution has been performed.
+The Business Admin selected for a task should be validated using `APEX_HUMAN_TASK.IS_ALLOWED` to ensure it is a valid Business Admin after any substitution has been performed.
 
-The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a varchar2 colon delimited list so that it can be used for subsequent task assignment or task cancellation functions. Add a column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(30)`.
+The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a varchar2 colon delimited list so that it can be used for subsequent task assignment or task cancellation functions. Add a column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(4000)`.
 
 #### Tasks:
 
@@ -49,12 +49,12 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a
  - [ ] Add `apex:businessAdmin` as an attribute inside <bpmn:userTask><bpmn:extensionElements><apex:apexApproval>.
  - [ ] Support task-level `apex:businessAdmin` in BPMN parser.
  - [ ] Create `flow_usertasks.get_apex_business_admin` function.
- - [ ] Extend flow_subflows table with column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(30)` (ddl + migration).  Migration value - left as null.
+ - [ ] Extend flow_subflows table with column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(4000)` (ddl + migration).  Migration value - left as null.
 
 ### 3.  Support Instigator can Complete
 
 - [ ] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task instigator to complete task. Save in BPMN inside `apex:approvalTask` as `apex:instigatorCanComplete`.
-- [ ] Add this to `flow_create_apex_task` and its call to `apex_human_task.create_task` call.
+- [x] Add this to `flow_create_apex_task` and its call to `apex_human_task.create_task` call.
 
 ### 4. Task Assignment
 
@@ -66,9 +66,9 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a
 
 APEX Task cancellation can be performed by either the task originator or a business admin. When a task requires cancellation, we should see if the current user has the ability to cancel the task (using `apex_human_task.is_allowed`).  If not, we'll use a `dbms_scheduler` job, scheduled immediately, to connect to APEX as a business admin for the task and cancel it.
 
-- [ ] create a dbms scheduler job to connect as a Business Admin to cancel a task.
+- [x] create a dbms scheduler job to connect as a Business Admin to cancel a task.
 - [ ] Add task cancelation to Process Reset, Termination, and Deletion.
-- [ ] Add APEX$TASK_STATUS to plugin callback..
+- [ ] Add APEX$TASK_STATE to plugin callback..
 
 ### 6. UI Integration
 

@@ -883,9 +883,7 @@ as
     , p_outcome       in flow_process_variables.prov_var_vc2%type default null
     )
     is
-      l_dgrm_id                      flow_subflows.sbfl_dgrm_id%type;
-      l_current_bpmn_id              flow_objects.objt_bpmn_id%type;
-      l_scope                        flow_subflows.sbfl_scope%type;
+      l_sbfl_rec                     flow_subflows%rowtype;
       l_var_name                     flow_process_variables.prov_var_name%type;
       l_result_var                   flow_process_variables.prov_var_name%type;
       l_cancelled_task_not_current   boolean := false;
@@ -905,12 +903,8 @@ as
 
       begin
         -- find and lock the subflow
-        select sbfl.sbfl_dgrm_id
-             , sbfl.sbfl_scope
-             , sbfl.sbfl_current
-          into l_dgrm_id
-             , l_scope
-             , l_current_bpmn_id 
+        select sbfl.*
+          into l_sbfl_rec
           from flow_subflows sbfl
          where sbfl.sbfl_prcs_id      = p_process_id
            and sbfl.sbfl_id           = p_subflow_id
@@ -932,7 +926,7 @@ as
       end;
       apex_debug.info 
       ( p_message => '--- Returning Approval Outcome - Found  Diagram %0'
-      , p0 => l_dgrm_id
+      , p0 => l_sbfl_rec.sbfl_dgrm_id
       );
       if p_outcome is not null then
         -- get name of return variable
@@ -940,8 +934,8 @@ as
           select objt.objt_attributes."apex"."resultVariable"
             into l_result_var
             from flow_objects objt
-           where objt.objt_bpmn_id = l_current_bpmn_id 
-             and objt.objt_dgrm_id = l_dgrm_id;
+           where objt.objt_bpmn_id = l_sbfl_rec.sbfl_current
+             and objt.objt_dgrm_id = l_sbfl_rec.sbfl_dgrm_id;
           apex_debug.info 
           ( p_message => '--- Returning Approval Outcome - Found result variable id %0'
           , p0 => l_result_var
@@ -955,10 +949,10 @@ as
         flow_proc_vars_int.set_var
          ( pi_prcs_id       => p_process_id
          , pi_var_name      => l_result_var
-         , pi_scope         => l_scope
+         , pi_scope         => l_sbfl_rec.sbfl_scope
          , pi_vc2_value     => p_outcome
          , pi_sbfl_id       => p_subflow_id
-         , pi_objt_bpmn_id  => l_current_bpmn_id
+         , pi_objt_bpmn_id  => l_sbfl_rec.sbfl_current
          );
       end if;
       case p_state_code
@@ -970,12 +964,11 @@ as
             , p0 => p_apex_task_id
             );
           else
-            flow_logging.log_instance_event
-            ( p_process_id => p_process_id
-            --, p_subflow_id => p_subflow_id
-            , p_objt_bpmn_id => l_current_bpmn_id
-            , p_event => flow_constants_pkg.gc_prcs_event_error
-            );   --todo Add 25.1 logging calls
+          flow_logging.log_step_event
+          ( p_sbfl_rec => l_sbfl_rec
+          , p_event => flow_constants_pkg.gc_step_event_cancelled
+          , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+          );  
             l_do_next_step := true;
           end if;
         when apex_human_task.c_task_state_completed then
@@ -983,22 +976,20 @@ as
           l_do_next_step := true;
         when apex_human_task.c_task_state_errored then
           -- error task
-          flow_logging.log_instance_event
-          ( p_process_id => p_process_id
-          --, p_subflow_id => p_subflow_id
-          , p_objt_bpmn_id => l_current_bpmn_id
-          , p_event => flow_constants_pkg.gc_prcs_event_error
-          );   --todo Add 25.1 logging calls
+          flow_logging.log_step_event
+          ( p_sbfl_rec => l_sbfl_rec
+          , p_event => flow_constants_pkg.gc_step_event_error
+          , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+          );  
           l_do_next_step := true; --TODO Change this to allow step restart
         when apex_human_task.c_task_state_expired then
           -- expire task
-          flow_logging.log_instance_event
-          ( p_process_id => p_process_id
-          --, p_subflow_id => p_subflow_id
-          , p_objt_bpmn_id => l_current_bpmn_id
-          , p_event => flow_constants_pkg.gc_prcs_event_error
-          );   --todo Add 25.1 logging calls
-          l_do_next_step := true; --TODO Change this to allow step restart
+          flow_logging.log_step_event
+          ( p_sbfl_rec => l_sbfl_rec
+          , p_event => flow_constants_pkg.gc_step_event_expired
+          , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+          );   
+          l_do_next_step := true; 
         else
           null;
       end case;

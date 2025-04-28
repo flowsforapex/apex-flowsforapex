@@ -304,6 +304,8 @@ as
   gc_step_event_iteration_terminated  constant  varchar2(20 char) := 'iteration terminated';
   gc_step_event_message_dequeued      constant  varchar2(20 char) := 'message dequeued';
   gc_step_event_message_enqueued      constant  varchar2(20 char) := 'message enqueued';
+  gc_step_event_cancelled             constant  varchar2(20 char) := 'APEX task cancelled';
+  gc_step_event_expired               constant  varchar2(20 char) := 'APEX task expired';
 
   -- Process Variable Datatypes
 
