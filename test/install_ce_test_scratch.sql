@@ -12,11 +12,9 @@ PROMPT >> Install All CE Test models
 commit;
 
 PROMPT >> Install Emp/Dept
-PROMPT >> Install Emp/Dept
 
 @create_emp_dept.sql
 
-PROMPT >> Create Timer Schedule
 PROMPT >> Create Timer Schedule
 
 BEGIN
