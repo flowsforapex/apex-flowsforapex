@@ -3,7 +3,7 @@ create or replace package flow_constants_pkg
 -- Flows for APEX - flow_constants_pkg.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
--- (c) Copyright Flowquest Consulting Limited. 2024-25.
+-- (c) Copyright Flowquest Limited and/or its affiliates. 2024-25.
 --
 -- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
@@ -132,6 +132,13 @@ as
   gc_apex_servicetask_body_html       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'bodyHTML';
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
+
+  gc_apex_servicetask_ai_generation   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexAIGeneration';
+
+  gc_apex_servicetask_ai_model        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiModel';
+  gc_apex_servicetask_ai_prompt       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiPrompt';
+  gc_apex_servicetask_ai_temperature  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiTemperature';
+  gc_apex_servicetask_ai_result       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'resultVariable';
 
   --messageFlow messaging protocol
   gc_simple_message   constant flow_types_pkg.t_bpmn_id := 'simpleMessage';

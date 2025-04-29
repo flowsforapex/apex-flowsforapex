@@ -262,14 +262,15 @@ create or replace package body flow_tasks as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_custom_service_task flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter 
     ( 'process_serviceTask'
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
   
-    -- future serviceTask types could include text message, tweet, AOP document via email, etc.
-    -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
+    -- future serviceTask types could include text message, tweet, AOP document via email, AI, etc.
+    -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process) + AI Generation
     -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
     flow_engine.start_step 
@@ -279,20 +280,25 @@ create or replace package body flow_tasks as
     , p_called_internally => true
     );
 
-    case get_task_type( pi_objt_id => p_step_info.target_objt_id )
+    case get_task_type( pi_objt_id => p_step_info.target_objt_id )  
       when flow_constants_pkg.gc_apex_task_execute_plsql then
-        flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id  => p_sbfl_info.sbfl_id
-        , pi_objt_id  => p_step_info.target_objt_id
-        , pi_step_key => p_sbfl_info.sbfl_step_key
-        );
-      when flow_constants_pkg.gc_apex_servicetask_send_mail then
-        flow_services.send_email
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
+            flow_plsql_runner_pkg.run_task_script
+            ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+            , pi_sbfl_id  => p_sbfl_info.sbfl_id
+            , pi_objt_id  => p_step_info.target_objt_id
+            , pi_step_key => p_sbfl_info.sbfl_step_key
+            );
+      when flow_constants_pkg.gc_apex_servicetask_send_mail then 
+           flow_services.send_email
+           ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+           , pi_sbfl_id => p_sbfl_info.sbfl_id
+           , pi_objt_id => p_step_info.target_objt_id
+           );
+      when flow_constants_pkg.gc_apex_servicetask_ai_generation then
+           flow_services.apex_AI_generation 
+           ( p_sbfl_info     => p_sbfl_info
+           , p_step_info     => p_step_info
+           );
       else
         null;
     end case;
