@@ -39,10 +39,12 @@ as
   ) return flow_process_variables.prov_var_vc2%type;
 
   function get_task_business_admins
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_step_key      in flow_subflows.sbfl_step_key%type
-  , p_separator     in varchar2 default ','
+  ( p_process_id         in flow_processes.prcs_id%type
+  , p_subflow_id         in flow_subflows.sbfl_id%type
+  , p_step_key           in flow_subflows.sbfl_step_key%type
+  , p_separator          in varchar2 default ','
+  , p_add_diagram_admin  in boolean default false
+  , p_add_instance_admin in boolean default false
   ) return flow_process_variables.prov_var_vc2%type;
   
   procedure cancel_apex_task
@@ -51,6 +53,10 @@ as
   , p_dgrm_id             in flow_diagrams.dgrm_id%type
   , p_apex_task_id        in number    
   , p_apex_business_admin in flow_subflows.sbfl_apex_business_admin%type default null
+  );
+
+  procedure cancel_all_apex_tasks
+  ( p_process_id          in flow_processes.prcs_id%type
   );
 
   procedure cancel_apex_task_from_scheduler

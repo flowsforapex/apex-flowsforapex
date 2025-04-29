@@ -45,15 +45,15 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a
  - [*] Add system config parameter `default_apex_business_admin` into config and migration scripts.
  - [ ] Add `default_apex_business_admin` to Engine App Config pages.
  - [ ] Add `apex:businessAdmin` as an in-line attribute of `BPMN:process` in Modeler ('Background Task Session' region), labeled 'Default APEX Business Admin'.
- - [ ] Support `apex:processBusinessAdmin` in BPMN parser.
+ - [ ] Support `apex:businessAdmin` in BPMN parser.
  - [ ] Add `apex:businessAdmin` as an attribute inside <bpmn:userTask><bpmn:extensionElements><apex:apexApproval>.
  - [ ] Support task-level `apex:businessAdmin` in BPMN parser.
  - [ ] Create `flow_usertasks.get_apex_business_admin` function.
  - [ ] Extend flow_subflows table with column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(4000)` (ddl + migration).  Migration value - left as null.
 
-### 3.  Support Instigator can Complete
+### 3.  Support Initiator can Complete
 
-- [ ] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task instigator to complete task. Save in BPMN inside `apex:approvalTask` as `apex:instigatorCanComplete`.
+- [ ] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task initiator to complete task. Save in BPMN inside `apex:approvalTask` as `apex:initiatorCanComplete`.
 - [x] Add this to `flow_create_apex_task` and its call to `apex_human_task.create_task` call.
 
 ### 4. Task Assignment
@@ -67,8 +67,8 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a
 APEX Task cancellation can be performed by either the task originator or a business admin. When a task requires cancellation, we should see if the current user has the ability to cancel the task (using `apex_human_task.is_allowed`).  If not, we'll use a `dbms_scheduler` job, scheduled immediately, to connect to APEX as a business admin for the task and cancel it.
 
 - [x] create a dbms scheduler job to connect as a Business Admin to cancel a task.
-- [ ] Add task cancelation to Process Reset, Termination, and Deletion.
-- [ ] Add APEX$TASK_STATE to plugin callback..
+- [x] Add task cancelation to Process Reset, Termination, and Deletion.
+- [x] Add APEX$TASK_STATE to plugin callback..
 
 ### 6. UI Integration
 

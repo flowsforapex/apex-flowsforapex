@@ -547,13 +547,16 @@ as
   end get_task_potential_owners;
 
   function get_task_business_admins
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_step_key      in flow_subflows.sbfl_step_key%type
-  , p_separator     in varchar2 default ','
+  ( p_process_id         in flow_processes.prcs_id%type
+  , p_subflow_id         in flow_subflows.sbfl_id%type
+  , p_step_key           in flow_subflows.sbfl_step_key%type
+  , p_separator          in varchar2 default ','
+  , p_add_diagram_admin  in boolean default false
+  , p_add_instance_admin in boolean default false
   ) return flow_process_variables.prov_var_vc2%type
     is
     l_business_admin flow_process_variables.prov_var_vc2%type;
+    l_fallback_admin flow_process_variables.prov_var_vc2%type;
   begin
     select UPPER(sbfl.sbfl_apex_business_admin)
       into l_business_admin
@@ -568,6 +571,42 @@ as
     -- so we need to replace ':' with ',' in the business admins string
     if l_business_admin is not null and p_separator != ':' then
       l_business_admin := replace ( l_business_admin,':', p_separator);
+    end if;
+
+    if p_add_diagram_admin then
+      -- add business admin defined in the current diagram to the list of business admins
+        select objt.objt_attributes."apex"."businessAdmin"
+          into l_fallback_admin
+          from flow_objects objt
+          join flow_diagrams dgrm
+            on objt.objt_dgrm_id = dgrm.dgrm_id
+          join flow_subflows sbfl
+            on sbfl.sbfl_dgrm_id = dgrm.dgrm_id
+         where sbfl.sbfl_prcs_id = p_process_id
+           and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         fetch first row only
+        ;
+      if l_fallback_admin is not null then
+        if l_business_admin is null then
+          l_business_admin := l_fallback_admin;
+        else
+          l_business_admin := l_business_admin || p_separator || l_fallback_admin;
+        end if;
+      end if;
+    end if;
+
+    if p_add_instance_admin then
+      -- add business admin defined in the current instance to the list of business admins
+      l_fallback_admin := flow_engine_util.get_config_value
+                          ( p_config_key => flow_constants_pkg.gc_config_default_apex_business_admin
+                          , p_default_value => null );
+      if l_fallback_admin is not null then
+        if l_business_admin is null then
+          l_business_admin := l_fallback_admin;
+        else
+          l_business_admin := l_business_admin || p_separator || l_fallback_admin;
+        end if;
+      end if;
     end if;
 
     return l_business_admin;
@@ -703,6 +742,48 @@ as
         );
     end if;
   end cancel_apex_task;
+
+  procedure cancel_all_apex_tasks
+  ( p_process_id          in flow_processes.prcs_id%type
+  )
+  is
+  begin
+    apex_debug.enter 
+    ( 'cancel_all_apex_tasks'
+    , 'process_id: ', p_process_id 
+    );
+    for current_apex_tasks in 
+            (
+            select sbfl.sbfl_apex_task_id
+                 , sbfl.sbfl_current
+                 , sbfl.sbfl_dgrm_id
+                 , sbfl.sbfl_apex_business_admin
+              from flow_subflows sbfl
+             where sbfl.sbfl_prcs_id = p_process_id
+               and sbfl.sbfl_apex_task_id is not null
+               and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_waiting_approval
+            )
+    loop
+      cancel_apex_task 
+        ( p_process_id          => p_process_id
+        , p_objt_bpmn_id        => current_apex_tasks.sbfl_current
+        , p_dgrm_id             => current_apex_tasks.sbfl_dgrm_id
+        , p_apex_task_id        => current_apex_tasks.sbfl_apex_task_id
+        , p_apex_business_admin => current_apex_tasks.sbfl_apex_business_admin
+        );
+      apex_debug.info 
+      ( p_message => 'APEX Human Task : %0  cancelled on object : %1'
+      , p0 => current_apex_tasks.sbfl_apex_task_id  
+      , p1 => current_apex_tasks.sbfl_current
+      );
+    end loop;
+    apex_debug.info 
+    ( p_message => 'APEX Human Task : All tasks cancelled for process : %0'
+    , p0 => p_process_id
+    );  
+
+  end cancel_all_apex_tasks;
+
 
   procedure cancel_apex_task_from_scheduler
   ( p_process_id          in varchar2

@@ -740,11 +740,11 @@ flow_api_pkg.return_task_state_outcome ( p_process_id      => :PROCESS_ID,
 ```
 **/
 
-   function task_potential_owners 
+   function get_task_potential_owners 
    ( p_process_id in flow_processes.prcs_id%type -- Process ID
    , p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID   
-   , p_step_key in flow_subflows.sbfl_step_key%type -- Step Key
-   , p_separator in varchar2 default ',' -- Separator for the list of potential owners
+   , p_step_key   in flow_subflows.sbfl_step_key%type -- Step Key
+   , p_separator  in varchar2 default ',' -- Separator for the list of potential owners
    ) return flow_process_variables.prov_var_vc2%type;
 
    /**
@@ -767,16 +767,22 @@ flow_api_pkg.task_potential_owners ( p_process_id => :PROCESS_ID,
 ```
 **/
 
-   function task_business_admins 
-   ( p_process_id in flow_processes.prcs_id%type -- Process ID
-   , p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID   
-   , p_step_key in flow_subflows.sbfl_step_key%type -- Step Key
-   , p_separator in varchar2 default ',' -- Separator for the list of potential owners
+   function get_task_business_admins 
+   ( p_process_id         in flow_processes.prcs_id%type -- Process ID
+   , p_subflow_id         in flow_subflows.sbfl_id%type -- Subflow ID   
+   , p_step_key           in flow_subflows.sbfl_step_key%type -- Step Key
+   , p_separator          in varchar2 default ',' -- Separator for the list of potential owners
+   , p_add_diagram_admin  in boolean default false
+   , p_add_instance_admin in boolean default false
    ) return flow_process_variables.prov_var_vc2%type;
    /**
-task_business_admins Function
+get_task_business_admins Function
 This function returns the list of business admins for a task in a process instance.  The list is returned as a string, with the values separated by the p_separator value (default is comma).   
 Intended usage is to allow an APEX Human Task to get the list of business admins for a task from its Flows for APEX process instance.
+
+If `p_add_diagram_admin` is true, the business admin defined in the bpmn:process object on the BPMN diagram will also be added to the list of business admins.
+
+If `p_add_instance_admin` is true, the business admin defined in the system configuration parameter `default_apex_business_admin` will also be added to the list of business admins.
 
 Note that APEX Human Tasks require the list to be a comma separated list, so the default value of p_separator is a comma.  If you are using this function in a different context, you can specify a different separator.   
 

@@ -836,11 +836,11 @@ create or replace package body flow_api_pkg as
                                                   );
   end return_task_state_outcome;
 
-  function task_potential_owners 
+  function get_task_potential_owners 
    ( p_process_id in flow_processes.prcs_id%type 
    , p_subflow_id in flow_subflows.sbfl_id%type   
-   , p_step_key in flow_subflows.sbfl_step_key%type 
-   , p_separator in varchar2 default ','  
+   , p_step_key   in flow_subflows.sbfl_step_key%type 
+   , p_separator  in varchar2 default ','  
    ) return flow_process_variables.prov_var_vc2%type
   is
   begin
@@ -850,13 +850,15 @@ create or replace package body flow_api_pkg as
            , p_step_key   => p_step_key
            , p_separator  => p_separator
            );
-  end task_potential_owners;
+  end get_task_potential_owners;
   
-  function task_business_admins 
-   ( p_process_id in flow_processes.prcs_id%type 
-   , p_subflow_id in flow_subflows.sbfl_id%type 
-   , p_step_key in flow_subflows.sbfl_step_key%type 
-   , p_separator in varchar2 default ',' 
+  function get_task_business_admins 
+   ( p_process_id         in flow_processes.prcs_id%type 
+   , p_subflow_id         in flow_subflows.sbfl_id%type 
+   , p_step_key           in flow_subflows.sbfl_step_key%type 
+   , p_separator          in varchar2 default ',' 
+   , p_add_diagram_admin  in boolean default false
+   , p_add_instance_admin in boolean default false
    ) return flow_process_variables.prov_var_vc2%type
   is
   begin
@@ -866,7 +868,7 @@ create or replace package body flow_api_pkg as
            , p_step_key   => p_step_key
            , p_separator  => p_separator
            );
-  end task_business_admins;
+  end get_task_business_admins;
 
   procedure receive_message
   ( p_message_name  flow_message_subscriptions.msub_message_name%type
