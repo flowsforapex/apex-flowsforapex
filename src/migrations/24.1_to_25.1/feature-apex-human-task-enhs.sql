@@ -8,13 +8,15 @@
 
 */
 
--- Add new config values for APEX Human Task Enhancements
+PROMPT >> Add new config values for APEX Human Task Enhancements
+begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_apex_business_admin'                   ,p_value => 'FLOWS4APEX');
 
- 
--- Add Business Admin to Subflows table
+  commit;
+end;
+/
 
-PROMPT >> Database Changes
+PROMPT >> Add Business Admin to Subflows table
 
 declare
   v_column_exists number := 0;  
@@ -31,12 +33,51 @@ begin
         )';
   end if;
 end;
+/
 
-PROMPT >> Add DBMS_SCHEDULER job to cancel APEX tasks
--- This job will be used to cancel APEX tasks created or administered by users
--- other  than the current user.ALTER
+PROMPT >> Add DBMS_SCHEDULER program for APEX Tasks cancellation
+begin
+  sys.dbms_scheduler.create_program (
+    program_name        => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    program_type        => 'STORED_PROCEDURE',
+    program_action      => 'FLOW_USERTASK_PKG.CANCEL_APEX_TASK_FROM_SCHEDULER',
+    number_of_arguments => 5,
+    enabled             => FALSE,
+    comments            => 'Flows for APEX  APEX Task Cancel Program'
+  );
 
--- TODO
+  -- Define arguments (match the procedure signature and order)
+  sys.dbms_scheduler.define_program_argument (
+    program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    argument_position => 1,
+    argument_type     => 'VARCHAR2' -- p_process_id
+  );
 
+  sys.dbms_scheduler.define_program_argument (
+    program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    argument_position => 2,
+    argument_type     => 'VARCHAR2' -- p_apex_task_id
+  );
 
+  sys.dbms_scheduler.define_program_argument (
+    program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    argument_position => 3,
+    argument_type     => 'VARCHAR2' -- p_apex_user
+  );
+
+  sys.dbms_scheduler.define_program_argument (
+    program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    argument_position => 4,
+    argument_type     => 'VARCHAR2' -- p_dgrm_id
+  );
+
+  sys.dbms_scheduler.define_program_argument (
+    program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    argument_position => 5,
+    argument_type     => 'VARCHAR2' -- p_objt_bpmn_id
+  );
+
+  -- Enable the program
+  sys.dbms_scheduler.enable('APEX_FLOW_CANCEL_APEX_TASK_P');
+end;
 /
