@@ -138,9 +138,10 @@ create or replace package body flow_tasks as
     l_due_on_json         flow_types_pkg.t_bpmn_attribute_vc2;
     l_due_on              flow_subflows.sbfl_due_on%type;
   begin
-  -- current implementation is limited to two userTask types, which are:
+  -- current implementation is limited to 3 userTask types, which are:
   --   - to run a user defined APEX page via the Task Inbox View
-  --   - to call an APEX Approval Task (from APEX v22.1 onwards)
+  --   - to call an APEX Approval Task 
+  --   - to run a user defined APEX page via the Task Inbox View, but with a simple form (from Flows v24.1 onwards)
   -- future userTask types could include parameterised, standarised template pages , template scripts ??
     apex_debug.enter 
     ( 'process_userTask'

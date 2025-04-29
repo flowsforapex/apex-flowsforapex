@@ -682,15 +682,15 @@ end;
 ,
       p_apex_task_id in number -- APEX Task ID
 ,
-      p_result in flow_process_variables.prov_var_vc2%type default null -- Approval Result
+      p_result in flow_process_variables.prov_var_vc2%type default null -- Approval Outcome
    );
  /**
-return_approval_result Procedure
-A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed.
+return_approval_result Procedure (DEPRACATED - Use procedure return_task_state_outcome
+A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed or otherwise changd state.
 This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
 then performs a flow_complete_step to move to the next step.
 
-This can be called from an APEX Approval Task Action step.  Note that you can also use the APEX Approval Return Result process plug-in to do this declaratively in your application.
+This can be called from an APEX Human Task (Approval Task) Action step.  Note that you can also use the APEX Approval Return Result process plug-in to do this declaratively in your application.
 
 EXAMPLE
 
@@ -703,6 +703,101 @@ flow_api_pkg.return_approval_result ( p_process_id      => :PROCESS_ID,
                                       p_result          => :APEX$TASK_OUTCOME);
 ```
 **/
+   procedure return_task_state_outcome (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type -- Step Key
+,
+      p_apex_task_id in number -- APEX Task ID
+,
+      p_state_code in apex_tasks.state_code%type  -- APEX Human Task State Code
+,
+      p_outcome in flow_process_variables.prov_var_vc2%type default null -- APEX Approval Task Outcome
+   );
+ /**
+return_task_state_outcome Procedure 
+
+From Flows for APEX 25.1.   Use this in preference to return_approval_result, which is now deprecated.
+
+A convenience procedure for returning an APEX Human Task (Approval or Action Task) result and state into a Flows for APEX process when the task has ben completed or otherwise changd state.
+This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
+then performs a flow_complete_step to move to the next step.
+
+This can be called from an APEX Human Task (Approval or Action Task) Action step.  Note that you can also use the APEX Human Task Return State and Outcome process plug-in to do this declaratively in your application.
+
+EXAMPLE
+
+This code could be defined in an APEX Approval Task Action definition when a task is `completed` (on approval and on rejection).  
+In this example, we have an APEX Approval parameter PROCESS_ID which contains the Flows for APEX process ID.  The values for p_task_id and p_result are 
+
+```sql
+flow_api_pkg.return_task_state_outcome ( p_process_id      => :PROCESS_ID,
+                                         p_apex_task_id    => :APEX$TASK_ID,
+                                         p_outcome         => :APEX$TASK_OUTCOME,
+                                         p_state_code      => :APEX$TASK_STATE);
+```
+**/
+
+   function get_task_potential_owners 
+   ( p_process_id in flow_processes.prcs_id%type -- Process ID
+   , p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID   
+   , p_step_key   in flow_subflows.sbfl_step_key%type -- Step Key
+   , p_separator  in varchar2 default ',' -- Separator for the list of potential owners
+   ) return flow_process_variables.prov_var_vc2%type;
+
+   /**
+task_potential_owners Function
+This function returns the list of potential owners for a task in a process instance.  The list is returned as a string, with the values separated by the p_separator value (default is comma).  
+Intended usage is to allow an APEX Human Task to get the list of potential owners for a task from its Flows for APEX process instance.
+
+Note that APEX Human Tasks require the list to be a comma separated list, so the default value of p_separator is a comma.  If you are using this function in a different context, you can specify a different separator.
+
+EXAMPLE
+
+This code could be defined in the Participants section of an APEX Human Task (Approval Task or Action Task) definition.  Having set Task Parameters for PROCESS_ID, SUBFLOW_ID and STEP_KEY, you can use this function to get the list of potential owners for the task.
+Define the Participant to be:  Potential Owners
+Define the type to be an:      Expression
+Define the Expression to be:  
+``` sql
+flow_api_pkg.task_potential_owners ( p_process_id => :PROCESS_ID,
+                                         p_subflow_id => :SUBFLOW_ID,
+                                         p_step_key   => :STEP_KEY)
+```
+**/
+
+   function get_task_business_admins 
+   ( p_process_id         in flow_processes.prcs_id%type -- Process ID
+   , p_subflow_id         in flow_subflows.sbfl_id%type -- Subflow ID   
+   , p_step_key           in flow_subflows.sbfl_step_key%type -- Step Key
+   , p_separator          in varchar2 default ',' -- Separator for the list of potential owners
+   , p_add_diagram_admin  in boolean default false
+   , p_add_instance_admin in boolean default false
+   ) return flow_process_variables.prov_var_vc2%type;
+   /**
+get_task_business_admins Function
+This function returns the list of business admins for a task in a process instance.  The list is returned as a string, with the values separated by the p_separator value (default is comma).   
+Intended usage is to allow an APEX Human Task to get the list of business admins for a task from its Flows for APEX process instance.
+
+If `p_add_diagram_admin` is true, the business admin defined in the bpmn:process object on the BPMN diagram will also be added to the list of business admins.
+
+If `p_add_instance_admin` is true, the business admin defined in the system configuration parameter `default_apex_business_admin` will also be added to the list of business admins.
+
+Note that APEX Human Tasks require the list to be a comma separated list, so the default value of p_separator is a comma.  If you are using this function in a different context, you can specify a different separator.   
+
+EXAMPLE
+This code could be defined in the Participants section of an APEX Human Task (Approval Task or Action Task) definition.  Having set Task Parameters for PROCESS_ID, SUBFLOW_ID and STEP_KEY, you can use this function to get the list of business admins for the task.
+Define the Participant to be:  Business Admins
+Define the type to be an:      Expression    
+Define the Expression to be:
+``` sql
+flow_api_pkg.task_business_admins      ( p_process_id => :PROCESS_ID,
+                                         p_subflow_id => :SUBFLOW_ID,
+                                         p_step_key   => :STEP_KEY)
+```
+**/
+
 
   procedure receive_message
   ( p_message_name  flow_message_subscriptions.msub_message_name%type
