@@ -1,6 +1,11 @@
 PROMPT >> Removing Flows4APEX Database Objects
 PROMPT >> ====================================
 
+PROMPT >> Scheduler Objects
+sys.dbms_scheduler.drop_job     (job_name => 'APEX_FLOW_STEP_TIMERS_J');
+sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P');
+sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P');
+
 PROMPT >> Packages
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;

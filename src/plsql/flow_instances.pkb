@@ -400,7 +400,6 @@ create or replace package body flow_instances as
                                                         , p_process_id            => p_process_id
                                                         , p_event_starting_object => p_event_starting_object);
 
-
     begin
       -- get instance scheduling information for the process being started
       select objt.objt_attributes."apex"."priority"
@@ -616,6 +615,8 @@ create or replace package body flow_instances as
     flow_message_util.cancel_instance_subscriptions
     ( p_process_id => p_process_id
     );
+    -- cancel any apex human tasks
+    flow_usertask_pkg.cancel_all_apex_tasks ( p_process_id => p_process_id );
     -- clear out run-time object_log
     delete
       from flow_subflow_log sflg 
@@ -804,6 +805,8 @@ create or replace package body flow_instances as
         pi_prcs_id => p_process_id
       , po_return_code => l_return_code
     );  
+    -- cancel any apex human tasks
+    flow_usertask_pkg.cancel_all_apex_tasks ( p_process_id => p_process_id );
     -- stop processing 
     flow_engine_util.terminate_level
     ( p_process_id => p_process_id
@@ -904,6 +907,8 @@ create or replace package body flow_instances as
         pi_prcs_id => p_process_id
       , po_return_code => l_return_code
     );  
+    -- cancel any apex human tasks
+    flow_usertask_pkg.cancel_all_apex_tasks ( p_process_id => p_process_id );
     -- if instance archiving is enabled and instance is not yet archived, run instance archive now before
     -- process data is deleted from run time tables to ensure arcchive is full audit trail
     if l_is_not_archived then

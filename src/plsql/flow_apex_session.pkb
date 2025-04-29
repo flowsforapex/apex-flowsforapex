@@ -2,9 +2,10 @@ create or replace package body flow_apex_session
 as
 
   type t_session_parameters    is record 
-  ( app_id   flow_types_pkg.t_bpmn_attribute_vc2
-  , page_id  flow_types_pkg.t_bpmn_attribute_vc2
-  , username flow_types_pkg.t_bpmn_attribute_vc2
+  ( app_id          flow_types_pkg.t_bpmn_attribute_vc2
+  , page_id         flow_types_pkg.t_bpmn_attribute_vc2
+  , username        flow_types_pkg.t_bpmn_attribute_vc2
+  , business_admin  flow_types_pkg.t_bpmn_attribute_vc2
   );
   e_apex_session_missing_param        exception;
   e_apex_session_multiple_processes   exception;
@@ -23,13 +24,15 @@ as
         select jt.app_id
              , jt.page_id
              , jt.username
+             , jt.business_admin
           into l_session_parameters
           from flow_objects objt
              , json_table( objt.objt_attributes, '$.apex'
                  columns
-                   app_id   varchar2(4000) path '$.applicationId'
-                 , page_id  varchar2(4000) path '$.pageId'
-                 , username varchar2(4000) path '$.username'
+                   app_id         varchar2(4000) path '$.applicationId'
+                 , page_id        varchar2(4000) path '$.pageId'
+                 , username       varchar2(4000) path '$.username'
+                 , business_admin varchar2(4000) path '$.businessAdmin'
                ) jt
          where objt.objt_dgrm_id  = p_dgrm_id
            and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
@@ -66,6 +69,15 @@ as
                         , p_default_value => null
                         );
     end if;
+
+    -- do this separately for apex_business_admin for upwards compatibility reasons...l_session_parameters
+    if l_session_parameters.business_admin is null then
+      l_session_parameters.business_admin := flow_engine_util.get_config_value 
+                        ( p_config_key    => flow_constants_pkg.gc_config_default_apex_business_admin
+                        , p_default_value => null
+                        );
+    end if;
+  
 
     if (  l_session_parameters.app_id is null
        or l_session_parameters.page_id is null 
@@ -241,16 +253,28 @@ as
   end create_async_session;
 
  function create_api_session
-  ( p_dgrm_id         in flow_diagrams.dgrm_id%type default null
-  , p_prcs_id         in flow_processes.prcs_id%type default null
+  ( p_dgrm_id            in flow_diagrams.dgrm_id%type default null
+  , p_prcs_id            in flow_processes.prcs_id%type default null
+  , p_as_business_admin  in boolean default false 
+  , p_business_admin     in flow_subflows.sbfl_apex_business_admin%type default null
   ) return number
   is 
     l_session_id             number;
     l_session_parameters     t_session_parameters;
+    l_username               flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     -- get session parameters from process diagram or system config
     l_session_parameters := get_session_parameters ( p_dgrm_id => p_dgrm_id);
   
+    if p_as_business_admin then
+      if p_business_admin is not null then
+        l_username := p_business_admin;
+      else
+        l_username := l_session_parameters.business_admin;
+      end if;
+    else
+      l_username := l_session_parameters.username;
+    end if;
     -- create apex session
     begin
       apex_session.create_session 

@@ -817,6 +817,58 @@ create or replace package body flow_api_pkg as
                                               );
   end return_approval_result;
 
+  procedure return_task_state_outcome
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_subflow_id    in flow_subflows.sbfl_id%type
+    , p_step_key      in flow_subflows.sbfl_step_key%type 
+    , p_apex_task_id  in number
+    , p_state_code    in apex_tasks.state_code%type 
+    , p_outcome       in flow_process_variables.prov_var_vc2%type default null
+    )
+  is
+  begin
+    flow_usertask_pkg.return_task_state_outcome   ( p_process_id    => p_process_id
+                                                  , p_subflow_id    => p_subflow_id
+                                                  , p_step_key      => p_step_key
+                                                  , p_apex_task_id  => p_apex_task_id
+                                                  , p_state_code    => p_state_code
+                                                  , p_outcome       => p_outcome
+                                                  );
+  end return_task_state_outcome;
+
+  function get_task_potential_owners 
+   ( p_process_id in flow_processes.prcs_id%type 
+   , p_subflow_id in flow_subflows.sbfl_id%type   
+   , p_step_key   in flow_subflows.sbfl_step_key%type 
+   , p_separator  in varchar2 default ','  
+   ) return flow_process_variables.prov_var_vc2%type
+  is
+  begin
+    return flow_usertask_pkg.get_task_potential_owners
+           ( p_process_id => p_process_id
+           , p_subflow_id => p_subflow_id
+           , p_step_key   => p_step_key
+           , p_separator  => p_separator
+           );
+  end get_task_potential_owners;
+  
+  function get_task_business_admins 
+   ( p_process_id         in flow_processes.prcs_id%type 
+   , p_subflow_id         in flow_subflows.sbfl_id%type 
+   , p_step_key           in flow_subflows.sbfl_step_key%type 
+   , p_separator          in varchar2 default ',' 
+   , p_add_diagram_admin  in boolean default false
+   , p_add_instance_admin in boolean default false
+   ) return flow_process_variables.prov_var_vc2%type
+  is
+  begin
+    return flow_usertask_pkg.get_task_business_admins
+           ( p_process_id => p_process_id
+           , p_subflow_id => p_subflow_id
+           , p_step_key   => p_step_key
+           , p_separator  => p_separator
+           );
+  end get_task_business_admins;
 
   procedure receive_message
   ( p_message_name  flow_message_subscriptions.msub_message_name%type

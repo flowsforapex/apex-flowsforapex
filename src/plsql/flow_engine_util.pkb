@@ -641,7 +641,9 @@ end get_object_tag;
           select sbfl.sbfl_id
                , sbfl.sbfl_current
                , sbfl.sbfl_scope
+               , sbfl.sbfl_dgrm_id
                , sbfl.sbfl_apex_task_id
+               , sbfl.sbfl_apex_business_admin
                , objt.objt_tag_name
                , objt.objt_sub_tag_name
                , objt.objt_attributes."taskType" tasktype
@@ -661,9 +663,11 @@ end get_object_tag;
           when flow_constants_pkg.gc_apex_usertask_apex_approval then
             -- cancel apex workflow task
             flow_usertask_pkg.cancel_apex_task
-            ( p_process_id    => p_process_id
-            , p_objt_bpmn_id  => subflows_with_tasks.sbfl_current
-            , p_apex_task_id  => subflows_with_tasks.sbfl_apex_task_id
+            ( p_process_id          => p_process_id
+            , p_objt_bpmn_id        => subflows_with_tasks.sbfl_current
+            , p_dgrm_id             => subflows_with_tasks.sbfl_dgrm_id
+            , p_apex_task_id        => subflows_with_tasks.sbfl_apex_task_id
+            , p_apex_business_admin => subflows_with_tasks.sbfl_apex_business_admin
             );
           when flow_constants_pkg.gc_simple_message then
             flow_message_util.cancel_subscription ( p_process_id  => p_process_id 

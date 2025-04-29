@@ -4,13 +4,11 @@ create or replace package flow_logging
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
-
 -- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 29-Jul-2021  Richard Allen (Flowquest) for  MT AG  
 -- Updated 10-Feb-2023  Richard Allen, Oracle
 -- Updated 25-Feb-2025  Richard Allen, Flowquest Limited
-
 --
 */
   authid definer
@@ -19,7 +17,6 @@ create or replace package flow_logging
                 , flow_call_activities, flow_subprocesses , flow_usertask_pkg, flow_settings
                 , flow_iteration, flow_instances_util_ee, flow_rewind, flow_reservations 
                 , flow_message_util_ee)
-
 as
 
   procedure log_diagram_event
