@@ -307,6 +307,7 @@ as
   gc_step_event_cancelled             constant  varchar2(20 char) := 'APEX task cancelled';
   gc_step_event_expired               constant  varchar2(20 char) := 'APEX task expired';
 
+
   -- Process Variable Datatypes
 
   gc_prov_var_type_varchar2           constant  varchar2(50 char) := 'VARCHAR2';

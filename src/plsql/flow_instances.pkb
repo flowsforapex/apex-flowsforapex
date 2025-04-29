@@ -487,18 +487,19 @@ create or replace package body flow_instances as
             );
             -- test for any step errors
             if not flow_globals.get_step_error then 
-        -- set the instance name if defined
-        if l_instance_name_def is not null then
-          set_instance_name
-          ( p_prcs_id => p_process_id
-          , p_sbfl_id => l_main_subflow.sbfl_id
-          , p_instance_name_def => l_instance_name_def
-          );
-        end if;
 
-        if not flow_globals.get_step_error then
+              -- set the instance name if defined
+              if l_instance_name_def is not null then
+                set_instance_name
+                ( p_prcs_id => p_process_id
+                , p_sbfl_id => l_main_subflow.sbfl_id
+                , p_instance_name_def => l_instance_name_def
+                );
+              end if;
 
-          -- start the timer
+              if not flow_globals.get_step_error then
+    
+                -- start the timer
                 flow_timers_pkg.start_timer
                 (
                   pi_prcs_id    => p_process_id
@@ -506,15 +507,16 @@ create or replace package body flow_instances as
                 , pi_step_key   => l_main_subflow.step_key
                 , pi_callback   => flow_constants_pkg.gc_bpmn_start_event
                 ); 
-            else
-              -- set error status on instance and subflow
-              flow_errors.set_error_status
-              ( pi_prcs_id => p_process_id
-              , pi_sbfl_id => l_main_subflow.sbfl_id
-              );
-        end if;
+              else
+                -- set error status on instance and subflow
+                flow_errors.set_error_status
+                ( pi_prcs_id => p_process_id
+                , pi_sbfl_id => l_main_subflow.sbfl_id
+                );
+
+              end if;
             end if;       
-        
+
           elsif (  l_starting_object.objt_sub_tag_name is null 
                 or l_starting_object.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_message_event_definition ) then
             -- plain (none) startEvent or messageStartEvent
@@ -529,6 +531,7 @@ create or replace package body flow_instances as
             );
 
             if not flow_globals.get_step_error then 
+
               -- set the instance name if defined
               if l_instance_name_def is not null then
                 set_instance_name
