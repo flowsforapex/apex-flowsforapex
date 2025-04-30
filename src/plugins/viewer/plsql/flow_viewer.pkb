@@ -1,8 +1,9 @@
 create or replace package body flow_viewer
 as
+
   /* Legacy plugin functions pre-25.1 */
 
-    function render
+  function render
   (
     p_region              in  apex_plugin.t_region
   , p_plugin              in  apex_plugin.t_plugin
