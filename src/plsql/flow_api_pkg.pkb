@@ -4,9 +4,11 @@ create or replace package body flow_api_pkg as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG. 2020-22
+-- (c) Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created    20-Jun-2020   Moritz Klein, MT AG 
 -- Modified   01-May-2022   Richard Allen, Oracle
+-- Modified   02-Mar-2025   Richard Allen, Flowquest
 -- 
 */
 
@@ -36,7 +38,8 @@ create or replace package body flow_api_pkg as
   (
     pi_dgrm_name in flow_diagrams.dgrm_name%type
   , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name in flow_processes.prcs_name%type
+  , pi_prcs_name in flow_processes.prcs_name%type default null
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   ) return flow_processes.prcs_id%type
   as
     l_dgrm_id         flow_diagrams.dgrm_id%type;
@@ -58,16 +61,20 @@ create or replace package body flow_api_pkg as
                                                   , pi_dgrm_version         => pi_dgrm_version
                                                   );
 
+    -- TODO - Get the Logging level from the diagram, then start the process with the greatest logging level
+
     return  flow_instances.create_process
-            ( p_dgrm_id   => l_dgrm_id
-            , p_prcs_name => pi_prcs_name
+            ( p_dgrm_id       => l_dgrm_id
+            , p_prcs_name     => pi_prcs_name
+            , p_logging_level => pi_logging_level
             );
   end flow_create;
 
   function flow_create
   (
-    pi_dgrm_id   in flow_diagrams.dgrm_id%type
-  , pi_prcs_name in flow_processes.prcs_name%type
+    pi_dgrm_id       in flow_diagrams.dgrm_id%type
+  , pi_prcs_name     in flow_processes.prcs_name%type default null
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   ) return flow_processes.prcs_id%type
   is
     l_ret flow_processes.prcs_id%type;
@@ -75,15 +82,17 @@ create or replace package body flow_api_pkg as
     return flow_instances.create_process
            ( p_dgrm_id => pi_dgrm_id
            , p_prcs_name => pi_prcs_name
+           , p_logging_level => pi_logging_level
            )
     ;
   end flow_create;
 
   procedure flow_create
   (
-    pi_dgrm_name in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
-  , pi_prcs_name in flow_processes.prcs_name%type
+    pi_dgrm_name     in flow_diagrams.dgrm_name%type
+  , pi_dgrm_version  in flow_diagrams.dgrm_version%type default null
+  , pi_prcs_name     in flow_processes.prcs_name%type default null
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   )
   as
     l_prcs_id flow_processes.prcs_id%type;
@@ -91,16 +100,18 @@ create or replace package body flow_api_pkg as
     l_prcs_id :=
       flow_create
       (
-        pi_dgrm_name => pi_dgrm_name
-      , pi_dgrm_version => pi_dgrm_version
-      , pi_prcs_name => pi_prcs_name
+        pi_dgrm_name     => pi_dgrm_name
+      , pi_dgrm_version  => pi_dgrm_version
+      , pi_prcs_name     => pi_prcs_name
+      , pi_logging_level => pi_logging_level
       );
   end flow_create;
 
   procedure flow_create
   (
-    pi_dgrm_id   in flow_diagrams.dgrm_id%type
-  , pi_prcs_name in flow_processes.prcs_name%type
+    pi_dgrm_id       in flow_diagrams.dgrm_id%type
+  , pi_prcs_name     in flow_processes.prcs_name%type default null
+  , pi_logging_level in flow_processes.prcs_logging_level%type default null
   )
   as
     l_prcs_id flow_processes.prcs_id%type;
@@ -108,8 +119,9 @@ create or replace package body flow_api_pkg as
     l_prcs_id :=
       flow_instances.create_process
       (
-        p_dgrm_id   => pi_dgrm_id
-      , p_prcs_name => pi_prcs_name
+        p_dgrm_id       => pi_dgrm_id
+      , p_prcs_name     => pi_prcs_name
+      , p_logging_level => pi_logging_level
       );
   end flow_create;
 
@@ -213,6 +225,21 @@ create or replace package body flow_api_pkg as
     , p_step_key    => p_step_key
     );
   end flow_start_step;
+
+    procedure flow_pause_step
+  (
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_step_key      in flow_subflows.sbfl_step_key%type default null
+  )
+  is 
+  begin
+    flow_engine.pause_step
+    ( p_process_id  => p_process_id
+    , p_subflow_id  => p_subflow_id
+    , p_step_key    => p_step_key
+    );
+  end flow_pause_step;
 
   procedure flow_restart_step
   (
@@ -790,6 +817,58 @@ create or replace package body flow_api_pkg as
                                               );
   end return_approval_result;
 
+  procedure return_task_state_outcome
+    ( p_process_id    in flow_processes.prcs_id%type
+    , p_subflow_id    in flow_subflows.sbfl_id%type
+    , p_step_key      in flow_subflows.sbfl_step_key%type 
+    , p_apex_task_id  in number
+    , p_state_code    in apex_tasks.state_code%type 
+    , p_outcome       in flow_process_variables.prov_var_vc2%type default null
+    )
+  is
+  begin
+    flow_usertask_pkg.return_task_state_outcome   ( p_process_id    => p_process_id
+                                                  , p_subflow_id    => p_subflow_id
+                                                  , p_step_key      => p_step_key
+                                                  , p_apex_task_id  => p_apex_task_id
+                                                  , p_state_code    => p_state_code
+                                                  , p_outcome       => p_outcome
+                                                  );
+  end return_task_state_outcome;
+
+  function get_task_potential_owners 
+   ( p_process_id in flow_processes.prcs_id%type 
+   , p_subflow_id in flow_subflows.sbfl_id%type   
+   , p_step_key   in flow_subflows.sbfl_step_key%type 
+   , p_separator  in varchar2 default ','  
+   ) return flow_process_variables.prov_var_vc2%type
+  is
+  begin
+    return flow_usertask_pkg.get_task_potential_owners
+           ( p_process_id => p_process_id
+           , p_subflow_id => p_subflow_id
+           , p_step_key   => p_step_key
+           , p_separator  => p_separator
+           );
+  end get_task_potential_owners;
+  
+  function get_task_business_admins 
+   ( p_process_id         in flow_processes.prcs_id%type 
+   , p_subflow_id         in flow_subflows.sbfl_id%type 
+   , p_step_key           in flow_subflows.sbfl_step_key%type 
+   , p_separator          in varchar2 default ',' 
+   , p_add_diagram_admin  in boolean default false
+   , p_add_instance_admin in boolean default false
+   ) return flow_process_variables.prov_var_vc2%type
+  is
+  begin
+    return flow_usertask_pkg.get_task_business_admins
+           ( p_process_id => p_process_id
+           , p_subflow_id => p_subflow_id
+           , p_step_key   => p_step_key
+           , p_separator  => p_separator
+           );
+  end get_task_business_admins;
 
   procedure receive_message
   ( p_message_name  flow_message_subscriptions.msub_message_name%type

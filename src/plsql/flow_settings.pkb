@@ -113,10 +113,12 @@ as
     when l_expr_details.expr_type = flow_constants_pkg.gc_expr_type_static then    
       if l_expr_details.expr_fmt is null then
         -- log warning then try to use the F4A default mask
-        flow_logging.log_instance_event ( p_process_id      => pi_prcs_id
-                                        , p_event           => flow_constants_pkg.gc_prcs_event_warning
-                                        , p_comment         => 'Timestamp formatMask not present.   Attempting to convert using default Flows for APEX format'
-                                        );
+        flow_logging.log_step_event ( p_process_id      => pi_prcs_id
+                                    , p_subflow_id      => pi_sbfl_id
+                                    , p_event           => flow_constants_pkg.gc_step_event_warning
+                                    , p_event_level     => flow_constants_pkg.gc_logging_level_routine
+                                    , p_comment         => 'Timestamp formatMask not present.   Attempting to convert using default Flows for APEX format'
+                                    );
         l_expr_details.expr_fmt := flow_constants_pkg.gc_prov_default_tstz_format;
       end if;
       l_return_tstz := to_timestamp_tz ( l_expr_details.expr_value, l_expr_details.expr_fmt);
@@ -309,6 +311,7 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type default null
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2 default null
   , pi_scope         flow_subflows.sbfl_scope%type default 0
+  , pi_step_key      flow_subflows.sbfl_step_key%type default null
   ) return flow_types_pkg.t_bpmn_attribute_vc2
   is
     l_expr_details expression_details_t;
@@ -336,6 +339,7 @@ as
         ( pi_prcs_id   => pi_prcs_id
         , pi_sbfl_id   => pi_sbfl_id
         , pi_scope     => pi_scope
+        , pi_step_key  => pi_step_key
         , pio_string   => l_expr_details.expr_value
         );
         l_return_value := l_expr_details.expr_value;
@@ -421,6 +425,7 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type
   , pi_expr          clob
   , pi_scope         flow_subflows.sbfl_scope%type default 0
+  , pi_step_key      flow_subflows.sbfl_step_key%type default null
   ) return clob
   is
     l_expr_details expression_details_t;
@@ -444,6 +449,7 @@ as
         ( pi_prcs_id   => pi_prcs_id
         , pi_sbfl_id   => pi_sbfl_id
         , pi_scope     => pi_scope
+        , pi_step_key  => pi_step_key
         , pio_string   => l_expr_details.expr_value
         );
         l_return_value := l_expr_details.expr_value;

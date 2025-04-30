@@ -1,0 +1,1452 @@
+---
+# ====== Page: Configuration - Location ======================
+id: 38
+identification: 
+  name: Configuration - Location
+  alias: CONFIGURATION-LOCATION
+  title: Configuration - Location
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Location ====================================
+  id: 3512217433851735
+  identification: 
+    name: Location
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_CONFIGURATION
+    include-rowid-column: false
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Update Row
+      lost-update-type: Row Values
+
+- # ====== Region: Button Bar ==================================
+  id: 3745995977530323
+  identification: 
+    name: Button Bar
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_03
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Buttons Container
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Choose the active destination ===============
+  id: 3747249703530336
+  identification: 
+    name: Choose the active destination
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Location # 3512217433851735
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--horizontal
+    - t-Alert--customIcons
+    - t-Alert--info
+    icon: fa-number-1-o
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Fill in the details =========================
+  id: 3747347338530337
+  identification: 
+    name: Fill in the details
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Location # 3512217433851735
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--horizontal
+    - t-Alert--customIcons
+    - t-Alert--info
+    - margin-bottom-none
+    icon: fa-number-2-o
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P38_CFIG_KEY =============================
+  id: 3512603514851739
+  identification: 
+    name: P38_CFIG_KEY
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Location # 3512217433851735
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Location # 3512217433851735
+    column: CFIG_KEY
+    data-type: VARCHAR2
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_CFIG_VALUE ===========================
+  id: 3512743931851740
+  identification: 
+    name: P38_CFIG_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Location # 3512217433851735
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Location # 3512217433851735
+    column: CFIG_VALUE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_DESTINATION_TYPE =====================
+  id: 3513035181851743
+  identification: 
+    name: P38_DESTINATION_TYPE
+    type: Radio Group
+
+  label: 
+    label: Destination Type
+    alignment: Left
+
+  settings: 
+    number-of-columns: 3
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 10
+    region: Choose the active destination # 3747249703530336
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2:Table;TABLE,OCI (API);OCI-API,OCI (PreAuth);OCI-PREAUTH'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_TABLE_NAME ===========================
+  id: 3513116353851744
+  identification: 
+    name: P38_TABLE_NAME
+    type: Select List
+
+  label: 
+    label: Table Name
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 40
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select table_name d, table_name r
+      from user_tables
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_ID_COLUMN ============================
+  id: 3513290888851745
+  identification: 
+    name: P38_ID_COLUMN
+    type: Select List
+
+  label: 
+    label: Id Column
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 50
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select column_name d, column_name r
+      from user_tab_columns
+      where table_name = :P38_TABLE_NAME
+      and data_type = 'NUMBER';
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P38_TABLE_NAME
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_TIMESTAMP_COLUMN =====================
+  id: 3513352883851746
+  identification: 
+    name: P38_TIMESTAMP_COLUMN
+    type: Select List
+
+  label: 
+    label: Timestamp Column
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 60
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select column_name d, column_name r
+      from user_tab_columns
+      where table_name = :P38_TABLE_NAME
+      and data_type like 'TIMESTAMP%WITH TIME ZONE%';
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P38_TABLE_NAME
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_BLOB_COLUMN ==========================
+  id: 3513454878851747
+  identification: 
+    name: P38_BLOB_COLUMN
+    type: Select List
+
+  label: 
+    label: Blob Column
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 70
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select column_name d, column_name r
+      from user_tab_columns
+      where table_name = :P38_TABLE_NAME
+      and data_type = 'BLOB';
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P38_TABLE_NAME
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_BASE_URL =============================
+  id: 3743758890530301
+  identification: 
+    name: P38_BASE_URL
+    type: Text Field
+
+  label: 
+    label: Base URL
+    alignment: Left
+
+  settings: 
+    subtype: URL
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_BUCKET_NAME ==========================
+  id: 3743862263530302
+  identification: 
+    name: P38_BUCKET_NAME
+    type: Text Field
+
+  label: 
+    label: Bucket Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_API_DOCUMENT_PREFIX ==================
+  id: 3743975741530303
+  identification: 
+    name: P38_API_DOCUMENT_PREFIX
+    type: Text Field
+
+  label: 
+    label: Document Prefix
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 110
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_API_CREDENTIAL_APEX_STATIC_ID ========
+  id: 3744055656530304
+  identification: 
+    name: P38_API_CREDENTIAL_APEX_STATIC_ID
+    type: Select List
+
+  label: 
+    label: APEX Credential Static Id
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 130
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select name||' ('||credential_type||')' d, static_id
+      from apex_workspace_credentials;
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_PRE_AUTH_URL =========================
+  id: 3744138186530305
+  identification: 
+    name: P38_PRE_AUTH_URL
+    type: Text Field
+
+  label: 
+    label: Pre Auth URL
+    alignment: Left
+
+  settings: 
+    subtype: URL
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 150
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_PREAUTH_DOCUMENT_PREFIX ==============
+  id: 3747558988530339
+  identification: 
+    name: P38_PREAUTH_DOCUMENT_PREFIX
+    type: Text Field
+
+  label: 
+    label: Document Prefix
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 160
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_PREAUTH_CREDENTIAL_APEX_STATIC_ID ====
+  id: 3747603686530340
+  identification: 
+    name: P38_PREAUTH_CREDENTIAL_APEX_STATIC_ID
+    type: Select List
+
+  label: 
+    label: APEX Credential Static Id
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 170
+    region: Fill in the details # 3747347338530337
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select name||' ('||credential_type||')' d, static_id
+      from apex_workspace_credentials;
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SAVE ========================================
+  id: 3745589259530319
+  identification: 
+    button-name: SAVE
+    label: Save
+
+  layout: 
+    sequence: 20
+    region: Button Bar # 3745995977530323
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: CANCEL ======================================
+  id: 3745670019530320
+  identification: 
+    button-name: CANCEL
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Button Bar # 3745995977530323
+    slot: PREVIOUS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Hide/Show Table Fields ==============
+  id: 3744327033530307
+  identification: 
+    name: Hide/Show Table Fields
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P38_DESTINATION_TYPE
+
+  client-side-condition: 
+    type: Item = Value
+    item: P38_DESTINATION_TYPE
+    value: TABLE
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 3744474525530308
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_TABLE_NAME
+      - P38_ID_COLUMN
+      - P38_TIMESTAMP_COLUMN
+      - P38_BLOB_COLUMN
+
+    execution: 
+      sequence: 10
+      event: Hide/Show Table Fields # 3744327033530307
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 3744597361530309
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_TABLE_NAME
+      - P38_ID_COLUMN
+      - P38_TIMESTAMP_COLUMN
+      - P38_BLOB_COLUMN
+
+    execution: 
+      sequence: 10
+      event: Hide/Show Table Fields # 3744327033530307
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Hide/Show OCI-API Fields ============
+  id: 3744633233530310
+  identification: 
+    name: Hide/Show OCI-API Fields
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P38_DESTINATION_TYPE
+    - P38_API_DOCUMENT_PREFIX
+    - P38_API_CREDENTIAL_APEX_STATIC_ID
+
+  client-side-condition: 
+    type: Item = Value
+    item: P38_DESTINATION_TYPE
+    value: OCI-API
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 3744771169530311
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_BASE_URL
+      - P38_BUCKET_NAME
+      - P38_API_DOCUMENT_PREFIX
+      - P38_API_CREDENTIAL_APEX_STATIC_ID
+
+    execution: 
+      sequence: 10
+      event: Hide/Show OCI-API Fields # 3744633233530310
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 3747744242530341
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_BASE_URL
+      - P38_BUCKET_NAME
+      - P38_API_DOCUMENT_PREFIX
+      - P38_API_CREDENTIAL_APEX_STATIC_ID
+
+    execution: 
+      sequence: 10
+      event: Hide/Show OCI-API Fields # 3744633233530310
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Hide/Show OCI-PREAUTH Fields ========
+  id: 3744919862530313
+  identification: 
+    name: Hide/Show OCI-PREAUTH Fields
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P38_DESTINATION_TYPE
+
+  client-side-condition: 
+    type: Item = Value
+    item: P38_DESTINATION_TYPE
+    value: OCI-PREAUTH
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 3745034758530314
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_PRE_AUTH_URL
+      - P38_PREAUTH_DOCUMENT_PREFIX
+      - P38_PREAUTH_CREDENTIAL_APEX_STATIC_ID
+
+    execution: 
+      sequence: 10
+      event: Hide/Show OCI-PREAUTH Fields # 3744919862530313
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 3747827765530342
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_PRE_AUTH_URL
+      - P38_PREAUTH_DOCUMENT_PREFIX
+      - P38_PREAUTH_CREDENTIAL_APEX_STATIC_ID
+
+    execution: 
+      sequence: 10
+      event: Hide/Show OCI-PREAUTH Fields # 3744919862530313
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Click on Cancel =====================
+  id: 3745700945530321
+  identification: 
+    name: Click on Cancel
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL # 3745670019530320
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 3745870785530322
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Click on Cancel # 3745700945530321
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P38_CFIG_VALUE =========================
+  id: 3746058063530324
+  identification: 
+    item-name: P38_CFIG_VALUE
+
+  execution: 
+    sequence: 10
+    point: After Submit
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      declare
+          l_clob clob;
+      begin
+          apex_json.initialize_clob_output;
+      
+          apex_json.open_object;
+          apex_json.write('destinationType', :P38_DESTINATION_TYPE);
+      
+          apex_json.open_object('tableDetails');
+          apex_json.write('tableName', :P38_TABLE_NAME);
+          apex_json.write('idColumn', :P38_ID_COLUMN);
+          apex_json.write('timestampColumn', :P38_TIMESTAMP_COLUMN);
+          apex_json.write('blobColumn', :P38_BLOB_COLUMN);
+          apex_json.close_object;
+      
+          apex_json.open_object('ociApiDetails');
+          apex_json.write('baseUrl', :P38_BASE_URL);
+          apex_json.write('bucketName', :P38_BUCKET_NAME);
+          apex_json.write('documentPrefix', :P38_API_DOCUMENT_PREFIX);
+          apex_json.write('credentialApexStaticId', :P38_API_CREDENTIAL_APEX_STATIC_ID);
+          apex_json.close_object;
+      
+          apex_json.open_object('ociPreAuthDetails');
+          apex_json.write('preAuthUrl', :P38_PRE_AUTH_URL);
+          apex_json.write('documentPrefix', :P38_PREAUTH_DOCUMENT_PREFIX);
+          apex_json.write('credentialApexStaticId', :P38_PREAUTH_CREDENTIAL_APEX_STATIC_ID);
+          apex_json.close_object;
+      
+          apex_json.close_object;
+      
+          l_clob := apex_json.get_clob_output( p_free => true );
+      
+          return l_clob;
+      end;
+
+processes: 
+- # ====== Process: Initialize form Configuration - Location ===
+  id: 3512551612851738
+  identification: 
+    name: Initialize form Configuration - Location
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Location # 3512217433851735
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Location ======================
+  id: 3512846601851741
+  identification: 
+    name: Process form Location
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Location # 3512217433851735
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Parse JSON =================================
+  id: 3744274227530306
+  identification: 
+    name: Parse JSON
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      begin
+         select destination_type,
+                table_name,
+                id_column,
+                timestamp_column,
+                blob_column,
+                base_url,
+                bucket_name,
+                oci_api_doc_prefix, 
+                oci_api_cred,
+                preauth_url,
+                oci_preauth_doc_prefix, 
+                oci_preauth_cred
+           into :p38_destination_type,
+                :p38_table_name,
+                :p38_id_column,
+                :p38_timestamp_column,
+                :p38_blob_column,
+                :p38_base_url,
+                :p38_bucket_name,
+                :p38_api_document_prefix,
+                :p38_api_credential_apex_static_id,
+                :p38_pre_auth_url,
+                :p38_preauth_document_prefix,
+                :p38_preauth_credential_apex_static_id
+           from json_table(
+                   (
+                      select cfig_value
+                        from flow_configuration
+                       where cfig_key = :P38_CFIG_KEY
+                   ),
+                   '$'
+                   columns (
+                      destination_type       varchar2 path '$.destinationType',
+                      table_name             varchar2 path '$.tableDetails.tableName',
+                      id_column              varchar2 path '$.tableDetails.idColumn',
+                      timestamp_column       varchar2 path '$.tableDetails.timestampColumn',
+                      blob_column            varchar2 path '$.tableDetails.blobColumn',
+                      base_url               varchar2 path '$.ociApiDetails.baseUrl',
+                      bucket_name            varchar2 path '$.ociApiDetails.bucketName',
+                      oci_api_doc_prefix     varchar2 path '$.ociApiDetails.documentPrefix',
+                      oci_api_cred           varchar2 path '$.ociApiDetails.credentialApexStaticId',
+                      preauth_url            varchar2 path '$.ociPreAuthDetails.preAuthUrl',
+                      oci_preauth_doc_prefix varchar2 path '$.ociPreAuthDetails.documentPrefix',
+                      oci_preauth_cred       varchar2 path '$.ociPreAuthDetails.credentialApexStaticId'
+                   )
+                );
+      exception
+          when no_data_found then
+              --Don't need to raise an exception there, it's just because there is no configuration
+              null;
+      end;
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Close Dialog ===============================
+  id: 3746695353530330
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: false
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

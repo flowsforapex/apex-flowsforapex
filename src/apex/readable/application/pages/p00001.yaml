@@ -1,0 +1,143 @@
+---
+# ====== Page: Getting Started ===============================
+id: 1
+identification: 
+  name: Getting Started
+  alias: GETTING-STARTED
+  title: Getting Started - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Getting Started =============================
+  id: 10603774502745437
+  identification: 
+    name: Getting Started
+    type: Static Content
+
+  source: 
+    html-code: |
+      <h2>Flows for APEX</h2>
+      <h3>A Low code, BPMN-based Process Flow system for APEX.</h3>
+      <h4> Features</h4>
+      <ul>
+      <li>Flows for APEX enables APEX developers to model and run process flows in APEX using a combination of visual process design and low-code techniques.</li>
+      <li>Designed primarily for APEX developers, Flows for APEX uses the technologies that you are already familiar with - APEX, PL/SQL, and SQL - to create powerful and flexible process flows in your APEX environment.</li>
+      <li>Used to create and execute a process flow of APEX pages, PL/SQL scripts, send email.</li>
+      <li> The low-code diagrammatic process definition can also be understood and edited by business users to increase business flexibility.  Flows use the Business Process Modeling Notation (BPMN) V2 style</li>
+      <li>Built as an APEX community project, and released on an open source, MIT licence.</li>
+      </ul>
+      <p>
+      <h4>Download</h4>
+      <a href="https://flowsforapex.org" target="_blank">flowsforapex.org</a>
+      <p>
+      <h4>Documentation</h4>
+      <a href="https://flowsforapex.org/latest/getting-started/" target="_blank">Latest Documentation Online</a>
+      <p>
+      <h4>BPMN Tutorials</h4>
+      To get you started with modelling flows, try out the preinstalled tutorial flows. For further information on the tutorials have a look <a href="https://flowsforapex.org/latest/tutorials/" target="_blank">here</a>.
+      <p>
+      <h4>Demo App</h4>
+      <p>Take a look at our <a href="https://flowsforapex.org" target="_blank">website</a> to see how the integration of a flow can be done.
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Getting Started =============================
+  id: 16518361588787101
+  identification: 
+    name: Getting Started
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Hero
+    template-options: 
+    - '#DEFAULT#'
+    - t-HeroRegion--hideIcon
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+

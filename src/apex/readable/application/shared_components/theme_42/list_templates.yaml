@@ -1,0 +1,2593 @@
+---
+- # ====== List Template: Top Navigation Mega Menu =============
+  id: 88546529882008878
+  identification: 
+    name: Top Navigation Mega Menu
+    identifier: TOP_NAVIGATION_MEGA_MENU
+    class: Pull Down Menu
+
+  subscription: 
+    master: 
+      referenced-id: 1665447133514362075
+
+  advanced: 
+    translatable: false
+
+  list: 
+    before-rows: |
+      <div class="t-MegaMenu #COMPONENT_CSS_CLASSES#" id="t_MenuNav" #APEX_CSP_DISPLAY_NONE#>
+        <div class="a-Menu-content t-MegaMenu-container">
+          <div class="t-MegaMenu-body">
+          <ul class="t-MegaMenu-list t-MegaMenu-list--top">
+
+  entry: 
+    current: |
+      <li class="t-MegaMenu-item t-MegaMenu-item--top t-MegaMenu-item--noSub is-active #A04#" data-current="true" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+      </li>
+    current-with-sublist: |
+      <li class="t-MegaMenu-item t-MegaMenu-item--top t-MegaMenu-item--hasSub is-active #A04#" data-current="true" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+    noncurrent: |
+      <li class="t-MegaMenu-item t-MegaMenu-item--top t-MegaMenu-item--noSub #A04#" data-current="false" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+      </li>
+    noncurrent-with-sublist: |
+      <li class="t-MegaMenu-item t-MegaMenu-item--top t-MegaMenu-item--hasSub #A04#" data-current="false" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+      </li>
+
+  sublist: 
+    before-rows: <ul class="t-MegaMenu-list t-MegaMenu-list--sub">
+    after-rows: </ul></li>
+
+  sublist-entry: 
+    current: |
+      <li class="t-MegaMenu-item is-active #A04#" data-current="true" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+      </li>
+    current-with-sublist: |
+      <li class="t-MegaMenu-item is-active #A04#" data-current="true" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+    noncurrent: |
+      <li class="t-MegaMenu-item #A04#" data-current="false" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+      </li>
+    noncurrent-with-sublist-items: |
+      <li class="t-MegaMenu-item #A04#" data-current="false" data-id="#A01#" data-shortcut="#A05#">
+        <span class="a-Menu-item t-MegaMenu-itemBody #A08#">
+          <span class="t-Icon #ICON_CSS_CLASSES#"></span>
+          <a class="a-Menu-label t-MegaMenu-labelWrap" href="#LINK#" target="#A06#">
+            <span class="t-MegaMenu-label">#TEXT_ESC_SC#</span>
+            <span class="t-MegaMenu-desc">#A03#</span>
+          </a>
+          <span class="t-MegaMenu-badge #A07#">#A02#</span>
+        </span>
+
+  after-list-entry: 
+    after-rows: ' </ul></div></div></div>'
+
+  attribute-descriptions: 
+    a01: ID Attribute
+    a02: Badge Value
+    a03: Description
+    a04: List Item Class
+    a05: Shortcut Key
+    a06: Link Target
+    a07: Badge Class
+    a08: Menu Item Class
+
+  template-options: 
+  - # ====== Template Option: Add Actions ========================
+    id: 1794428795043267
+    identification: 
+      name: Add Actions
+      identifier: ADD_ACTIONS
+      sequence: 1
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-addActions
+
+    help: 
+      help-text: Use this option to add shortcuts for menu items. Note that actions.js must be included on your page to support this functionality.
+
+  - # ====== Template Option: 2 Columns ==========================
+    id: 88547031223008883
+    identification: 
+      name: 2 Columns
+      identifier: 2_COLUMNS
+      group: Layout
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--layout2Cols
+
+  - # ====== Template Option: 3 Columns ==========================
+    id: 88547363961008883
+    identification: 
+      name: 3 Columns
+      identifier: 3_COLUMNS
+      group: Layout
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--layout3Cols
+
+  - # ====== Template Option: 4 Columns ==========================
+    id: 88547845021008883
+    identification: 
+      name: 4 Columns
+      identifier: 4_COLUMNS
+      group: Layout
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--layout4Cols
+
+  - # ====== Template Option: 5 Columns ==========================
+    id: 88548160965008884
+    identification: 
+      name: 5 Columns
+      identifier: 5_COLUMNS
+      group: Layout
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--layout5Cols
+
+  - # ====== Template Option: Custom =============================
+    id: 88548630470008884
+    identification: 
+      name: Custom
+      identifier: CUSTOM
+      group: Layout
+      sequence: 60
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--layoutCustom
+
+  - # ====== Template Option: Display Menu Callout ===============
+    id: 88549005800008884
+    identification: 
+      name: Display Menu Callout
+      identifier: DISPLAY_MENU_CALLOUT
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-menu-callout
+
+    help: 
+      help-text: Displays a callout arrow that points to where the menu was activated from.
+
+  - # ====== Template Option: Full Width =========================
+    id: 88549413713008884
+    identification: 
+      name: Full Width
+      identifier: FULL_WIDTH
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--fullWidth
+
+    help: 
+      help-text: Stretches the menu to fill the width of the screen.
+
+  - # ====== Template Option: Stacked ============================
+    id: 88549765769008884
+    identification: 
+      name: Stacked
+      identifier: STACKED
+      group: Layout
+      sequence: 60
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MegaMenu--layoutStacked
+
+- # ====== List Template: Tabs =================================
+  id: 12495524735818880142
+  identification: 
+    name: Tabs
+    identifier: TABS
+    class: Tabbed Navigation List
+
+  subscription: 
+    master: 
+      referenced-id: 3288206686691809997
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    preset: 
+    - t-Tabs--simple
+
+  list: 
+    before-rows: '<ul class="t-Tabs #COMPONENT_CSS_CLASSES#">'
+
+  entry: 
+    current: |
+      <li class="t-Tabs-item is-active #A03#" aria-current="page" id="#A01#">
+        <a href="#LINK#" class="t-Tabs-link #A04#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true"></span>
+          <span class="t-Tabs-label">#TEXT#</span>
+        </a>
+      </li>
+    noncurrent: |
+      <li class="t-Tabs-item #A03#" id="#A01#">
+        <a href="#LINK#" class="t-Tabs-link #A04#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true"></span>
+          <span class="t-Tabs-label">#TEXT#</span>
+        </a>
+      </li>
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  javascript: 
+    file-urls: 
+    - '#APEX_FILES#libraries/apex/#MIN_DIRECTORY#widget.apexTabs#MIN#.js?v=#APEX_VERSION#'
+
+  attribute-descriptions: 
+    a01: List Item ID
+    a03: List Item Class
+    a04: Link Class
+
+  template-options: 
+  - # ====== Template Option: Small ==============================
+    id: 12495523249552880140
+    identification: 
+      name: Small
+      identifier: SMALL
+      group: Size
+      sequence: 5
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--small
+
+  - # ====== Template Option: Simple =============================
+    id: 12495523430849880140
+    identification: 
+      name: Simple
+      identifier: SIMPLE
+      group: Style
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--simple
+
+    help: 
+      help-text: A very simplistic tab UI.
+
+  - # ====== Template Option: Pill ===============================
+    id: 12495523644208880140
+    identification: 
+      name: Pill
+      identifier: PILL
+      group: Style
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--pill
+
+    help: 
+      help-text: Displays tabs in a pill container.
+
+  - # ====== Template Option: Large ==============================
+    id: 12495523859248880140
+    identification: 
+      name: Large
+      identifier: LARGE
+      group: Size
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--large
+
+    help: 
+      help-text: Increases font size and white space around tab items.
+
+  - # ====== Template Option: Inline with Label ==================
+    id: 12495524049575880140
+    identification: 
+      name: Inline with Label
+      identifier: INLINE_WITH_LABEL
+      group: Icons
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--inlineIcons
+
+  - # ====== Template Option: Above Label ========================
+    id: 12495524251143880140
+    identification: 
+      name: Above Label
+      identifier: ABOVE_LABEL
+      group: Icons
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--iconsAbove
+
+    help: 
+      help-text: Places icons above tab label.
+
+  - # ====== Template Option: Fill Labels ========================
+    id: 12495524461988880140
+    identification: 
+      name: Fill Labels
+      identifier: FILL_LABELS
+      group: Layout
+      sequence: 1
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Tabs--fillLabels
+
+    help: 
+      help-text: Stretch tabs to fill to the width of the tabs container.
+
+- # ====== List Template: Menu Popup ===========================
+  id: 12495525309455880143
+  identification: 
+    name: Menu Popup
+    identifier: MENU_POPUP
+    class: Pull Down Menu
+
+  subscription: 
+    master: 
+      referenced-id: 3492264004432431646
+
+  advanced: 
+    translatable: false
+
+  list: 
+    before-rows: '<div id="#PARENT_STATIC_ID#_menu" class="#COMPONENT_CSS_CLASSES#" #APEX_CSP_DISPLAY_NONE#><ul>'
+
+  entry: 
+    current: |
+      <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+      
+    current-with-sublist: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: |
+      <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+      
+    noncurrent-with-sublist: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  sublist: 
+    before-rows: <ul>
+    after-rows: </ul></li>
+
+  sublist-entry: 
+    current: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist-items: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  after-list-entry: 
+    after-rows: </ul></div>
+
+  javascript: 
+    execute-when-page-loads: |
+      var e = apex.jQuery("##PARENT_STATIC_ID#_menu", apex.gPageContext$);
+      if (e.hasClass("js-addActions")) {
+        apex.actions.addFromMarkup( e );
+      }
+      e.menu({ iconType: 'fa', callout: e.hasClass("js-menu-callout")});
+
+  attribute-descriptions: 
+    a01: Menu Item ID / Action Name
+    a02: Disabled (True/False)
+    a03: Hidden (True/False)
+    a04: Title Attribute (Used By Actions Only)
+    a05: Shortcut
+    a06: Link Target
+
+  template-options: 
+  - # ====== Template Option: Display Menu Callout ===============
+    id: 12495524862618880143
+    identification: 
+      name: Display Menu Callout
+      identifier: DISPLAY_MENU_CALLOUT
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-menu-callout
+
+    help: 
+      help-text: Use this option to add display a callout for the menu. Note that callout will only be displayed if the data-parent-element custom attribute is defined.
+
+  - # ====== Template Option: Add Actions ========================
+    id: 12495525068278880143
+    identification: 
+      name: Add Actions
+      identifier: ADD_ACTIONS
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-addActions
+
+    help: 
+      help-text: Enables you to define a keyboard shortcut to activate the menu item.
+
+- # ====== List Template: Wizard Progress ======================
+  id: 12495526785023880145
+  identification: 
+    name: Wizard Progress
+    identifier: WIZARD_PROGRESS
+    class: Wizard Progress List
+
+  subscription: 
+    master: 
+      referenced-id: 2008702338707394488
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    preset: 
+    - t-WizardSteps--displayLabels
+
+  list: 
+    before-rows: '<ul aria-label="#CURRENT_PROGRESS#" class="t-WizardSteps #COMPONENT_CSS_CLASSES#" id="#LIST_ID#">'
+
+  entry: 
+    current: |
+      <li class="t-WizardSteps-step is-active" aria-current="step" id="#LIST_ITEM_ID#">
+        <div class="t-WizardSteps-wrap" data-link="#LINK#">
+          <span class="t-WizardSteps-marker" aria-hidden="true"></span>
+          <span class="t-WizardSteps-label">#TEXT# <span aria-hidden="true" class="t-WizardSteps-labelState"></span></span>
+        </div>
+      </li>
+    noncurrent: |
+      <li class="t-WizardSteps-step" id="#LIST_ITEM_ID#">
+        <div class="t-WizardSteps-wrap" data-link="#LINK#">
+          <span class="t-WizardSteps-marker" aria-hidden="true"></span>
+          <span class="t-WizardSteps-label">#TEXT# <span aria-hidden="true" class="t-WizardSteps-labelState"></span></span>
+        </div>
+      </li>
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  javascript: 
+    execute-when-page-loads: apex.theme.initWizardProgressBar();
+
+  template-options: 
+  - # ====== Template Option: Vertical Orientation ===============
+    id: 12495525495554880143
+    identification: 
+      name: Vertical Orientation
+      identifier: VERTICAL_LIST
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-WizardSteps--vertical
+
+    help: 
+      help-text: Displays the wizard progress list in a vertical orientation and is suitable for displaying within a side column of a page.
+
+  - # ====== Template Option: Hide Labels ========================
+    id: 12495525642905880143
+    identification: 
+      name: Hide Labels
+      identifier: HIDELABELS
+      group: Label Display
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-WizardSteps--hideLabels
+
+  - # ====== Template Option: All Steps ==========================
+    id: 12495525829841880143
+    identification: 
+      name: All Steps
+      identifier: ALLSTEPS
+      group: Label Display
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-WizardSteps--displayLabels
+
+  - # ====== Template Option: Current Step Only ==================
+    id: 12495526055652880143
+    identification: 
+      name: Current Step Only
+      identifier: CURRENTSTEPONLY
+      group: Label Display
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-WizardSteps--displayCurrentLabelOnly
+
+  - # ====== Template Option: Make Wizard Steps Clickable ========
+    id: 12495526423626880143
+    identification: 
+      name: Make Wizard Steps Clickable
+      identifier: WIZARD_PROGRESS_LINKS
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-wizardProgressLinks
+
+    help: 
+      help-text: This option will make the wizard steps clickable links.
+
+- # ====== List Template: Top Navigation Tabs ==================
+  id: 12495528385085880146
+  identification: 
+    name: Top Navigation Tabs
+    identifier: TOP_NAVIGATION_TABS
+    class: Tabbed Navigation List
+
+  subscription: 
+    master: 
+      referenced-id: 1453011561172885578
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    preset: 
+    - t-NavTabs--inlineLabels-lg
+    - t-NavTabs--displayLabels-sm
+
+  list: 
+    before-rows: '<ul class="t-NavTabs #COMPONENT_CSS_CLASSES#" id="#PARENT_STATIC_ID#_navtabs">'
+
+  entry: 
+    current: |
+      <li class="t-NavTabs-item #A03# is-active" aria-current="page" id="#A01#">
+        <a href="#LINK#" class="t-NavTabs-link #A04# " title="#TEXT_ESC_SC#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true"></span>
+          <span class="t-NavTabs-label">#TEXT_ESC_SC#</span>
+          <span class="t-NavTabs-badge #A05#">#A02#</span>
+        </a>
+      </li>
+    noncurrent: |
+      <li class="t-NavTabs-item #A03#" id="#A01#">
+        <a href="#LINK#" class="t-NavTabs-link #A04# " title="#TEXT_ESC_SC#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true"></span>
+          <span class="t-NavTabs-label">#TEXT_ESC_SC#</span>
+          <span class="t-NavTabs-badge #A05#">#A02#</span>
+        </a>
+      </li>
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  attribute-descriptions: 
+    a01: List Item ID
+    a02: Badge Value
+    a03: List Item Class
+    a04: Link Class
+    a05: Badge Class
+
+  template-options: 
+  - # ====== Template Option: Display labels above ===============
+    id: 12495526839144880145
+    identification: 
+      name: Display labels above
+      identifier: LABEL_ABOVE_LG
+      group: Desktop
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-NavTabs--stacked
+
+    help: 
+      help-text: Display the label stacked above the icon and badge
+
+  - # ====== Template Option: Display labels inline ==============
+    id: 12495527024406880145
+    identification: 
+      name: Display labels inline
+      identifier: LABEL_INLINE_LG
+      group: Desktop
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-NavTabs--inlineLabels-lg
+
+    help: 
+      help-text: Display the label inline with the icon and badge
+
+  - # ====== Template Option: Do not display labels ==============
+    id: 12495527255570880145
+    identification: 
+      name: Do not display labels
+      identifier: HIDE_LABELS_SM
+      group: Mobile
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-NavTabs--hiddenLabels-sm
+
+  - # ====== Template Option: Do not display labels ==============
+    id: 12495527402028880145
+    identification: 
+      name: Do not display labels
+      identifier: NO_LABEL_LG
+      group: Desktop
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-NavTabs--hiddenLabels-lg
+
+    help: 
+      help-text: Hides the label for the list item
+
+  - # ====== Template Option: Display labels =====================
+    id: 12495527863440880145
+    identification: 
+      name: Display labels
+      identifier: DISPLAY_LABELS_SM
+      group: Mobile
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-NavTabs--displayLabels-sm
+
+    help: 
+      help-text: Displays the label for the list items below the icon
+
+- # ====== List Template: Menu Bar =============================
+  id: 12495529517389880148
+  identification: 
+    name: Menu Bar
+    identifier: MENU_BAR
+    class: Pull Down Menu
+
+  subscription: 
+    master: 
+      referenced-id: 2008709236185638887
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    default: 
+    - js-showSubMenuIcons
+
+  list: 
+    before-rows: '<div class="t-MenuBar #COMPONENT_CSS_CLASSES#" id="#PARENT_STATIC_ID#_menubar"><ul>'
+
+  entry: 
+    current: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  sublist: 
+    before-rows: <ul>
+    after-rows: </ul></li>
+
+  sublist-entry: 
+    current: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist-items: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  after-list-entry: 
+    after-rows: </ul></div>
+
+  javascript: 
+    execute-when-page-loads: |
+      var e = apex.jQuery("##PARENT_STATIC_ID#_menubar", apex.gPageContext$);
+      if (e.hasClass("js-addActions")) {
+        apex.actions.addFromMarkup( e );
+      }
+      e.menu({
+        behaveLikeTabs: e.hasClass("js-tabLike"),
+        menubarShowSubMenuIcon: e.hasClass("js-showSubMenuIcons") || null,
+        iconType: 'fa',
+        menubar: true,
+        menubarOverflow: true,
+        callout: e.hasClass("js-menu-callout")
+      });
+
+  attribute-descriptions: 
+    a01: Menu Item ID / Action Name
+    a02: Disabled (True/False)
+    a03: Hidden (True/False)
+    a04: Title Attribute (Used By Actions Only)
+    a05: Shortcut
+    a06: Link Target
+
+  template-options: 
+  - # ====== Template Option: Behave Like Tabs ===================
+    id: 12495528443868880146
+    identification: 
+      name: Behave Like Tabs
+      identifier: BEHAVE_LIKE_TABS
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-tabLike
+
+  - # ====== Template Option: Show Sub Menu Icons ================
+    id: 12495528844306880146
+    identification: 
+      name: Show Sub Menu Icons
+      identifier: SHOW_SUB_MENU_ICONS
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-showSubMenuIcons
+
+  - # ====== Template Option: Display Menu Callout ===============
+    id: 12495529023501880146
+    identification: 
+      name: Display Menu Callout
+      identifier: DISPLAY_MENU_CALLOUT
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-menu-callout
+
+    help: 
+      help-text: Use this option to add display a callout for the menu.
+
+  - # ====== Template Option: Add Actions ========================
+    id: 12495529254324880146
+    identification: 
+      name: Add Actions
+      identifier: ADD_ACTIONS
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-addActions
+
+    help: 
+      help-text: Use this option to add shortcuts for menu items. Note that actions.js must be included on your page to support this functionality.
+
+- # ====== List Template: Links List ===========================
+  id: 12495531199768880148
+  identification: 
+    name: Links List
+    identifier: LINKS_LIST
+    class: Vertical Unordered List without Bullets
+
+  subscription: 
+    master: 
+      referenced-id: 4070914341144059318
+
+  advanced: 
+    translatable: false
+
+  list: 
+    before-rows: '<ul class="t-LinksList #COMPONENT_CSS_CLASSES#" id="#LIST_ID#">'
+
+  entry: 
+    current: |
+      <li class="t-LinksList-item is-current #A03#" aria-current="page">
+        <a href="#LINK#" class="t-LinksList-link" #A02#>
+          <span class="t-LinksList-icon" aria-hidden="true"><span class="t-Icon #ICON_CSS_CLASSES#"></span></span>
+          <span class="t-LinksList-label">#TEXT#</span>
+          <span class="t-LinksList-badge">#A01#</span>
+        </a>
+      </li>
+      
+    current-with-sublist: |
+      <li class="t-LinksList-item is-current #A03#" aria-current="page">
+        <a href="#LINK#" class="t-LinksList-link" #A02#>
+          <span class="t-LinksList-icon" aria-hidden="true"><span class="t-Icon #ICON_CSS_CLASSES#"></span></span>
+          <span class="t-LinksList-label">#TEXT#</span>
+          <span class="t-LinksList-badge">#A01#</span>
+        </a>
+        #SUB_LISTS#
+      </li>
+    noncurrent: |
+      <li class="t-LinksList-item #A03#">
+        <a href="#LINK#" class="t-LinksList-link" #A02#>
+          <span class="t-LinksList-icon" aria-hidden="true"><span class="t-Icon #ICON_CSS_CLASSES#"></span></span>
+          <span class="t-LinksList-label">#TEXT#</span>
+          <span class="t-LinksList-badge">#A01#</span>
+        </a>
+      </li>
+    noncurrent-with-sublist: |
+      <li class="t-LinksList-item #A03#">
+        <a href="#LINK#" class="t-LinksList-link" #A02#>
+          <span class="t-LinksList-icon" aria-hidden="true"><span class="t-Icon #ICON_CSS_CLASSES#"></span></span>
+          <span class="t-LinksList-label">#TEXT#</span>
+          <span class="t-LinksList-badge">#A01#</span>
+        </a>
+      </li>
+
+  sublist: 
+    before-rows: <ul class="t-LinksList-list">
+    after-rows: </ul>
+
+  sublist-entry: 
+    current: |
+      <li class="t-LinksList-item is-current #A03#" aria-current="page">
+        <a href="#LINK#" class="t-LinksList-link" #A02#>
+          <span class="t-LinksList-icon" aria-hidden="true"><span class="t-Icon #ICON_CSS_CLASSES#"></span></span>
+          <span class="t-LinksList-label">#TEXT#</span>
+          <span class="t-LinksList-badge">#A01#</span>
+        </a>
+      </li>
+      
+    noncurrent: |
+      <li class="t-LinksList-item #A03#">
+        <a href="#LINK#" class="t-LinksList-link" #A02#>
+          <span class="t-LinksList-icon" aria-hidden="true"><span class="t-Icon #ICON_CSS_CLASSES#"></span></span>
+          <span class="t-LinksList-label">#TEXT#</span>
+          <span class="t-LinksList-badge">#A01#</span>
+        </a>
+      </li>
+      
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  attribute-descriptions: 
+    a01: Badge Value
+    a02: Link Attributes
+    a03: List Item CSS Classes
+
+  template-options: 
+  - # ====== Template Option: For Top Level Items Only ===========
+    id: 12495529607350880148
+    identification: 
+      name: For Top Level Items Only
+      identifier: SHOWTOPICONS
+      group: Display Icons
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-LinksList--showTopIcons
+
+    help: 
+      help-text: This will show icons for top level items of the list only. It will not show icons for sub lists.
+
+  - # ====== Template Option: For All Items ======================
+    id: 12495529811979880148
+    identification: 
+      name: For All Items
+      identifier: SHOWICONS
+      group: Display Icons
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-LinksList--showIcons
+
+  - # ====== Template Option: Show Badges ========================
+    id: 12495530224839880148
+    identification: 
+      name: Show Badges
+      identifier: SHOWBADGES
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-LinksList--showBadge
+
+    help: 
+      help-text: Show badge to right of link (requires Attribute 1 to be populated)
+
+  - # ====== Template Option: Show Right Arrow ===================
+    id: 12495530420299880148
+    identification: 
+      name: Show Right Arrow
+      identifier: SHOWGOTOARROW
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-LinksList--showArrow
+
+    help: 
+      help-text: Show arrow to the right of link
+
+  - # ====== Template Option: Disable Text Wrapping ==============
+    id: 12495530611793880148
+    identification: 
+      name: Disable Text Wrapping
+      identifier: DISABLETEXTWRAPPING
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-LinksList--nowrap
+
+    help: 
+      help-text: Do not allow link text to wrap to new lines. Truncate with ellipsis.
+
+  - # ====== Template Option: Actions ============================
+    id: 12495530876602880148
+    identification: 
+      name: Actions
+      identifier: ACTIONS
+      group: Style
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-LinksList--actions
+
+    help: 
+      help-text: Render as actions to be placed on the right side column.
+
+- # ====== List Template: Top Navigation Menu ==================
+  id: 12495532306266880151
+  identification: 
+    name: Top Navigation Menu
+    identifier: TOP_NAVIGATION_MENU
+    class: Pull Down Menu
+
+  subscription: 
+    master: 
+      referenced-id: 2525307901300239072
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    default: 
+    - js-tabLike
+
+  list: 
+    before-rows: '<div class="t-Header-nav-list #COMPONENT_CSS_CLASSES#" id="t_MenuNav"><ul>'
+
+  entry: 
+    current: <li class="a-MenuBar-item a-Menu--current" data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a class="a-MenuBar-label" href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li class="a-MenuBar-item a-Menu--current" data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a class="a-MenuBar-label" href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: <li class="a-MenuBar-item" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a class="a-MenuBar-label" href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist: <li class="a-MenuBar-item" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a class="a-MenuBar-label" href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  sublist: 
+    before-rows: '<ul #APEX_CSP_DISPLAY_NONE#>'
+    after-rows: </ul></li>
+
+  sublist-entry: 
+    current: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist-items: <li data-id="#A01#" data-disabled="#A02#" data-hide="#A03#" data-shortcut="#A05#" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  after-list-entry: 
+    after-rows: </ul></div>
+
+  javascript: 
+    execute-when-page-loads: |
+      var e = apex.jQuery("#t_MenuNav", apex.gPageContext$);
+      if (e.hasClass("js-addActions")) {
+        apex.actions.addFromMarkup( e );
+      }
+      e.menu({
+        behaveLikeTabs: e.hasClass("js-tabLike"),
+        menubarShowSubMenuIcon: e.hasClass("js-showSubMenuIcons") || null,
+        menubar: true,
+        menubarOverflow: true,
+        callout: e.hasClass("js-menu-callout")
+      });
+      
+
+  attribute-descriptions: 
+    a01: Menu Item ID / Action Name
+    a02: Disabled (True/False)
+    a03: Hidden (True/False)
+    a04: Title Attribute (Used By Actions Only)
+    a05: Shortcut Key
+    a06: Link Target
+
+  template-options: 
+  - # ====== Template Option: Behave Like Tabs ===================
+    id: 12495531210901880149
+    identification: 
+      name: Behave Like Tabs
+      identifier: BEHAVE_LIKE_TABS
+      sequence: 1
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-tabLike
+
+  - # ====== Template Option: Show Sub Menu Icons ================
+    id: 12495531659842880149
+    identification: 
+      name: Show Sub Menu Icons
+      identifier: SHOW_SUB_MENU_ICONS
+      sequence: 1
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-showSubMenuIcons
+
+  - # ====== Template Option: Display Menu Callout ===============
+    id: 12495531809266880149
+    identification: 
+      name: Display Menu Callout
+      identifier: DISPLAY_MENU_CALLOUT
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-menu-callout
+
+    help: 
+      help-text: Use this option to add display a callout for the menu.
+
+  - # ====== Template Option: Add Actions ========================
+    id: 12495532058926880149
+    identification: 
+      name: Add Actions
+      identifier: ADD_ACTIONS
+      sequence: 1
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-addActions
+
+    help: 
+      help-text: Use this option to add shortcuts for menu items. Note that actions.js must be included on your page to support this functionality.
+
+- # ====== List Template: Side Navigation Menu =================
+  id: 12495533999726880152
+  identification: 
+    name: Side Navigation Menu
+    identifier: SIDE_NAVIGATION_MENU
+    class: Vertical Sidebar List
+
+  subscription: 
+    master: 
+      referenced-id: 2466292414354694776
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    preset: 
+    - t-TreeNav--styleA
+    - js-navCollapsed--hidden
+    default: 
+    - js-defaultCollapsed
+
+  list: 
+    before-rows: |
+      <div class="t-Body-nav" id="t_Body_nav" role="navigation" aria-label="&"APP_TEXT$APEX.TEMPLATE.APPLICATION".">
+        <div class="a-TreeView t-TreeNav #COMPONENT_CSS_CLASSES#" id="t_TreeNav" data-id="#PARENT_STATIC_ID#_tree" aria-label="&"APP_TEXT$APEX.TEMPLATE.MAIN_NAV_LABEL".">
+          <ul>
+      
+
+  entry: 
+    current: |
+      <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#">
+        <a href="#LINK#" title="#A04#" #APEX_CSP_DISPLAY_NONE# target="#A06#">#TEXT_ESC_SC#</a>
+        <div class="a-TreeView-node a-TreeView-node--topLevel" aria-hidden="true">
+          <div role="none" class="a-TreeView-row"></div>
+          <div role="none" class="a-TreeView-content">
+            <span class="fa fa-file-o #ICON_CSS_CLASSES#"></span>
+            <span class="a-TreeView-label">#TEXT_ESC_SC#</span>
+          </div>
+        </div>
+      </li>
+      
+    current-with-sublist: |
+      <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#">
+        <a href="#LINK#" title="#A04#" #APEX_CSP_DISPLAY_NONE# target="#A06#">#TEXT_ESC_SC#</a>
+        <div class="a-TreeView-node a-TreeView-node--topLevel" aria-hidden="true">
+          <div role="none" class="a-TreeView-row"></div>
+          <div role="none" class="a-TreeView-content">
+            <span class="fa fa-file-o #ICON_CSS_CLASSES#"></span>
+            <span class="a-TreeView-label">#TEXT_ESC_SC#</span>
+          </div>
+        </div>
+      
+    noncurrent: |
+      <li data-current="false" data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#">
+        <a href="#LINK#" title="#A04#" #APEX_CSP_DISPLAY_NONE# target="#A06#">#TEXT_ESC_SC#</a>
+        <div class="a-TreeView-node a-TreeView-node--topLevel" aria-hidden="true">
+          <div role="none" class="a-TreeView-row"></div>
+          <div role="none" class="a-TreeView-content">
+            <span class="fa fa-file-o #ICON_CSS_CLASSES#"></span>
+            <span class="a-TreeView-label">#TEXT_ESC_SC#</span>
+          </div>
+        </div>
+      </li>
+    noncurrent-with-sublist: |
+      <li data-current="false" data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#">
+        <a href="#LINK#" title="#A04#" #APEX_CSP_DISPLAY_NONE# target="#A06#">#TEXT_ESC_SC#</a>
+        <div class="a-TreeView-node a-TreeView-node--topLevel" aria-hidden="true">
+          <div role="none" class="a-TreeView-row"></div>
+          <div role="none" class="a-TreeView-content">
+            <span class="fa fa-file-o #ICON_CSS_CLASSES#"></span>
+            <span class="a-TreeView-label">#TEXT_ESC_SC#</span>
+          </div>
+        </div>
+      
+
+  sublist: 
+    before-rows: '<ul #APEX_CSP_DISPLAY_NONE#>'
+    after-rows: </ul></li>
+
+  sublist-entry: 
+    current: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li data-current="true" data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+    noncurrent: <li data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist-items: <li data-id="#A01#" data-disabled="#A02#" data-icon="#ICON_CSS_CLASSES#" data-shortcut="#A05#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a>
+
+  after-list-entry: 
+    after-rows: |2
+          </ul>
+        </div>
+      </div>
+      <script #APEX_CSP_NONCE_ATTRIBUTE#>
+      (() => {
+        const pref = "ORA_WWV_apex.toggleCore.nav.&APP_ID..preferenceForExpanded",
+              nav  = document.getElementById('t_TreeNav').classList,
+              body = document.getElementById('t_PageBody');
+        if ( !sessionStorage.getItem( pref ) ) { sessionStorage.setItem( pref, !nav.contains('js-defaultCollapsed') ); }
+        if ( nav.contains('js-navCollapsed--default') ) {
+            body?.classList.add('js-navCollapsed--icons');
+            if ( sessionStorage.getItem( pref ) === "false" ) { body?.classList.add('js-navCollapsed'); }
+        }
+        if ( sessionStorage.getItem( pref ) === "true" && window.matchMedia("(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--js-mq-lg") + ")").matches) { body?.classList.add('js-navExpanded'); }
+        for (const label of document.querySelectorAll(".a-TreeView .a-TreeView-label")) {
+            label.textContent = label.textContent.replaceAll(/\[(.*?)\]/ig, '');
+        }
+      })();
+      </script>
+
+  javascript: 
+    file-urls: 
+    - '#APEX_FILES#libraries/apex/#MIN_DIRECTORY#widget.treeView#MIN#.js?v=#APEX_VERSION#'
+    execute-when-page-loads: apex.jQuery('body').addClass('t-PageBody--leftNav');
+
+  attribute-descriptions: 
+    a01: ID Attribute
+    a02: Disabled (True/False)
+    a04: Title Attribute (Used By Actions Only)
+    a05: Shortcut Key
+    a06: Link Target
+
+  template-options: 
+  - # ====== Template Option: Add Actions ========================
+    id: 1817034024043276
+    identification: 
+      name: Add Actions
+      identifier: ADD_ACTIONS
+      sequence: 1
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-addActions
+
+    help: 
+      help-text: Use this option to add shortcuts for menu items. Note that actions.js must be included on your page to support this functionality.
+
+  - # ====== Template Option: Style B ============================
+    id: 12495532499920880151
+    identification: 
+      name: Style B
+      identifier: STYLE_B
+      group: Style
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-TreeNav--styleB
+
+    help: 
+      help-text: Style Variation B
+
+  - # ====== Template Option: Style A ============================
+    id: 12495532636217880151
+    identification: 
+      name: Style A
+      identifier: STYLE_A
+      group: Style
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-TreeNav--styleA
+
+    help: 
+      help-text: Style Variation A
+
+  - # ====== Template Option: Classic ============================
+    id: 12495532875262880152
+    identification: 
+      name: Classic
+      identifier: STYLE_C
+      group: Style
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-TreeNav--classic
+
+    help: 
+      help-text: Classic Style
+
+  - # ====== Template Option: Hidden =============================
+    id: 12495533001635880152
+    identification: 
+      name: Hidden
+      identifier: COLLAPSE_STYLE_HIDDEN
+      group: Collapse Mode
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-navCollapsed--hidden
+
+    help: 
+      help-text: Completely hide the navigation menu when it is collapsed.
+
+  - # ====== Template Option: Icon ===============================
+    id: 12495533260166880152
+    identification: 
+      name: Icon
+      identifier: ICON_DEFAULT
+      group: Collapse Mode
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-navCollapsed--default
+
+    help: 
+      help-text: Display icons when the navigation menu is collapsed for large screens.
+
+  - # ====== Template Option: Collapsed by Default ===============
+    id: 12495533672614880152
+    identification: 
+      name: Collapsed by Default
+      identifier: COLLAPSED_DEFAULT
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-defaultCollapsed
+
+    help: 
+      help-text: This option will load the side navigation menu in a collapsed state by default.
+
+- # ====== List Template: Navigation Bar =======================
+  id: 12495534382344880154
+  identification: 
+    name: Navigation Bar
+    identifier: NAVIGATION_BAR
+    class: Pull Down Menu
+
+  subscription: 
+    master: 
+      referenced-id: 2846096252961119197
+
+  advanced: 
+    translatable: false
+
+  list: 
+    before-rows: '<ul class="t-NavigationBar #COMPONENT_CSS_CLASSES#" id="#LIST_ID#">'
+
+  entry: 
+    current: |
+      <li class="t-NavigationBar-item is-active #A02#" aria-current="page">
+        <a class="t-Button t-Button--icon t-Button--header t-Button--navBar" href="#LINK#" title="#A04#" target="#A06#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true" #IMAGE_ATTR#></span><span class="t-Button-label">#TEXT_ESC_SC#</span><span class="t-Button-badge">#A01#</span>
+        </a>
+      </li>
+    current-with-sublist: |
+      <li class="t-NavigationBar-item is-active #A02#" aria-current="page">
+        <button class="t-Button t-Button--icon t-Button t-Button--header t-Button--navBar" type="button" id="#LIST_ITEM_ID#" data-menu="menu_#LIST_ITEM_ID#" title="#A04#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true" #IMAGE_ATTR#></span><span class="t-Button-label">#TEXT_ESC_SC#</span><span class="t-Button-badge">#A01#</span><span class="a-Icon icon-down-arrow" aria-hidden="true"></span>
+        </button>
+    noncurrent: |
+      <li class="t-NavigationBar-item #A02#">
+        <a class="t-Button t-Button--icon t-Button--header t-Button--navBar" href="#LINK#" title="#A04#" target="#A06#">
+          <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true" #IMAGE_ATTR#></span><span class="t-Button-label">#TEXT_ESC_SC#</span><span class="t-Button-badge">#A01#</span>
+        </a>
+      </li>
+    noncurrent-with-sublist: |
+      <li class="t-NavigationBar-item #A02#">
+        <button class="t-Button t-Button--icon t-Button t-Button--header t-Button--navBar" type="button" id="#LIST_ITEM_ID#" data-menu="menu_#LIST_ITEM_ID#" title="#A04#">
+            <span class="t-Icon #ICON_CSS_CLASSES#" aria-hidden="true" #IMAGE_ATTR#></span><span class="t-Button-label">#TEXT_ESC_SC#</span><span class="t-Button-badge">#A01#</span><span class="a-Icon icon-down-arrow" aria-hidden="true"></span>
+        </button>
+
+  sublist: 
+    before-rows: '<div class="t-NavigationBar-menu" #APEX_CSP_DISPLAY_NONE# id="menu_#PARENT_LIST_ITEM_ID#"><ul>'
+    after-rows: </ul></div></li>
+
+  sublist-entry: 
+    current: <li class="#A02#" data-current="true" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    current-with-sublist: <li class="#A02#" data-current="true" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent: <li class="#A02#" data-current="false" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+    noncurrent-with-sublist-items: <li class="#A02#" data-current="false" data-icon="#ICON_CSS_CLASSES#"><a href="#LINK#" title="#A04#" target="#A06#">#TEXT_ESC_SC#</a></li>
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  attribute-descriptions: 
+    a01: Badge Value
+    a02: List  Item CSS Classes
+    a04: Title Attribute
+    a06: Link Target
+
+  template-options: 
+  - # ====== Template Option: Display Menu Callout ===============
+    id: 12495534019905880152
+    identification: 
+      name: Display Menu Callout
+      identifier: DISPLAY_MENU_CALLOUT
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - js-menu-callout
+
+    help: 
+      help-text: Use this option to add display a callout for the menu.
+
+- # ====== List Template: Media List ===========================
+  id: 12495537187789880157
+  identification: 
+    name: Media List
+    identifier: MEDIA_LIST
+    class: Vertical Images List
+
+  subscription: 
+    master: 
+      referenced-id: 2066548068783481421
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    default: 
+    - t-MediaList--showIcons
+    - t-MediaList--showDesc
+
+  list: 
+    before-rows: '<ul class="t-MediaList #COMPONENT_CSS_CLASSES#">'
+
+  entry: 
+    current: |
+      <li class="t-MediaList-item is-active #A04#">
+        <a href="#LINK#" class="t-MediaList-itemWrap #A05#" #A03#>
+          <div class="t-MediaList-iconWrap" aria-hidden="true">
+            <span class="t-MediaList-icon u-color #A06#"><span class="t-Icon #ICON_CSS_CLASSES#" #IMAGE_ATTR#></span></span>
+          </div>
+          <div class="t-MediaList-body">
+            <h3 class="t-MediaList-title" aria-current="page">#TEXT#</h3>
+            <p class="t-MediaList-desc">#A01#</p>
+          </div>
+          <div class="t-MediaList-badgeWrap">
+            <span class="t-MediaList-badge">#A02#</span>
+          </div>
+        </a>
+      </li>
+    noncurrent: |
+      <li class="t-MediaList-item  #A04#">
+        <a href="#LINK#" class="t-MediaList-itemWrap #A05#" #A03#>
+          <div class="t-MediaList-iconWrap" aria-hidden="true">
+            <span class="t-MediaList-icon u-color #A06#"><span class="t-Icon #ICON_CSS_CLASSES#" #IMAGE_ATTR#></span></span>
+          </div>
+          <div class="t-MediaList-body">
+            <h3 class="t-MediaList-title">#TEXT#</h3>
+            <p class="t-MediaList-desc">#A01#</p>
+          </div>
+          <div class="t-MediaList-badgeWrap">
+            <span class="t-MediaList-badge">#A02#</span>
+          </div>
+        </a>
+      </li>
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  attribute-descriptions: 
+    a01: Description
+    a02: Badge Value
+    a03: Link Attributes
+    a04: List Item CSS Classes
+    a05: Link Class
+    a06: Icon Color Class
+
+  template-options: 
+  - # ====== Template Option: Apply Theme Colors =================
+    id: 12495534440938880156
+    identification: 
+      name: Apply Theme Colors
+      identifier: APPLY_THEME_COLORS
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - u-colors
+
+    help: 
+      help-text: Applies colors from the Theme's color palette to icons in the list.
+
+  - # ====== Template Option: Show Icons =========================
+    id: 12495534609191880156
+    identification: 
+      name: Show Icons
+      identifier: SHOW_ICONS
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--showIcons
+
+    help: 
+      help-text: Display an icon next to the list item.
+
+  - # ====== Template Option: Show Description ===================
+    id: 12495534848193880156
+    identification: 
+      name: Show Description
+      identifier: SHOW_DESCRIPTION
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--showDesc
+
+    help: 
+      help-text: Shows the description (Attribute 1) for each list item.
+
+  - # ====== Template Option: Show Badges ========================
+    id: 12495535049264880156
+    identification: 
+      name: Show Badges
+      identifier: SHOW_BADGES
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--showBadges
+
+    help: 
+      help-text: Show a badge (Attribute 2) to the right of the list item.
+
+  - # ====== Template Option: Large ==============================
+    id: 12495535208776880156
+    identification: 
+      name: Large
+      identifier: LIST_SIZE_LARGE
+      group: Size
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--large
+      - force-fa-lg
+
+    help: 
+      help-text: Increases the size of the text and icons in the list.
+
+  - # ====== Template Option: Square =============================
+    id: 12495535691639880156
+    identification: 
+      name: Square
+      identifier: ICONS_SQUARE
+      group: Icon Shape
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--iconsSquare
+
+    help: 
+      help-text: The icons are displayed within a square shape.
+
+  - # ====== Template Option: Rounded Corners ====================
+    id: 12495535851622880156
+    identification: 
+      name: Rounded Corners
+      identifier: ICONS_ROUNDED
+      group: Icon Shape
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--iconsRounded
+
+    help: 
+      help-text: The icons are displayed within a square with rounded corners.
+
+  - # ====== Template Option: Span Horizontal ====================
+    id: 12495536075167880156
+    identification: 
+      name: Span Horizontal
+      identifier: SPANHORIZONTAL
+      group: Layout
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--horizontal
+
+    help: 
+      help-text: Show all list items in one horizontal row.
+
+  - # ====== Template Option: 5 Column Grid ======================
+    id: 12495536205681880156
+    identification: 
+      name: 5 Column Grid
+      identifier: 5COLUMNGRID
+      group: Layout
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--cols
+      - t-MediaList--5cols
+
+  - # ====== Template Option: 4 Column Grid ======================
+    id: 12495536469962880156
+    identification: 
+      name: 4 Column Grid
+      identifier: 4COLUMNGRID
+      group: Layout
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--cols
+      - t-MediaList--4cols
+
+  - # ====== Template Option: 3 Column Grid ======================
+    id: 12495536648855880156
+    identification: 
+      name: 3 Column Grid
+      identifier: 3COLUMNGRID
+      group: Layout
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--cols
+      - t-MediaList--3cols
+
+  - # ====== Template Option: 2 Column Grid ======================
+    id: 12495536879435880157
+    identification: 
+      name: 2 Column Grid
+      identifier: 2COLUMNGRID
+      group: Layout
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-MediaList--cols
+      - t-MediaList--2cols
+
+- # ====== List Template: Cards ================================
+  id: 12495542773533880165
+  identification: 
+    name: Cards
+    identifier: CARDS
+    class: Horizontal Images with Label List
+
+  subscription: 
+    master: 
+      referenced-id: 2885322685880632508
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    preset: 
+    - t-Cards--animColorFill
+    - t-Cards--3cols
+    - t-Cards--basic
+
+  list: 
+    before-rows: '<ul class="t-Cards #COMPONENT_CSS_CLASSES#">'
+
+  entry: 
+    current: |
+      <li class="t-Cards-item is-active #A04#" aria-current="page">
+        <div class="t-Card">
+          <a href="#LINK#" class="t-Card-wrap" #A05#>
+            <div class="t-Card-icon u-color #A06#"><span class="t-Icon #ICON_CSS_CLASSES#"><span class="t-Card-initials" role="presentation">#A03#</span></span></div>
+            <div class="t-Card-titleWrap">
+              <h3 class="t-Card-title">#TEXT#</h3>
+              <h4 class="t-Card-subtitle">#A07#</h4>
+            </div>
+            <div class="t-Card-body">
+              <div class="t-Card-desc">#A01#</div>
+              <div class="t-Card-info">#A02#</div>
+            </div>
+            <span class="t-Card-colorFill u-color #A06#" aria-hidden="true"></span>
+          </a>
+        </div>
+      </li>
+    noncurrent: |
+      <li class="t-Cards-item #A04#">
+        <div class="t-Card">
+          <a href="#LINK#" class="t-Card-wrap" #A05#>
+            <div class="t-Card-icon u-color #A06#"><span class="t-Icon #ICON_CSS_CLASSES#"><span class="t-Card-initials" role="presentation">#A03#</span></span></div>
+            <div class="t-Card-titleWrap">
+              <h3 class="t-Card-title">#TEXT#</h3>
+              <h4 class="t-Card-subtitle">#A07#</h4>
+            </div>
+            <div class="t-Card-body">
+              <div class="t-Card-desc">#A01#</div>
+              <div class="t-Card-info">#A02#</div>
+            </div>
+            <span class="t-Card-colorFill u-color #A06#" aria-hidden="true"></span>
+          </a>
+        </div>
+      </li>
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  attribute-descriptions: 
+    a01: Description
+    a02: Secondary Information
+    a03: Initials
+    a04: List Item CSS Classes
+    a05: Link Attributes
+    a06: Card Color Class
+    a07: Subtitle
+
+  template-options: 
+  - # ====== Template Option: Apply Theme Colors =================
+    id: 12495537298467880157
+    identification: 
+      name: Apply Theme Colors
+      identifier: USE_THEME_COLORS
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - u-colors
+
+    help: 
+      help-text: Applies the colors from the theme's color palette to the icons or initials within cards.
+
+  - # ====== Template Option: Stacked ============================
+    id: 12495537412177880157
+    identification: 
+      name: Stacked
+      identifier: CARDS_STACKED
+      group: Layout
+      sequence: 5
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--stacked
+
+    help: 
+      help-text: Stacks the cards on top of each other.
+
+  - # ====== Template Option: Span Horizontally ==================
+    id: 12495537692510880157
+    identification: 
+      name: Span Horizontally
+      identifier: SPAN_HORIZONTALLY
+      group: Layout
+      sequence: 70
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--spanHorizontally
+
+  - # ====== Template Option: Square =============================
+    id: 12495537887100880157
+    identification: 
+      name: Square
+      identifier: ICONS_SQUARE
+      group: Icon Shape
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--iconsSquare
+
+    help: 
+      help-text: The icons are displayed within a square shape.
+
+  - # ====== Template Option: Rounded Corners ====================
+    id: 12495538057178880157
+    identification: 
+      name: Rounded Corners
+      identifier: ICONS_ROUNDED
+      group: Icon Shape
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--iconsRounded
+
+    help: 
+      help-text: The icons are displayed within a square with rounded corners.
+
+  - # ====== Template Option: Hidden =============================
+    id: 12495538480427880159
+    identification: 
+      name: Hidden
+      identifier: HIDDEN_BODY_TEXT
+      group: Body Text
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--hideBody
+
+    help: 
+      help-text: This option hides the card body which contains description and subtext.
+
+  - # ====== Template Option: Float ==============================
+    id: 12495538681630880159
+    identification: 
+      name: Float
+      identifier: FLOAT
+      group: Layout
+      sequence: 60
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--float
+
+  - # ====== Template Option: Block ==============================
+    id: 12495538839944880159
+    identification: 
+      name: Block
+      identifier: BLOCK
+      group: Style
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--featured
+      - t-Cards--block
+      - force-fa-lg
+
+  - # ====== Template Option: Featured ===========================
+    id: 12495539092326880159
+    identification: 
+      name: Featured
+      identifier: FEATURED
+      group: Style
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--featured
+      - force-fa-lg
+
+  - # ====== Template Option: Display Subtitle ===================
+    id: 12495539246488880159
+    identification: 
+      name: Display Subtitle
+      identifier: DISPLAY_SUBTITLE
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--displaySubtitle
+
+  - # ====== Template Option: Display Initials ===================
+    id: 12495539485418880159
+    identification: 
+      name: Display Initials
+      identifier: DISPLAY_INITIALS
+      group: Icons
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--displayInitials
+
+    help: 
+      help-text: Initials come from List Attribute 3
+
+  - # ====== Template Option: Display Icons ======================
+    id: 12495539660270880159
+    identification: 
+      name: Display Icons
+      identifier: DISPLAY_ICONS
+      group: Icons
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--displayIcons
+
+  - # ====== Template Option: 4 Lines ============================
+    id: 12495540092530880159
+    identification: 
+      name: 4 Lines
+      identifier: 4_LINES
+      group: Body Text
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--desc-4ln
+
+  - # ====== Template Option: 3 Lines ============================
+    id: 12495540295899880160
+    identification: 
+      name: 3 Lines
+      identifier: 3_LINES
+      group: Body Text
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--desc-3ln
+
+  - # ====== Template Option: 2 Lines ============================
+    id: 12495540474923880160
+    identification: 
+      name: 2 Lines
+      identifier: 2_LINES
+      group: Body Text
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--desc-2ln
+
+  - # ====== Template Option: Compact ============================
+    id: 12495540805281880160
+    identification: 
+      name: Compact
+      identifier: COMPACT
+      group: Style
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--compact
+
+    help: 
+      help-text: Use this option when you want to show smaller cards.
+
+  - # ====== Template Option: 2 Columns ==========================
+    id: 12495541087730880160
+    identification: 
+      name: 2 Columns
+      identifier: 2_COLUMNS
+      group: Layout
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--cols
+
+  - # ====== Template Option: Basic ==============================
+    id: 12495541264314880162
+    identification: 
+      name: Basic
+      identifier: BASIC
+      group: Style
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--basic
+
+  - # ====== Template Option: Raise Card =========================
+    id: 12495541455298880162
+    identification: 
+      name: Raise Card
+      identifier: RAISE_CARD
+      group: Animation
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--animRaiseCard
+
+    help: 
+      help-text: Raises the card so it pops up.
+
+  - # ====== Template Option: Color Fill =========================
+    id: 12495541633607880162
+    identification: 
+      name: Color Fill
+      identifier: COLOR_FILL
+      group: Animation
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--animColorFill
+
+    help: 
+      help-text: Fills the card background with the color of the icon or default link style.
+
+  - # ====== Template Option: 5 Columns ==========================
+    id: 12495542092200880165
+    identification: 
+      name: 5 Columns
+      identifier: 5_COLUMNS
+      group: Layout
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--5cols
+
+  - # ====== Template Option: 4 Columns ==========================
+    id: 12495542291041880165
+    identification: 
+      name: 4 Columns
+      identifier: 4_COLUMNS
+      group: Layout
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--4cols
+
+  - # ====== Template Option: 3 Columns ==========================
+    id: 12495542424759880165
+    identification: 
+      name: 3 Columns
+      identifier: 3_COLUMNS
+      group: Layout
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Cards--3cols
+
+- # ====== List Template: Badge List ===========================
+  id: 12495546789751880176
+  identification: 
+    name: Badge List
+    identifier: BADGE_LIST
+    class: Horizontal Links List
+
+  subscription: 
+    master: 
+      referenced-id: 2062482847268086664
+
+  advanced: 
+    translatable: false
+
+  template-options: 
+    preset: 
+    - t-BadgeList--large
+    - t-BadgeList--cols t-BadgeList--3cols
+    - t-BadgeList--circular
+
+  list: 
+    before-rows: '<ul class="t-BadgeList #COMPONENT_CSS_CLASSES#">'
+
+  entry: 
+    current: |
+      <li class="t-BadgeList-item #A02# is-current" aria-current="page">
+        <a class="t-BadgeList-wrap u-color #A04#" href="#LINK#" #A03#>
+          <span class="t-BadgeList-label">#TEXT#</span>
+          <span class="t-BadgeList-value">#A01#</span>
+        </a>
+      </li>
+      
+    noncurrent: |
+      <li class="t-BadgeList-item #A02#">
+        <a class="t-BadgeList-wrap u-color #A04#" href="#LINK#" #A03#>
+          <span class="t-BadgeList-label">#TEXT#</span>
+          <span class="t-BadgeList-value">#A01#</span>
+        </a>
+      </li>
+      
+
+  after-list-entry: 
+    after-rows: </ul>
+
+  attribute-descriptions: 
+    a01: Value
+    a02: List item CSS Classes
+    a03: Link Attributes
+    a04: Link Classes
+
+  comments: 
+    comments: |
+      A01: Large Number
+      A02: List Item Classes
+      A03: Link Attributes
+
+  template-options: 
+  - # ====== Template Option: Apply Theme Colors =================
+    id: 12495542869236880165
+    identification: 
+      name: Apply Theme Colors
+      identifier: APPLY_THEME_COLORS
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - u-colors
+
+  - # ====== Template Option: 128px ==============================
+    id: 12495543063075880165
+    identification: 
+      name: 128px
+      identifier: XXLARGE
+      group: Badge Size
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--xxlarge
+
+  - # ====== Template Option: 96px ===============================
+    id: 12495543217773880167
+    identification: 
+      name: 96px
+      identifier: XLARGE
+      group: Badge Size
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--xlarge
+
+  - # ====== Template Option: Stacked ============================
+    id: 12495543432138880167
+    identification: 
+      name: Stacked
+      identifier: STACKED
+      group: Layout
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--stacked
+
+    help: 
+      help-text: Stack badges on top of each other
+
+  - # ====== Template Option: 32px ===============================
+    id: 12495543642357880167
+    identification: 
+      name: 32px
+      identifier: SMALL
+      group: Badge Size
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--small
+
+  - # ====== Template Option: 48px ===============================
+    id: 12495543815075880167
+    identification: 
+      name: 48px
+      identifier: MEDIUM
+      group: Badge Size
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--medium
+
+  - # ====== Template Option: 64px ===============================
+    id: 12495544084965880167
+    identification: 
+      name: 64px
+      identifier: LARGE
+      group: Badge Size
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--large
+
+  - # ====== Template Option: Float Items ========================
+    id: 12495544415469880167
+    identification: 
+      name: Float Items
+      identifier: FLOATITEMS
+      group: Layout
+      sequence: 70
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--float
+
+    help: 
+      help-text: Float badges to left
+
+  - # ====== Template Option: Flexible Box =======================
+    id: 12495544679195880167
+    identification: 
+      name: Flexible Box
+      identifier: FLEXIBLEBOX
+      group: Layout
+      sequence: 80
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--flex
+
+    help: 
+      help-text: Use flexbox to arrange items
+
+  - # ====== Template Option: Span Horizontally ==================
+    id: 12495544842685880167
+    identification: 
+      name: Span Horizontally
+      identifier: FIXED
+      group: Layout
+      sequence: 60
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--fixed
+
+    help: 
+      help-text: Span badges horizontally
+
+  - # ====== Template Option: Grid ===============================
+    id: 12495545083611880168
+    identification: 
+      name: Grid
+      identifier: GRID
+      group: Style
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--dash
+
+  - # ====== Template Option: 5 Column Grid ======================
+    id: 12495545224789880168
+    identification: 
+      name: 5 Column Grid
+      identifier: 5COLUMNGRID
+      group: Layout
+      sequence: 50
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--cols
+      - t-BadgeList--5cols
+
+    help: 
+      help-text: Arrange badges in a 5 column grid
+
+  - # ====== Template Option: 4 Column Grid ======================
+    id: 12495545457700880168
+    identification: 
+      name: 4 Column Grid
+      identifier: 4COLUMNGRID
+      group: Layout
+      sequence: 40
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--cols
+      - t-BadgeList--4cols
+
+    help: 
+      help-text: Arrange badges in 4 column grid
+
+  - # ====== Template Option: 3 Column Grid ======================
+    id: 12495545659348880168
+    identification: 
+      name: 3 Column Grid
+      identifier: 3COLUMNGRID
+      group: Layout
+      sequence: 30
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--cols
+      - t-BadgeList--3cols
+
+    help: 
+      help-text: Arrange badges in a 3 column grid
+
+  - # ====== Template Option: 2 Column Grid ======================
+    id: 12495545855921880168
+    identification: 
+      name: 2 Column Grid
+      identifier: 2COLUMNGRID
+      group: Layout
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--cols
+
+    help: 
+      help-text: Arrange badges in a two column grid
+
+  - # ====== Template Option: Circular ===========================
+    id: 12495546228455880170
+    identification: 
+      name: Circular
+      identifier: CIRCULAR
+      group: Style
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-BadgeList--circular
+

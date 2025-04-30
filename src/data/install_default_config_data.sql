@@ -12,12 +12,13 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'stats_retain_quarterly_summaries_months'       ,p_value => '60');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'engine_app_mode'                               ,p_value => 'production');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'duplicate_step_prevention'                     ,p_value => 'strict');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_initial_installed'                     ,p_value => '24.1');
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_now_installed'                         ,p_value => '24.1');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_initial_installed'                     ,p_value => '25.1');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'version_now_installed'                         ,p_value => '25.1');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_workspace'                             ,p_value => 'FLOWS4APEX');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_application'                           ,p_value => '100');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_pageid'                                ,p_value => '1');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_username'                              ,p_value => 'FLOWS4APEX');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_apex_business_admin'                   ,p_value => 'FLOWS4APEX');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'default_email_sender'                          ,p_value => '');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'timer_max_cycles'                              ,p_value => '1000');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'parser_log_enabled'                            ,p_value => 'false' );

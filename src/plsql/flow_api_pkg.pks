@@ -109,7 +109,9 @@ These API functions are provided as Application Helper functions from the Flows 
 ,
       pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    ) return flow_processes.prcs_id%type;
  /**
 Function flow_create - Signature 1
@@ -118,6 +120,8 @@ If the version is not specified,
   first lookup is to use dgrm_status = 'released'
   second lookup is to use dgrm_version = '0' and dgrm_status = 'draft'
 If nothing is found based on above rules an exception will be raised.  For accuracy, it is recommended that you specify a version or use the form of flow_create specifying dgrm_id directly.
+
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
 
 This function returns the Process ID of the newly created process.
 
@@ -140,11 +144,15 @@ end;
    function flow_create (
       pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    ) return flow_processes.prcs_id%type;
  /**
 Function flow_create - Signature 2
 This function creates a new process instance based on a diagram id (process specification) and returns the Process ID of the newly created process
+
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
 
 EXAMPLE
 
@@ -166,7 +174,9 @@ end;
 ,
       pi_dgrm_version in flow_diagrams.dgrm_version%type default null -- Version of the model to instanciate (optional)
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    );
  /**
 Procedure flow_create - Signature 1
@@ -179,9 +189,11 @@ If the version is not specified:
 
 If nothing is found based on above rules an exception will be raised. For accuracy, it’s recommended that you specify a version or use the form of flow_create specifying dgrm_id directly.
 
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
+
 EXAMPLE
 
-This example will create a new process instance called “My Instance Name” based on the model “My Model” in version “0”.
+This example will create a new process instance called “My Instance Name” based on the model “My Model” in version “0”.  Logging level will be set to 4.
 
 ```sql
 begin
@@ -189,6 +201,7 @@ begin
         pi_dgrm_name    => 'My Model'
       , pi_dgrm_version => '0'
       , pi_prcs_name    => 'My Instance Name'
+      , pi_logging_level => 4 
    );
 end;
 ```
@@ -196,23 +209,27 @@ end;
    procedure flow_create (
       pi_dgrm_id in flow_diagrams.dgrm_id%type -- ID of the model to instanciate
 ,
-      pi_prcs_name in flow_processes.prcs_name%type -- Name of the process instance to create
+      pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
+,
+      pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
    );
  /**
 Procedure flow_create - Signature 2
 
 This procedure creates a new process instance based on a diagram id and version (process specification)
 
+The process instance is created with a logging level  that is the higher of the logging level of the diagram and the logging level specified in the call.  If the logging level is not specified, the logging level of the diagram is used.
 
 EXAMPLE
 
-This example will create a new process instance called “My Instance Name” based on the model ID 1.
+This example will create a new process instance called “My Instance Name” based on the model ID 1, and with full logging.
 
 ```sql
 begin
    flow_api_pkg.flow_create(
-         pi_dgrm_id    => 1
-      , pi_prcs_name    => 'My Instance Name'
+         pi_dgrm_id      => 1
+      , pi_prcs_name     => 'My Instance Name'
+      , pi_logging_level => 8
    );
 end;
 ```
@@ -373,6 +390,10 @@ This procedure is an optional command that can be used in applications to signal
 This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
 A ‘good-practice’ app would issue this call when work is about to start on a task, for example, from a page loading process.
 
+Use this in conjunction with `flow_pause_step` to indicate that the work is paused on a task.
+
+flow_start_step requires event logging to be  running at the 'detailed` level or higher to be effective.
+
 EXAMPLE
 
 This example will use this procedure to indicate that the work is started for the task that have the subflow ID 3 in the process ID 1.
@@ -380,6 +401,37 @@ This example will use this procedure to indicate that the work is started for th
 ```sql
 begin
    flow_api_pkg.flow_start_step(
+        p_process_id => 1
+      , p_subflow_id => 3 
+      , p_step_key   => 'NqOiEHUbAF'
+   );
+end;
+```
+**/
+   procedure flow_pause_step (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type default null -- Step Key
+   );
+ /**
+Procedure flow_pause_step
+This procedure is an optional command that can be used in conjunction with flow_start_step in applications to signal that a user has paused working on a task. 
+This is only used to differentiate ‘waiting’ time from ‘processing’ time in system logs to aid process management and statistics. 
+A ‘good-practice’ app would issue this call when work on a task is saved but the workflow task is not completed, for example, from a page save process that did not include a 'flow_complete_step'.
+
+If flow_start_step has not been called, this procedure will have no effect.
+
+'flow_pause_step' requires event logging to be running at the `detailed` level or higher to be effective.
+
+EXAMPLE
+
+This example will use this procedure to indicate that the work has paused on the task that have the subflow ID 3 in the process ID 1.
+
+```sql
+begin
+   flow_api_pkg.flow_pause_step(
         p_process_id => 1
       , p_subflow_id => 3 
       , p_step_key   => 'NqOiEHUbAF'
@@ -630,15 +682,15 @@ end;
 ,
       p_apex_task_id in number -- APEX Task ID
 ,
-      p_result in flow_process_variables.prov_var_vc2%type default null -- Approval Result
+      p_result in flow_process_variables.prov_var_vc2%type default null -- Approval Outcome
    );
  /**
-return_approval_result Procedure
-A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed.
+return_approval_result Procedure (DEPRACATED - Use procedure return_task_state_outcome
+A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed or otherwise changd state.
 This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
 then performs a flow_complete_step to move to the next step.
 
-This can be called from an APEX Approval Task Action step.  Note that you can also use the APEX Approval Return Result process plug-in to do this declaratively in your application.
+This can be called from an APEX Human Task (Approval Task) Action step.  Note that you can also use the APEX Approval Return Result process plug-in to do this declaratively in your application.
 
 EXAMPLE
 
@@ -651,6 +703,101 @@ flow_api_pkg.return_approval_result ( p_process_id      => :PROCESS_ID,
                                       p_result          => :APEX$TASK_OUTCOME);
 ```
 **/
+   procedure return_task_state_outcome (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_step_key in flow_subflows.sbfl_step_key%type -- Step Key
+,
+      p_apex_task_id in number -- APEX Task ID
+,
+      p_state_code in apex_tasks.state_code%type  -- APEX Human Task State Code
+,
+      p_outcome in flow_process_variables.prov_var_vc2%type default null -- APEX Approval Task Outcome
+   );
+ /**
+return_task_state_outcome Procedure 
+
+From Flows for APEX 25.1.   Use this in preference to return_approval_result, which is now deprecated.
+
+A convenience procedure for returning an APEX Human Task (Approval or Action Task) result and state into a Flows for APEX process when the task has ben completed or otherwise changd state.
+This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
+then performs a flow_complete_step to move to the next step.
+
+This can be called from an APEX Human Task (Approval or Action Task) Action step.  Note that you can also use the APEX Human Task Return State and Outcome process plug-in to do this declaratively in your application.
+
+EXAMPLE
+
+This code could be defined in an APEX Approval Task Action definition when a task is `completed` (on approval and on rejection).  
+In this example, we have an APEX Approval parameter PROCESS_ID which contains the Flows for APEX process ID.  The values for p_task_id and p_result are 
+
+```sql
+flow_api_pkg.return_task_state_outcome ( p_process_id      => :PROCESS_ID,
+                                         p_apex_task_id    => :APEX$TASK_ID,
+                                         p_outcome         => :APEX$TASK_OUTCOME,
+                                         p_state_code      => :APEX$TASK_STATE);
+```
+**/
+
+   function get_task_potential_owners 
+   ( p_process_id in flow_processes.prcs_id%type -- Process ID
+   , p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID   
+   , p_step_key   in flow_subflows.sbfl_step_key%type -- Step Key
+   , p_separator  in varchar2 default ',' -- Separator for the list of potential owners
+   ) return flow_process_variables.prov_var_vc2%type;
+
+   /**
+task_potential_owners Function
+This function returns the list of potential owners for a task in a process instance.  The list is returned as a string, with the values separated by the p_separator value (default is comma).  
+Intended usage is to allow an APEX Human Task to get the list of potential owners for a task from its Flows for APEX process instance.
+
+Note that APEX Human Tasks require the list to be a comma separated list, so the default value of p_separator is a comma.  If you are using this function in a different context, you can specify a different separator.
+
+EXAMPLE
+
+This code could be defined in the Participants section of an APEX Human Task (Approval Task or Action Task) definition.  Having set Task Parameters for PROCESS_ID, SUBFLOW_ID and STEP_KEY, you can use this function to get the list of potential owners for the task.
+Define the Participant to be:  Potential Owners
+Define the type to be an:      Expression
+Define the Expression to be:  
+``` sql
+flow_api_pkg.task_potential_owners ( p_process_id => :PROCESS_ID,
+                                         p_subflow_id => :SUBFLOW_ID,
+                                         p_step_key   => :STEP_KEY)
+```
+**/
+
+   function get_task_business_admins 
+   ( p_process_id         in flow_processes.prcs_id%type -- Process ID
+   , p_subflow_id         in flow_subflows.sbfl_id%type -- Subflow ID   
+   , p_step_key           in flow_subflows.sbfl_step_key%type -- Step Key
+   , p_separator          in varchar2 default ',' -- Separator for the list of potential owners
+   , p_add_diagram_admin  in boolean default false
+   , p_add_instance_admin in boolean default false
+   ) return flow_process_variables.prov_var_vc2%type;
+   /**
+get_task_business_admins Function
+This function returns the list of business admins for a task in a process instance.  The list is returned as a string, with the values separated by the p_separator value (default is comma).   
+Intended usage is to allow an APEX Human Task to get the list of business admins for a task from its Flows for APEX process instance.
+
+If `p_add_diagram_admin` is true, the business admin defined in the bpmn:process object on the BPMN diagram will also be added to the list of business admins.
+
+If `p_add_instance_admin` is true, the business admin defined in the system configuration parameter `default_apex_business_admin` will also be added to the list of business admins.
+
+Note that APEX Human Tasks require the list to be a comma separated list, so the default value of p_separator is a comma.  If you are using this function in a different context, you can specify a different separator.   
+
+EXAMPLE
+This code could be defined in the Participants section of an APEX Human Task (Approval Task or Action Task) definition.  Having set Task Parameters for PROCESS_ID, SUBFLOW_ID and STEP_KEY, you can use this function to get the list of business admins for the task.
+Define the Participant to be:  Business Admins
+Define the type to be an:      Expression    
+Define the Expression to be:
+``` sql
+flow_api_pkg.task_business_admins      ( p_process_id => :PROCESS_ID,
+                                         p_subflow_id => :SUBFLOW_ID,
+                                         p_step_key   => :STEP_KEY)
+```
+**/
+
 
   procedure receive_message
   ( p_message_name  flow_message_subscriptions.msub_message_name%type

@@ -4,8 +4,8 @@ begin
   l_dgrm_content := apex_string.join_clob(
     apex_t_varchar2(
       q'[<?xml version="1.0" encoding="UTF-8"?>]'
-      ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="23.1.0">]'
-      ,q'[  <bpmn:process id="Process_0rxermh" isExecutable="false" apex:manualInput="false" apex:applicationId="100" apex:pageId="1" apex:username="FLOWSTESTER1">]'
+      ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="24.1.0">]'
+      ,q'[  <bpmn:process id="Process_A11a" name="Process A11a Variable Expression Types with Call Activity" isExecutable="false" apex:manualInput="true">]'
       ,q'[    <bpmn:startEvent id="Event_0v2q0b0" name="start">]'
       ,q'[      <bpmn:outgoing>Flow_1jhtmdh</bpmn:outgoing>]'
       ,q'[    </bpmn:startEvent>]'
@@ -200,7 +200,7 @@ begin
       ,q'[    </bpmn:callActivity>]'
       ,q'[  </bpmn:process>]'
       ,q'[  <bpmndi:BPMNDiagram id="BPMNDiagram_1">]'
-      ,q'[    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0rxermh">]'
+      ,q'[    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_A11a">]'
       ,q'[      <bpmndi:BPMNShape id="Event_0v2q0b0_di" bpmnElement="Event_0v2q0b0">]'
       ,q'[        <dc:Bounds x="272" y="382" width="36" height="36" />]'
       ,q'[        <bpmndi:BPMNLabel>]'

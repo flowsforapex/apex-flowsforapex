@@ -20,6 +20,187 @@ as
   lock_timeout              exception;
   pragma exception_init (lock_timeout, -3006);
 
+  procedure get_nearest_previous_opening_parincl_gateway
+  ( pi_sbfl_rec                in  flow_subflows%rowtype
+  , po_nearest_gateway_bpmn_id out flow_objects.objt_bpmn_id%type
+  , po_nearest_gateway_type    out flow_objects.objt_tag_name%type
+  , po_nearest_gateway_name    out flow_objects.objt_name%type
+  , po_num_steps               out integer
+  )
+  is
+    l_gateway_bpmn_id   flow_objects.objt_bpmn_id%type;
+    l_current_object    flow_objects.objt_bpmn_id%type;
+    l_gateway_type      flow_objects.objt_tag_name%type;
+    l_gateway_name      flow_objects.objt_name%type;
+    l_num_steps         integer;
+  begin
+    apex_debug.enter
+    ( 'get_nearest_previous_opening_parincl_gateway'
+    , 'pi_sbfl_rec.sbfl_current' , pi_sbfl_rec.sbfl_current
+    );
+    begin
+       -- get nearest previous opening parallel or inclusve gateway
+       with candidate_gateways as    
+        ( select distinct prev_obj.objt_bpmn_id 
+               , prev_obj.objt_tag_name
+               , coalesce( prev_obj.objt_name, prev_obj.objt_bpmn_id) objt_name
+               , prev_obj.objt_id
+               , prev_obj.objt_dgrm_id
+               , level as num_steps
+            from flow_objects prev_obj
+            join flow_connections conn
+              on conn.conn_src_objt_id = prev_obj.objt_id
+             and conn.conn_dgrm_id     = prev_obj.objt_dgrm_id
+             and conn.conn_tag_name    = flow_constants_pkg.gc_bpmn_sequence_flow
+            join flow_objects curr_obj
+              on conn.conn_tgt_objt_id = curr_obj.objt_id
+             and conn.conn_dgrm_id     = curr_obj.objt_dgrm_id
+             and conn.conn_tag_name    = flow_constants_pkg.gc_bpmn_sequence_flow
+           where curr_obj.objt_dgrm_id = pi_sbfl_rec.sbfl_dgrm_id
+             and prev_obj.objt_tag_name in ('bpmn:inclusiveGateway','bpmn:parallelGateway')
+           start with curr_obj.objt_bpmn_id = pi_sbfl_rec.sbfl_current
+          connect by  curr_obj.objt_tag_name not in ('bpmn:inclusiveGateway','bpmn:parallelGateway', 'bpmn:startEvent', 'bpmn:boundaryEvent')
+                  and curr_obj.objt_id = prior prev_obj.objt_id
+          order by level 
+        )
+     select candidate_gateways.objt_bpmn_id
+          , candidate_gateways.objt_tag_name
+          , candidate_gateways.objt_name
+          , candidate_gateways.num_steps
+       into l_gateway_bpmn_id
+          , l_gateway_type
+          , l_gateway_name
+          , l_num_steps
+      from candidate_gateways
+      where ( select count (back_links.conn_id)
+                from flow_connections back_links
+               where back_links.conn_tgt_objt_id = candidate_gateways.objt_id
+                 and back_links.conn_tag_name    = flow_constants_pkg.gc_bpmn_sequence_flow
+                 and back_links.conn_dgrm_id     = candidate_gateways.objt_dgrm_id
+            ) = 1
+        ;
+    exception
+      when no_data_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+        , pi_message_key  => 'gateway-no-previous-gateway'
+        );
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+        , pi_message_key  => 'gateway-multiple-previous-gateways'
+        );
+    end;
+    apex_debug.message ( 'Nearest previous opening parallel or inclusive gateway: %0 %1 %2 %3'
+                       , l_gateway_bpmn_id
+                       , l_gateway_type
+                       , l_gateway_name
+                       , l_num_steps
+                       );
+    po_nearest_gateway_bpmn_id := l_gateway_bpmn_id;
+    po_nearest_gateway_type    := l_gateway_type;
+    po_nearest_gateway_name    := l_gateway_name;  
+    po_num_steps               := l_num_steps;  
+  end get_nearest_previous_opening_parincl_gateway;
+
+  function get_matching_opening_gateway
+  ( pi_sbfl_rec       in flow_subflows%rowtype
+  ) return flow_objects.objt_bpmn_id%type
+  is
+    l_gateway_rec         flow_objects%rowtype;
+    l_tgt_objt_bpmn_id    flow_objects.objt_bpmn_id%type;
+  begin
+    apex_debug.enter
+    ( 'get_matching_opening_gateway'
+    , 'pi_sbfl_rec.sbfl_current' , pi_sbfl_rec.sbfl_current
+    , 'pi_sbfl_rec.sbfl_dgrm_id' , pi_sbfl_rec.sbfl_dgrm_id
+    , 'pi_sbfl_rec.sbfl_status'  , pi_sbfl_rec.sbfl_status
+    );
+    -- get the matching object from the subflow_log record for the completed closing gateway
+    begin
+      select distinct sflg.sflg_matching_object
+        into l_tgt_objt_bpmn_id
+        from flow_subflow_log sflg
+       where sflg_prcs_id        = pi_sbfl_rec.sbfl_prcs_id
+         and sflg_sbfl_id        = pi_sbfl_rec.sbfl_id
+         and sflg_objt_id        = pi_sbfl_rec.sbfl_current
+      ;
+    exception
+      when no_data_found then
+        -- migration issue from pre 25.1 - no matching object - just can't rewind here!
+        l_tgt_objt_bpmn_id  := null;
+      when others then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+        , pi_message_key  => 'gateway-matching-object-error'
+        );
+    end;
+    
+    apex_debug.message ( p_message => 'Matching opening gateway: %0 '
+                       , p0 => l_tgt_objt_bpmn_id
+                       );
+    return l_tgt_objt_bpmn_id;
+  end get_matching_opening_gateway;
+
+  procedure get_nearest_previous_gateway
+  ( pi_sbfl_rec                in  flow_subflows%rowtype
+  , po_nearest_gateway_bpmn_id out flow_objects.objt_bpmn_id%type
+  , po_nearest_gateway_type    out flow_objects.objt_tag_name%type
+  , po_nearest_gateway_name    out flow_objects.objt_name%type
+  , po_num_steps               out integer
+  )
+  is
+    l_gateway_bpmn_id   flow_objects.objt_bpmn_id%type;
+    l_current_object    flow_objects.objt_bpmn_id%type;
+    l_gateway_type      flow_objects.objt_tag_name%type;
+    l_gateway_name      flow_objects.objt_name%type;
+    l_num_steps         integer;
+  begin
+    -- get nearest previous gateway
+    begin
+        select prev_obj.objt_bpmn_id 
+             , prev_obj.objt_tag_name
+             , coalesce( prev_obj.objt_name, prev_obj.objt_bpmn_id)
+             , level
+          into l_gateway_bpmn_id
+             , l_gateway_type
+             , l_gateway_name
+             , l_num_steps
+          from flow_objects prev_obj
+          join flow_connections conn
+            on conn.conn_src_objt_id = prev_obj.objt_id
+           and conn.conn_dgrm_id     = prev_obj.objt_dgrm_id
+           and conn.conn_tag_name    = flow_constants_pkg.gc_bpmn_sequence_flow
+          join flow_objects curr_obj
+            on conn.conn_tgt_objt_id = curr_obj.objt_id
+           and conn.conn_dgrm_id     = curr_obj.objt_dgrm_id
+           and conn.conn_tag_name    = flow_constants_pkg.gc_bpmn_sequence_flow
+         where curr_obj.objt_dgrm_id = pi_sbfl_rec.sbfl_dgrm_id
+           and prev_obj.objt_tag_name in ('bpmn:eventBasedGateway','bpmn:inclusiveGateway','bpmn:parallelGateway',  'bpmn:exclusiveGateway')
+         start with curr_obj.objt_bpmn_id = pi_sbfl_rec.sbfl_current
+        connect by  curr_obj.objt_tag_name not in ('bpmn:eventBasedGateway','bpmn:inclusiveGateway','bpmn:parallelGateway', 'bpmn:startEvent', 'bpmn:exclusiveGateway', 'bpmn:boundaryEvent')
+                and curr_obj.objt_id = prior prev_obj.objt_id
+        order by level
+        fetch first 1 row only
+        ;
+    exception
+      when no_data_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+        , pi_message_key  => 'gateway-no-previous-gateway'
+        );
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+        , pi_message_key  => 'gateway-multiple-previous-gateways'
+        );
+    end;
+    po_nearest_gateway_bpmn_id := l_gateway_bpmn_id;
+    po_nearest_gateway_type    := l_gateway_type;
+    po_nearest_gateway_name    := l_gateway_name;
+    po_num_steps               := l_num_steps;  
+  end get_nearest_previous_gateway;
+
   function get_valid_routing_variable_routes
     ( pi_prcs_id            in flow_processes.prcs_id%type
     , pi_sbfl_id            in flow_subflows.sbfl_id%type
@@ -624,7 +805,9 @@ as
     l_num_unfinished_subflows   number;
     l_forward_routes            apex_t_varchar2 := apex_t_varchar2();
     l_step_key                  flow_subflows.sbfl_step_key%type;
+    l_tag_name                  flow_objects.objt_tag_name%type; -- not used
     l_is_actual_gateway         boolean;  -- set if the object is really a gateway (vs. an iteration acting as a gateway)
+    l_matching_object           flow_objects.objt_bpmn_id%type;
 /*    l_new_subflows              t_new_sbfls := t_new_sbfls();
     l_new_subflow               flow_types_pkg.t_subflow_context; */ -- think these not used
   begin
@@ -637,11 +820,12 @@ as
     if p_step_info.target_objt_treat_as_tag is null and p_sbfl_info.sbfl_loop_counter is null then 
       -- for actual gateway get number of forward and backward connections
       flow_engine_util.get_number_of_connections
-      ( pi_dgrm_id => p_step_info.dgrm_id
-      , pi_target_objt_id => p_step_info.target_objt_id
-      , pi_conn_type => flow_constants_pkg.gc_bpmn_sequence_flow
-      , po_num_back_connections => l_num_back_connections
-      , po_num_forward_connections => l_num_forward_connections
+      ( pi_dgrm_id                  => p_step_info.dgrm_id
+      , pi_objt_bpmn_id             => p_step_info.target_objt_ref
+      , pi_conn_type                => flow_constants_pkg.gc_bpmn_sequence_flow
+      , po_num_back_connections     => l_num_back_connections
+      , po_num_forward_connections  => l_num_forward_connections
+      , po_objt_tag_name            => l_tag_name  -- not used
       );
       l_is_actual_gateway := true;
     elsif p_step_info.target_objt_treat_as_tag = flow_constants_pkg.gc_bpmn_gateway_parallel 
@@ -677,6 +861,7 @@ as
         l_gateway_forward_status := gateway_merge ( p_sbfl_info  => p_sbfl_info
                                                   , p_step_info  => p_step_info
                                                   );
+        l_matching_object := p_sbfl_info.sbfl_starting_object;
       end if;                                        
       -- switch to parent subflow 
       l_sbfl_id := p_sbfl_info.sbfl_sbfl_id;
@@ -723,10 +908,11 @@ as
               , p0 => p_step_info.target_objt_ref
               , p1 => apex_string.join(l_forward_routes,':')
               );
-              flow_logging.log_instance_event
-              ( p_process_id  => p_sbfl_info.sbfl_prcs_id
-              , p_objt_bpmn_id  => p_step_info.target_objt_ref
-              , p_event  => 'Gateway Processed'
+              flow_logging.log_step_event
+              ( p_sbfl_rec      => p_sbfl_info
+--              , p_objt_bpmn_id  => p_step_info.target_objt_ref
+              , p_event  => flow_constants_pkg.gc_step_event_route_chosen
+              , p_event_level => flow_constants_pkg.gc_logging_level_routine
               , p_comment  => 'Chosen Paths : '||apex_string.join(l_forward_routes,':')
               );
             when flow_constants_pkg.gc_bpmn_gateway_parallel then 
@@ -795,6 +981,7 @@ as
         , p_subflow_id => l_sbfl_id
         , p_step_key   => l_step_key
         , p_forward_route => null
+        , p_matching_object => l_matching_object
         );
       end if;  -- single path
     end if;  -- forward token
@@ -809,6 +996,7 @@ as
     l_num_back_connections      number;   -- number of connections back from object
     l_forward_routes            apex_t_varchar2 := apex_t_varchar2();
     l_forward_route             flow_connections.conn_bpmn_id%type;
+    l_tag_name                  flow_objects.objt_tag_name%type;  -- not used
   begin
     -- handles opening and closing and closing and reopening
     apex_debug.enter 
@@ -817,10 +1005,11 @@ as
     );
     flow_engine_util.get_number_of_connections
     ( pi_dgrm_id => p_step_info.dgrm_id
-    , pi_target_objt_id => p_step_info.target_objt_id
+    , pi_objt_bpmn_id => p_step_info.target_objt_ref
     , pi_conn_type => flow_constants_pkg.gc_bpmn_sequence_flow
     , po_num_back_connections => l_num_back_connections
     , po_num_forward_connections => l_num_forward_connections
+    , po_objt_tag_name => l_tag_name  -- not used
     );
 
     if l_num_forward_connections > 1 then

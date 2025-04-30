@@ -1,0 +1,417 @@
+---
+- # ====== Field Template: Required - Floating =================
+  id: 12495522548744880132
+  identification: 
+    name: Required - Floating
+    identifier: REQUIRED_FLOATING
+    class: Required Label
+
+  subscription: 
+    master: 
+      referenced-id: 1607675344320152883
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer">
+        <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label">
+    after: |2
+        </label>
+      </div>
+
+  item: 
+    before: |
+      <div class="t-Form-inputContainer">
+        <div class="t-Form-itemRequired-marker" aria-hidden="true"></div>
+        <div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: |
+      #ITEM_POST_TEXT##HELP_TEMPLATE#
+        </div>
+        <div class="t-Form-itemAssistance">
+          #ERROR_TEMPLATE#
+          <div class="t-Form-itemRequired" aria-hidden="true">#REQUIRED#</div>
+        </div>
+        #INLINE_HELP_TEMPLATE#
+      </div>
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <div class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</div>
+
+  error-templates: 
+    error-template: <div class="t-Form-error">#ERROR_MESSAGE#</div>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer t-Form-fieldContainer--floatingLabel is-required #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+
+  template-options: 
+  - # ====== Template Option: Asterisk ===========================
+    id: 10338423946536157
+    identification: 
+      name: Asterisk
+      identifier: INDICATOR_ASTERISK
+      group: Required Indicator
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Form-fieldContainer--indicatorAsterisk
+
+    help: 
+      help-text: Displays an asterisk * on required items.
+
+  - # ====== Template Option: Inline Label =======================
+    id: 10339170659536157
+    identification: 
+      name: Inline Label
+      identifier: INDICATOR_LABEL
+      group: Required Indicator
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Form-fieldContainer--indicatorLabel
+
+    help: 
+      help-text: Displays "Required" inline.
+
+- # ====== Field Template: Required - Above ====================
+  id: 12495522609431880132
+  identification: 
+    name: Required - Above
+    identifier: REQUIRED_ABOVE
+    class: Required Label
+
+  subscription: 
+    master: 
+      referenced-id: 3030115129444970113
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer">
+        <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label">
+    after: |2
+        </label> #HELP_TEMPLATE#
+      </div>
+
+  item: 
+    before: |
+      <div class="t-Form-inputContainer">
+        <div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: |
+      #ITEM_POST_TEXT#</div>
+        <div class="t-Form-itemAssistance">
+          #ERROR_TEMPLATE#
+          <div class="t-Form-itemRequired" aria-hidden="true">#REQUIRED#</div>
+        </div>
+        #INLINE_HELP_TEMPLATE#
+      </div>
+      
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <div class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</div>
+
+  error-templates: 
+    error-template: <div class="t-Form-error">#ERROR_MESSAGE#</div>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer t-Form-fieldContainer--stacked is-required #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+
+  template-options: 
+  - # ====== Template Option: Asterisk ===========================
+    id: 10335626281536156
+    identification: 
+      name: Asterisk
+      identifier: INDICATOR_ASTERISK
+      group: Required Indicator
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Form-fieldContainer--indicatorAsterisk
+
+    help: 
+      help-text: Displays an asterisk * on required items.
+
+  - # ====== Template Option: Inline Label =======================
+    id: 10336347117536156
+    identification: 
+      name: Inline Label
+      identifier: INDICATOR_LABEL
+      group: Required Indicator
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Form-fieldContainer--indicatorLabel
+
+    help: 
+      help-text: Displays "Required" inline.
+
+- # ====== Field Template: Required ============================
+  id: 12495522780887880132
+  identification: 
+    name: Required
+    identifier: REQUIRED
+    class: Required Label
+
+  subscription: 
+    master: 
+      referenced-id: 2525313812251712801
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer col col-#LABEL_COLUMN_SPAN_NUMBER#">
+        <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label">
+    after: |2
+        </label>
+      </div>
+
+  item: 
+    before: |
+      <div class="t-Form-inputContainer col col-#ITEM_COLUMN_SPAN_NUMBER#">
+        <div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: |
+      #ITEM_POST_TEXT##HELP_TEMPLATE#
+        </div>
+        <div class="t-Form-itemAssistance">
+          #ERROR_TEMPLATE#
+          <div class="t-Form-itemRequired" aria-hidden="true">#REQUIRED#</div>
+        </div>
+        #INLINE_HELP_TEMPLATE#
+      </div>
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <div class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</div>
+
+  error-templates: 
+    error-template: <div class="t-Form-error">#ERROR_MESSAGE#</div>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer is-required rel-col #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+
+  template-options: 
+  - # ====== Template Option: Asterisk ===========================
+    id: 10332867801536155
+    identification: 
+      name: Asterisk
+      identifier: INDICATOR_ASTERISK
+      group: Required Indicator
+      sequence: 10
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Form-fieldContainer--indicatorAsterisk
+
+    help: 
+      help-text: Displays an asterisk * on required items.
+
+  - # ====== Template Option: Inline Label =======================
+    id: 10333506226536155
+    identification: 
+      name: Inline Label
+      identifier: INDICATOR_LABEL
+      group: Required Indicator
+      sequence: 20
+
+    settings: 
+      advanced: false
+
+    appearance: 
+      css-classes: 
+      - t-Form-fieldContainer--indicatorLabel
+
+    help: 
+      help-text: Displays "Required" inline.
+
+- # ====== Field Template: Optional - Floating =================
+  id: 12495522847445880132
+  identification: 
+    name: Optional - Floating
+    identifier: OPTIONAL_FLOATING
+    class: Optional Label
+
+  subscription: 
+    master: 
+      referenced-id: 1607675164727151865
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer">
+      <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label">
+    after: |
+      </label>
+      </div>
+
+  item: 
+    before: <div class="t-Form-inputContainer"><div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: '#ITEM_POST_TEXT##HELP_TEMPLATE#</div>#INLINE_HELP_TEMPLATE##ERROR_TEMPLATE#</div>'
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <span class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</span>
+
+  error-templates: 
+    error-template: <span class="t-Form-error">#ERROR_MESSAGE#</span>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer t-Form-fieldContainer--floatingLabel #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+
+- # ====== Field Template: Optional - Above ====================
+  id: 12495522916395880132
+  identification: 
+    name: Optional - Above
+    identifier: OPTIONAL_ABOVE
+    class: Optional Label
+
+  subscription: 
+    master: 
+      referenced-id: 3030114864004968404
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer">
+      <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label">
+    after: |
+      </label> #HELP_TEMPLATE#
+      </div>
+
+  item: 
+    before: <div class="t-Form-inputContainer"><div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: '#ITEM_POST_TEXT#</div>#INLINE_HELP_TEMPLATE##ERROR_TEMPLATE#</div>'
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <span class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</span>
+
+  error-templates: 
+    error-template: <span class="t-Form-error">#ERROR_MESSAGE#</span>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer t-Form-fieldContainer--stacked #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+
+- # ====== Field Template: Optional ============================
+  id: 12495523037429880132
+  identification: 
+    name: Optional
+    identifier: OPTIONAL
+    class: Optional Label
+
+  subscription: 
+    master: 
+      referenced-id: 2317154212072806530
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer col col-#LABEL_COLUMN_SPAN_NUMBER#">
+      <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label">
+    after: |
+      </label>
+      </div>
+      
+
+  item: 
+    before: <div class="t-Form-inputContainer col col-#ITEM_COLUMN_SPAN_NUMBER#"><div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: '#ITEM_POST_TEXT##HELP_TEMPLATE#</div>#INLINE_HELP_TEMPLATE##ERROR_TEMPLATE#</div>'
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <span class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</span>
+
+  error-templates: 
+    error-template: <span class="t-Form-error">#ERROR_MESSAGE#</span>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer rel-col #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+
+- # ====== Field Template: Hidden ==============================
+  id: 12495523145758880138
+  identification: 
+    name: Hidden
+    identifier: HIDDEN
+    class: No Label
+
+  subscription: 
+    master: 
+      referenced-id: 2039339104148359505
+
+  advanced: 
+    translatable: false
+
+  label: 
+    before: |
+      <div class="t-Form-labelContainer t-Form-labelContainer--hiddenLabel col col-#LABEL_COLUMN_SPAN_NUMBER#">
+      <label for="#CURRENT_ITEM_NAME#" id="#LABEL_ID#" class="t-Form-label u-VisuallyHidden">
+    after: |
+      </label>
+      </div>
+
+  item: 
+    before: <div class="t-Form-inputContainer col col-#ITEM_COLUMN_SPAN_NUMBER#"><div class="t-Form-itemWrapper">#ITEM_PRE_TEXT#
+    after: '#ITEM_POST_TEXT##HELP_TEMPLATE#</div>#INLINE_HELP_TEMPLATE##ERROR_TEMPLATE#</div>'
+    pre-text: <span class="t-Form-itemText t-Form-itemText--pre">#CURRENT_ITEM_PRE_TEXT#</span>
+    post-text: <span class="t-Form-itemText t-Form-itemText--post">#CURRENT_ITEM_POST_TEXT#</span>
+
+  help: 
+    invoke: <button class="t-Form-helpButton js-itemHelp" data-itemhelp="#CURRENT_ITEM_ID#" title="#CURRENT_ITEM_HELP_LABEL#" aria-label="#CURRENT_ITEM_HELP_LABEL#" tabindex="-1" type="button"><span class="a-Icon icon-help" aria-hidden="true"></span></button>
+    inline: <span class="t-Form-inlineHelp">#CURRENT_ITEM_INLINE_HELP_TEXT#</span>
+
+  error-templates: 
+    error-template: <span class="t-Form-error">#ERROR_MESSAGE#</span>
+
+  field-container: 
+    before-label-and-item: '<div class="t-Form-fieldContainer t-Form-fieldContainer--hiddenLabel rel-col #ITEM_CSS_CLASSES#" id="#CURRENT_ITEM_CONTAINER_ID#">'
+    after-label-and-item: </div>
+

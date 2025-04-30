@@ -3,8 +3,10 @@ create or replace package body test_021_messageFlow_basics as
 -- Flows for APEX - test_021_messageFlow_basics.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 17-Apr-2023   Richard Allen - Oracle
+-- Edited  20-Jan-2025   Richard Allen - Flowquest
 --
 */
 
@@ -226,6 +228,7 @@ create or replace package body test_021_messageFlow_basics as
 
     when 'send' then
 
+      dbms_session.sleep(2);
       -- check if message subscription has been consumed
 
       open l_actual for
@@ -764,7 +767,7 @@ create or replace package body test_021_messageFlow_basics as
 
 
       -- check that the receiver task subflow is now on After step and running       
-
+      dbms_session.sleep(2);
       open l_expected for
          select
             l_prcs_rx                                 as sbfl_prcs_id,
@@ -852,7 +855,7 @@ create or replace package body test_021_messageFlow_basics as
                                 pi_current  => l_sending_path);
 
       -- check that the send task subflow is now on After step and running       
-
+      dbms_session.sleep(2);
       open l_expected for
          select
             l_prcs_tx                                 as sbfl_prcs_id,
@@ -1034,7 +1037,7 @@ create or replace package body test_021_messageFlow_basics as
 
     -- check the receiving object received the payload
 
-   
+    dbms_session.sleep(2);   
     l_actual_clob := flow_process_vars.get_var_clob ( pi_prcs_id  => l_prcs_rx
                                                     , pi_var_name  => 'returnPayload');                                                   
     ut.expect(l_actual_clob).to_be_null;
@@ -1071,7 +1074,7 @@ create or replace package body test_021_messageFlow_basics as
 
     -- check the receiving object received the payload
 
-   
+    dbms_session.sleep(2);   
     l_actual_clob := flow_process_vars.get_var_clob ( pi_prcs_id  => l_prcs_rx
                                                     , pi_var_name  => 'returnPayload');                                                   
     ut.expect(l_actual_clob).to_be_null;
@@ -1108,7 +1111,7 @@ create or replace package body test_021_messageFlow_basics as
 
     -- check the receiving object received the payload
 
-   
+    dbms_session.sleep(2);   
     l_actual_clob := flow_process_vars.get_var_clob ( pi_prcs_id  => l_prcs_rx
                                                     , pi_var_name  => 'returnPayload');                                                   
     ut.expect(l_actual_clob).to_be_null;
@@ -1145,7 +1148,7 @@ create or replace package body test_021_messageFlow_basics as
 
     -- check the receiving object received the payload
 
-   
+    dbms_session.sleep(2);   
     l_actual_clob := flow_process_vars.get_var_clob ( pi_prcs_id  => l_prcs_rx
                                                     , pi_var_name  => 'returnPayload');                                                   
     ut.expect(l_actual_clob).to_be_null;
@@ -1625,7 +1628,7 @@ create or replace package body test_021_messageFlow_basics as
     end if;
 
     -- now check whether one 1 subflow  running
-
+    dbms_session.sleep(2);
     open l_expected for   
           select
           l_prcs_id as sbfl_prcs_id,
@@ -1825,6 +1828,7 @@ create or replace package body test_021_messageFlow_basics as
                                    );
 
       -- check all subflows correct
+      dbms_session.sleep(2);
 
       open l_expected for
          select
@@ -1858,10 +1862,11 @@ create or replace package body test_021_messageFlow_basics as
                                    , p_key_name       => 'MyKey'
                                    , p_key_value      => 'Receive1'
                                    );
-
+      dbms_session.sleep(2);
     end case;
 
     -- check all subflows correct
+
     open l_expected for
        select
        l_prcs_id as sbfl_prcs_id,
@@ -1965,6 +1970,7 @@ create or replace package body test_021_messageFlow_basics as
                                    );      
 
       -- check subflows
+      dbms_session.sleep(2);
       open l_expected for
          select
          l_prcs_id as sbfl_prcs_id,

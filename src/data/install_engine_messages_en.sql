@@ -271,6 +271,18 @@ begin
     values ( 'iter_close_error', c_load_lang, q'[Internal error processing iteration closure on subflow %0]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'feature-requires-ee', c_load_lang, q'[Processing this feature requires licensing Flows for APEX Enterprise Edition.]' );
+-- below here manually added for 25.1 dev (only add these to the english file...)
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'suspend-invalid-status', c_load_lang, q'[Only process instances currently in running or error status can be suspended.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'resume-invalid-status', c_load_lang, q'[Only process instances currently suspended can be resumed.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'var_exp_plsql_other', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  PL/SQL error shown in event log. ]' );
+-- above here manually added for 25.1 dev
+/* template below
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( '', c_load_lang, q'[  ]' );
+*/
 
   commit;
 end;

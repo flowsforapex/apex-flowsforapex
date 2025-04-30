@@ -1,0 +1,17 @@
+---
+- # ====== Application Computation: APP_NAME_TITLE =============
+  id: 34570910330109834
+  identification: 
+    item-name: APP_NAME_TITLE
+
+  execution: 
+    sequence: 10
+    point: AFTER_LOGIN
+
+  computation: 
+    type: Static Value
+    static-value: Flows for APEX
+
+  subscription: 
+    version-number: 1760504921
+

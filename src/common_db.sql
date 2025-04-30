@@ -28,6 +28,8 @@ PROMPT >> Engine
 @plsql/flow_services.pks
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
+@plsql/flow_instances_util_ee.pks
+@plsql/flow_rewind.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
 @plsql/flow_reservations.pks
@@ -161,6 +163,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0013_expressions_vw.sql
 @views/engine-app/flow_p0013_instance_log_vw.sql
 @views/engine-app/flow_p0013_step_log_vw.sql
+@views/engine-app/flow_p0013_step_events_vw.sql
 @views/engine-app/flow_p0013_subflows_vw.sql
 @views/engine-app/flow_p0013_variable_log_vw.sql
 @views/engine-app/flow_p0013_called_diagrams_vw.sql

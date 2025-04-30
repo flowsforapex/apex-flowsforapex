@@ -1,0 +1,158 @@
+---
+- # ====== Automation: Flows for APEX - Daily Instance Archive =
+  id: 2130974654065929
+  identification: 
+    name: Flows for APEX - Daily Instance Archive
+    static-id: flows-for-apex-daily-instance-archive
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=0
+    schedule-status: Disabled
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  comments: 
+    comments: |
+      Flows for APEX Daily Instance Archive.
+      For each process instance that has reached 'completed' or 'terminated' status, this daily job creates a JSON summary of the instance execution, diagrams used, sub flows run, variables set, process events.
+      Archives are stored based on the F4A Configuration Parameter  'logging_archive_location', and can be set to a database table or to OCI Object Storage.
+
+  actions: 
+  - # ====== Action: Run Daily Instance Archive ==================
+    id: 2131266656065931
+    identification: 
+      name: Run Daily Instance Archive
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.archive_completed_instances;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Daily Instance Summary Archive process error
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Purge Statistics =======
+  id: 2132078093091545
+  identification: 
+    name: Flows for APEX - Purge Statistics
+    static-id: flows-for-apex-purge-statistics
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=0
+    schedule-status: Disabled
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  actions: 
+  - # ====== Action: Purge Old Statistics ========================
+    id: 2132703073101244
+    identification: 
+      name: Purge Old Statistics
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.purge_statistics;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Error purging Flows for APEX Statistics summaries
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Gather Daily Statistics 
+  id: 2133342671110884
+  identification: 
+    name: Flows for APEX - Gather Daily Statistics
+    static-id: flows-for-apex-gather-daily-statistics
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=12
+    schedule-status: Disabled
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  actions: 
+  - # ====== Action: Gather Daily Stats ==========================
+    id: 2133626467110885
+    identification: 
+      name: Gather Daily Stats
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.run_daily_stats;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Error gathering daily Flows for APEX Stats
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Purge Logs =============
+  id: 2134304189122562
+  identification: 
+    name: Flows for APEX - Purge Logs
+    static-id: flows-for-apex-purge-logs
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=5
+    schedule-status: Disabled
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  comments: 
+    comments: Flows for APEX Purge Instance Log Tables.   This purges records in the flow_instance_events, flow_step_events, and flow_variable_events tables to keep log table size under control.  If instance summary archiving is enabled, a json document containing a full summary / audit trail for each process instance should have been created and stored in archive storage (database table or OCI Object Storage) before the relevant records are purged.   See documentation.
+
+  actions: 
+  - # ====== Action: Purge Log Tables ============================
+    id: 2134675479122562
+    identification: 
+      name: Purge Log Tables
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.purge_instance_logs;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Flows for APEX - Error purging log tables.
+      stop-execution-on-error: true
+

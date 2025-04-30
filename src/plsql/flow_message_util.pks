@@ -3,15 +3,18 @@ create or replace package flow_message_util
 -- Flows for APEX - flow_message_util
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+-- (c) Copyright Flowquest Limited and / or ts affiliates, 2025.
 --
 -- Created  04-Mar-2023  Richard Allen (Oracle Corporation)
+-- Edited   18-Jan-2025  Richard Allen (Flowquest)
 --
 -- Contains utility and common routines for messageFlow used by
 -- bpmn:sendTask, bpmn:receiveTask, message catch and throw events, message start events, etc.
 --
 */
   accessible by ( flow_message_flow, flow_tasks, flow_engine , flow_instances 
-                , flow_engine_util , flow_boundary_events , flow_diagram, flow_message_util_ee )
+                , flow_engine_util , flow_boundary_events , flow_diagram
+                , flow_message_util_ee , flow_rewind )
 as  
 
   function get_msg_subscription_details
@@ -67,17 +70,24 @@ as
   );
 
   procedure intermed_save_payload_and_callback
-   ( p_msub           in flow_message_subscriptions%rowtype
-   , p_payload        in clob default null
+   ( p_corr_msg       in flow_t_correlated_message
    , p_current        in flow_objects.objt_bpmn_id%type 
    , p_scope          in flow_subflows.sbfl_scope%type
    );
 
-  function correlate_catch_event
-    ( p_message_name  flow_message_subscriptions.msub_message_name%type 
-    , p_key_name      flow_message_subscriptions.msub_key_name%type
-    , p_key_value     flow_message_subscriptions.msub_key_value%type
-    ) return flow_message_subscriptions%rowtype;
+  function correlate_received_message  
+  ( p_msg     in  flow_message_flow.t_flow_simple_message
+  ) return flow_t_correlated_message;
+
+  procedure handle_correlated_message
+  ( p_corr_msg             in  flow_t_correlated_message
+  );
+
+  procedure log_received_message
+  ( p_received_message in flow_message_flow.t_flow_simple_message
+  , p_subscription     in flow_message_subscriptions%rowtype
+  , p_was_correlated   in boolean
+  );
   
 end flow_message_util;
 /

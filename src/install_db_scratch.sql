@@ -6,6 +6,10 @@ PROMPT >> =============================
 
 PROMPT >> Installing Tables
 @ddl/install_scratch.sql
+
+PROMPT >> Installing Schema Level Types
+@types/flow_t_correlated_message.sql
+
 PROMPT >> Common Objects
 @common_db.sql
 PROMPT >> Adding Comments

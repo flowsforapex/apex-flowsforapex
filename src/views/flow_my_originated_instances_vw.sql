@@ -31,6 +31,7 @@ select   prcs_id
        , 'last updated '||apex_util.get_since (p_value => prcs_last_update) as prcs_last_update_since
        , prcs_last_update_by
        , prcs_business_ref
+       , prcs_was_altered
 from flow_instances_vw
 where prcs_init_by =  sys_context('apex$session','app_user') 
 with read only;

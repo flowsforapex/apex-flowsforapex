@@ -1,0 +1,613 @@
+---
+# ====== Page: Export ========================================
+id: 5
+identification: 
+  name: Export
+  alias: EXPORT
+  title: Export - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Always
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Options =====================================
+  id: 17600327473220601
+  identification: 
+    name: Options
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P5_DGRM_ID ===============================
+  id: 17600676567220604
+  identification: 
+    name: P5_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Options # 17600327473220601
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_FILENAME ==============================
+  id: 17601343709220611
+  identification: 
+    name: P5_FILENAME
+    type: Text Field
+
+  label: 
+    label: File Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Options # 17600327473220601
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 300
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Item = Value
+    item: P5_MULTI
+    value: N
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_INCLUDE_VERSION =======================
+  id: 17601485306220612
+  identification: 
+    name: P5_INCLUDE_VERSION
+    type: Switch
+
+  label: 
+    label: Include Version
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 30
+    region: Options # 17600327473220601
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - filename-changer
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  server-side-condition: 
+    type: Item = Value
+    item: P5_MULTI
+    value: N
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_INCLUDE_CATEGORY ======================
+  id: 17601505679220613
+  identification: 
+    name: P5_INCLUDE_CATEGORY
+    type: Switch
+
+  label: 
+    label: Include Category
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 50
+    region: Options # 17600327473220601
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - filename-changer
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  server-side-condition: 
+    type: Item = Value
+    item: P5_MULTI
+    value: N
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_INCLUDE_LAST_CHANGE_DATE ==============
+  id: 17601607926220614
+  identification: 
+    name: P5_INCLUDE_LAST_CHANGE_DATE
+    type: Switch
+
+  label: 
+    label: Include Last Change Date
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 60
+    region: Options # 17600327473220601
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - filename-changer
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  server-side-condition: 
+    type: Item = Value
+    item: P5_MULTI
+    value: N
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_DOWNLOAD_AS ===========================
+  id: 17601740723220615
+  identification: 
+    name: P5_DOWNLOAD_AS
+    type: Radio Group
+
+  label: 
+    label: Download As
+    alignment: Left
+
+  settings: 
+    number-of-columns: 2
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 70
+    region: Options # 17600327473220601
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: P5_DOWNLOAD_AS # 11258952541008552
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    css-classes: 
+    - filename-changer
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: BPMN
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_INCLUDE_STATUS ========================
+  id: 17602168797220619
+  identification: 
+    name: P5_INCLUDE_STATUS
+    type: Switch
+
+  label: 
+    label: Include Status
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 40
+    region: Options # 17600327473220601
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - filename-changer
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  server-side-condition: 
+    type: Item = Value
+    item: P5_MULTI
+    value: N
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_MULTI =================================
+  id: 34632201368575824
+  identification: 
+    name: P5_MULTI
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Options # 17600327473220601
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: EXPORT ======================================
+  id: 17601866805220616
+  identification: 
+    button-name: EXPORT
+    label: Export
+
+  layout: 
+    sequence: 10
+    region: Options # 17600327473220601
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    - t-Button--gapTop
+    icon: fa-download
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: Set File Name On Change =============
+  id: 17601968120220617
+  identification: 
+    name: Set File Name On Change
+
+  execution: 
+    sequence: 10
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: jQuery Selector
+    jquery-selector: .filename-changer
+
+  server-side-condition: 
+    type: Item = Value
+    item: P5_MULTI
+    value: N
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 17602048410220618
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        return flow_engine_app_api.get_file_name(
+            p_dgrm_id => :P5_DGRM_ID,
+            p_include_version => :P5_INCLUDE_VERSION,
+            p_include_status => :P5_INCLUDE_STATUS,
+            p_include_category => :P5_INCLUDE_CATEGORY,
+            p_include_last_change_date => :P5_INCLUDE_LAST_CHANGE_DATE,
+            p_download_as => :P5_DOWNLOAD_AS
+        );
+        
+      items-to-submit: 
+      - P5_INCLUDE_VERSION
+      - P5_INCLUDE_CATEGORY
+      - P5_INCLUDE_LAST_CHANGE_DATE
+      - P5_DOWNLOAD_AS
+      - P5_DGRM_ID
+      - P5_INCLUDE_STATUS
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P5_FILENAME
+
+    execution: 
+      sequence: 10
+      event: Set File Name On Change # 17601968120220617
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+processes: 
+- # ====== Process: Download File ==============================
+  id: 17602291110220620
+  identification: 
+    name: Download File
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      begin
+          flow_engine_app_api.download_file(
+              p_dgrm_id => :P5_DGRM_ID,
+              p_file_name => :P5_FILENAME,
+              p_download_as => :P5_DOWNLOAD_AS,
+              p_multi_file => case :P5_MULTI when 'Y' then true else false end
+          );
+      end;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    when-button-pressed: EXPORT # 17601866805220616
+

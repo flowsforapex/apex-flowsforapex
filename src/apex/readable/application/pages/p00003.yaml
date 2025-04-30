@@ -1,0 +1,1771 @@
+---
+# ====== Page: Dashboard =====================================
+id: 3
+identification: 
+  name: Dashboard
+  alias: DASHBOARD
+  title: Dashboard - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: initPage3();
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Instance Errors in the last 14 days =========
+  id: 2036577010569044
+  identification: 
+    name: Instance Errors in the last 14 days
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 2036635440569045
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Series 1 ====================================
+      id: 2036784998569046
+      identification: 
+        name: Series 1
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with period as (
+              select sysdate - 13 + level - 1 dt
+              from   dual
+              connect by level <= (
+                sysdate - sysdate  + 14
+              )
+            ), 
+            error_counts as (
+              select trunc(cast(lgpr.lgpr_timestamp as date)) as day, count(lgpr.lgpr_prcs_id) as error_count
+              from flow_instance_event_log lgpr
+              where lgpr.lgpr_prcs_event = 'error'
+              and   lgpr.lgpr_timestamp > systimestamp - to_dsinterval ('P14D')
+              group by trunc(cast(lgpr.lgpr_timestamp as date))
+            )
+            select    to_char(trunc(p.dt), 'YYYY-MM-DD') label, e.error_count as value
+            from      period p
+            left join error_counts e
+            on        e.day = trunc(p.dt)
+            order by  to_char(trunc(p.dt), 'YYYY-MM-DD')
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#D2433B'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 2036882857569047
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 2036981184569048
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Current Overdue Flow Instances ==============
+  id: 2037037389569049
+  identification: 
+    name: Current Overdue Flow Instances
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 2037143803569050
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Suspended ===================================
+      id: 20834111623514
+      identification: 
+        name: Suspended
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+             select prcs.prcs_dgrm_id Diagram, dgrm.dgrm_name Process_Name, count(prcs_id)
+               from flow_processes prcs
+          left join flow_diagrams dgrm
+                 on dgrm.dgrm_id = prcs.prcs_dgrm_id
+              where prcs.prcs_due_on < systimestamp
+                and prcs.prcs_status = 'suspended'
+           group by prcs_dgrm_id, dgrm.dgrm_name
+           order by count(prcs_id) desc
+          fetch first 10 rows only
+
+      column-mapping: 
+        label: PROCESS_NAME
+        value: COUNT(PRCS_ID)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    - # ====== Series: Running =====================================
+      id: 2141783765493901
+      identification: 
+        name: Running
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+             select prcs.prcs_dgrm_id Diagram, dgrm.dgrm_name Process_Name, count(prcs_id)
+               from flow_processes prcs
+          left join flow_diagrams dgrm
+                 on dgrm.dgrm_id = prcs.prcs_dgrm_id
+              where prcs.prcs_due_on < systimestamp
+                and prcs.prcs_status = 'running'
+           group by prcs_dgrm_id, dgrm.dgrm_name
+           order by count(prcs_id) desc
+          fetch first 10 rows only
+
+      column-mapping: 
+        label: PROCESS_NAME
+        value: COUNT(PRCS_ID)
+
+      appearance: 
+        color: '#6AAD42'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    - # ====== Series: Error =======================================
+      id: 2142032851493904
+      identification: 
+        name: Error
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+             select prcs.prcs_dgrm_id Diagram, dgrm.dgrm_name Process_Name, count(prcs_id)
+               from flow_processes prcs
+          left join flow_diagrams dgrm
+                 on dgrm.dgrm_id = prcs.prcs_dgrm_id
+              where prcs.prcs_due_on < systimestamp
+                and prcs.prcs_status = 'error'
+           group by prcs_dgrm_id, dgrm.dgrm_name
+           order by count(prcs_id) desc
+          fetch first 10 rows only
+
+      column-mapping: 
+        label: PROCESS_NAME
+        value: COUNT(PRCS_ID)
+
+      appearance: 
+        color: '#D2433B'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 2141803901493902
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 2141997113493903
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Version mismatch ============================
+  id: 3508800535851701
+  identification: 
+    name: Version mismatch
+    type: Static Content
+
+  source: 
+    html-code: '&P3_VERSION_MISMATCH!RAW.'
+
+  layout: 
+    sequence: 20
+    parent-region: Errors # 3511439830851727
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-expanded
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P3_VERSION_MISMATCH
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Errors ======================================
+  id: 3511439830851727
+  identification: 
+    name: Errors
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--horizontal
+    - t-Alert--defaultIcons
+    - t-Alert--warning
+    - t-Alert--accessibleHeading
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      :P3_APEX_UPGRADE_DETECTED is not null or
+      :P3_VERSION_MISMATCH is not null or
+      flow_timers_pkg.get_timer_status = 'FALSE'
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Timers disabled =============================
+  id: 3511545006851728
+  identification: 
+    name: Timers disabled
+    type: Static Content
+
+  source: 
+    html-code: Models containing one or more timers could not work properly on this system because they are disabled.<br>You can enable it in the Configuration page.
+
+  layout: 
+    sequence: 30
+    parent-region: Errors # 3511439830851727
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-expanded
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_timers_pkg.get_timer_status = 'FALSE'
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: APEX upgrade detected =======================
+  id: 3511637925851729
+  identification: 
+    name: APEX upgrade detected
+    type: Static Content
+
+  source: 
+    html-code: '&P3_APEX_UPGRADE_DETECTED!RAW.'
+
+  layout: 
+    sequence: 40
+    parent-region: Errors # 3511439830851727
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-expanded
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P3_APEX_UPGRADE_DETECTED
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Flow Instances per status ===================
+  id: 34404686490171432
+  identification: 
+    name: Flow Instances per status
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+          nvl(sum(case when i.prcs_status = 'created' then 1 else 0 end), 0)  as created_instances,
+          apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_STATUS', p_values => 'created', p_clear_cache => 'RP,RIR') as instance_created_link,
+          nvl(sum(case when i.prcs_status = 'running' then 1 else 0 end), 0)  as running_instances,
+          apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_STATUS', p_values => 'running', p_clear_cache => 'RP,RIR') as instance_running_link,
+          nvl(sum(case when i.prcs_status = 'completed' then 1 else 0 end), 0) as completed_instances,
+          apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_STATUS', p_values => 'completed', p_clear_cache => 'RP,RIR') as instance_completed_link,
+          nvl(sum(case when i.prcs_status = 'terminated' then 1 else 0 end), 0)  as terminated_instances,
+          apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_STATUS', p_values => 'terminated', p_clear_cache => 'RP,RIR') as instance_terminated_link,
+          nvl(sum(case when i.prcs_status = 'error' then 1 else 0 end), 0) as error_instances,
+          apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_STATUS', p_values => 'error', p_clear_cache => 'RP,RIR') as instance_error_link,
+          nvl(sum(case when i.prcs_status = 'suspended' then 1 else 0 end), 0) as suspended_instances,
+          apex_page.get_url(p_page => 10, p_items => 'IR_PRCS_STATUS', p_values => 'suspended', p_clear_cache => 'RP,RIR') as instance_suspended_link
+      from flow_instances_vw i
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-instances-per-status
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - t-BadgeList--large
+      - t-BadgeList--dash
+      - t-BadgeList--fixed
+      - t-Report--hideNoPagination
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: SUSPENDED_INSTANCES =========================
+    id: 20420483623510
+    identification: 
+      column-name: SUSPENDED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Suspended
+      alignment: center
+
+    layout: 
+      sequence: 3
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <a href="#INSTANCE_SUSPENDED_LINK#"><span class="instance-counter-link" data-status="suspended">#SUSPENDED_INSTANCES#</span></a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INSTANCE_SUSPENDED_LINK =====================
+    id: 20687047623512
+    identification: 
+      column-name: INSTANCE_SUSPENDED_LINK
+      type: Hidden
+
+    layout: 
+      sequence: 72
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CREATED_INSTANCES ===========================
+    id: 34404729118171433
+    identification: 
+      column-name: CREATED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Created
+      alignment: center
+
+    layout: 
+      sequence: 1
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <a href="#INSTANCE_CREATED_LINK#"><span class="instance-counter-link" data-status="created">#CREATED_INSTANCES#</span></a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: RUNNING_INSTANCES ===========================
+    id: 34404808882171434
+    identification: 
+      column-name: RUNNING_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Running
+      alignment: center
+
+    layout: 
+      sequence: 2
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <a href="#INSTANCE_RUNNING_LINK#"><span class="instance-counter-link" data-status="running">#RUNNING_INSTANCES#</span></a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: COMPLETED_INSTANCES =========================
+    id: 34404982371171435
+    identification: 
+      column-name: COMPLETED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Completed
+      alignment: center
+
+    layout: 
+      sequence: 22
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <a href="#INSTANCE_COMPLETED_LINK#"><span class="instance-counter-link" data-status="completed">#COMPLETED_INSTANCES#</span></a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TERMINATED_INSTANCES ========================
+    id: 34405020184171436
+    identification: 
+      column-name: TERMINATED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Terminated
+      alignment: center
+
+    layout: 
+      sequence: 32
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <a href="#INSTANCE_TERMINATED_LINK#"><span class="instance-counter-link" data-status="terminated">#TERMINATED_INSTANCES#</span></a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ERROR_INSTANCES =============================
+    id: 34405145511171437
+    identification: 
+      column-name: ERROR_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Error
+      alignment: center
+
+    layout: 
+      sequence: 42
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <a href="#INSTANCE_ERROR_LINK#"><span class="instance-counter-link" data-status="error">#ERROR_INSTANCES#</span></a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INSTANCE_CREATED_LINK =======================
+    id: 34405276469171438
+    identification: 
+      column-name: INSTANCE_CREATED_LINK
+      type: Hidden
+
+    layout: 
+      sequence: 52
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INSTANCE_RUNNING_LINK =======================
+    id: 34405310659171439
+    identification: 
+      column-name: INSTANCE_RUNNING_LINK
+      type: Hidden
+
+    layout: 
+      sequence: 62
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INSTANCE_COMPLETED_LINK =====================
+    id: 34405470286171440
+    identification: 
+      column-name: INSTANCE_COMPLETED_LINK
+      type: Hidden
+
+    layout: 
+      sequence: 82
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INSTANCE_TERMINATED_LINK ====================
+    id: 34405533448171441
+    identification: 
+      column-name: INSTANCE_TERMINATED_LINK
+      type: Hidden
+
+    layout: 
+      sequence: 92
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: INSTANCE_ERROR_LINK =========================
+    id: 34405630954171442
+    identification: 
+      column-name: INSTANCE_ERROR_LINK
+      type: Hidden
+
+    layout: 
+      sequence: 102
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Current Flow Instances per Model - Top 10 ===
+  id: 34405803831171444
+  identification: 
+    name: Current Flow Instances per Model - Top 10
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 34405931132171445
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: true
+      stack-label: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Value - Descending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Suspended ===================================
+      id: 20787487623513
+      identification: 
+        name: Suspended
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with top_procs as 
+          (
+          select d.dgrm_id, d.dgrm_name, count(i.prcs_id)
+          from  flow_diagrams d
+          join  flow_processes i
+            on d.dgrm_id = i.prcs_dgrm_id
+          group by d.dgrm_id, d.dgrm_name
+          order by count(i.prcs_id) desc
+          fetch first 15 rows only
+          )
+          select p.dgrm_id, p.dgrm_name label, count(i.prcs_id) value
+          from top_procs p
+          left join flow_processes i
+           on p.dgrm_id = i.prcs_dgrm_id
+          where i.prcs_status = 'suspended'
+          group by p.dgrm_id, p.dgrm_name
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#007aff'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::P16_DGRM_ID,P16_DGRM_NAME_VERSION:&DGRM_ID.,&LABEL.'
+          page: 16 # Process Statistics
+          values: 
+            p16_dgrm_id: '&DGRM_ID.'
+            p16_dgrm_name_version: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Created =====================================
+      id: 34406094116171446
+      identification: 
+        name: Created
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with top_procs as 
+          (
+          select d.dgrm_id, d.dgrm_name, count(i.prcs_id)
+          from  flow_diagrams d
+          join  flow_processes i
+            on d.dgrm_id = i.prcs_dgrm_id
+          group by d.dgrm_id, d.dgrm_name
+          order by count(i.prcs_id) desc
+          fetch first 15 rows only
+          )
+          select p.dgrm_id, p.dgrm_name label, count(i.prcs_id) value
+          from top_procs p
+          left join flow_processes i
+           on p.dgrm_id = i.prcs_dgrm_id
+          where i.prcs_status = 'created'
+          group by p.dgrm_id, p.dgrm_name
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#D9B13B'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::P16_DGRM_ID,P16_DGRM_NAME_VERSION:&DGRM_ID.,&LABEL.'
+          page: 16 # Process Statistics
+          values: 
+            p16_dgrm_id: '&DGRM_ID.'
+            p16_dgrm_name_version: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Running =====================================
+      id: 34406322852171449
+      identification: 
+        name: Running
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with top_procs as 
+          (
+          select d.dgrm_id, d.dgrm_name, count(i.prcs_id)
+          from  flow_diagrams d
+          join  flow_processes i
+            on d.dgrm_id = i.prcs_dgrm_id
+          group by d.dgrm_id, d.dgrm_name
+          order by count(i.prcs_id) desc
+          fetch first 15 rows only
+          )
+          select p.dgrm_id, p.dgrm_name label, count(i.prcs_id) value
+          from top_procs p
+          left join flow_processes i
+           on p.dgrm_id = i.prcs_dgrm_id
+          where i.prcs_status = 'running'
+          group by p.dgrm_id, p.dgrm_name
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#6AAD42'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::P16_DGRM_ID,P16_DGRM_NAME_VERSION:&DGRM_ID.,&LABEL.'
+          page: 16 # Process Statistics
+          values: 
+            p16_dgrm_id: '&DGRM_ID.'
+            p16_dgrm_name_version: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Completed ===================================
+      id: 34406421411171450
+      identification: 
+        name: Completed
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with top_procs as 
+          (
+          select d.dgrm_id, d.dgrm_name, count(i.prcs_id)
+          from  flow_diagrams d
+          join  flow_processes i
+            on d.dgrm_id = i.prcs_dgrm_id
+          group by d.dgrm_id, d.dgrm_name
+          order by count(i.prcs_id) desc
+          fetch first 15 rows only
+          )
+          select p.dgrm_id, p.dgrm_name label, count(i.prcs_id) value
+          from top_procs p
+          left join flow_processes i
+           on p.dgrm_id = i.prcs_dgrm_id
+          where i.prcs_status = 'completed'
+          group by p.dgrm_id, p.dgrm_name
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#8C9EB0 '
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::P16_DGRM_ID,P16_DGRM_NAME_VERSION:&DGRM_ID.,&LABEL.'
+          page: 16 # Process Statistics
+          values: 
+            p16_dgrm_id: '&DGRM_ID.'
+            p16_dgrm_name_version: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Terminated ==================================
+      id: 34629958268575801
+      identification: 
+        name: Terminated
+
+      execution: 
+        sequence: 50
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with top_procs as 
+          (
+          select d.dgrm_id, d.dgrm_name, count(i.prcs_id)
+          from  flow_diagrams d
+          join  flow_processes i
+            on d.dgrm_id = i.prcs_dgrm_id
+          group by d.dgrm_id, d.dgrm_name
+          order by count(i.prcs_id) desc
+          fetch first 15 rows only
+          )
+          select p.dgrm_id, p.dgrm_name label, count(i.prcs_id) value
+          from top_procs p
+          left join flow_processes i
+           on p.dgrm_id = i.prcs_dgrm_id
+          where i.prcs_status = 'terminated'
+          group by p.dgrm_id, p.dgrm_name
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#D76A27'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::P16_DGRM_ID,P16_DGRM_NAME_VERSION:&DGRM_ID.,&LABEL.'
+          page: 16 # Process Statistics
+          values: 
+            p16_dgrm_id: '&DGRM_ID.'
+            p16_dgrm_name_version: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    - # ====== Series: Error =======================================
+      id: 34630038161575802
+      identification: 
+        name: Error
+
+      execution: 
+        sequence: 60
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with top_procs as 
+          (
+          select d.dgrm_id, d.dgrm_name, count(i.prcs_id)
+          from  flow_diagrams d
+          join  flow_processes i
+            on d.dgrm_id = i.prcs_dgrm_id
+          group by d.dgrm_id, d.dgrm_name
+          order by count(i.prcs_id) desc
+          fetch first 15 rows only
+          )
+          select p.dgrm_id, p.dgrm_name label, count(i.prcs_id) value
+          from top_procs p
+          left join flow_processes i
+           on p.dgrm_id = i.prcs_dgrm_id
+          where i.prcs_status = 'error'
+          group by p.dgrm_id, p.dgrm_name
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#D2433B'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::P16_DGRM_ID,P16_DGRM_NAME_VERSION:&DGRM_ID.,&LABEL.'
+          page: 16 # Process Statistics
+          values: 
+            p16_dgrm_id: '&DGRM_ID.'
+            p16_dgrm_name_version: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 34406178037171447
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 34406265588171448
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Flow Instances started in the last 14 days ==
+  id: 34586934772532100
+  identification: 
+    name: Flow Instances started in the last 14 days
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 34587344445532101
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Series 1 ====================================
+      id: 34589026072532104
+      identification: 
+        name: Series 1
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with period as (
+              select sysdate - 13 + level - 1 dt
+              from   dual
+              connect by level <= (
+                sysdate - sysdate  + 14
+              )
+            )
+            select  to_char(trunc(p.dt), 'YYYY-MM-DD') label, count(ins.prcs_id) as value
+            from period p
+            left join flow_instances_vw ins on trunc(cast(ins.prcs_start_ts as date)) = trunc(p.dt)
+            group by to_char(trunc(p.dt), 'YYYY-MM-DD')
+            order by  to_char(trunc(p.dt), 'YYYY-MM-DD')
+
+      column-mapping: 
+        label: LABEL
+        value: VALUE
+
+      appearance: 
+        color: '#D9B13B'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:15:&SESSION.::&DEBUG.::P15_DATE:&LABEL.'
+          page: 15 # Daily Statistics
+          values: 
+            p15_date: '&LABEL.'
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 20
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 34587853181532103
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 34588414131532104
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Breadcrumb ==================================
+  id: 34631684166575818
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+page-items: 
+- # ====== Page Item: P3_VERSION_MISMATCH ======================
+  id: 3508955560851702
+  identification: 
+    name: P3_VERSION_MISMATCH
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Breadcrumb # 34631684166575818
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P3_APEX_UPGRADE_DETECTED =================
+  id: 3511819715851731
+  identification: 
+    name: P3_APEX_UPGRADE_DETECTED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Breadcrumb # 34631684166575818
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+computations: 
+- # ====== Computation: P3_VERSION_MISMATCH ====================
+  id: 3509091092851703
+  identification: 
+    item-name: P3_VERSION_MISMATCH
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      begin
+          return flow_engine_app_api.check_version_mismatch( p_app_id => :app_id);
+      end;
+
+- # ====== Computation: P3_APEX_UPGRADE_DETECTED ===============
+  id: 3512045963851733
+  identification: 
+    item-name: P3_APEX_UPGRADE_DETECTED
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      begin
+          return flow_engine_app_api.check_apex_upgrade( p_app_id => :app_id);
+      end;
+

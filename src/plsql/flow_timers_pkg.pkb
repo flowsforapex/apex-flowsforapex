@@ -914,11 +914,12 @@ begin
        and sbfl.sbfl_prcs_id = p_process_id
     ;
 
-    flow_logging.log_instance_event
+    flow_logging.log_step_event
     ( p_process_id  => p_process_id
-    , p_objt_bpmn_id  => l_current_object
-    , p_event  => flow_constants_pkg.gc_prcs_event_rescheduled
-    , p_comment  => p_comment
+    , p_subflow_id  => p_subflow_id
+    , p_event       => flow_constants_pkg.gc_prcs_event_rescheduled
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+    , p_comment     => p_comment
     );
 
   end if;
@@ -952,8 +953,41 @@ exception
 
 end reschedule_timer;
 
+/******************************************************************************
+  suspend_process_timers
+    suspend all timers for a process instance
+******************************************************************************/
 
+  procedure suspend_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  is
+  begin
+    update flow_timers
+       set timr_status = c_suspended
+     where timr_prcs_id = pi_prcs_id
+       and timr_status = c_created
+    ;
+  end suspend_process_timers;
 
+/******************************************************************************
+  resume_process_timers
+    resume all timers for a process instance    
+******************************************************************************/
+
+  procedure resume_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  is
+  begin
+    update flow_timers
+       set timr_status = c_created
+     where timr_prcs_id = pi_prcs_id
+       and timr_status = c_suspended
+    ;
+  end resume_process_timers;
 
 /******************************************************************************
   EXPIRE_TIMER
