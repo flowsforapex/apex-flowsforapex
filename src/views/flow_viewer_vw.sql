@@ -24,9 +24,9 @@ with all_completed as (
                 and sbfl.sbfl_diagram_level = sflg.sflg_diagram_level
                 and sbfl.sbfl_current is not null
            )
-     group by sflg_prcs_id
-            , sflg_dgrm_id
-            , sflg_diagram_level
+     group by sflg.sflg_prcs_id
+            , sflg.sflg_dgrm_id
+            , sflg.sflg_diagram_level
 ), all_current as (
   select sbfl_prcs_id as prcs_id
        , sbfl_dgrm_id as dgrm_id
