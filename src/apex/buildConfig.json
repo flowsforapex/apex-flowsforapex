@@ -133,6 +133,7 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_viewer_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0002_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0007_diagrams_var_vw.sql", "add_show_errors": false }
@@ -144,9 +145,7 @@
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_variables_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_message_subscriptions_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0008_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_instances_vw.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0010_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_attributes_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_expressions_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0013_instance_log_vw.sql", "add_show_errors": false }
