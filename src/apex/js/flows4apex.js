@@ -170,26 +170,15 @@ function sendToServer(dataToSend, options = {}){
       }
     })
     .fail( function ( jqXHR, textStatus, errorThrown ) {
+        console.log('error');
       apex.debug.error( "Total fail...", jqXHR, textStatus, errorThrown );
     } ); 
 }
 
-function downloadAsSVG(event){
-  var regionId = $(event.target).parents('.t-Region').attr('id');
-  apex
-    .region( regionId )
-    .getSVG()
-    .then( ( svg ) => {
-      var svgBlob = new Blob( [svg], {
-        type: "image/svg+xml",
-      } );
-      var fileName = Date.now();
-
-      var downloadLink = document.createElement( "a" );
-      downloadLink.download = fileName;
-      downloadLink.href = window.URL.createObjectURL( svgBlob );
-      downloadLink.click();
-    } );
+function downloadAsSVG(){
+    apex
+    .region( "flow-monitor" )
+    .downloadAsSVG();
 }
 
 function startFlowInstance( action, element ) {
@@ -308,40 +297,6 @@ function resumeFlowInstance(action, element) {
   }
 }
 
-function suspendFlowInstance(action, element) {
-  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-    apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
-    data.x03 = getConfirmComment();
-
-    var options = {};
-    options.messageKey = "APP_INSTANCE_SUSPENDED";
-    options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
-    options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
-    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
-    sendToServer(data, options);
-  } else {
-    openModalConfirmWithComment( action, element, "APP_CONFIRM_SUSPEND_INSTANCE", "APP_SUSPEND_INSTANCE" );
-  }
-}
-
-function resumeFlowInstance(action, element) {
-  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-    apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
-    data.x03 = getConfirmComment();
-
-    var options = {};
-    options.messageKey = "APP_INSTANCE_RESUMED";
-    options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
-    options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
-    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
-    sendToServer(data, options);
-  } else {
-    openModalConfirmWithComment( action, element, "APP_CONFIRM_RESUME_INSTANCE", "APP_RESUME_INSTANCE" );
-  }
-}
-
 function deleteFlowInstance( action, element ){ 
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
@@ -396,6 +351,12 @@ function redirectToFlowInstanceDetail( action, element ){
 }
 
 function redirectToFlowDiagram( action, element ){
+  var data = getflowInstanceData(action, element);
+  data.x02 = apex.jQuery( element ).attr("data-dgrm");
+  sendToServer(data);
+}
+
+function redirectToFlowDiagramTaskStatus(action, element){
   var data = getflowInstanceData(action, element);
   data.x02 = apex.jQuery( element ).attr("data-dgrm");
   sendToServer(data);
@@ -1088,6 +1049,18 @@ function rewindCallActivity( action, element ){
   });
 }
 
+function rewindLinkEvent( action, element ){
+  apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_REWIND_LINK_EVENT"), function( okPressed ) {
+    if( okPressed ) {
+      var data = getSubflowData(action, element);
+      
+      var options = {};
+      options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events"];
+      sendToServer(data, options);
+    }
+  });
+}
+
 function receiveMessage( action, element ) {
   if ( apex.jQuery( "#receive_message_dialog" ).dialog( "isOpen" ) ) {
     var data = getMessageData( action, element );
@@ -1220,6 +1193,12 @@ function initActions(){
             apex.theme.openRegion( "copy_flow_reg" );
           },
         },
+        {
+          name: "instances-per-step",
+          action: function ( event, focusElement ) {
+            redirectToFlowDiagramTaskStatus(this.name, focusElement);
+          },
+        }
       ] );
     }
 
@@ -1367,6 +1346,12 @@ function initActions(){
           action: function( event, focusElement ) {
             rewindCallActivity( this.name, focusElement );
           }
+        },
+        {
+          name: "rewind-link-event-on-resume",
+          action: function( event, focusElement ) {
+            rewindLinkEvent( this.name, focusElement );
+          }
         }
       ] );
     }
@@ -1478,18 +1463,6 @@ function initActions(){
           name: "delete-flow-instance",
           action: function ( event, focusElement ) {
             deleteFlowInstance( this.name, focusElement );
-          }
-        },
-        {
-          name: "suspend-flow-instance",
-          action: function ( event, focusElement ) {
-            suspendFlowInstance( this.name, focusElement );
-          }
-        },
-        {
-          name: "resume-flow-instance",
-          action: function ( event, focusElement ) {
-            resumeFlowInstance( this.name, focusElement );
           }
         },
         {
@@ -1744,13 +1717,6 @@ function initPage8() {
         if ( item.action === "resume-flow-instance" ) {
           item.disabled = prcsStatus !== "suspended" ? true : false;
         }              
-        if ( item.action === "suspend-flow-instance" ) {
-          item.disabled =
-            prcsStatus === "running" || prcsStatus === "error" ? false : true;
-        }  
-        if ( item.action === "resume-flow-instance" ) {
-          item.disabled = prcsStatus !== "suspended" ? true : false;
-        }              
         return item;
       } );
 
@@ -1831,7 +1797,6 @@ function initPage8() {
         var menuItems = ui.menu.items;
         var sbflStatus = rowBtn.data( "status" );
         var prcsStatus = apex.item("P8_PRCS_STATUS").getValue();
-        var prcsStatus = apex.item("P8_PRCS_STATUS").getValue();
         var subflReservation = rowBtn.data( "reservation" );
         menuItems = menuItems.map( function ( item ) {
           if ( item.action === "complete-step" ) {
@@ -1875,6 +1840,9 @@ function initPage8() {
             item.disabled = prcsStatus !== "suspended" ? true : false;
           } 
           if ( item.action === "rewind-call-activity-on-resume" ) {
+            item.disabled = prcsStatus !== "suspended" ? true : false;
+          } 
+          if ( item.action === "rewind-link-event-on-resume" ) {
             item.disabled = prcsStatus !== "suspended" ? true : false;
           } 
           return item;

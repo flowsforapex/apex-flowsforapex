@@ -661,6 +661,7 @@ create or replace package body flow_api_pkg as
                                           end;
         l_task.initiator               := l_row.prcs_init_by;
         l_task.initiator_lower         := lower(l_row.prcs_init_by);
+        l_task.initiator_can_complete  := 'Y';
         l_task.actual_owner            := l_row.sbfl_reservation;
         l_task.actual_owner_lower      := lower (l_row.sbfl_reservation);
         l_task.potential_owners        := l_row.sbfl_potential_users;

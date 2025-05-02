@@ -1,13 +1,20 @@
 # Flows for APEX - Change Log
 
 ## v25.1 Community Edition
+- Adds an AI-generation Service Task, using the APEX_AI services.
 - Adds Event-based logging of step events for audit trail and debugging.
 - Adds a process instance logging level to allow event logging to be specified on a per-diagram and per-instance basis.
 - Enhancements to process instance naming.  prcs_name no longer mandatory on flow_api_pkg.flow_create. On creation, defaults to dgrm_name||sysdate.  Process name can be specified on bpmn:process object in diagram as substitutable string, executed during instance start (after variable expressions have run) if defined.
 - Changes behavior for flow_api_pkg.start_step.  Previously start_step could be used once to optionally used to log the time that work started on a step.  Now you can start and pause (flow_api_pkg.pause_step) multiple times, with timings logged in the event log.
 - Add support for start_step and pause_step calls in the manage-flow-instance-step plugin.
+- Added flow_api_pkg.get_task_potential_owners and get_task_business_admins so that an APEX Human Task can set its potential owners and business admin from the workflow.
+- Added new Task Action plugin return-task-state-outcome to return task state and task outcome from APEX Human Task.  Can be used on task completion, cancellation and task expiry.
+- Added new cleanup routines to cancel any APEX Human Tasks left after a process instance is reset, terminated, deleted or the process flow cancels an active task.
+- Added an APEX Component Group containing all of the components required in a Flows for APEX application.  Application items for PROCESS_ID, SUBFLOW_ID, STEP_KEY.  All plugins for use in customer applications.
+- Scheduler objects for timers and APEX task cleanup are now created automatically.  Flows for APEX user is now assumed to have CREATE JOB privilege.
 - Deprecates update, upload, upload and parse functions (all except parse) in bpmn_parser_pkg.   These have been available through flow_diagrams package since 23.1, and will be removed from bpmn_parser_pkg in a future release.
 - Required APEX version increased to APEX v24.1, in line with Oracle's support policy for APEX.
+- Privileges.  Flows for APEX user now requires CREATE JOB database system privilege.  
 - 
 
 ## v24.1 Community Edition

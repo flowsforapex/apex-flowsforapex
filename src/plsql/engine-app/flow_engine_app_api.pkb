@@ -293,6 +293,12 @@ as
             , p_items => 'P7_DGRM_ID'
             , p_values => apex_application.g_x02
           );
+        when 'INSTANCES-PER-STEP' then
+          l_url := apex_page.get_url(
+              p_page => 19
+            , p_items => 'P19_DGRM_ID'
+            , p_values => apex_application.g_x02
+          );
         when 'OPEN-FLOW-INSTANCE-DETAILS' then
           l_url := apex_page.get_url(
               p_page => 8

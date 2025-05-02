@@ -4,9 +4,11 @@ create or replace package flow_usertask_pkg
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
+-- (c) Copyright Flowquest Limited, 2025.
 --
 -- Created 12-Nov-2020  Moritz Klein ( MT AG) 
 -- Edited  13-Apr-2022 - Richard Allen (Oracle)
+-- Edited  23-Apr-2025 - Richard Allen (Flowquest)
 --
 */
   authid definer

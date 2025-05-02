@@ -91,6 +91,7 @@ as
   gc_apex_process_application_id      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
   gc_apex_process_page_id             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
+  gc_apex_process_business_admin      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'businessAdmin';
   
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';

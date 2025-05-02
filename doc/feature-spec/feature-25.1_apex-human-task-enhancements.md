@@ -26,7 +26,7 @@ In addition, the APEX Human Task has evolved since APEX 22.1, with the following
 
 - [x] Update all calls from `APEX_APPROVAL` to `APEX_HUMAN_TASK`.
 - [ ] Remove conditional compiles for APEX versions < 24.1
-- [ ] Update Task Type in flow_apex_my_combined_task_list_vw for APEX Action Tasks & Flows.
+- [x] Update Task Type in flow_apex_my_combined_task_list_vw for APEX Action Tasks & Flows.
 
 ### 2. Add a Business Owner into our UserTask Definition to Enable Task Assignment and Task Cancelation
 
@@ -45,23 +45,23 @@ The business Admin used for a task should then be stored on `FLOW_SUBFLOWS` as a
 #### Tasks
 
 - [X] Add system config parameter `default_apex_business_admin` into config and migration scripts.
-- [ ] Add `default_apex_business_admin` to Engine App Config pages.
-- [ ] Add `apex:businessAdmin` as an in-line attribute of `BPMN:process` in Modeler ('Background Task Session' region), labeled 'Default APEX Business Admin'.
-- [ ] Support `apex:businessAdmin` in BPMN parser.
-- [ ] Add `apex:businessAdmin` as an attribute inside <bpmn:userTask><bpmn:extensionElements><apex:apexApproval>.
-- [ ] Support task-level `apex:businessAdmin` in BPMN parser.
-- [ ] Create `flow_usertasks.get_apex_business_admin` function.
-- [ ] Extend flow_subflows table with column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(4000)` (ddl + migration).  Migration value - left as null.
+- [x] Add `default_apex_business_admin` to Engine App Config pages.
+- [x] Add `apex:businessAdmin` as an in-line attribute of `BPMN:process` in Modeler ('Background Task Session' region), labeled 'Default APEX Business Admin'.
+- [x] Support `apex:businessAdmin` in BPMN parser.
+- [x] Add `apex:businessAdmin` as an attribute inside <bpmn:userTask><bpmn:extensionElements><apex:apexApproval>.
+- [x] Support task-level `apex:businessAdmin` in BPMN parser.
+- [x] Create `flow_usertasks.get_apex_business_admin` function.
+- [x] Extend flow_subflows table with column `flow_subflows.sbfl_apex_task_business_admin` as a `varchar2(4000)` (ddl + migration).  Migration value - left as null.
 
 ### 3.  Support Initiator can Complete
 
-- [ ] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task initiator to complete task. Save in BPMN inside `apex:approvalTask` as `apex:initiatorCanComplete`.
+- [x] Add Switch on BPMN:UserTask sub-type 'APEX Approval' region to allow task initiator to complete task. Save in BPMN inside `apex:approvalTask` as `apex:initiatorCanComplete`.
 - [X] Add this to `flow_create_apex_task` and its call to `apex_human_task.create_task` call.
 
 ### 4. Task Assignment
 
-- [ ] We create two new functions in flow_api_pkg, task_potential_owners and task_business_admins which return a comma-delimited list of task potential owners and business admins, respectively.  The underlying functions, in `flow_usertask_pkg`, get the potential owners and business admins from flow_subflows and convert the separator from ':' to ','.  A user can then use these in an APEX Task Definition to specify the potential owners and business admins for their task.  APEX create task will call these functions in Flows for APEX during task creation.
-- [ ] Remove Groups and Excluded Users from the Properties Panel for APEX Tasks.
+- [x] We create two new functions in flow_api_pkg,get_task_potential_owners and get_task_business_admins which return a comma-delimited list of task potential owners and business admins, respectively.  The underlying functions, in `flow_usertask_pkg`, get the potential owners and business admins from flow_subflows and convert the separator from ':' to ','.  A user can then use these in an APEX Task Definition to specify the potential owners and business admins for their task.  APEX create task will call these functions in Flows for APEX during task creation.
+- [x] Remove Groups and Excluded Users from the Properties Panel for APEX Tasks.
   
 ### 5. Task Cancel
 
