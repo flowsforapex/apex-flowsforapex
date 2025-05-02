@@ -112,6 +112,8 @@ These API functions are provided as Application Helper functions from the Flows 
       pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
+,
+      pi_auto_commit in boolean default true -- automatically commit the process creation (default is true)
    ) return flow_processes.prcs_id%type;
  /**
 Function flow_create - Signature 1
@@ -147,6 +149,8 @@ end;
       pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
+,
+      pi_auto_commit in boolean default true -- automatically commit the process creation (default is true)
    ) return flow_processes.prcs_id%type;
  /**
 Function flow_create - Signature 2
@@ -177,6 +181,8 @@ end;
       pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
+,
+      pi_auto_commit in boolean default true -- automatically commit the process creation (default is true)
    );
  /**
 Procedure flow_create - Signature 1
@@ -212,6 +218,8 @@ end;
       pi_prcs_name in flow_processes.prcs_name%type default null -- Name of the process instance to create
 ,
       pi_logging_level in flow_processes.prcs_logging_level%type default null -- Logging level for the process instance
+,
+      pi_auto_commit in boolean default true -- automatically commit the process creation (default is true)
    );
  /**
 Procedure flow_create - Signature 2

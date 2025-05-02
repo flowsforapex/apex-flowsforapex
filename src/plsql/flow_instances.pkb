@@ -251,6 +251,7 @@ create or replace package body flow_instances as
     , p_prcs_name       in flow_processes.prcs_name%type default null
     , p_logging_level   in flow_processes.prcs_logging_level%type default null
     , p_starting_object in flow_objects.objt_bpmn_id%type default null
+    , p_auto_commit     in boolean default true
     ) return flow_processes.prcs_id%type
   is
     l_new_prcs_id            flow_processes.prcs_id%type;
@@ -322,7 +323,10 @@ create or replace package body flow_instances as
     , p_event_level => flow_constants_pkg.gc_logging_level_major_events
     , p_comment     => 'Instance name set to ' || l_instance_name
     );
-    commit;
+    
+    if p_auto_commit then
+      commit;
+    end if;
 
     apex_debug.info
     ( p_message => 'Flow Instance created.  DGRM_ID : %0, PRCS_ID : %1, Logging Level: %2'

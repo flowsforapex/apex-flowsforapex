@@ -20,6 +20,7 @@ as
     , p_prcs_name       in flow_processes.prcs_name%type default null
     , p_logging_level   in flow_processes.prcs_logging_level%type default null
     , p_starting_object in flow_objects.objt_bpmn_id%type default null
+    , p_auto_commit     in boolean default true
     ) return flow_processes.prcs_id%type
     ;
 
