@@ -39,6 +39,7 @@ type t_task_list_item is record
    , priority_level          varchar2( 255)
    , initiator               varchar2( 255)
    , initiator_lower         varchar2( 255)
+   , initiator_can_complete  varchar2(   1)
    , actual_owner            varchar2( 255)
    , actual_owner_lower      varchar2( 255)
    , potential_owners        varchar2(4000)

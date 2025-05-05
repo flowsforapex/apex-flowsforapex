@@ -5,10 +5,12 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates, 2025
 --
 -- Created 12-Nov-2020 Moritz Klein (MT AG) 
 -- Edited  13-Apr-2022 Richard Allen (Oracle)
 -- Edited  23-May-2022 Moritz Klein (MT AG)
+-- Edted   23-Apr-2025 Richard Allen (Flowquest)
 --
 */
   e_lock_timeout exception;
@@ -307,11 +309,11 @@ as
          , objt.objt_attributes."apex"."businessRef"
          , objt.objt_attributes."apex"."resultVariable"
          , objt.objt_attributes."apex"."initiator"  
-         , objt.objt_attributes."apex"."customExtension"."initiatorCanComplete"  --TODO: Change once parser is fixed
+         , objt.objt_attributes."apex"."initiatorCanComplete"  
          , objt.objt_attributes."apex"."priority"
          , objt.objt_attributes."apex"."dueOn"
          , objt.objt_attributes."apex"."potentialUsers"
-         , objt.objt_attributes."apex"."customExtension"."businessAdmin" --TODO: Change once parser is fixed
+         , objt.objt_attributes."apex"."businessAdmin" 
       into l_app_id
          , l_static_id
          , l_subject
@@ -446,18 +448,21 @@ as
 
     begin
       l_apex_task_id := apex_human_task.create_task
-                     ( p_application_id     => l_app_id
-                     , p_task_def_static_id => l_static_id
-                     , p_subject            => l_subject
-                     , p_detail_pk          => coalesce(l_business_ref, flow_globals.business_ref) 
-                     , p_parameters         => l_task_parameters
-                     , p_initiator          => coalesce ( l_initiator
-                                                  , sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  ) 
-                     , p_priority           => l_priority
-                     , p_due_date           => l_due_on
+                     ( p_application_id           => l_app_id
+                     , p_task_def_static_id       => l_static_id
+                     , p_subject                  => l_subject
+                     , p_detail_pk                => coalesce(l_business_ref, flow_globals.business_ref) 
+                     , p_parameters               => l_task_parameters
+                     , p_initiator                => coalesce ( l_initiator
+                                                        , sys_context('apex$session','app_user') 
+                                                        , sys_context('userenv','os_user')
+                                                        , sys_context('userenv','session_user')
+                                                        ) 
+                     , p_initiator_can_complete   => case l_initiator_can_complete 
+                                                        when flow_constants_pkg.gc_vcbool_true then true
+                                                        else null end
+                     , p_priority                 => l_priority
+                     , p_due_date                 => l_due_on
                      );
       apex_debug.info 
       ( p_message => 'APEX Human Task created - APEX Task Reference %0 created'

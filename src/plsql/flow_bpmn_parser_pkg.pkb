@@ -1935,6 +1935,7 @@ as
                       , proc.proc_application_id
                       , proc.proc_page_id
                       , proc.proc_username
+                      , proc.proc_business_admin
                       , proc.proc_steps
                       , proc.proc_sub_procs
                       , proc.proc_name
@@ -1956,6 +1957,7 @@ as
                         , proc_application_id     varchar2( 50 char) path '@apex:applicationId'
                         , proc_page_id            varchar2( 50 char) path '@apex:pageId'
                         , proc_username           varchar2( 50 char) path '@apex:username'
+                        , proc_business_admin     varchar2( 50 char) path '@apex:businessAdmin'
                         , proc_steps              sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:laneSet'
                         , proc_sub_procs          sys.xmltype        path 'bpmn:subProcess'
                         , proc_laneset            sys.xmltype        path 'bpmn:laneSet'
@@ -1997,6 +1999,15 @@ as
             pi_objt_bpmn_id   => rec.proc_id
           , pi_attribute_name => flow_constants_pkg.gc_apex_process_username
           , pi_value          => rec.proc_username
+          );
+        end if;
+
+        if rec.proc_business_admin is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_business_admin
+          , pi_value          => rec.proc_business_admin
           );
         end if;
 

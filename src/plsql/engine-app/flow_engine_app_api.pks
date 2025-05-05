@@ -301,6 +301,7 @@ as
   , pi_default_application       in flow_configuration.cfig_value%type
   , pi_default_pageid            in flow_configuration.cfig_value%type
   , pi_default_username          in flow_configuration.cfig_value%type
+  , pi_default_business_admin    in flow_configuration.cfig_value%type
   );
 
   procedure set_timers_settings(

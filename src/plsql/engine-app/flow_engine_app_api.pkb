@@ -293,6 +293,12 @@ as
             , p_items => 'P7_DGRM_ID'
             , p_values => apex_application.g_x02
           );
+        when 'INSTANCES-PER-STEP' then
+          l_url := apex_page.get_url(
+              p_page => 19
+            , p_items => 'P19_DGRM_ID'
+            , p_values => apex_application.g_x02
+          );
         when 'OPEN-FLOW-INSTANCE-DETAILS' then
           l_url := apex_page.get_url(
               p_page => 8
@@ -1967,6 +1973,7 @@ as
   , pi_default_application       in flow_configuration.cfig_value%type
   , pi_default_pageid            in flow_configuration.cfig_value%type
   , pi_default_username          in flow_configuration.cfig_value%type
+  , pi_default_business_admin    in flow_configuration.cfig_value%type
   )
   as
   begin
@@ -1976,6 +1983,8 @@ as
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application  , p_value => pi_default_application);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid       , p_value => pi_default_pageid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username     , p_value => pi_default_username);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_apex_business_admin 
+                                                                                                           , p_value => pi_default_business_admin);
 
   end set_engine_settings;
 
