@@ -134,7 +134,7 @@ as
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
-  gc_apex_servicetask_ai_generation   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'apexAIGeneration';
+  gc_apex_servicetask_ai_generation   constant flow_types_pkg.t_bpmn_id := 'apexAIGeneration';
 
   gc_apex_servicetask_ai_model        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiModel';
   gc_apex_servicetask_ai_prompt       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiPrompt';
