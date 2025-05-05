@@ -40,6 +40,7 @@ create or replace package body flow_api_pkg as
   , pi_dgrm_version in flow_diagrams.dgrm_version%type default null
   , pi_prcs_name in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
+  , pi_auto_commit in boolean default true
   ) return flow_processes.prcs_id%type
   as
     l_dgrm_id         flow_diagrams.dgrm_id%type;
@@ -67,6 +68,7 @@ create or replace package body flow_api_pkg as
             ( p_dgrm_id       => l_dgrm_id
             , p_prcs_name     => pi_prcs_name
             , p_logging_level => pi_logging_level
+            , p_auto_commit   => pi_auto_commit
             );
   end flow_create;
 
@@ -75,6 +77,7 @@ create or replace package body flow_api_pkg as
     pi_dgrm_id       in flow_diagrams.dgrm_id%type
   , pi_prcs_name     in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
+  , pi_auto_commit   in boolean default true
   ) return flow_processes.prcs_id%type
   is
     l_ret flow_processes.prcs_id%type;
@@ -83,6 +86,7 @@ create or replace package body flow_api_pkg as
            ( p_dgrm_id => pi_dgrm_id
            , p_prcs_name => pi_prcs_name
            , p_logging_level => pi_logging_level
+           , p_auto_commit => pi_auto_commit
            )
     ;
   end flow_create;
@@ -93,6 +97,7 @@ create or replace package body flow_api_pkg as
   , pi_dgrm_version  in flow_diagrams.dgrm_version%type default null
   , pi_prcs_name     in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
+  , pi_auto_commit   in boolean default true
   )
   as
     l_prcs_id flow_processes.prcs_id%type;
@@ -104,6 +109,7 @@ create or replace package body flow_api_pkg as
       , pi_dgrm_version  => pi_dgrm_version
       , pi_prcs_name     => pi_prcs_name
       , pi_logging_level => pi_logging_level
+      , pi_auto_commit   => pi_auto_commit
       );
   end flow_create;
 
@@ -112,6 +118,7 @@ create or replace package body flow_api_pkg as
     pi_dgrm_id       in flow_diagrams.dgrm_id%type
   , pi_prcs_name     in flow_processes.prcs_name%type default null
   , pi_logging_level in flow_processes.prcs_logging_level%type default null
+  , pi_auto_commit   in boolean default true
   )
   as
     l_prcs_id flow_processes.prcs_id%type;
@@ -122,6 +129,7 @@ create or replace package body flow_api_pkg as
         p_dgrm_id       => pi_dgrm_id
       , p_prcs_name     => pi_prcs_name
       , p_logging_level => pi_logging_level
+      , p_auto_commit   => pi_auto_commit
       );
   end flow_create;
 
