@@ -99,6 +99,14 @@ as
     p_app_id number default apex_application.g_flow_id
   ) return varchar2;
 
+  function flow_apex_automation_disabled(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean;
+
+  function flow_apex_automation_failure(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean;
+
   /* page 4 */
 
   function get_region_title(
