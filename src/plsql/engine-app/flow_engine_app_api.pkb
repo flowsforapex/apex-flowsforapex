@@ -983,7 +983,7 @@ as
           a.static_id, 
           l.status_code, 
           start_timestamp, row_number() over(partition by a.static_id order by start_timestamp desc) as rn
-      from APEX_APPL_AUTOMATIONS	a
+      from apex_appl_automations	a
       join apex_automation_log l  
         on l.automation_id = a.automation_id 
         and l.application_id = a.application_id
