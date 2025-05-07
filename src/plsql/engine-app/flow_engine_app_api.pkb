@@ -954,6 +954,54 @@ as
 
   end check_apex_upgrade;
 
+  function flow_apex_automation_disabled(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean
+  is
+    l_cnt number;
+  begin
+    select count(*)
+      into l_cnt
+      from apex_appl_automations  
+     where application_id = p_app_id
+       and static_id like 'flows-for-apex-%'
+       and trigger_type_code = 'POLLING'
+       and polling_status_code = 'DISABLED';
+
+    return (l_cnt > 0);
+  end flow_apex_automation_disabled;
+
+
+  function flow_apex_automation_failure(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean
+  is
+    l_cnt number;
+  begin
+    with automation_log as (
+      select a.static_id
+           , l.status_code
+           , start_timestamp
+           , row_number() over(partition by a.static_id order by start_timestamp desc) as rn
+        from apex_appl_automations	a
+        join apex_automation_log l  
+          on l.automation_id  = a.automation_id 
+         and l.application_id = a.application_id
+       where a.application_id = p_app_id
+         and a.static_id like 'flows-for-apex-%'
+         and a.trigger_type_code = 'POLLING'
+    )
+    select count(*)
+      into l_cnt
+      from automation_log
+      where rn = 1
+        and status_code = 'FAILURE'
+    ;
+
+    return (l_cnt > 0);
+  
+  end flow_apex_automation_failure;
+
 
   /* page 4 */
 
