@@ -257,6 +257,7 @@ create or replace package body flow_logging as
       , lgsf_due_on
       , lgsf_priority
       , lgsf_user
+      , lgsf_apex_task_id
       , lgsf_comment
       )
       select sbfl.sbfl_prcs_id
@@ -282,6 +283,7 @@ create or replace package body flow_logging as
                         , sys_context('userenv','session_user')
                         )  
             end 
+           , sbfl.sbfl_apex_task_id
            , p_notes        
         from flow_subflows sbfl 
        where sbfl.sbfl_id = p_subflow_id

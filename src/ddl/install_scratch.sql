@@ -548,6 +548,7 @@ create table flow_step_event_log
 , lgsf_reservation		    VARCHAR2(255 char)
 , lgsf_due_on               TIMESTAMP WITH TIME ZONE 
 , lgsf_priority             NUMBER
+, lgsf_apex_task_id         NUMBER
 , lgsf_user				    VARCHAR2(255 char)	
 , lgsf_comment         	    VARCHAR2(2000 CHAR)
 );

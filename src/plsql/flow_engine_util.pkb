@@ -664,6 +664,7 @@ end get_object_tag;
             -- cancel apex workflow task
             flow_usertask_pkg.cancel_apex_task
             ( p_process_id          => p_process_id
+            , p_subflow_id          => subflows_with_tasks.sbfl_id
             , p_objt_bpmn_id        => subflows_with_tasks.sbfl_current
             , p_dgrm_id             => subflows_with_tasks.sbfl_dgrm_id
             , p_apex_task_id        => subflows_with_tasks.sbfl_apex_task_id

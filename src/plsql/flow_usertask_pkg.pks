@@ -51,6 +51,7 @@ as
   
   procedure cancel_apex_task
   ( p_process_id          in flow_processes.prcs_id%type
+  , p_subflow_id          in flow_subflows.sbfl_id%type
   , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
   , p_dgrm_id             in flow_diagrams.dgrm_id%type
   , p_apex_task_id        in number    
@@ -65,7 +66,8 @@ as
   ( p_process_id          in varchar2
   , p_apex_task_id        in varchar2 
   , p_apex_user           in varchar2
-  , p_dgrm_id             in varchar2
+  , p_app_id              in varchar2
+  , p_page_id             in varchar2
   , p_objt_bpmn_id        in varchar2 default null
   );
 

@@ -12,6 +12,7 @@ as
                 , lgsf.lgsf_completed at time zone sessiontimezone as lgsf_completed
                 , lgsf.lgsf_reservation
                 , lgsf.lgsf_user
+                , lgsf.lgsf_apex_task_id
                 , lgsf.lgsf_comment
              from flow_step_event_log lgsf
              join flow_objects objt

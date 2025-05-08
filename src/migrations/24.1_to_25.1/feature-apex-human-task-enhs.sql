@@ -41,7 +41,7 @@ begin
     program_name        => 'APEX_FLOW_CANCEL_APEX_TASK_P',
     program_type        => 'STORED_PROCEDURE',
     program_action      => 'FLOW_USERTASK_PKG.CANCEL_APEX_TASK_FROM_SCHEDULER',
-    number_of_arguments => 5,
+    number_of_arguments => 6,
     enabled             => FALSE,
     comments            => 'Flows for APEX  APEX Task Cancel Program'
   );
@@ -68,12 +68,18 @@ begin
   sys.dbms_scheduler.define_program_argument (
     program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
     argument_position => 4,
-    argument_type     => 'VARCHAR2' -- p_dgrm_id
+    argument_type     => 'VARCHAR2' -- p_app_id
   );
 
   sys.dbms_scheduler.define_program_argument (
     program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
     argument_position => 5,
+    argument_type     => 'VARCHAR2' -- p_page_id
+  );
+
+  sys.dbms_scheduler.define_program_argument (
+    program_name      => 'APEX_FLOW_CANCEL_APEX_TASK_P',
+    argument_position => 6,
     argument_type     => 'VARCHAR2' -- p_objt_bpmn_id
   );
 

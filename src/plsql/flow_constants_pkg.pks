@@ -255,6 +255,7 @@ as
   gc_sbfl_status_suspended            constant  varchar2(20 char) := 'suspended';
   gc_sbfl_status_restart_on_resume    constant  varchar2(20 char) := 'restart on resume';
   gc_sbfl_status_delete_on_resume     constant  varchar2(20 char) := 'delete on resume';
+  gc_sbfl_status_canceling_task       constant  varchar2(20 char) := 'canceling task';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
   -- Process Instance Status
