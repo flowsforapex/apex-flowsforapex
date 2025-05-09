@@ -621,7 +621,8 @@ as
   ( p_process_id          in flow_processes.prcs_id%type
   , p_apex_task_id        in number 
   , p_apex_user           in flow_subflows.sbfl_apex_business_admin%type default null
-  , p_dgrm_id             in flow_diagrams.dgrm_id%type
+  , p_app_id              in number
+  , p_page_id             in number
   , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
   ) 
   is
@@ -642,18 +643,21 @@ as
     -- Set the argument values
     sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
                                           , argument_position => 1
-                                          , argument_value => p_process_id); -- p_process_id
+                                          , argument_value => to_char(p_process_id)); -- p_process_id
     sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
                                           , argument_position => 2
-                                          , argument_value => p_apex_task_id); -- p_apex_task_id
+                                          , argument_value => to_char(p_apex_task_id)); -- p_apex_task_id
     sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
                                           , argument_position => 3
                                           , argument_value => p_apex_user);-- p_apex_user
     sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
                                           , argument_position => 4
-                                          , argument_value => p_dgrm_id); -- p_dgrm_id
+                                          , argument_value => to_char(p_app_id)); -- p_app_id
     sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
                                           , argument_position => 5
+                                          , argument_value => to_char(p_page_id)); -- p_page_id
+    sys.dbms_scheduler.set_job_argument_value ( job_name => l_job_name
+                                          , argument_position => 6
                                           , argument_value => p_objt_bpmn_id);  -- p_objt_bpmn_id
   
     -- Run the job immediately
@@ -663,8 +667,8 @@ as
 
   procedure cancel_apex_task
     ( p_process_id          in flow_processes.prcs_id%type
+    , p_subflow_id          in flow_subflows.sbfl_id%type
     , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
-    , p_dgrm_id             in flow_diagrams.dgrm_id%type
     , p_apex_task_id        in number    
     , p_apex_business_admin in flow_subflows.sbfl_apex_business_admin%type default null
     )
@@ -677,9 +681,22 @@ as
   begin
     apex_debug.enter 
     ( 'cancel_apex_task'
+    , 'subflow_id: ', p_subflow_id
     , 'apex task_id: ', p_apex_task_id 
     , 'apex business admin: ', p_apex_business_admin 
     );
+    -- update subflow status to show its being canceled
+    update flow_subflows sbfl
+       set sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_canceling_task
+         , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                , sys_context('userenv','os_user')
+                                                , sys_context('userenv','session_user')
+                                                )  
+     where sbfl.sbfl_id       = p_subflow_id
+       and sbfl.sbfl_prcs_id  = p_process_id
+       and sbfl.sbfl_status    = flow_constants_pkg.gc_sbfl_status_waiting_approval
+    ;
     -- check if current user is allowed  to cancel the task
     l_is_allowed := apex_human_task.is_allowed
       ( p_task_id         => p_apex_task_id
@@ -711,7 +728,7 @@ as
             );
           if l_is_allowed then 
             apex_debug.info 
-            ( p_message => '...Business Admin %0 can delete APEX Human Task : %1  - cancelling now ...'
+            ( p_message => '...Business Admin %0 can delete APEX Human Task : %1  - schedule cancelation...'
             , p0 => l_business_admin
             , p1 => p_apex_task_id
             );
@@ -719,7 +736,16 @@ as
               ( p_process_id          => p_process_id
               , p_apex_task_id        => p_apex_task_id
               , p_apex_user           => l_business_admin
-              , p_dgrm_id             => p_dgrm_id
+              , p_app_id              => coalesce ( sys_context('apex$session','app_id')
+                                                  , flow_engine_util.get_config_value 
+                                                         ( p_config_key => flow_constants_pkg.gc_config_default_application
+                                                         , p_default_value => null)
+                                                  )
+              , p_page_id             => coalesce ( sys_context('apex$session','app_page_id')
+                                                  , flow_engine_util.get_config_value 
+                                                         ( p_config_key => flow_constants_pkg.gc_config_default_pageid 
+                                                         , p_default_value => null)
+                                                  )
               , p_objt_bpmn_id        => p_objt_bpmn_id
               );
             continue;
@@ -742,7 +768,16 @@ as
         ( p_process_id          => p_process_id
         , p_apex_task_id        => p_apex_task_id
         , p_apex_user           => l_task_initiator
-        , p_dgrm_id             => p_dgrm_id
+        , p_app_id              => coalesce ( sys_context('apex$session','app_id')
+                                            , flow_engine_util.get_config_value 
+                                                   ( p_config_key => flow_constants_pkg.gc_config_default_application
+                                                   , p_default_value => null)
+                                            )
+        , p_page_id             => coalesce ( sys_context('apex$session','app_page_id')
+                                            , flow_engine_util.get_config_value 
+                                                   ( p_config_key => flow_constants_pkg.gc_config_default_pageid 
+                                                   , p_default_value => null)
+                                            )
         , p_objt_bpmn_id        => p_objt_bpmn_id
         );
     end if;
@@ -760,8 +795,8 @@ as
     for current_apex_tasks in 
             (
             select sbfl.sbfl_apex_task_id
+                 , sbfl.sbfl_id
                  , sbfl.sbfl_current
-                 , sbfl.sbfl_dgrm_id
                  , sbfl.sbfl_apex_business_admin
               from flow_subflows sbfl
              where sbfl.sbfl_prcs_id = p_process_id
@@ -771,19 +806,20 @@ as
     loop
       cancel_apex_task 
         ( p_process_id          => p_process_id
+        , p_subflow_id          => current_apex_tasks.sbfl_id
         , p_objt_bpmn_id        => current_apex_tasks.sbfl_current
-        , p_dgrm_id             => current_apex_tasks.sbfl_dgrm_id
         , p_apex_task_id        => current_apex_tasks.sbfl_apex_task_id
         , p_apex_business_admin => current_apex_tasks.sbfl_apex_business_admin
         );
       apex_debug.info 
-      ( p_message => 'APEX Human Task : %0  cancelled on object : %1'
+      ( p_message => 'APEX Human Task : %0  canceled or scheduled for background cancelation on object : %1  by bus admin : %2'
       , p0 => current_apex_tasks.sbfl_apex_task_id  
       , p1 => current_apex_tasks.sbfl_current
+      , p2 => current_apex_tasks.sbfl_apex_business_admin
       );
     end loop;
     apex_debug.info 
-    ( p_message => 'APEX Human Task : All tasks cancelled for process : %0'
+    ( p_message => 'APEX Human Task : All tasks cancelled or scheduled for background cancelation for process : %0'
     , p0 => p_process_id
     );  
 
@@ -794,7 +830,8 @@ as
   ( p_process_id          in varchar2
   , p_apex_task_id        in varchar2 
   , p_apex_user           in varchar2
-  , p_dgrm_id             in varchar2
+  , p_app_id              in varchar2
+  , p_page_id             in varchar2
   , p_objt_bpmn_id        in varchar2 default null
   )
   is
@@ -802,15 +839,15 @@ as
     l_session_id          number;
     l_process_id          flow_processes.prcs_id%type := to_number(p_process_id);
     l_apex_task_id        number := to_number(p_apex_task_id);  
-    l_dgrm_id             flow_objects.objt_dgrm_id%type := to_number(p_dgrm_id);
+    l_app_id              number := to_number(p_app_id);
+    l_page_id             number := to_number(p_page_id);
   begin
-    -- create apex session as the task originator
-    l_session_id :=  flow_apex_session.create_api_session
-                        ( p_dgrm_id             => l_dgrm_id
-                        , p_prcs_id             => l_process_id
-                        , p_as_business_admin   => true
-                        , p_business_admin      => p_apex_user
-                        );
+    -- create apex session 
+    apex_session.create_session
+      ( p_app_id        => l_app_id
+      , p_page_id       => l_page_id
+      , p_username      => p_apex_user
+      );
     apex_debug.enter 
         ( 'cancel_apex_task_from_scheduler'
         , 'apex task_id: ', l_apex_task_id
@@ -820,7 +857,7 @@ as
     begin
       apex_human_task.cancel_task (p_task_id => l_apex_task_id);
       apex_debug.info 
-      ( p_message => 'APEX Human Task : %0  cancelled on object : %1'
+      ( p_message => 'APEX Human Task : %0  canceled on object : %1'
       , p0 => l_apex_task_id
       , p1 => p_objt_bpmn_id
       );
@@ -832,12 +869,10 @@ as
         , p0 => p_objt_bpmn_id
         , p1 => l_apex_task_id
         , p2 => sqlerrm
+        , p3 => sys_context('apex$session','app_session')
         );
         -- $F4AMESSAGE 'apex-task-cancelation-error' || 'Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)'
     end; 
-    -- delete apex session
-    apex_session.delete_session ( p_session_id => l_session_id);
-  
   end cancel_apex_task_from_scheduler;
 
   procedure return_approval_result
@@ -987,6 +1022,8 @@ as
       , 'state_code: ', p_state_code
       );
 
+      flow_globals.set_is_recursive_step (true);
+
       begin
         -- find and lock the subflow
         select sbfl.*
@@ -999,7 +1036,7 @@ as
         for update of sbfl.sbfl_step_key wait 5;
       exception
         when no_data_found then
-          if p_state_code != apex_human_task.c_task_state_cancelled then
+          if p_state_code = apex_human_task.c_task_state_cancelled then
             -- task already cancelled in Flows - do nothing
             l_cancelled_task_not_current := true;
           else
@@ -1046,15 +1083,26 @@ as
           -- cancel task
           if l_cancelled_task_not_current then
             apex_debug.info 
-            ( p_message => 'APEX Human Task : %0  already cancelled - not current task '
+            ( p_message => 'APEX Human Task : %0  already cancelled - not current task or subflow already deleted'
+            , p0 => p_apex_task_id
+            );
+          elsif l_sbfl_rec.sbfl_status = flow_constants_pkg.gc_sbfl_status_canceling_task then
+            apex_debug.info 
+            ( p_message => 'APEX Human Task : %0  previously set to be canceled by Flows - task now cancelled'
             , p0 => p_apex_task_id
             );
           else
-          flow_logging.log_step_event
-          ( p_sbfl_rec => l_sbfl_rec
-          , p_event => flow_constants_pkg.gc_step_event_cancelled
-          , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
-          );  
+            -- task cancelled by initiator or business admin from APEX
+            apex_debug.info 
+            ( p_message => 'APEX Human Task : %0  cancelled on object : %1 from APEX - doing next step' 
+            , p0 => p_apex_task_id
+            , p1 => l_sbfl_rec.sbfl_current
+            );
+            flow_logging.log_step_event
+            ( p_sbfl_rec => l_sbfl_rec
+            , p_event => flow_constants_pkg.gc_step_event_cancelled
+            , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+            );  
             l_do_next_step := true;
           end if;
         when apex_human_task.c_task_state_completed then

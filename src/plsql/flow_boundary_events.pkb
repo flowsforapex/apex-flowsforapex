@@ -306,6 +306,8 @@ is
     l_timestamp              flow_subflows.sbfl_became_current%type;
     l_scope                  flow_subflows.sbfl_scope%type;
     l_sbfl_rec               flow_subflows%rowtype;
+    l_apex_business_admin    flow_subflows.sbfl_apex_business_admin%type;
+    l_apex_task_id           flow_subflows.sbfl_apex_task_id%type;
   begin
     apex_debug.enter 
     ( 'handle_interrupting_boundary_event'
@@ -321,10 +323,14 @@ is
            , main_objt.objt_tag_name
            , main_objt.objt_bpmn_id
            , sbfl.sbfl_scope
+           , sbfl.sbfl_apex_business_admin
+           , sbfl.sbfl_apex_task_id
         into l_boundary_objt_bpmn_id
            , l_parent_objt_tag
            , l_parent_objt_bpmn_id
            , l_scope
+           , l_apex_business_admin
+           , l_apex_task_id
         from flow_subflows sbfl
         join flow_objects main_objt
           on main_objt.objt_bpmn_id = sbfl.sbfl_current
@@ -343,10 +349,14 @@ is
            , main_objt.objt_tag_name
            , main_objt.objt_bpmn_id
            , sbfl.sbfl_scope
+           , sbfl.sbfl_apex_business_admin
+           , sbfl.sbfl_apex_task_id
         into l_boundary_objt_bpmn_id
            , l_parent_objt_tag
            , l_parent_objt_bpmn_id
            , l_scope
+           , l_apex_business_admin
+           , l_apex_task_id
         from flow_subflows sbfl
         join flow_objects main_objt
           on main_objt.objt_bpmn_id = sbfl.sbfl_current
@@ -396,8 +406,19 @@ is
     , p_subflow_id       => p_subflow_id
     , p_event            => flow_constants_pkg.gc_step_event_interrupted
     , p_event_level      => flow_constants_pkg.gc_logging_level_major_events
-    , p_comment          => 'Boundary Event Interrupted by '||l_boundary_objt_bpmn_id
+    , p_comment          => 'Interrupted by Boundary Event '||l_boundary_objt_bpmn_id
     );
+    -- clean up any APEX Human Tasks started for the interrupted object
+    if ( l_parent_objt_tag = flow_constants_pkg.gc_bpmn_usertask 
+       and  l_apex_task_id is not null ) then
+      flow_usertask_pkg.cancel_apex_task
+      ( p_process_id            => p_process_id
+      , p_subflow_id            => p_subflow_id
+      , p_objt_bpmn_id          => l_parent_objt_bpmn_id
+      , p_apex_task_id          => l_apex_task_id
+      , p_apex_business_admin   => l_apex_business_admin
+      );
+    end if;
     -- generate a step key & insert in the update...use later
     l_timestamp := systimestamp;
     l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_subflow_id
@@ -408,6 +429,8 @@ is
     update flow_subflows sbfl
        set sbfl.sbfl_current        = l_boundary_objt_bpmn_id
          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+         , sbfl.sbfl_apex_task_id   = null
+         , sbfl.sbfl_apex_business_admin = null
          , sbfl.sbfl_last_completed = l_parent_objt_bpmn_id
          , sbfl.sbfl_became_current = l_timestamp
          , sbfl.sbfl_step_key       = l_step_key

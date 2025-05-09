@@ -112,6 +112,26 @@ begin
 end;
 /
 
+declare
+  v_column_exists          number := 0; 
+  l_existing_logging_level flow_configuration.cfig_value%type;
+  l_new_logging_level      number := 0;
+begin
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'LGSF_APEX_TASK_ID'
+     and upper(table_name)  = 'FLOW_STEP_EVENT_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_step_event_log
+                          add ( lgsf_apex_task_id number
+                              )';
+  end if;
+
+end;
+/
+
 PROMPT >>> Table flow_processes altered 
 
 PROMPT >>> Migrate logging configuration for flow_processes and flow_configuration
