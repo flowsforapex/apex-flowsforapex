@@ -848,7 +848,6 @@ as
       , p_page_id       => l_page_id
       , p_username      => p_apex_user
       );
-    apex_debug.enable (apex_debug.c_log_level_app_trace);
     apex_debug.enter 
         ( 'cancel_apex_task_from_scheduler'
         , 'apex task_id: ', l_apex_task_id

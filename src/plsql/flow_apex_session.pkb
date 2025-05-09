@@ -282,7 +282,6 @@ as
         , p_page_id  => l_session_parameters.page_id
         , p_username => l_session_parameters.username 
         );
-      apex_debug.enable(apex_debug.c_log_level_app_trace);
     exception
       when flow_constants_pkg.ge_invalid_session_params then
         if p_prcs_id is not null then
