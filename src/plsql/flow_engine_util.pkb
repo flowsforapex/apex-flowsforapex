@@ -666,7 +666,6 @@ end get_object_tag;
             ( p_process_id          => p_process_id
             , p_subflow_id          => subflows_with_tasks.sbfl_id
             , p_objt_bpmn_id        => subflows_with_tasks.sbfl_current
-            , p_dgrm_id             => subflows_with_tasks.sbfl_dgrm_id
             , p_apex_task_id        => subflows_with_tasks.sbfl_apex_task_id
             , p_apex_business_admin => subflows_with_tasks.sbfl_apex_business_admin
             );

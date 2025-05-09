@@ -669,7 +669,6 @@ as
     ( p_process_id          in flow_processes.prcs_id%type
     , p_subflow_id          in flow_subflows.sbfl_id%type
     , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
-    , p_dgrm_id             in flow_diagrams.dgrm_id%type
     , p_apex_task_id        in number    
     , p_apex_business_admin in flow_subflows.sbfl_apex_business_admin%type default null
     )
@@ -798,7 +797,6 @@ as
             select sbfl.sbfl_apex_task_id
                  , sbfl.sbfl_id
                  , sbfl.sbfl_current
-                 , sbfl.sbfl_dgrm_id
                  , sbfl.sbfl_apex_business_admin
               from flow_subflows sbfl
              where sbfl.sbfl_prcs_id = p_process_id
@@ -810,16 +808,14 @@ as
         ( p_process_id          => p_process_id
         , p_subflow_id          => current_apex_tasks.sbfl_id
         , p_objt_bpmn_id        => current_apex_tasks.sbfl_current
-        , p_dgrm_id             => current_apex_tasks.sbfl_dgrm_id
         , p_apex_task_id        => current_apex_tasks.sbfl_apex_task_id
         , p_apex_business_admin => current_apex_tasks.sbfl_apex_business_admin
         );
       apex_debug.info 
-      ( p_message => 'APEX Human Task : %0  canceled or scheduled for background cancelation on object : %1 on dgrm: %2 by bus admin : %3'
+      ( p_message => 'APEX Human Task : %0  canceled or scheduled for background cancelation on object : %1  by bus admin : %2'
       , p0 => current_apex_tasks.sbfl_apex_task_id  
       , p1 => current_apex_tasks.sbfl_current
-      , p2 => current_apex_tasks.sbfl_dgrm_id
-      , p3 => current_apex_tasks.sbfl_apex_business_admin
+      , p2 => current_apex_tasks.sbfl_apex_business_admin
       );
     end loop;
     apex_debug.info 

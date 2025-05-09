@@ -53,7 +53,6 @@ as
   ( p_process_id          in flow_processes.prcs_id%type
   , p_subflow_id          in flow_subflows.sbfl_id%type
   , p_objt_bpmn_id        in flow_objects.objt_bpmn_id%type
-  , p_dgrm_id             in flow_diagrams.dgrm_id%type
   , p_apex_task_id        in number    
   , p_apex_business_admin in flow_subflows.sbfl_apex_business_admin%type default null
   );
