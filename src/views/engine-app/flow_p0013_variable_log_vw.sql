@@ -13,7 +13,7 @@ as
            when lgvr_var_date is not null then to_char(lgvr_var_date, v('APP_DATE_TIME_FORMAT'))
            when lgvr_var_clob is not null then cast(dbms_lob.substr(lgvr_var_clob, 1000) as varchar2(4000))
            when lgvr_var_tstz is not null then to_char(lgvr_var_tstz, v('NLS_TIMESTAMP_TZ_FORMAT'))
-           when lgvr_var_json is not null then cast(dbms_lob.substr(lgvr_var_json, 1000) as  varchar2(4000))
+           when lgvr_var_json is not null then cast(dbms_lob.substr(lgvr_var_json, 1000) as varchar2(4000))
          end as lgvr_value
     from flow_variable_event_log
 with read only;
