@@ -68,6 +68,7 @@ is
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => p_subflow_id
+          , pi_step_key    => null
           , pi_var_scope   => boundary_events.sbfl_scope
           , pi_expr_scope  => boundary_events.sbfl_scope
           );
@@ -128,6 +129,7 @@ is
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => l_new_non_int_event_sbfl.sbfl_id
+          , pi_step_key    => l_new_non_int_event_sbfl.step_key
           , pi_var_scope   => boundary_events.sbfl_scope
           , pi_expr_scope  => boundary_events.sbfl_scope
           );
@@ -449,6 +451,7 @@ is
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id      => p_process_id
     , pi_sbfl_id      => p_subflow_id
+    , pi_step_key     => l_step_key
     , pi_var_scope    => l_scope
     , pi_expr_scope   => l_scope
     );
@@ -612,6 +615,7 @@ is
       , pi_set          => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id      => pi_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id      => pi_par_sbfl
+      , pi_step_key     => l_step_key
       , pi_var_scope    => l_parent_sbfl_scope
       , pi_expr_scope   => l_parent_sbfl_scope
       );
@@ -660,6 +664,7 @@ is
       , pi_set          => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id      => pi_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id      => l_new_sbfl.sbfl_id
+      , pi_step_key     => l_new_sbfl.step_key
       , pi_var_scope    => l_parent_sbfl_scope
       , pi_expr_scope   => l_parent_sbfl_scope
       );     

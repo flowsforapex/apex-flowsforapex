@@ -4,7 +4,7 @@ create or replace package flow_expressions
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Consulting Limited. 2024
+-- (c) Copyright Flowquest Limited and / or affiliates. 2024-2025
 --
 -- Created    13-Mar-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
@@ -26,6 +26,7 @@ as
   , pi_set          flow_object_expressions.expr_set%type
   , pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
   , pi_var_scope    flow_subflows.sbfl_scope%type
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   );
@@ -36,6 +37,7 @@ as
   , pi_set          flow_object_expressions.expr_set%type
   , pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
   , pi_var_scope    flow_subflows.sbfl_scope%type
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   );

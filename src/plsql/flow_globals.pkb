@@ -1,3 +1,4 @@
+create or replace package body flow_globals
 /* 
 -- Flows for APEX - flow_globals.pkb
 -- 
@@ -8,10 +9,7 @@
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
 --
 */
-
-create or replace package body flow_globals
 as
-
 
   g_error_on_step  boolean := false;  
   -- g_error_on_step starts false when every step is processed but is set true if an error

@@ -5,7 +5,7 @@ as
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
   -- (c) Copyright MT AG, 2021-2022.
-  -- (c) Copyright Flowquest Limited. 2021-2024.
+  -- (c) Copyright Flowquest Limited and / or affiliates. 2021-2025.
   --
   -- Created    22-Mar-2021  Richard Allen (Flowquest, for MT AG)
   -- Modified   12-Apr-2022  Richard Allen (Oracle)
@@ -63,6 +63,7 @@ as
   procedure set_static
   ( pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
   , pi_expression   t_expr_rec
   , pi_var_scope    flow_subflows.sbfl_scope%type
   , pi_expr_scope   flow_subflows.sbfl_scope%type  
@@ -84,6 +85,7 @@ as
     ( pi_prcs_id => pi_prcs_id
     , pi_sbfl_id => pi_sbfl_id
     , pi_scope   => pi_expr_scope
+    , pi_step_key => pi_step_key
     , pio_string => l_expression_text
     );
 
@@ -258,6 +260,7 @@ as
   ( pi_prcs_id        flow_processes.prcs_id%type
   , pi_expression     t_expr_rec
   , pi_sbfl_id        flow_subflows.sbfl_id%type
+  , pi_step_key       flow_subflows.sbfl_step_key%type
   , pi_var_scope      flow_subflows.sbfl_scope%type
   , pi_expr_scope     flow_subflows.sbfl_scope%type
   ) 
@@ -276,6 +279,7 @@ as
                     , pi_sql_text     => pi_expression.expr_expression
                     , pi_result_type  => pi_expression.expr_var_type
                     , pi_scope        => pi_expr_scope
+                    , pi_step_key     => pi_step_key
                     , pi_expr_type    => pi_expression.expr_type
                     );
 
@@ -313,6 +317,7 @@ as
   ( pi_prcs_id      flow_processes.prcs_id%type
   , pi_expression   t_expr_rec
   , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
   , pi_var_scope    flow_subflows.sbfl_scope%type
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   )
@@ -331,6 +336,7 @@ as
                     , pi_plsql_text   => pi_expression.expr_expression
                     , pi_result_type  => pi_expression.expr_var_type
                     , pi_scope        => pi_expr_scope
+                    , pi_step_key     => pi_step_key
                     , pi_expr_type   => pi_expression.expr_type
                     );
     l_result_rec.var_name   := pi_expression.expr_var_name;
@@ -370,6 +376,7 @@ as
   , pi_set          flow_object_expressions.expr_set%type
   , pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
   , pi_var_scope    flow_subflows.sbfl_scope%type
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   )
@@ -394,6 +401,7 @@ as
       ( pi_prcs_id      => pi_prcs_id
       , pi_sbfl_id      => pi_sbfl_id
       , pi_scope        => pi_expr_scope
+      , pi_step_key     => pi_step_key
       , pi_loop_counter => flow_engine_util.get_loop_counter(pi_sbfl_id => pi_sbfl_id)
       );
       apex_debug.trace 
@@ -410,6 +418,7 @@ as
             , pi_sbfl_id      => pi_sbfl_id
             , pi_expression   => l_expressions(i)
             , pi_var_scope    => pi_var_scope
+            , pi_step_key     => pi_step_key
             , pi_expr_scope   => pi_expr_scope 
             );
           when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_proc_var then
@@ -428,6 +437,7 @@ as
             ( pi_prcs_id      => pi_prcs_id
             , pi_expression   => l_expressions(i)
             , pi_sbfl_id      => pi_sbfl_id
+            , pi_step_key     => pi_step_key
             , pi_var_scope    => pi_var_scope
             , pi_expr_scope   => pi_expr_scope             
             );  
@@ -440,6 +450,7 @@ as
             ( pi_prcs_id      => pi_prcs_id
             , pi_expression   => l_expressions(i)
             , pi_sbfl_id      => pi_sbfl_id
+            , pi_step_key     => pi_step_key
             , pi_var_scope    => pi_var_scope
             , pi_expr_scope   => pi_expr_scope             
             );  
@@ -457,6 +468,7 @@ as
   , pi_set          flow_object_expressions.expr_set%type
   , pi_prcs_id      flow_processes.prcs_id%type
   , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
   , pi_var_scope    flow_subflows.sbfl_scope%type
   , pi_expr_scope   flow_subflows.sbfl_scope%type
   )
@@ -484,6 +496,7 @@ as
     , pi_set          => pi_set
     , pi_prcs_id      => pi_prcs_id
     , pi_sbfl_id      => pi_sbfl_id
+    , pi_step_key     => pi_step_key
     , pi_var_scope    => pi_var_scope
     , pi_expr_scope   => pi_expr_scope 
     );

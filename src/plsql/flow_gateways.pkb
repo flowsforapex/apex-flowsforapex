@@ -623,6 +623,7 @@ as
           , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
           , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
           , pi_sbfl_id     => p_sbfl_info.sbfl_sbfl_id
+          , pi_step_key    => p_sbfl_info.sbfl_step_key
           , pi_var_scope   => p_sbfl_info.sbfl_scope
           , pi_expr_scope  => p_sbfl_info.sbfl_scope
           );
@@ -884,6 +885,7 @@ as
           , pi_set         => flow_constants_pkg.gc_expr_set_before_split
           , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
           , pi_sbfl_id     => l_sbfl_id
+          , pi_step_key    => p_sbfl_info.sbfl_step_key
           , pi_var_scope   => p_sbfl_info.sbfl_scope
           , pi_expr_scope  => p_sbfl_info.sbfl_scope
           );
@@ -1020,6 +1022,7 @@ as
       , pi_set         => flow_constants_pkg.gc_expr_set_before_split
       , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_info.sbfl_id
+      , pi_step_key    => p_sbfl_info.sbfl_step_key
       , pi_var_scope   => p_sbfl_info.sbfl_scope
       , pi_expr_scope  => p_sbfl_info.sbfl_scope
       );
@@ -1051,6 +1054,7 @@ as
       , pi_set         => flow_constants_pkg.gc_expr_set_after_merge
       , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_info.sbfl_id
+      , pi_step_key    => p_sbfl_info.sbfl_step_key
       , pi_var_scope   => p_sbfl_info.sbfl_scope
       , pi_expr_scope  => p_sbfl_info.sbfl_scope
       );      
@@ -1111,6 +1115,7 @@ as
     , pi_set         => flow_constants_pkg.gc_expr_set_before_split
     , pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
     , pi_sbfl_id     => p_sbfl_info.sbfl_id
+    , pi_step_key    => p_sbfl_info.sbfl_step_key
     , pi_var_scope   => p_sbfl_info.sbfl_scope
     , pi_expr_scope  => p_sbfl_info.sbfl_scope
     );

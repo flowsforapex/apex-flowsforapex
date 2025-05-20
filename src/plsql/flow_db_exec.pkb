@@ -4,7 +4,7 @@ as
 -- Flows for APEX - flow_db_exec.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
--- (c) Copyright Flowquest Consulting Limited. 2024
+-- (c) Copyright Flowquest Limited and/ or its affiliates. 2024-2025
 --
 -- Created  08-Dec-2022  Richard Allen (Oracle Corporation)
 -- Changed  21-FEB-2023  Moritz Klein (MT GmbH)
@@ -18,6 +18,7 @@ as
   , pi_sql_text       varchar2
   , pi_result_type    varchar2  
   , pi_scope          flow_subflows.sbfl_scope%type default 0
+  , pi_step_key       flow_subflows.sbfl_step_key%type default null
   , pi_expr_type      flow_types_pkg.t_expr_type
   ) return flow_proc_vars_int.t_proc_var_value
   as  
@@ -49,6 +50,7 @@ as
       ( pi_prcs_id => pi_prcs_id
       , pi_sbfl_id => pi_sbfl_id
       , pi_scope   => pi_scope
+      , pi_step_key => pi_step_key
       , pio_string => l_sql_text
       );
       -- get bind parameters
@@ -56,6 +58,7 @@ as
                               ( pi_expr               => l_sql_text
                               , pi_prcs_id            => pi_prcs_id
                               , pi_sbfl_id            => pi_sbfl_id
+                              , pi_step_key           => pi_step_key
                               , pi_scope              => pi_scope
                               );
     end if;
@@ -522,6 +525,7 @@ as
   , pi_plsql_text     varchar2
   , pi_result_type    varchar2  
   , pi_scope          flow_subflows.sbfl_scope%type default 0
+  , pi_step_key       flow_subflows.sbfl_step_key%type default null
   , pi_expr_type      flow_types_pkg.t_expr_type
   , pi_state_params   apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return flow_proc_vars_int.t_proc_var_value
@@ -543,6 +547,7 @@ as
       ( pi_prcs_id => pi_prcs_id
       , pi_sbfl_id => pi_sbfl_id
       , pi_scope   => pi_scope
+      , pi_step_key => pi_step_key
       , pio_string => l_expr
       );
 
@@ -559,6 +564,7 @@ as
                               , pi_prcs_id            => pi_prcs_id
                               , pi_sbfl_id            => pi_sbfl_id
                               , pi_scope              => pi_scope
+                              , pi_step_key           => pi_step_key
                               , pi_state_params       => pi_state_params
                               );    
     end if;

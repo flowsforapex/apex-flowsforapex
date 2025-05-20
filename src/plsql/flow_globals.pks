@@ -1,15 +1,16 @@
+create or replace package flow_globals
 /* 
 -- Flows for APEX - flow_globals.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2021-2025.
 --
 -- Created    25-Aug-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
+-- Modified   19-May-2025  Richard Allen (Flowquest Limited)
 --
 */
-
-create or replace package flow_globals
   authid definer
 as
 
@@ -21,7 +22,7 @@ as
   loop_counter  flow_subflows.sbfl_loop_counter%type;
 
   throw_bpmn_error_event exception;
-  pragma EXCEPTION_INIT(throw_bpmn_error_event, -20001);
+  pragma EXCEPTION_INIT(throw_bpmn_error_event, -20101);
   request_stop_engine exception;
   pragma EXCEPTION_INIT(request_stop_engine, -20003);
 

@@ -10,6 +10,7 @@
 - Added flow_api_pkg.get_task_potential_owners and get_task_business_admins so that an APEX Human Task can set its potential owners and business admin from the workflow.
 - Added new Task Action plugin return-task-state-outcome to return task state and task outcome from APEX Human Task.  Can be used on task completion, cancellation and task expiry.
 - Added new cleanup routines to cancel any APEX Human Tasks left after a process instance is reset, terminated, deleted or the process flow cancels an active task.
+- Step Key is now available for substitution or binding in most places, including variable expression.
 - Added an APEX Component Group containing all of the components required in a Flows for APEX application.  Application items for PROCESS_ID, SUBFLOW_ID, STEP_KEY.  All plugins for use in customer applications.
 - Scheduler objects for timers and APEX task cleanup are now created automatically.  Flows for APEX user is now assumed to have CREATE JOB privilege.
 - Deprecates update, upload, upload and parse functions (all except parse) in bpmn_parser_pkg.   These have been available through flow_diagrams package since 23.1, and will be removed from bpmn_parser_pkg in a future release.

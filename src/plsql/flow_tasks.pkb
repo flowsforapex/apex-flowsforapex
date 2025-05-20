@@ -254,6 +254,18 @@ create or replace package body flow_tasks as
       ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
       );
       flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
+    when others then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after process script task failed (outside of plsql script runner)'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'plsql_script_failed'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
 
   end process_scriptTask;
 

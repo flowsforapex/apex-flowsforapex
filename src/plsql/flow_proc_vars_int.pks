@@ -273,6 +273,7 @@ function scope_is_valid
   , pi_prcs_id        in  flow_processes.prcs_id%type
   , pi_sbfl_id        in  flow_subflows.sbfl_id%type
   , pi_scope          in  flow_subflows.sbfl_scope%type
+  , pi_step_key       in  flow_subflows.sbfl_step_key%type default null
   , pi_state_params   in  apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return apex_exec.t_parameters;
 
@@ -290,6 +291,7 @@ function scope_is_valid
   , pi_prcs_id  in  flow_processes.prcs_id%type
   , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   , pi_scope    in  flow_subflows.sbfl_scope%type
+  , pi_step_key in  flow_subflows.sbfl_step_key%type default null
   ) return apex_plugin_util.t_bind_list;
 
   function get_vars_as_json_object

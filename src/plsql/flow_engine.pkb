@@ -169,6 +169,7 @@ end flow_process_link_event;
     , pi_set         => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id     => p_process_id
     , pi_sbfl_id     => p_subflow_id
+    , pi_step_key    => p_sbfl_info.sbfl_step_key
     , pi_var_scope   => p_sbfl_info.sbfl_scope
     , pi_expr_scope  => p_sbfl_info.sbfl_scope
     );
@@ -360,6 +361,7 @@ end flow_process_link_event;
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id      => p_sbfl_info.sbfl_prcs_id
     , pi_sbfl_id      => p_sbfl_info.sbfl_id
+    , pi_step_key     => p_sbfl_info.sbfl_step_key
     , pi_var_scope    => p_sbfl_info.sbfl_scope
     , pi_expr_scope   => p_sbfl_info.sbfl_scope
     );
@@ -599,6 +601,7 @@ begin
   , pi_set          => flow_constants_pkg.gc_expr_set_on_event
   , pi_prcs_id      => p_process_id
   , pi_sbfl_id      => p_subflow_id
+  , pi_step_key     => p_step_key
   , pi_var_scope    => l_sbfl_scope
   , pi_expr_scope   => l_sbfl_scope
   );
@@ -882,6 +885,7 @@ begin
         , pi_set            => flow_constants_pkg.gc_expr_set_after_task
         , pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
         , pi_sbfl_id        => p_sbfl_rec.sbfl_id
+        , pi_step_key       => p_sbfl_rec.sbfl_step_key
         , pi_var_scope      => p_sbfl_rec.sbfl_scope
         , pi_expr_scope     => p_sbfl_rec.sbfl_scope
       );
@@ -1260,6 +1264,7 @@ begin
       , pi_set         => flow_constants_pkg.gc_expr_set_before_task
       , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_step_key    => p_sbfl_rec.sbfl_step_key
       , pi_var_scope   => p_sbfl_rec.sbfl_scope
       , pi_expr_scope  => p_sbfl_rec.sbfl_scope
     );
@@ -1273,6 +1278,7 @@ begin
       , pi_set         => flow_constants_pkg.gc_expr_set_before_event
       , pi_prcs_id     => p_sbfl_rec.sbfl_prcs_id
       , pi_sbfl_id     => p_sbfl_rec.sbfl_id
+      , pi_step_key    => p_sbfl_rec.sbfl_step_key
       , pi_var_scope   => p_sbfl_rec.sbfl_scope
       , pi_expr_scope  => p_sbfl_rec.sbfl_scope
     );

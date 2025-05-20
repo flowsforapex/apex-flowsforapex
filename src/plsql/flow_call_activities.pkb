@@ -168,6 +168,7 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_in_variables
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => l_called_subflow_context.sbfl_id   --- should this be logged on calling or called subflows?  variables only in scope of called...
+        , pi_step_key     => l_called_subflow_context.step_key
         , pi_var_scope    => l_called_subflow_context.scope
         , pi_expr_scope   => l_calling_sbfl_scope
         );
@@ -203,6 +204,7 @@ as
             , pi_set          => flow_constants_pkg.gc_expr_set_on_event
             , pi_prcs_id      => p_process_id
             , pi_sbfl_id      => l_called_subflow_context.sbfl_id
+            , pi_step_key     => l_called_subflow_context.step_key
             , pi_var_scope    => l_called_subflow_context.scope
             , pi_expr_scope   => l_called_subflow_context.scope
             );

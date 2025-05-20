@@ -84,6 +84,7 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_on_event
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => p_sbfl_context_par.sbfl_id
+        , pi_step_key     => p_sbfl_context_par.step_key
         , pi_var_scope    => p_sbfl_context_par.scope
         , pi_expr_scope   => p_sbfl_context_par.scope        
         );
@@ -180,7 +181,8 @@ as
           ( pi_objt_id      => l_par_objt_id
           , pi_set          => flow_constants_pkg.gc_expr_set_out_variables
           , pi_prcs_id      => p_process_id
-          , pi_sbfl_id      => p_sbfl_context_par.sbfl_id   
+          , pi_sbfl_id      => p_sbfl_context_par.sbfl_id  
+          , pi_step_key     => p_sbfl_context_par.step_key 
           , pi_var_scope    => p_sbfl_context_par.scope
           , pi_expr_scope   => p_sbfl_info.sbfl_scope
           );      
@@ -301,6 +303,7 @@ as
           , pi_set          => flow_constants_pkg.gc_expr_set_on_event
           , pi_prcs_id      => p_process_id
           , pi_sbfl_id      => l_sbfl_context_sub.sbfl_id
+          , pi_step_key     => l_sbfl_context_sub.step_key
           , pi_var_scope    => l_sbfl_context_sub.scope
           , pi_expr_scope   => l_sbfl_context_sub.scope
           );
