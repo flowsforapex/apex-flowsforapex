@@ -146,6 +146,7 @@ as
                           ( pi_expr       => l_plsql_code
                           , pi_prcs_id     => pi_prcs_id
                           , pi_sbfl_id    => pi_sbfl_id
+                          , pi_step_key   => pi_step_key
                           , pi_scope      => flow_globals.scope
                           );
     end if;

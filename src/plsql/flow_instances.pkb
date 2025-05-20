@@ -486,6 +486,7 @@ create or replace package body flow_instances as
             , pi_set            => flow_constants_pkg.gc_expr_set_before_event
             , pi_prcs_id        => p_process_id
             , pi_sbfl_id        => l_main_subflow.sbfl_id
+            , pi_step_key       => l_main_subflow.step_key
             , pi_var_scope      => l_main_subflow.scope
             , pi_expr_scope     => l_main_subflow.scope
             );
@@ -530,6 +531,7 @@ create or replace package body flow_instances as
             , pi_set           => flow_constants_pkg.gc_expr_set_on_event
             , pi_prcs_id       => p_process_id
             , pi_sbfl_id       => l_main_subflow.sbfl_id
+            , pi_step_key      => l_main_subflow.step_key
             , pi_var_scope     => l_main_subflow.scope
             , pi_expr_scope    => l_main_subflow.scope      
             );

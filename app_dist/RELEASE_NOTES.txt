@@ -128,7 +128,7 @@ HISTORY
   - Adds a built-in process variable BUSINESS_REF to link a flow instance to its underlying business object.
   - Makes process_id and subflow_id available to scripts and expressions through flow_globals.
   - Adds a configuration option to allow editing of models in a development environment without strict versioning enforcement.
-  - Modifies behaviour of flow_reset to delete all non-built-in process variables.
+  - Modifies behavior of flow_reset to delete all non-built-in process variables.
   - Disables (non-operative) cycle timers from all timer event types.
   - Allows Inclusive Gateways to be used as 'merge-then-resplit' gateways.
   - Allows process variables to be deleted.
@@ -146,7 +146,7 @@ HISTORY
   - The demo app "Order Shipment" is now deprecated
 
 * v5.1.1
-  - Fixed several bugs occuring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
+  - Fixed several bugs occurring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
   - Fixed a bug causing the first task after an Interrupting Escalation Boundary Event to be skipped
   - Fixed bug preventing flow monitor showing process progress in extremely large and repetitive models
   - Fixed a problem with diagram export file names being too long
@@ -174,25 +174,25 @@ HISTORY
   - Added "Add Gateway Route" to Flow Control for convenience when adding a process variable for a gateway
 
 * v5.0.0
-  - Live validation checks during modelling provided by bpmnlint.
+  - Live validation checks during modeling provided by bpmnlint.
   - Support for user tasks: call an APEX page as specified in the properties panel (page ID, app ID, etc.).
   - Support for script tasks: call a PL/SQL procedure as specified in the properties panel.
   - Support for service tasks: send out an e-mail by calling apex_mail as specified in the properties panel.
   - Support for timers (requires a grant on create dbms_job).
-  - BPMN Modeler is now wrapped in a plugin. This also removes the limitation of modelling flows that are larger than 32kB.
+  - BPMN Modeler is now wrapped in a plugin. This also removes the limitation of modeling flows that are larger than 32kB.
   - Process variables that live within the scope of a process instance.
   - Updated Demo App “Shipment Processes” that utilizes process variables at gateways.
   - Support for escalation & error boundary events on sub processes and timer boundary events on tasks and user tasks. Timers and escalations can be interrupting or non-interrupting.
   - A new view "flow_processes_vw" that can be used as source for the BPMN viewer plugin.
-  - Improved API package: moved internal procedures to a new package ‘flow_engine.pkg’. Flow control now designed for automatic flow between tasks using only a complete_step procedure to replace flow_next_step. The V4.0 syntax of flow_next_step and flow_next_branch now desupported.
+  - Improved API package: moved internal procedures to a new package ‘flow_engine.pkg’. Flow control now designed for automatic flow between tasks using only a complete_step procedure to replace flow_next_step. The V4.0 syntax of flow_next_step and flow_next_branch now de-supported.
   - Gateway routing decision is now automatically made based on a specific process variable.
   - Support for process inbox-style applications through enhanced inbox views, along with optional task reservation. (reserve_task, release_task).
 
 * v4.0.0
   - New Subflow architecture to support Parallel Gateways, Sub Processes
   - Support for subprocesses (n levels deep)
-  - Support for Parallel Gateways (AND) and parallel flows, including process re-synchronisation
-  - Support for Inclusive Gateways (OR) and optional parallel flows, including process re-synchronisation
+  - Support for Parallel Gateways (AND) and parallel flows, including process re-synchronization
+  - Support for Inclusive Gateways (OR) and optional parallel flows, including process re-synchronization
   - Support for IntermediateCatchEvents and eventBasedGateways
   - Support for Terminate Stop Events in top level processes
   - Process viewer now shows all present and completed steps, and expanded views of sub-processes

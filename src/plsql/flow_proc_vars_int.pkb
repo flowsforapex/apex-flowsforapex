@@ -1351,6 +1351,7 @@ end lock_var;
   , pi_prcs_id  in  flow_processes.prcs_id%type
   , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   , pi_scope    in  flow_subflows.sbfl_scope%type
+  , pi_step_key in  flow_subflows.sbfl_step_key%type default null
   ) return apex_plugin_util.t_bind_list
   is
     l_bind                  apex_plugin_util.t_bind;
@@ -1379,6 +1380,8 @@ end lock_var;
             l_bind.value := pi_sbfl_id;
           when flow_constants_pkg.gc_substitution_scope then
             l_bind.value := pi_scope;   
+          when flow_constants_pkg.gc_substitution_step_key then
+            l_bind.value := pi_step_key;
           when flow_constants_pkg.gc_substitution_process_priority then
             l_bind.value := flow_instances.priority (p_process_id => pi_prcs_id);   
           else  
@@ -1408,6 +1411,7 @@ end lock_var;
   , pi_prcs_id  in  flow_processes.prcs_id%type
   , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   , pi_scope    in  flow_subflows.sbfl_scope%type
+  , pi_step_key in  flow_subflows.sbfl_step_key%type default null
   , pi_state_params   in  apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return apex_exec.t_parameters
   is
@@ -1459,7 +1463,10 @@ end lock_var;
             l_parameter.data_type           := apex_exec.c_data_type_number;
           when l_bind_name = flow_constants_pkg.gc_substitution_scope then
             l_parameter.value.number_value  := pi_scope;
-            l_parameter.data_type           := apex_exec.c_data_type_number;      
+            l_parameter.data_type           := apex_exec.c_data_type_number; 
+          when l_bind_name = flow_constants_pkg.gc_substitution_step_key then
+            l_parameter.value.varchar2_value:= pi_step_key;
+            l_parameter.data_type           := apex_exec.c_data_type_varchar2;               
           when l_bind_name = flow_constants_pkg.gc_substitution_process_priority then
             l_parameter.value.number_value  := flow_instances.priority (p_process_id => pi_prcs_id);
             l_parameter.data_type           := apex_exec.c_data_type_number;   
