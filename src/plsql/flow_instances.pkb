@@ -182,6 +182,7 @@ create or replace package body flow_instances as
     , p_starting_object             in  flow_objects.objt_bpmn_id%type default null
     , p_requested_logging_level     in  flow_processes.prcs_logging_level%type default null
     , p_calculated_logging_level    out flow_processes.prcs_logging_level%type
+    , p_process_bpmn_id             out flow_objects.objt_bpmn_id%type
     )
   is
     l_bpmn_process_objt flow_objects%rowtype;
@@ -220,6 +221,7 @@ create or replace package body flow_instances as
     l_logging_level := greatest ( nvl(p_requested_logging_level,0)
                                 , l_logging_level );
     p_calculated_logging_level := l_logging_level;
+    p_process_bpmn_id          := l_bpmn_process_objt.objt_bpmn_id;
   end get_instance_attributes;
 
   procedure set_instance_name
@@ -255,9 +257,9 @@ create or replace package body flow_instances as
     ) return flow_processes.prcs_id%type
   is
     l_new_prcs_id            flow_processes.prcs_id%type;
-    l_bpmn_process_objt      flow_objects%rowtype;
     l_calc_logging_level     flow_processes.prcs_logging_level%type;
     l_instance_name          flow_processes.prcs_name%type;
+    l_process_objt_bpmn_id   flow_objects.objt_bpmn_id%type;
   begin
     apex_debug.enter
     ('create_process'
@@ -308,11 +310,13 @@ create or replace package body flow_instances as
                             , p_starting_object           => p_starting_object
                             , p_requested_logging_level   => p_logging_level
                             , p_calculated_logging_level  => l_calc_logging_level
+                            , p_process_bpmn_id           => l_process_objt_bpmn_id
                             );
 
     -- update the process with the logging level
     update flow_processes prcs
-       set prcs.prcs_logging_level = l_calc_logging_level
+       set prcs.prcs_logging_level    = l_calc_logging_level
+         , prcs.prcs_process_bpmn_id  = l_process_objt_bpmn_id
      where prcs.prcs_id = l_new_prcs_id
        ;
 
