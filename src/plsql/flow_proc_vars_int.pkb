@@ -1101,6 +1101,8 @@ end lock_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_scope then
+            pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_scope );
           when flow_constants_pkg.gc_substitution_process_priority then
             pio_string := replace ( pio_string
                                   , get_replacement_pattern( l_f4a_substitutions(i) )
@@ -1173,6 +1175,8 @@ end lock_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_scope then
+            pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_scope );
           when flow_constants_pkg.gc_substitution_process_priority then
             pio_string := replace ( pio_string
                                   , get_replacement_pattern( l_f4a_substitutions(i) )

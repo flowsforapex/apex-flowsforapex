@@ -33,6 +33,7 @@ PROMPT >> Installing Package Specifications
 @plsql/test_022_usertask_misc.pks
 @plsql/test_023_custom_extensions.pks
 @plsql/test_024_usertask_approval_task.pks
+@plsql/test_025_script_tasks.pks
 
 PROMPT >> Installing Package Bodies
 
@@ -60,6 +61,7 @@ PROMPT >> Installing Package Bodies
 @plsql/test_022_usertask_misc.pkb
 @plsql/test_023_custom_extensions.pkb
 @plsql/test_024_usertask_approval_task.pkb
+@plsql/test_025_script_tasks.pkb
 
 PROMPT >> Engine Test Scripts Installed
 

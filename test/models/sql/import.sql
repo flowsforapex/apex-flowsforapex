@@ -104,6 +104,8 @@ set define off;
 @@"A23b - Custom Extensions - In Lanesets_0.sql";
 @@"A24a - Approval Component - Basic Operation_0.sql";
 @@"A24b - Approval Task - Task Cancelation_0.sql";
+@@"A25a - Script Task Proc Var Binding and Substitution_0.sql";
+@@"A25b - Script Task Exception handling_0.sql";
 @@"A27a - Variable Expression Errors_0.sql";
 commit;
 PROMPT >> Models created

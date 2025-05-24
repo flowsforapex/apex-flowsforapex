@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">
+  <bpmn:process id="Process_025a" name="Test025A" isExecutable="false" apex:minLoggingLevel="0" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_0qvc45j</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_Pre" name="Pre">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>Path</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>A</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>MyVC2_Fred</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>fred</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>MyNum_42</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>42</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>MyDate_23Feb24</apex:varName>
+            <apex:varDataType>DATE</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2024-02-23 01:02:03</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>4</apex:varSequence>
+            <apex:varName>MyJson</apex:varName>
+            <apex:varDataType>JSON</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>{"myObj":"thisObject"}</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qvc45j</bpmn:incoming>
+      <bpmn:outgoing>Flow_0an16hj</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0qvc45j" sourceRef="Event_Start" targetRef="Activity_Pre" />
+    <bpmn:sequenceFlow id="Flow_0an16hj" sourceRef="Activity_Pre" targetRef="Gateway_Choose" />
+    <bpmn:sequenceFlow id="Flow_A" name="Path &#39;A&#39;" sourceRef="Gateway_Choose" targetRef="Activity_A" apex:sequence="40">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$PATH = 'A'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_A" name="Substitute Basic Context" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>declare
+    l_process_id    number;
+    l_subflow_id    number;
+    l_scope         number;
+    l_step_key      varchar2(10);
+    l_result_ok_1   varchar2(10);
+    l_result_ok_2   varchar2(10);
+    l_result_ok_3   varchar2(10);
+    l_result_ok_4   varchar2(10);
+
+begin
+    l_process_id := to_number('&amp;F4A$PROCESS_ID.');
+    l_subflow_id := to_number('&amp;F4A$SUBFLOW_ID.');
+    l_scope      := to_number('&amp;F4A$SCOPE.');
+    l_step_key   := '&amp;F4A$STEP_KEY.';
+
+    if l_process_id = flow_globals.process_id then
+        l_result_ok_1 := 'OK';
+    else
+        l_result_ok_1 := 'FAIL';
+    end if;
+
+    if l_subflow_id = flow_globals.subflow_id then
+        l_result_ok_2 := 'OK';
+    else
+        l_result_ok_2 := 'FAIL';
+    end if;
+
+    if l_scope = flow_globals.scope then
+        l_result_ok_3 := 'OK';
+    else
+        l_result_ok_3 := 'FAIL';
+    end if;
+
+    if l_step_key = flow_globals.step_key then
+        l_result_ok_4 := 'OK';
+    else
+        l_result_ok_4 := 'FAIL';
+    end if;    
+      
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_1'
+                                , pi_vc2_value=&gt; l_result_ok_1
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_2'
+                                , pi_vc2_value=&gt; l_result_ok_2
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_3'
+                                , pi_vc2_value=&gt; l_result_ok_3
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_4'
+                                , pi_vc2_value=&gt; l_result_ok_4
+                                ); 
+
+end;                                   </apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_A</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vpx09i</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_B" name="Path &#39;B&#39;" sourceRef="Gateway_Choose" targetRef="Activity_B" apex:sequence="50">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$PATH = 'B'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_D" name="Path &#39;D&#39;" sourceRef="Gateway_Choose" targetRef="Activity_D" apex:sequence="60">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$PATH = 'D'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_E" name="Path &#39;E&#39;" sourceRef="Gateway_Choose" targetRef="Activity_E" apex:sequence="70">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$PATH = 'E'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_B" name="Bind Basic Context" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:engine>true</apex:engine>
+          <apex:plsqlCode>declare
+    l_process_id    number;
+    l_subflow_id    number;
+    l_scope         number;
+    l_step_key      varchar2(10);
+    l_result_ok_1   varchar2(10);
+    l_result_ok_2   varchar2(10);
+    l_result_ok_3   varchar2(10);
+    l_result_ok_4   varchar2(10);
+
+begin
+    l_process_id := :F4A$PROCESS_ID;
+    l_subflow_id := :F4A$SUBFLOW_ID;
+    l_scope      := :F4A$SCOPE;
+    l_step_key   := :F4A$STEP_KEY;
+
+    if l_process_id = flow_globals.process_id then
+        l_result_ok_1 := 'OK';
+    else
+        l_result_ok_1 := 'FAIL';
+    end if;
+
+    if l_subflow_id = flow_globals.subflow_id then
+        l_result_ok_2 := 'OK';
+    else
+        l_result_ok_2 := 'FAIL';
+    end if;
+
+    if l_scope = flow_globals.scope then
+        l_result_ok_3 := 'OK';
+    else
+        l_result_ok_3 := 'FAIL';
+    end if;
+
+    if l_step_key = flow_globals.step_key then
+        l_result_ok_4 := 'OK';
+    else
+        l_result_ok_4 := 'FAIL';
+    end if;    
+      
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_1'
+                                , pi_vc2_value=&gt; l_result_ok_1
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_2'
+                                , pi_vc2_value=&gt; l_result_ok_2
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_3'
+                                , pi_vc2_value=&gt; l_result_ok_3
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_4'
+                                , pi_vc2_value=&gt; l_result_ok_4
+                                ); 
+
+end;                                   </apex:plsqlCode>
+          <apex:autoBinds>false</apex:autoBinds>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_B</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f1ygaf</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_D" name="Substitute Proc Vars" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>declare
+    l_var1          varchar2(20);
+    l_var2          number;
+    l_var3          date;
+    l_var4          varchar2(100);
+    l_result_ok_1   varchar2(10);
+    l_result_ok_2   varchar2(10);
+    l_result_ok_3   varchar2(10);
+    l_result_ok_4   varchar2(10);
+
+begin
+    l_var1 := '&amp;F4A$MyVC2_Fred.';
+    l_var2 := to_number('&amp;F4A$MyNum_42.');
+    l_var3 := to_date ('&amp;F4A$MyDate_23Feb24.', 'YYYY-MM-DD HH24:MI:SS');
+    l_var4 := '&amp;F4A$MyJSON.';
+
+    if l_var1 = 'fred' then
+        l_result_ok_1 := 'OK';
+    else
+        l_result_ok_1 := 'FAIL';
+    end if;
+
+    if l_var2 = 42 then
+        l_result_ok_2 := 'OK';
+    else
+        l_result_ok_2 := 'FAIL';
+    end if;
+
+    if l_var3 = to_date('23-Feb-2024 01:02:03','DD-Mon-YYYY HH24:MI:SS') then
+        l_result_ok_3 := 'OK';
+    else
+        l_result_ok_3 := 'FAIL';
+    end if;
+
+    if l_var4 = '{"myObj":"thisObject"}' then
+        l_result_ok_4 := 'OK';
+    else
+        l_result_ok_4 := 'FAIL';
+    end if;    
+      
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_1'
+                                , pi_vc2_value=&gt; l_result_ok_1
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_2'
+                                , pi_vc2_value=&gt; l_result_ok_2
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_3'
+                                , pi_vc2_value=&gt; l_result_ok_3
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_4'
+                                , pi_vc2_value=&gt; l_result_ok_4
+                                ); 
+
+end;                                   </apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_D</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cmfh8u</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_E" name="Bind Proc Vars" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:engine>true</apex:engine>
+          <apex:plsqlCode>declare
+    l_var1          varchar2(20);
+    l_var2          number;
+    l_var3          date;
+    l_var4          varchar2(100);
+    l_result_ok_1   varchar2(10);
+    l_result_ok_2   varchar2(10);
+    l_result_ok_3   varchar2(10);
+    l_result_ok_4   varchar2(10);
+
+begin
+    l_var1 := :F4A$MyVC2_Fred;
+    l_var2 := :F4A$MyNum_42;
+    l_var3 := :F4A$MyDate_23Feb24;
+    l_var4 := :F4A$MyJSON;
+
+    if l_var1 = 'fred' then
+        l_result_ok_1 := 'OK';
+    else
+        l_result_ok_1 := 'FAIL';
+    end if;
+
+    if l_var2 = 42 then
+        l_result_ok_2 := 'OK';
+    else
+        l_result_ok_2 := 'FAIL';
+    end if;
+
+    if l_var3 = to_date('23-Feb-2024 01:02:03','DD-Mon-YYYY HH24:MI:SS') then
+        l_result_ok_3 := 'OK';
+    else
+        l_result_ok_3 := 'FAIL';
+        flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                  , pi_var_name =&gt; 'RESULT_3'
+                                  , pi_date_value=&gt; l_var3
+                                  );
+    end if;
+
+    if l_var4 = '{"myObj":"thisObject"}' then
+        l_result_ok_4 := 'OK';
+    else
+        l_result_ok_4 := 'FAIL';
+    end if;    
+      
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_1'
+                                , pi_vc2_value=&gt; l_result_ok_1
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_2'
+                                , pi_vc2_value=&gt; l_result_ok_2
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_3'
+                                , pi_vc2_value=&gt; l_result_ok_3
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_4'
+                                , pi_vc2_value=&gt; l_result_ok_4
+                                ); 
+
+end;                                   </apex:plsqlCode>
+          <apex:autoBinds>false</apex:autoBinds>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_E</bpmn:incoming>
+      <bpmn:outgoing>Flow_15rwct8</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:task id="Activity_AfterA" name="AfterA">
+      <bpmn:incoming>Flow_0vpx09i</bpmn:incoming>
+      <bpmn:outgoing>Flow_11loexi</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0vpx09i" sourceRef="Activity_A" targetRef="Activity_AfterA" />
+    <bpmn:endEvent id="Event_EndA" name="EndA">
+      <bpmn:incoming>Flow_11loexi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_11loexi" sourceRef="Activity_AfterA" targetRef="Event_EndA" />
+    <bpmn:task id="Activity_AfterB" name="AfterB">
+      <bpmn:incoming>Flow_1f1ygaf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cvcwx9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1f1ygaf" sourceRef="Activity_B" targetRef="Activity_AfterB" />
+    <bpmn:endEvent id="Event_EndB" name="EndB">
+      <bpmn:incoming>Flow_1cvcwx9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1cvcwx9" sourceRef="Activity_AfterB" targetRef="Event_EndB" />
+    <bpmn:task id="Activity_AfterD" name="AfterD">
+      <bpmn:incoming>Flow_0cmfh8u</bpmn:incoming>
+      <bpmn:outgoing>Flow_16uxe2r</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0cmfh8u" sourceRef="Activity_D" targetRef="Activity_AfterD" />
+    <bpmn:endEvent id="Event_EndD" name="EndD">
+      <bpmn:incoming>Flow_16uxe2r</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_16uxe2r" sourceRef="Activity_AfterD" targetRef="Event_EndD" />
+    <bpmn:task id="Activity_AfterE" name="AfterE">
+      <bpmn:incoming>Flow_15rwct8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sx78il</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_15rwct8" sourceRef="Activity_E" targetRef="Activity_AfterE" />
+    <bpmn:endEvent id="Event_EndE" name="EndE">
+      <bpmn:incoming>Flow_1sx78il</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1sx78il" sourceRef="Activity_AfterE" targetRef="Event_EndE" />
+    <bpmn:exclusiveGateway id="Gateway_Choose" name="Choose">
+      <bpmn:incoming>Flow_0an16hj</bpmn:incoming>
+      <bpmn:outgoing>Flow_A</bpmn:outgoing>
+      <bpmn:outgoing>Flow_B</bpmn:outgoing>
+      <bpmn:outgoing>Flow_D</bpmn:outgoing>
+      <bpmn:outgoing>Flow_E</bpmn:outgoing>
+      <bpmn:outgoing>Flow_C</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="Activity_C" name="call Deprecated Context" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:executePlsql>
+          <apex:plsqlCode>declare
+    l_process_id    number;
+    l_subflow_id    number;
+    l_scope         number;
+    l_step_key      varchar2(10);
+    l_result_ok_1   varchar2(10);
+    l_result_ok_2   varchar2(10);
+    l_result_ok_3   varchar2(10);
+    l_result_ok_4   varchar2(10);
+
+begin
+    l_process_id := flow_plsql_runner_pkg.get_current_prcs_id;
+    l_subflow_id := flow_plsql_runner_pkg.get_current_sbfl_id;
+    l_scope      := to_number('&amp;F4A$SCOPE.');
+    l_step_key   := '&amp;F4A$STEP_KEY.';
+
+    if l_process_id = flow_globals.process_id then
+        l_result_ok_1 := 'OK';
+    else
+        l_result_ok_1 := 'FAIL';
+    end if;
+
+    if l_subflow_id = flow_globals.subflow_id then
+        l_result_ok_2 := 'OK';
+    else
+        l_result_ok_2 := 'FAIL';
+    end if;
+
+    if l_scope = flow_globals.scope then
+        l_result_ok_3 := 'OK';
+    else
+        l_result_ok_3 := 'FAIL';
+    end if;
+
+    if l_step_key = flow_globals.step_key then
+        l_result_ok_4 := 'OK';
+    else
+        l_result_ok_4 := 'FAIL';
+    end if;    
+      
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_1'
+                                , pi_vc2_value=&gt; l_result_ok_1
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_2'
+                                , pi_vc2_value=&gt; l_result_ok_2
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_3'
+                                , pi_vc2_value=&gt; l_result_ok_3
+                                );
+      flow_process_vars.set_var ( pi_prcs_id  =&gt; flow_globals.process_id
+                                , pi_var_name =&gt; 'RESULT_OK_4'
+                                , pi_vc2_value=&gt; l_result_ok_4
+                                ); 
+
+end;                                   </apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_C</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t3me8f</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:task id="Activity_AfterC" name="AfterC">
+      <bpmn:incoming>Flow_0t3me8f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dhc8n5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_EndC" name="EndC">
+      <bpmn:incoming>Flow_0dhc8n5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0t3me8f" sourceRef="Activity_C" targetRef="Activity_AfterC" />
+    <bpmn:sequenceFlow id="Flow_0dhc8n5" sourceRef="Activity_AfterC" targetRef="Event_EndC" />
+    <bpmn:sequenceFlow id="Flow_C" name="Path C" sourceRef="Gateway_Choose" targetRef="Activity_C" apex:sequence="80">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$PATH = 'C'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_025a">
+      <bpmndi:BPMNShape id="Event_1mp9cf5_di" bpmnElement="Event_Start">
+        <dc:Bounds x="-548" y="22" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-542" y="65" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12w4ktg_di" bpmnElement="Activity_Pre">
+        <dc:Bounds x="-460" y="0" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vj7ftm_di" bpmnElement="Activity_A">
+        <dc:Bounds x="-190" y="-411" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1knhl8a_di" bpmnElement="Activity_B">
+        <dc:Bounds x="-190" y="-301" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13hof8l_di" bpmnElement="Activity_D">
+        <dc:Bounds x="-190" y="-80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10fn1l5_di" bpmnElement="Activity_E">
+        <dc:Bounds x="-190" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o8w0gb_di" bpmnElement="Activity_AfterA">
+        <dc:Bounds x="-20" y="-411" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xkwbfc_di" bpmnElement="Event_EndA">
+        <dc:Bounds x="152" y="-389" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="-346" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_138x6lj_di" bpmnElement="Activity_AfterB">
+        <dc:Bounds x="-20" y="-301" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mjjveg_di" bpmnElement="Event_EndB">
+        <dc:Bounds x="152" y="-279" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="-236" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eyop8u_di" bpmnElement="Activity_AfterD">
+        <dc:Bounds x="-20" y="-80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03w4dxr_di" bpmnElement="Event_EndD">
+        <dc:Bounds x="152" y="-58" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="-15" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14j45uk_di" bpmnElement="Activity_AfterE">
+        <dc:Bounds x="-20" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00g2equ_di" bpmnElement="Event_EndE">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="125" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1fn74hh_di" bpmnElement="Gateway_Choose" isMarkerVisible="true">
+        <dc:Bounds x="-305" y="15" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-218" y="30" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08swgju" bpmnElement="Activity_C">
+        <dc:Bounds x="-190" y="-190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_16s48xx" bpmnElement="Activity_AfterC">
+        <dc:Bounds x="-20" y="-190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04kbmu1" bpmnElement="Event_EndC">
+        <dc:Bounds x="152" y="-168" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="-125" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0qvc45j_di" bpmnElement="Flow_0qvc45j">
+        <di:waypoint x="-512" y="40" />
+        <di:waypoint x="-460" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0an16hj_di" bpmnElement="Flow_0an16hj">
+        <di:waypoint x="-360" y="40" />
+        <di:waypoint x="-305" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ep1dup_di" bpmnElement="Flow_A">
+        <di:waypoint x="-280" y="15" />
+        <di:waypoint x="-280" y="-371" />
+        <di:waypoint x="-190" y="-371" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-249" y="-397" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xnyrvb_di" bpmnElement="Flow_B">
+        <di:waypoint x="-280" y="15" />
+        <di:waypoint x="-280" y="-261" />
+        <di:waypoint x="-190" y="-261" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-249" y="-287" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17wz89q_di" bpmnElement="Flow_D">
+        <di:waypoint x="-280" y="15" />
+        <di:waypoint x="-280" y="-40" />
+        <di:waypoint x="-190" y="-40" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-249" y="-67" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aa7ek9_di" bpmnElement="Flow_E">
+        <di:waypoint x="-280" y="65" />
+        <di:waypoint x="-280" y="100" />
+        <di:waypoint x="-190" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-259" y="80" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vpx09i_di" bpmnElement="Flow_0vpx09i">
+        <di:waypoint x="-90" y="-371" />
+        <di:waypoint x="-20" y="-371" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11loexi_di" bpmnElement="Flow_11loexi">
+        <di:waypoint x="80" y="-371" />
+        <di:waypoint x="152" y="-371" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f1ygaf_di" bpmnElement="Flow_1f1ygaf">
+        <di:waypoint x="-90" y="-261" />
+        <di:waypoint x="-20" y="-261" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cvcwx9_di" bpmnElement="Flow_1cvcwx9">
+        <di:waypoint x="80" y="-261" />
+        <di:waypoint x="152" y="-261" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cmfh8u_di" bpmnElement="Flow_0cmfh8u">
+        <di:waypoint x="-90" y="-40" />
+        <di:waypoint x="-20" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16uxe2r_di" bpmnElement="Flow_16uxe2r">
+        <di:waypoint x="80" y="-40" />
+        <di:waypoint x="152" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15rwct8_di" bpmnElement="Flow_15rwct8">
+        <di:waypoint x="-90" y="100" />
+        <di:waypoint x="-20" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sx78il_di" bpmnElement="Flow_1sx78il">
+        <di:waypoint x="80" y="100" />
+        <di:waypoint x="152" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1c7vfha" bpmnElement="Flow_0t3me8f">
+        <di:waypoint x="-90" y="-150" />
+        <di:waypoint x="-20" y="-150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_167w3nv" bpmnElement="Flow_0dhc8n5">
+        <di:waypoint x="80" y="-150" />
+        <di:waypoint x="152" y="-150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ikoitj_di" bpmnElement="Flow_C">
+        <di:waypoint x="-280" y="15" />
+        <di:waypoint x="-280" y="-150" />
+        <di:waypoint x="-190" y="-150" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-247" y="-177" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
