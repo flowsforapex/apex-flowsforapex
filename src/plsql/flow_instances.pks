@@ -80,6 +80,11 @@ as
     ) return flow_processes.prcs_due_on%type
     ;
 
+  function status
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_status%type
+    ;
+
   procedure set_was_altered
     (
       p_process_id  in flow_processes.prcs_id%type

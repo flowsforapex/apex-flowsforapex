@@ -1499,6 +1499,25 @@ begin
                 , p_lock_subflow => true
                 );
 
+  -- prevent any external complete_step calls when the process is suspended
+  if  flow_instances.status (p_process_id) = flow_constants_pkg.gc_prcs_status_suspended 
+      and not p_recursive_call then
+      
+    apex_debug.info
+    ( p_message => 'Process %0 is suspended.  Cannot complete step on subflow %1.'
+    , p0        => p_process_id
+    , p1        => p_subflow_id
+    );
+    flow_errors.handle_instance_error
+    ( pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+    , pi_message_key => 'suspended-cannot-complete-step'
+    , p0            => p_process_id
+    , p1            => p_subflow_id
+    );
+    --F$MESSAGE 'suspended-cannot-complete-step' || 'Process %0 is suspended.  Cannot complete step on subflow %1.'
+  end if;
+
   -- check step key is valid
   if flow_engine_util.step_key_valid( pi_prcs_id            => p_process_id
                                     , pi_sbfl_id            => p_subflow_id

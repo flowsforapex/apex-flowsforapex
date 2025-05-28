@@ -21,6 +21,10 @@ as
     , payloadl number
     ); 
 
+    procedure dequeue_instance_correlated_messages
+    ( p_process_id  in flow_processes.prcs_id%type
+    );
+
     function correlate_start_event
     ( p_msg  flow_message_flow.t_flow_simple_message
     ) return flow_message_subscriptions%rowtype;

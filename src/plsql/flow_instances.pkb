@@ -1033,6 +1033,19 @@ create or replace package body flow_instances as
       return l_due_on;
   end due_on;
 
+  function status
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_status%type
+  is
+      l_status    flow_processes.prcs_status%type;
+  begin
+      select prcs_status
+        into l_status
+        from flow_processes
+       where prcs_id = p_process_id;
+      return l_status;
+  end status;
+
   procedure set_was_altered
     (
       p_process_id  in flow_processes.prcs_id%type
