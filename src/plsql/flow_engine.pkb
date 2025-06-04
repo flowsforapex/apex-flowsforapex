@@ -1168,7 +1168,7 @@ begin
   , p1 => p_step_info.target_objt_subtag
   );
   apex_debug.trace
-  ( p_message => 'Runing Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
+  ( p_message => 'Running Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
   , p0 => p_sbfl_rec.sbfl_id
   , p1 => p_sbfl_rec.sbfl_last_completed
   , p2 => p_sbfl_rec.sbfl_prcs_id
@@ -2042,14 +2042,16 @@ begin
       flow_instances.set_was_altered (p_process_id => p_process_id);
     end if;
 
-    if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
-      -- restart object contains a timer.  run var exps and step forward immediately
+    if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition 
+    and l_sbfl_rec.sbfl_status = flow_constants_pkg.gc_sbfl_status_error  then
+      -- restart object contains a timer and sbfl in error => timer step with an error - run var exps and step forward immediately
+      -- note l_sbfl_rec is the subflow status when the call was made.    subflow has been updated subsequently...
       restart_failed_timer_step
       ( p_sbfl_rec => l_sbfl_rec
       , p_step_info => l_step_info
       );
     else
-      -- all other object types.  restart current task
+      -- all other object types, including a timer that is being startded as part of a resume.  restart current task
       run_step 
       ( p_sbfl_rec => l_sbfl_rec
       , p_step_info => l_step_info
