@@ -19,42 +19,50 @@ as
   pragma exception_init(diagram_not_draft, -20002);
 
   function create_diagram(
-    pi_dgrm_name in flow_diagrams.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type)
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type)
   return flow_diagrams.dgrm_id%type;
 
   function upload_diagram
   (
-    pi_dgrm_name       in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version    in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category   in flow_diagrams.dgrm_category%type
-  , pi_dgrm_content    in flow_diagrams.dgrm_content%type
-  , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_log_comment     in flow_flow_event_log.lgfl_comment%type default null
-  , pi_force_overwrite in boolean default false
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status            in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_log_comment            in flow_flow_event_log.lgfl_comment%type default null
+  , pi_force_overwrite        in boolean default false
   ) return flow_diagrams.dgrm_id%type;
 
   procedure upload_diagram
   (
-    pi_dgrm_name       in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version    in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category   in flow_diagrams.dgrm_category%type
-  , pi_dgrm_content    in flow_diagrams.dgrm_content%type
-  , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_log_comment     in flow_flow_event_log.lgfl_comment%type default null
-  , pi_force_overwrite in boolean default false
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status            in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_log_comment            in flow_flow_event_log.lgfl_comment%type default null
+  , pi_force_overwrite        in boolean default false
   );
 
   procedure upload_and_parse
   (
-    pi_dgrm_name       in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version    in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category   in flow_diagrams.dgrm_category%type
-  , pi_dgrm_content    in flow_diagrams.dgrm_content%type
-  , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_log_comment     in flow_flow_event_log.lgfl_comment%type default null
-  , pi_force_overwrite in boolean default false
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status            in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_log_comment            in flow_flow_event_log.lgfl_comment%type default null
+  , pi_force_overwrite        in boolean default false
   );
 
   procedure update_diagram
@@ -64,17 +72,19 @@ as
   );
 
   function add_diagram_version(
-    pi_dgrm_id in flow_diagrams.dgrm_id%type,
+    pi_dgrm_id      in flow_diagrams.dgrm_id%type,
     pi_dgrm_version in flow_diagrams.dgrm_version%type)
   return flow_diagrams.dgrm_id%type;
 
 
   function import_diagram(
-    pi_dgrm_name in flow_diagrams.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type,
-    pi_dgrm_content in flow_diagrams.dgrm_content%type,
-    pi_force_overwrite in varchar2 default flow_constants_pkg.gc_false) 
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_force_overwrite        in varchar2 default flow_constants_pkg.gc_false)
   return flow_diagrams.dgrm_id%type;
   
   
@@ -89,10 +99,12 @@ as
 
 
   procedure edit_diagram(
-    pi_dgrm_id in flow_diagrams.dgrm_id%type,
-    pi_dgrm_name in flow_diagrams.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type);
+    pi_dgrm_id                in flow_diagrams.dgrm_id%type
+  , pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type);
 
 
   procedure release_diagram(
@@ -121,7 +133,7 @@ as
   --
   function get_start_event(
     p_dgrm_id               in flow_diagrams.dgrm_id%type,
-    p_process_id           in flow_processes.prcs_id%type,
+    p_process_id            in flow_processes.prcs_id%type,
     p_event_starting_object in flow_objects.objt_bpmn_id%type default null)
   return flow_objects%rowtype;
 

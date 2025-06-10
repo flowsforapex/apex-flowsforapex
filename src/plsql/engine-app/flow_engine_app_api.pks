@@ -152,13 +152,15 @@ as
   return varchar2;
 
   function upload_and_parse(
-      pi_import_from     in varchar2,
-      pi_dgrm_name       in flow_diagrams.dgrm_name%type,
-      pi_dgrm_category   in flow_diagrams.dgrm_category%type,
-      pi_dgrm_version    in flow_diagrams.dgrm_version%type,
-      pi_dgrm_content    in flow_diagrams.dgrm_content%type,
-      pi_file_name       in varchar2,
-      pi_force_overwrite in varchar2
+      pi_import_from            in varchar2,
+      pi_dgrm_name              in flow_diagrams.dgrm_name%type,
+      pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type,
+      pi_dgrm_description       in flow_diagrams.dgrm_description%type default null,
+      pi_dgrm_category          in flow_diagrams.dgrm_category%type,
+      pi_dgrm_version           in flow_diagrams.dgrm_version%type,
+      pi_dgrm_content           in flow_diagrams.dgrm_content%type,
+      pi_file_name              in varchar2,
+      pi_force_overwrite        in varchar2
   )
   return flow_diagrams.dgrm_id%type;
   
@@ -177,13 +179,15 @@ as
     
   procedure process_page_p7
   (
-    pio_dgrm_id      in out nocopy flow_diagrams.dgrm_id%type
-  , pi_dgrm_name     in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category in flow_diagrams.dgrm_category%type
-  , pi_new_version   in flow_diagrams.dgrm_version%type
-  , pi_cascade       in varchar2
-  , pi_request       in varchar2
+    pio_dgrm_id               in out nocopy flow_diagrams.dgrm_id%type
+  , pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_new_version            in flow_diagrams.dgrm_version%type
+  , pi_cascade                in varchar2
+  , pi_request                in varchar2
   );
   
   function get_page_title(
