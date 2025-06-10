@@ -770,6 +770,52 @@ create or replace package body flow_instances as
       raise;
   end resume_process;
 
+  procedure reset_process_to_running
+  (
+    p_subflow_rec  in flow_subflows%rowtype 
+  , p_comment      in flow_instance_event_log.lgpr_comment%type default null
+  ) 
+  is
+    l_num_error_subflows  number;
+  begin
+    -- tries to reset the process instance to running after subflow errors are cleared
+    -- used on - subflow restart step, force next step, and resume process
+    -- assumes the flow_processes record is already locked
+    apex_debug.enter
+    ( 'reset_process_to_running'
+    , 'process_id', p_subflow_rec.sbfl_prcs_id
+    , 'subflow_id', p_subflow_rec.sbfl_id
+    );
+    -- see if instance can be reset to running
+    select count(sbfl_id)
+      into l_num_error_subflows
+      from flow_subflows sbfl 
+     where sbfl.sbfl_prcs_id = p_subflow_rec.sbfl_prcs_id
+       and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
+    ;
+    if l_num_error_subflows = 0 then
+      update flow_processes prcs
+         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
+           , prcs.prcs_was_altered = 'Y'
+           , prcs.prcs_last_update = systimestamp
+           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where prcs.prcs_id = p_subflow_rec.sbfl_prcs_id
+      ;
+      flow_logging.log_instance_event
+      ( p_process_id    => p_subflow_rec.sbfl_prcs_id
+      , p_objt_bpmn_id  => p_subflow_rec.sbfl_current
+      , p_event         => flow_constants_pkg.gc_prcs_status_running
+      , p_event_level   => flow_constants_pkg.gc_logging_level_abnormal_events
+      );
+    else
+      -- mark instance as altered anyhow
+      flow_instances.set_was_altered (p_process_id => p_subflow_rec.sbfl_prcs_id);
+    end if;
+  end reset_process_to_running;
+
   procedure terminate_process
     (
       p_process_id  in flow_processes.prcs_id%type

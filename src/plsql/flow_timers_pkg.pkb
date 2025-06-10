@@ -249,7 +249,7 @@ create or replace package body flow_timers_pkg as
       select * into l_timers
         from flow_timers
        where rowid in (
-          select max(rowid) keep (dense_rank first order by coalesce( timr_last_run, timr_created_on )) trowid
+          select max(rowid) keep (dense_rank first order by timr_start_on) trowid
             from flow_timers
            where timr_status = c_created
              --and coalesce( timr_last_run, timr_created_on )  < l_run_time 

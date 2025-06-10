@@ -175,6 +175,8 @@ create or replace package body test_025_script_tasks as
           from flow_processes p
          where p.prcs_id = l_prcs_id;
     ut.expect( l_actual ).to_equal( l_expected );   
+    --chean up the process
+    flow_api_pkg.flow_delete( p_process_id => l_prcs_id );
   end test_runner_A;
 
   
@@ -213,11 +215,11 @@ create or replace package body test_025_script_tasks as
     test_runner_A( p_path => 'E' );
   end script_task_substitutions_A5;
 
-  procedure test_runner_B
+  function test_runner_B
   ( p_path               in varchar2 
   , p_script_should_fail in boolean default false
   , p_BE_should_fire     in boolean default false
-  )
+  ) return flow_processes.prcs_id%type
   is
     l_actual          sys_refcursor;
     l_expected        sys_refcursor;
@@ -363,63 +365,68 @@ create or replace package body test_025_script_tasks as
         end if;
 
     end;
+    return l_prcs_id;
   end test_runner_B;
 
   -- test(B1 - Successful Script Task execution)
   procedure script_task_exceptions_B1
   is
   begin
-    test_runner_B( p_path => 'A' 
-                 , p_script_should_fail => false
-                 , p_BE_should_fire     => false
-                 );
+    g_prcs_id_a := test_runner_B( p_path => 'A' 
+                                , p_script_should_fail => false
+                                , p_BE_should_fire     => false
+                                );
   end script_task_exceptions_B1;
 
   -- test(B2 - Script Task raises e_plsql_script_requested_stop exception)
   procedure script_task_exceptions_B2
   is
   begin
-    test_runner_B( p_path => 'B' 
-                 , p_script_should_fail => true
-                 , p_BE_should_fire     => false
-                 );
+    g_prcs_id_b := test_runner_B( p_path => 'B' 
+                                , p_script_should_fail => true
+                                , p_BE_should_fire     => false
+                                );
   end script_task_exceptions_B2;
 
   -- test(B3 - Script Task raises flow_globals.request_stop_engine exception)
   procedure script_task_exceptions_B3
   is
   begin
-    test_runner_B( p_path => 'C'  
-                 , p_script_should_fail => true
-                 , p_BE_should_fire     => FALSE
-                 );
+    g_prcs_id_c := test_runner_B( p_path => 'C'  
+                                , p_script_should_fail => true
+                                , p_BE_should_fire     => FALSE
+                                );
   end script_task_exceptions_B3;
 
   -- test(B4 - Script Task raises other exception)
   procedure script_task_exceptions_B4
   is
   begin
-    test_runner_B( p_path => 'D' 
-                 , p_script_should_fail => true
-                 , p_BE_should_fire     => false
-                 );
+    g_prcs_id_d := test_runner_B( p_path => 'D' 
+                                , p_script_should_fail => true
+                                , p_BE_should_fire     => false
+                                );
   end script_task_exceptions_B4;  
 
   -- test(B5 - Script Task raises flow_globals.throw_bpmn_error_event exception)
   procedure script_task_exceptions_B5
   is
   begin
-    test_runner_B( p_path => 'E' 
-                 , p_script_should_fail => true
-                 , p_BE_should_fire     => true
-                 ); 
+    g_prcs_id_e := test_runner_B( p_path => 'E' 
+                                , p_script_should_fail => true
+                                , p_BE_should_fire     => true
+                                ); 
   end script_task_exceptions_B5;
 
   -- afterall
   procedure tear_down_tests
   is
   begin
-    null;
+    flow_api_pkg.flow_delete( p_process_id => g_prcs_id_a );
+    flow_api_pkg.flow_delete( p_process_id => g_prcs_id_b );
+    flow_api_pkg.flow_delete( p_process_id => g_prcs_id_c );
+    flow_api_pkg.flow_delete( p_process_id => g_prcs_id_d );
+    flow_api_pkg.flow_delete( p_process_id => g_prcs_id_e );
   end ;
 
 end test_025_script_tasks;

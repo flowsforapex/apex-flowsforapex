@@ -306,7 +306,14 @@ begin
     values ( 'gateway-multiple-previous-gws', c_load_lang, q'[Multiple previous opening parallel or inclusive gateways found for subflow %0.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'gateway-matching-object-error', c_load_lang, q'[Error retrieving matching gateway object for subflow %0, current step %1.]' );
-    
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-split-event-based-gw', c_load_lang, q'[ Rewind - cannot rewind from an event based gateway that is still running.  Rewind one of the forward subflows back to the event based gateway first.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values ( 'rewind-no-current-step', c_load_lang, q'[Rewind - requested target step for rewind is not a valid transition from current step.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-step-reposition-error', c_load_lang, q'[Rewind - error repositioning step.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-force-step-not-error', c_load_lang, q'[Cannot force next step on subflow that is not in error status.]' );
 -- above here manually added for 25.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

@@ -2013,34 +2013,11 @@ begin
     , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     );
 
-    -- see if instance can be reset to running
-    select count(sbfl_id)
-      into l_num_error_subflows
-      from flow_subflows sbfl 
-     where sbfl.sbfl_prcs_id = p_process_id
-       and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
-    ;
-    if l_num_error_subflows = 0 then
-      update flow_processes prcs
-         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
-           , prcs.prcs_was_altered = 'Y'
-           , prcs.prcs_last_update = systimestamp
-           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  )  
-       where prcs.prcs_id = p_process_id
-      ;
-      flow_logging.log_instance_event
-      ( p_process_id    => p_process_id
-      , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
-      , p_event         => flow_constants_pkg.gc_prcs_status_running
-      , p_event_level   => flow_constants_pkg.gc_logging_level_abnormal_events
-      );
-    else
-      -- mark instance as altered anyhow
-      flow_instances.set_was_altered (p_process_id => p_process_id);
-    end if;
+    -- see if instance can be reset to running - mark instance as altered anyhow
+    flow_instances.reset_process_to_running
+    ( p_subflow_rec => l_sbfl_rec
+    , p_comment     => p_comment
+    );
 
     if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition 
     and l_sbfl_rec.sbfl_status = flow_constants_pkg.gc_sbfl_status_error  then

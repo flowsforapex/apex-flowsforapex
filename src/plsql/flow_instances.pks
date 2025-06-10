@@ -58,6 +58,12 @@ as
     , p_comment     in flow_instance_event_log.lgpr_comment%type default null
     );
 
+  procedure reset_process_to_running
+    (
+      p_subflow_rec  in flow_subflows%rowtype 
+    , p_comment      in flow_instance_event_log.lgpr_comment%type default null
+    );
+
   procedure set_priority
     (
       p_process_id  in flow_processes.prcs_id%type
