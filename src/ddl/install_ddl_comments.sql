@@ -32,13 +32,15 @@ comment on table flow_configuration         is 'Flows for APEX table containing 
 comment on table flow_messages              is 'Flows for APEX table containing language-specific error and warning messages used by Flows for APEX.';
 comment on table flow_iterated_objects      is 'Flows for APEX table containing live run-time state of all objects that are iterated or looped.';
 
-comment on column flow_diagrams.dgrm_id           is 'Unique reference number for a diagram'; 
-comment on column flow_diagrams.dgrm_name         is 'diagram name - often the business process name'; 
-comment on column flow_diagrams.dgrm_version      is 'version of this diagram'; 
-comment on column flow_diagrams.dgrm_status       is 'current diagram status - draft, released (for normal production use), depracated (for use only by current instances), or archived (no longer in use)'; 
-comment on column flow_diagrams.dgrm_category     is ' '; 
-comment on column flow_diagrams.dgrm_last_update  is ' '; 
-comment on column flow_diagrams.dgrm_content      is ' '; 
+comment on column flow_diagrams.dgrm_id                is 'Unique reference number for a diagram'; 
+comment on column flow_diagrams.dgrm_name              is 'diagram name - often the business process name'; 
+comment on column flow_diagrams.dgrm_version           is 'version of this diagram'; 
+comment on column flow_diagrams.dgrm_status            is 'current diagram status - draft, released (for normal production use), depracated (for use only by current instances), or archived (no longer in use)'; 
+comment on column flow_diagrams.dgrm_category          is ' '; 
+comment on column flow_diagrams.dgrm_last_update       is ' '; 
+comment on column flow_diagrams.dgrm_content           is ' '; 
+comment on column flow_diagrams.dgrm_short_description is 'brief explanation of the diagram'; 
+comment on column flow_diagrams.dgrm_description       is 'more detailed explanation of the diagram'; 
 
 comment on column FLOW_CONNECTIONS.CONN_ID is 'Connection ID. A system generated unique identifier for a connection.  Note that the Connection ID changes when a diagram is re-parsed.';                          
 comment on column FLOW_CONNECTIONS.CONN_BPMN_ID is 'The unique identifier for a connection that is contained in the BPMN process diagram.';                     
