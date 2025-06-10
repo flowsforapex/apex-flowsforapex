@@ -299,7 +299,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'rewind-no-parent-call-act', 'en', q'[Rewind - no parent call activity subflow found to rewind to.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'rewind-parent-not-call-act', 'en', q'[Rewind - parent subflow is not a call activity to rewind to.']' );
+    values ( 'rewind-parent-not-call-act', 'en', q'[Rewind - parent subflow is not a call activity to rewind to.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'gateway-no-previous-gw', c_load_lang, q'[No previous opening parallel or inclusive gateway found for subflow %0.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
