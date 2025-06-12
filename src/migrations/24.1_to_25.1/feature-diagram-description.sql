@@ -15,4 +15,9 @@ PROMPT >> Add dgrm_description
 
   alter table flow_diagrams add dgrm_description clob;
   comment on column flow_diagrams.dgrm_description is 'more detailed explanation of the diagram';
+
+PROMPT >> Add dgrm_icon
+
+  alter table flow_diagrams add dgrm_icon varchar2(50 char);
+  comment on column flow_diagrams.dgrm_icon is 'icon for this diagram';
 /

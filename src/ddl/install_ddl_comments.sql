@@ -41,6 +41,7 @@ comment on column flow_diagrams.dgrm_last_update       is ' ';
 comment on column flow_diagrams.dgrm_content           is ' '; 
 comment on column flow_diagrams.dgrm_short_description is 'brief explanation of the diagram'; 
 comment on column flow_diagrams.dgrm_description       is 'more detailed explanation of the diagram'; 
+comment on column flow_diagrams.dgrm_icon              is 'icon for this diagram'; 
 
 comment on column FLOW_CONNECTIONS.CONN_ID is 'Connection ID. A system generated unique identifier for a connection.  Note that the Connection ID changes when a diagram is re-parsed.';                          
 comment on column FLOW_CONNECTIONS.CONN_BPMN_ID is 'The unique identifier for a connection that is contained in the BPMN process diagram.';                     
