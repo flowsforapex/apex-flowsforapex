@@ -1120,6 +1120,7 @@ as
     l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_short_description => '||dbms_assert.enquote_literal(r_diagrams.dgrm_short_description)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_description => '||dbms_assert.enquote_literal(r_diagrams.dgrm_description)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_icon => '||dbms_assert.enquote_literal(r_diagrams.dgrm_icon)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_content => l_dgrm_content'||utl_tcp.crlf||');'||utl_tcp.crlf;
@@ -1232,6 +1233,7 @@ as
       dgrm_name              flow_diagrams.dgrm_name%type,
       dgrm_short_description flow_diagrams.dgrm_short_description%type,
       dgrm_description       flow_diagrams.dgrm_description%type,
+      dgrm_icon              flow_diagrams.dgrm_icon%type,
       dgrm_version           flow_diagrams.dgrm_version%type,
       dgrm_status            flow_diagrams.dgrm_status%type,
       dgrm_category          flow_diagrams.dgrm_category%type,
@@ -1256,6 +1258,7 @@ as
         dgrm_name,
         dgrm_short_description,
         dgrm_description,
+        dgrm_icon,
         dgrm_version,
         dgrm_status,
         dgrm_category,
@@ -1293,6 +1296,7 @@ as
           l_json_object.put('dgrm_name' ,  l_flows(i).dgrm_name);
           l_json_object.put('dgrm_short_description' ,  l_flows(i).dgrm_short_description);
           l_json_object.put('dgrm_description' ,  l_flows(i).dgrm_description);
+          l_json_object.put('dgrm_icon' ,  l_flows(i).dgrm_icon);
           l_json_object.put('dgrm_version' ,  l_flows(i).dgrm_version);
           l_json_object.put('dgrm_status' ,  l_flows(i).dgrm_status);
           l_json_object.put('dgrm_category' ,  l_flows(i).dgrm_category);
@@ -1430,6 +1434,7 @@ as
         pi_dgrm_name              in flow_diagrams.dgrm_name%type,
         pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type,
         pi_dgrm_description       in flow_diagrams.dgrm_description%type default null,
+        pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null,
         pi_dgrm_category          in flow_diagrams.dgrm_category%type,
         pi_dgrm_version           in flow_diagrams.dgrm_version%type,
         pi_dgrm_content           in flow_diagrams.dgrm_content%type,
@@ -1454,6 +1459,7 @@ as
             pi_dgrm_name => pi_dgrm_name,
             pi_dgrm_short_description => pi_dgrm_short_description,
             pi_dgrm_description => pi_dgrm_description,
+            pi_dgrm_icon => pi_dgrm_icon,
             pi_dgrm_version => pi_dgrm_version,
             pi_dgrm_category => pi_dgrm_category,
             pi_dgrm_content => l_dgrm_content,
@@ -1480,6 +1486,7 @@ as
         l_dgrm_name              flow_diagrams.dgrm_name%type;
         l_dgrm_short_description flow_diagrams.dgrm_short_description%type;
         l_dgrm_description       flow_diagrams.dgrm_description%type;
+        l_dgrm_icon              flow_diagrams.dgrm_icon%type;
         l_dgrm_category          flow_diagrams.dgrm_category%type;
         l_dgrm_version           flow_diagrams.dgrm_version%type;
         l_dgrm_content           flow_diagrams.dgrm_content%type;
@@ -1505,6 +1512,7 @@ as
             l_dgrm_name              := l_json_object.get_String('dgrm_name');
             l_dgrm_short_description := l_json_object.get_String('dgrm_short_description');
             l_dgrm_description       := l_json_object.get_String('dgrm_description');
+            l_dgrm_icon              := l_json_object.get_String('dgrm_icon');
             l_dgrm_version           := l_json_object.get_String('dgrm_version');
             l_dgrm_category          := l_json_object.get_String('dgrm_category');
             l_dgrm_name              := l_json_object.get_String('dgrm_name');
@@ -1522,6 +1530,7 @@ as
                 , pi_dgrm_name => l_dgrm_name
                 , pi_dgrm_short_description => l_dgrm_short_description
                 , pi_dgrm_description => l_dgrm_description
+                , pi_dgrm_icon => l_dgrm_icon
                 , pi_dgrm_category => l_dgrm_category
                 , pi_dgrm_version => l_dgrm_version
                 , pi_dgrm_content => l_clob
@@ -1557,6 +1566,7 @@ as
   , pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_new_version            in flow_diagrams.dgrm_version%type
@@ -1570,6 +1580,7 @@ as
                          pi_dgrm_name => pi_dgrm_name,
                          pi_dgrm_short_description => pi_dgrm_short_description,
                          pi_dgrm_description => pi_dgrm_description,
+                         pi_dgrm_icon => pi_dgrm_icon,
                          pi_dgrm_category => pi_dgrm_category,
                          pi_dgrm_version => pi_dgrm_version);
       when 'SAVE' then
@@ -1578,6 +1589,7 @@ as
           pi_dgrm_name => pi_dgrm_name,
           pi_dgrm_short_description => pi_dgrm_short_description,
           pi_dgrm_description => pi_dgrm_description,
+          pi_dgrm_icon => pi_dgrm_icon,
           pi_dgrm_category => pi_dgrm_category,
           pi_dgrm_version => pi_dgrm_version);
       when 'DELETE' then

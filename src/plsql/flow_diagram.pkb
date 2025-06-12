@@ -17,6 +17,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -43,8 +44,8 @@ as
 
     if l_dgrm_id is null then
       insert
-        into flow_diagrams ( dgrm_name, dgrm_short_description, dgrm_description, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
-        values ( pi_dgrm_name, pi_dgrm_short_description, pi_dgrm_description,
+        into flow_diagrams ( dgrm_name, dgrm_short_description, dgrm_description, dgrm_icon, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
+        values ( pi_dgrm_name, pi_dgrm_short_description, pi_dgrm_description, pi_dgrm_icon,
                  pi_dgrm_version, pi_dgrm_category,
                  pi_dgrm_status, systimestamp, pi_dgrm_content )
       returning dgrm_id into l_dgrm_id
@@ -54,6 +55,7 @@ as
         update flow_diagrams
           set dgrm_short_description = pi_dgrm_short_description
             , dgrm_description = pi_dgrm_description
+            , dgrm_icon = pi_dgrm_icon
             , dgrm_content = pi_dgrm_content
             , dgrm_last_update = systimestamp
             , dgrm_status  = pi_dgrm_status
@@ -81,6 +83,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -92,7 +95,7 @@ as
     l_dgrm_id       flow_diagrams.dgrm_id%type;
   begin
     l_dgrm_id := upload_diagram ( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
-                                  pi_dgrm_short_description => pi_dgrm_short_description, pi_dgrm_description => pi_dgrm_description,
+                                  pi_dgrm_short_description => pi_dgrm_short_description, pi_dgrm_description => pi_dgrm_description, pi_dgrm_icon => pi_dgrm_icon,
                                   pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
                                   pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite,
                                   pi_log_comment => pi_log_comment
@@ -104,6 +107,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -116,7 +120,7 @@ as
   begin
 
     l_dgrm_id := upload_diagram ( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
-                                  pi_dgrm_short_description => pi_dgrm_short_description, pi_dgrm_description => pi_dgrm_description,
+                                  pi_dgrm_short_description => pi_dgrm_short_description, pi_dgrm_description => pi_dgrm_description, pi_dgrm_icon => pi_dgrm_icon,
                                   pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
                                   pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite,
                                   pi_log_comment => pi_log_comment
@@ -151,6 +155,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type)
   return flow_diagrams.dgrm_id%type
@@ -172,6 +177,7 @@ as
             ( pi_dgrm_name              => pi_dgrm_name
             , pi_dgrm_short_description => pi_dgrm_short_description
             , pi_dgrm_description       => pi_dgrm_description
+            , pi_dgrm_icon              => pi_dgrm_icon
             , pi_dgrm_version           => pi_dgrm_version
             , pi_dgrm_category          => pi_dgrm_category
             , pi_dgrm_content           => replace ( flow_constants_pkg.gc_default_xml, '#RANDOM_PRCS_ID#',
@@ -214,6 +220,7 @@ as
                  ( pi_dgrm_name              => r_diagrams.dgrm_name
                  , pi_dgrm_short_description => r_diagrams.dgrm_short_description
                  , pi_dgrm_description       => r_diagrams.dgrm_description
+                 , pi_dgrm_icon              => r_diagrams.dgrm_icon
                  , pi_dgrm_version           => pi_dgrm_version
                  , pi_dgrm_category          => r_diagrams.dgrm_category
                  , pi_dgrm_content           => r_diagrams.dgrm_content
@@ -232,6 +239,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -268,6 +276,7 @@ as
                    ( pi_dgrm_name              => pi_dgrm_name
                    , pi_dgrm_short_description => pi_dgrm_short_description
                    , pi_dgrm_description       => pi_dgrm_description
+                   , pi_dgrm_icon              => pi_dgrm_icon
                    , pi_dgrm_version           => pi_dgrm_version
                    , pi_dgrm_category          => pi_dgrm_category
                    , pi_dgrm_content           => pi_dgrm_content
@@ -542,6 +551,7 @@ as
   , pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type)
   as
@@ -569,6 +579,7 @@ as
        set dgrm_name = pi_dgrm_name,
            dgrm_short_description = pi_dgrm_short_description,
            dgrm_description =  pi_dgrm_description,
+           dgrm_icon =  pi_dgrm_icon,
            dgrm_version = pi_dgrm_version,
            dgrm_category = pi_dgrm_category
      where dgrm_id = pi_dgrm_id;

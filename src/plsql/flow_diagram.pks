@@ -22,6 +22,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type)
   return flow_diagrams.dgrm_id%type;
@@ -31,6 +32,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -44,6 +46,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -57,6 +60,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -81,6 +85,7 @@ as
     pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type
   , pi_dgrm_content           in flow_diagrams.dgrm_content%type
@@ -103,6 +108,7 @@ as
   , pi_dgrm_name              in flow_diagrams.dgrm_name%type
   , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
   , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
   , pi_dgrm_category          in flow_diagrams.dgrm_category%type
   , pi_dgrm_version           in flow_diagrams.dgrm_version%type);
 
