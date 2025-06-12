@@ -5,6 +5,7 @@ as
        , dgrm.dgrm_version
        , dgrm.dgrm_status
        , dgrm.dgrm_category
+       , dgrm.dgrm_icon
     from flow_diagrams dgrm
    where exists 
          ( select null

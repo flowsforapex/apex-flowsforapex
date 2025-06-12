@@ -4,6 +4,7 @@ as
        , dgrm.dgrm_name
        , dgrm.dgrm_short_description
        , dgrm.dgrm_description
+       , dgrm.dgrm_icon
        , dgrm.dgrm_version
        , dgrm.dgrm_status
        , case dgrm_status
