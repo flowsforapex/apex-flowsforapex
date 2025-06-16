@@ -3,13 +3,15 @@ create or replace package body test_024_usertask_approval_task as
 -- Flows for APEX - test_024_usertask_approval_task.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 18-May-2023   Richard Allen - Oracle
+-- Edited  10-Jun-2025   Richard Allen - Flowquest Limited (enhanced for 25.1 APEX Human Task enhs)
 --
 */
 
-  -- uses models 24a
-  -- uses APEX App: FA Testing - Suite 024 - Apploval Component Integration
+  -- uses models 24a,b,c
+  -- uses APEX App: FA Testing - Suite 024 - Approval Component Integration
 
   -- suite(24 usertask - approval task)
   -- rollback(manual)
@@ -20,7 +22,7 @@ create or replace package body test_024_usertask_approval_task as
 
   g_model_a24a constant varchar2(100) := 'A24a - Approval Component - Basic Operation';
   g_model_a24b constant varchar2(100) := 'A24b - Approval Task - Task Cancelation';
-  g_model_a24c constant varchar2(100) := 'A24c -';
+  g_model_a24c constant varchar2(100) := 'A24c - APEX Human Task Ownership and Cancellation';
   g_model_a24d constant varchar2(100) := 'A24d -';
   g_model_a24e constant varchar2(100) := 'A24e -';
   g_model_a24f constant varchar2(100) := 'A24f -';
@@ -33,6 +35,7 @@ create or replace package body test_024_usertask_approval_task as
   g_test_prcs_name_e constant varchar2(100) := 'test 024 - approval task e';
   g_test_prcs_name_f constant varchar2(100) := 'test 024 - approval task f';
   g_test_prcs_name_g constant varchar2(100) := 'test 024 - approval task g';
+  g_test_prcs_name_h constant varchar2(100) := 'test 024 - approval task h';
 
   g_prcs_id_a       flow_processes.prcs_id%type;
   g_prcs_id_b       flow_processes.prcs_id%type;
@@ -41,6 +44,7 @@ create or replace package body test_024_usertask_approval_task as
   g_prcs_id_e       flow_processes.prcs_id%type;
   g_prcs_id_f       flow_processes.prcs_id%type;
   g_prcs_id_g       flow_processes.prcs_id%type;
+  g_prcs_id_h       flow_processes.prcs_id%type;
 
   g_dgrm_a24a_id  flow_diagrams.dgrm_id%type;
   g_dgrm_a24b_id  flow_diagrams.dgrm_id%type;
@@ -50,6 +54,36 @@ create or replace package body test_024_usertask_approval_task as
   g_dgrm_a24f_id  flow_diagrams.dgrm_id%type;
   g_dgrm_a24g_id  flow_diagrams.dgrm_id%type;
 
+  function get_current_sbfl_list 
+  ( p_prcs_id  in flow_processes.prcs_id%type)
+  return sys.json_element_t
+  is
+    l_sbfl_list varchar2(4000);
+  begin
+    with sbfl_list as (
+           select json_object
+                   ( 'current'        value sf.sbfl_current
+                   , 'iteration_type' value sf.sbfl_iteration_type
+                   , 'iteration_path' value it.iter_display_name
+                   , 'status'         value sf.sbfl_status
+                   ) subflows
+                 , sf.sbfl_prcs_id 
+                 , sf.sbfl_current 
+                 , it.iter_display_name sbfl_iteration_path     
+           from flow_subflows sf
+           left join flow_iterations it
+             on sf.sbfl_iter_id = it.iter_id
+           order by sbfl_current, it.iter_display_name
+           )
+    select json_arrayagg (sl.subflows order by sl.sbfl_current asc, sl.sbfl_iteration_path asc returning varchar2(4000)) sbfl_array
+      into l_sbfl_list
+    from sbfl_list sl
+    join flow_processes p
+      on p.prcs_id = sl.sbfl_prcs_id
+    where p.prcs_id = p_prcs_id;
+    return sys.json_element_t.parse(l_sbfl_list);
+  end get_current_sbfl_list;
+
   procedure set_up_tests
   is 
   begin
@@ -57,7 +91,7 @@ create or replace package body test_024_usertask_approval_task as
     -- get dgrm_ids to use for comparison
     g_dgrm_a24a_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24a );
     g_dgrm_a24b_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24b );
-    --g_dgrm_a24c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24c );
+    g_dgrm_a24c_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24c );
     --g_dgrm_a24d_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24d );
     --g_dgrm_a24e_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24e );
     --g_dgrm_a24f_id := test_helper.set_dgrm_id( pi_dgrm_name => g_model_a24f );
@@ -65,7 +99,7 @@ create or replace package body test_024_usertask_approval_task as
 
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24a_id);
     flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24b_id);
-    --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24c_id);
+    flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24c_id);
     --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24d_id);
     --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24e_id);
     --flow_bpmn_parser_pkg.parse( pi_dgrm_id => g_dgrm_a24f_id);
@@ -565,6 +599,435 @@ create or replace package body test_024_usertask_approval_task as
   end approval_task_cleanup_sbfl_deletion;
 
 
+  -- test(H - APEX Human Task - Setting Potential Owner and Business Admin
+  procedure AHT_set_pot_owner_and_business_admin
+  is
+   l_actual          sys_refcursor;
+    l_expected        sys_refcursor;
+    l_dgrm_id         flow_diagrams.dgrm_id%type;
+    l_prcs_name       flow_processes.prcs_name%type;
+    l_prcs_id         flow_processes.prcs_id%type;
+    l_sbfl_id         flow_subflows.sbfl_id%type;
+    l_task_id         number;
+    l_expected_sbfls  sys.json_element_t;
+    l_actual_sbfls    sys.json_element_t;
+  begin
+    -- get dgrm_id for A25h
+    l_dgrm_id := g_dgrm_a24c_id;
+    l_prcs_name := g_test_prcs_name_h;
+    -- create a new instance
+    l_prcs_id := flow_api_pkg.flow_create
+                  ( pi_dgrm_id   => l_dgrm_id
+                  , pi_prcs_name => l_prcs_name
+                  );
+    g_prcs_id_h := l_prcs_id;
+
+    -- check no existing process variables    
+    open l_actual for
+    select *
+    from flow_process_variables
+    where prov_prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_have_count( 0 );
+
+    -- set the app_id (important for Approval Tasks)
+    flow_process_vars.set_var ( pi_prcs_id => l_prcs_id
+                              , pi_var_name => 'Ste24_Test_App_ID'
+                              , pi_vc2_value =>  g_human_task_app_id
+                              );
+
+    -- set the business_ref
+    flow_process_vars.set_business_ref( pi_prcs_id    => l_prcs_id
+                                        , pi_vc2_value  => '7839' -- king
+                                        , pi_scope      => 0
+                                        );
+    
+    -- start process and check running status
+    
+    flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_running   as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );
+
+    -- check initial subflows running
+
+    open l_expected for
+       select
+          l_prcs_id as sbfl_prcs_id,
+          l_dgrm_id as sbfl_dgrm_id,
+          'Activity_Pre' as sbfl_current,
+          flow_constants_pkg.gc_sbfl_status_running sbfl_status
+       from dual;
+    open l_actual for
+       select sbfl_prcs_id, sbfl_dgrm_id, sbfl_current, sbfl_status 
+       from flow_subflows 
+       where sbfl_prcs_id = l_prcs_id
+       and sbfl_status not in ( 'split', 'in subprocess');
+    ut.expect( l_actual ).to_equal( l_expected ).unordered;
+    -- step forward to the APEX Task
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_Pre' );
+    -- check subflow status
+    l_expected_sbfls := sys.json_element_t.parse('
+    [
+      {"current":"Activity_Action_A","iteration_type":null,"iteration_path":null,"status":"waiting for approval"}
+    ]
+    ');
+    l_actual_sbfls := get_current_sbfl_list(p_prcs_id => l_prcs_id);
+    ut.expect( l_actual_sbfls ).to_equal( l_expected_sbfls );
+    -- check for task Id returned
+
+        select sbfl_apex_task_id
+          into l_task_id
+          from flow_subflows
+         where sbfl_prcs_id = l_prcs_id
+           and sbfl_id      = test_helper.get_sbfl_id (pi_prcs_id => l_prcs_id, pi_current => 'Activity_Action_A');
+
+    ut.expect(l_task_id).to_be_not_null();     
+
+    -- check the potential owner and business admin was set correctly on the apex task
+    
+    open l_expected for 
+      select 'FLOWSTESTER1' as participant
+           , 'POTENTIAL_OWNER' as participant_type
+           , 'USER' as identity_type
+      from dual
+      union all
+      select 'FLOWSTESTER2' as participant
+           , 'BUSINESS_ADMIN' as participant_type
+           , 'USER' as identity_type
+      from dual;
+    open l_actual for
+      select participant, participant_type, identity_type
+      from apex_task_participants
+      where  task_id = l_task_id
+      and    participant_type in ('POTENTIAL_OWNER', 'BUSINESS_ADMIN');
+    ut.expect(l_actual).to_equal(l_expected).unordered;
+
+    -- check the subject, priority and business ref were set correctly
+    open l_expected for 
+      select 'Task Subject Assigned from Flows - Task A1' as subject
+           , 2 as priority
+           , '7839' as detail_pk
+      from dual;
+    open l_actual for
+      select subject, priority, detail_pk
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- change session to the task owner
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    apex_session.create_session ( p_app_id => g_human_task_app_id 
+                                , p_page_id => 3
+                                , p_username => 'FLOWSTESTER1' 
+                                );
+    -- complete the task
+    apex_approval.complete_task ( p_task_id => l_task_id);
+    -- return to new session as original user
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    -- check subflow status
+    l_expected_sbfls := sys.json_element_t.parse('
+    [
+      {"current":"Activity_ManagerSubProc","iteration_type":null,"iteration_path":null,"status":"in subprocess"},
+      {"current":"Activity_fin_approval","iteration_type":null,"iteration_path":null,"status":"waiting for approval"}
+    ]
+    ');
+    l_actual_sbfls := get_current_sbfl_list(p_prcs_id => l_prcs_id);
+    ut.expect( l_actual_sbfls ).to_equal( l_expected_sbfls );
+    -- check the task ID was returned
+    select sbfl_apex_task_id
+      into l_task_id
+      from flow_subflows
+     where sbfl_prcs_id = l_prcs_id
+       and sbfl_current = 'Activity_fin_approval';
+    ut.expect(l_task_id).to_be_not_null();  
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the potential owner and business admin was set correctly on the apex task
+    open l_expected for 
+      select 'FLOWSTESTER1' as participant
+           , 'POTENTIAL_OWNER' as participant_type
+           , 'USER' as identity_type
+      from dual
+      union all
+      select 'FLOWSTESTER2' as participant
+           , 'BUSINESS_ADMIN' as participant_type
+           , 'USER' as identity_type
+      from dual;
+    open l_actual for
+      select participant, participant_type, identity_type
+      from apex_task_participants
+      where  task_id = l_task_id
+      and    participant_type in ('POTENTIAL_OWNER', 'BUSINESS_ADMIN');
+    ut.expect(l_actual).to_equal(l_expected).unordered;
+    -- check the subject, priority and business ref were set correctly
+    open l_expected for 
+      select 'FIN APPROVAL - TASK B' as subject
+           , 4 as priority
+           , '7839' as detail_pk
+      from dual;
+    open l_actual for
+      select subject, priority, detail_pk
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- change session to the approver
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    apex_session.create_session ( p_app_id => g_human_task_app_id 
+                                , p_page_id => 3
+                                , p_username => 'FLOWSTESTER1' 
+                                );
+    -- make the approval
+    apex_approval.complete_task ( p_task_id => l_task_id
+                                , p_outcome => apex_approval.c_task_outcome_approved
+                                );
+    -- return to new session as original user
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+
+    -- check workflow has moved forwards
+    l_expected_sbfls := sys.json_element_t.parse('
+    [
+      {"current":"Activity_ManagerSubProc","iteration_type":null,"iteration_path":null,"status":"in subprocess"},
+      {"current":"Activity_MgrApprove","iteration_type":null,"iteration_path":null,"status":"waiting for approval"}
+    ]
+    ');
+    l_actual_sbfls := get_current_sbfl_list(p_prcs_id => l_prcs_id);
+    ut.expect( l_actual_sbfls ).to_equal( l_expected_sbfls );
+    -- check the task ID was returned
+    select sbfl_apex_task_id
+      into l_task_id
+      from flow_subflows
+     where sbfl_prcs_id = l_prcs_id
+       and sbfl_current = 'Activity_MgrApprove';
+    ut.expect(l_task_id).to_be_not_null();
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the potential owner and business admin was set correctly on the apex task
+    open l_expected for 
+      select 'FLOWSTESTER2' as participant
+           , 'POTENTIAL_OWNER' as participant_type
+           , 'USER' as identity_type
+      from dual
+      union all
+      select 'FLOWSTESTER1' as participant
+           , 'BUSINESS_ADMIN' as participant_type
+           , 'USER' as identity_type
+      from dual;  
+    open l_actual for
+      select participant, participant_type, identity_type
+      from apex_task_participants
+      where  task_id = l_task_id
+      and    participant_type in ('POTENTIAL_OWNER', 'BUSINESS_ADMIN');
+    ut.expect(l_actual).to_equal(l_expected).unordered;
+    -- check the subject, priority and business ref were set correctly
+    open l_expected for 
+      select 'Manager Approval Subject from F4A' as subject
+           , 1 as priority
+           , '7839' as detail_pk
+      from dual;
+    open l_actual for
+      select subject, priority, detail_pk
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- change session to the approver
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    apex_session.create_session ( p_app_id => g_human_task_app_id 
+                                , p_page_id => 3
+                                , p_username => 'FLOWSTESTER2' 
+                                );
+    -- make the approval
+    apex_approval.complete_task ( p_task_id => l_task_id
+                                , p_outcome => apex_approval.c_task_outcome_approved
+                                );
+    -- return to new session as original user
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    -- check workflow has moved forwards
+    l_expected_sbfls := sys.json_element_t.parse('
+    [
+      {"current":"Activity_VP_Approval","iteration_type":null,"iteration_path":null,"status":"waiting for approval"}
+    ]
+    ');
+    l_actual_sbfls := get_current_sbfl_list(p_prcs_id => l_prcs_id);
+    ut.expect( l_actual_sbfls ).to_equal( l_expected_sbfls );
+    -- check the task ID was returned
+    select sbfl_apex_task_id
+      into l_task_id
+      from flow_subflows
+     where sbfl_prcs_id = l_prcs_id
+       and sbfl_current = 'Activity_VP_Approval';
+    ut.expect(l_task_id).to_be_not_null();
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the potential owner and business admin was set correctly on the apex task
+    open l_expected for 
+      select 'FLOWSTESTER1' as participant
+           , 'POTENTIAL_OWNER' as participant_type
+           , 'USER' as identity_type
+      from dual
+      union all
+      select 'FLOWSTESTER2' as participant
+           , 'BUSINESS_ADMIN' as participant_type
+           , 'USER' as identity_type
+      from dual;
+    open l_actual for
+      select participant, participant_type, identity_type
+      from apex_task_participants
+      where  task_id = l_task_id
+      and    participant_type in ('POTENTIAL_OWNER', 'BUSINESS_ADMIN');
+    ut.expect(l_actual).to_equal(l_expected).unordered;
+    -- check the subject, priority (not set) and business ref were set correctly
+    open l_expected for 
+      select 'VP Approval' as subject
+           , 3 as priority
+           , '7839' as detail_pk
+      from dual;
+    open l_actual for
+      select subject, priority, detail_pk
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- check the task is in the correct state
+    open l_expected for 
+      select 'ASSIGNED' as state_code
+      from dual;
+    open l_actual for
+      select state_code
+      from apex_tasks
+      where  task_id = l_task_id;
+    ut.expect(l_actual).to_equal(l_expected);
+    -- change session to the approver
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;    
+    apex_session.create_session ( p_app_id => g_human_task_app_id 
+                                , p_page_id => 3
+                                , p_username => 'FLOWSTESTER1' 
+                                );
+    -- make the approval
+    apex_approval.complete_task ( p_task_id => l_task_id
+                                , p_outcome => apex_approval.c_task_outcome_approved
+                                );
+    -- return to new session as original user
+    begin
+      apex_session.delete_session;
+    exception
+      when others then 
+        null;
+    end;
+    -- check workflow has moved forwards
+    l_expected_sbfls := sys.json_element_t.parse('
+    [
+      {"current":"Activity_Order_Laptop","iteration_type":null,"iteration_path":null,"status":"running"}
+    ]
+    ');
+    l_actual_sbfls := get_current_sbfl_list(p_prcs_id => l_prcs_id);
+    ut.expect( l_actual_sbfls ).to_equal( l_expected_sbfls );
+    -- step forward to the end
+    test_helper.step_forward(pi_prcs_id => l_prcs_id, pi_current => 'Activity_Order_Laptop' );
+    -- check workflow has completed
+    open l_expected for
+        select
+        l_dgrm_id                                   as prcs_dgrm_id,
+        l_prcs_name                                 as prcs_name,
+        flow_constants_pkg.gc_prcs_status_completed as prcs_status
+        from dual;
+    open l_actual for
+        select prcs_dgrm_id, prcs_name, prcs_status 
+          from flow_processes p
+         where p.prcs_id = l_prcs_id;
+    ut.expect( l_actual ).to_equal( l_expected );
+  end AHT_set_pot_owner_and_business_admin;
+
+
   --afterall
   procedure tear_down_tests  
   is
@@ -576,7 +1039,7 @@ create or replace package body test_024_usertask_approval_task as
     flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_e,  p_comment  => 'Ran by utPLSQL as Test Suite 024');
     flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_f,  p_comment  => 'Ran by utPLSQL as Test Suite 024');
     flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_g,  p_comment  => 'Ran by utPLSQL as Test Suite 024');
-
+    flow_api_pkg.flow_delete(p_process_id  =>  g_prcs_id_h,  p_comment  => 'Ran by utPLSQL as Test Suite 024');
 
     ut.expect( v('APP_SESSION')).to_be_null;
   end tear_down_tests;

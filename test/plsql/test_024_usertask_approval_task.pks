@@ -3,13 +3,15 @@ create or replace package test_024_usertask_approval_task as
 -- Flows for APEX - test_024_usertask_approval_task.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2025.
 --
 -- Created 16-May-2023   Richard Allen - Oracle
+-- edited  10-Jun-2025   Richard Allen - Flowquest Limited (enhanced for 25.1 APEX Human Task enhs)
 --
 */
 
-  -- uses models 24a
-  -- uses APEX App: FA Testing - Suite 024 - Apploval Component Integration
+  -- uses models 24a,b,c
+  -- uses APEX App: FA Testing - Suite 024 - Approval Component Integration
 
   --%suite(24 usertask - approval task)
   --%rollback(manual)
@@ -38,6 +40,11 @@ create or replace package test_024_usertask_approval_task as
 
   --%test(G - Approval Task cancelation when Subflow deleted)
   procedure approval_task_cleanup_sbfl_deletion;
+
+  --%test(H - APEX Human Task - Setting Potential Owner and Business Admin)
+  procedure AHT_set_pot_owner_and_business_admin;
+
+
 
   --%afterall
   procedure tear_down_tests;
