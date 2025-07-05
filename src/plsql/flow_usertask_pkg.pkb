@@ -1134,10 +1134,10 @@ as
           , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
           );  
           l_do_next_step := true; --TODO Change this to allow step restart
-  --     APEX bug in APEX < 24.2.5 means expired tasks do not report their new status 
-  --     so. handling expired with the 'else' clause temporarily
-  --      when apex_human_task.c_task_state_expired then
-        else
+        when apex_human_task.c_task_state_expired then
+          -- APEX bug in APEX <= 24.2.7 means that state_code for an expired task is not set to 'EXPIRED' but to its previous state.
+          -- use of the plugin in APEX versions with this bug will result in expirations not getting returned wit status of 'EXPIRED'
+          -- users should use 'execute pl/sql' in place of the plugin.  p_state_code must be manually set to 'EXPIRED' in that case.
           -- expire task
           flow_logging.log_step_event
           ( p_sbfl_rec => l_sbfl_rec
@@ -1153,8 +1153,8 @@ as
           -- , p_comment => 'setting do next step'
           -- );
           l_do_next_step := true; 
-  --      else   -- uncomment when APEX fixed
-  --        null;
+        else   
+          null;
       end case;
 
       if l_do_next_step then      

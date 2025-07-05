@@ -721,7 +721,21 @@
       "dgrm_status": "draft",
       "dgrm_category": "Testing",
       "file": "A24b - Approval Task - Task Cancelation_0.bpmn"
-    },    
+    },  
+    {
+      "dgrm_name":"A24c - APEX Human Task Ownership and Cancellation",
+      "dgrm_version":"0",
+      "dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A24c - APEX Human Task Ownership and Cancellation_0.bpmn"
+    },
+    {
+      "dgrm_name":"A24d - APEX Human Task - Cancellation - New Plugin",
+      "dgrm_version":"0",
+      "dgrm_status":"draft",
+      "dgrm_category":"Testing",
+      "file":"A24d - APEX Human Task - Cancellation - New Plugin_0.bpmn"
+    },
     {
       "dgrm_name": "A25a - Script Task Proc Var Binding and Substitution",
       "dgrm_version": "0",
