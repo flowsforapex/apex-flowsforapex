@@ -38,13 +38,21 @@ create or replace package test_024_usertask_approval_task as
   --%test(F - Basic Approval Task - Bad Priority Provided)
   procedure basic_approval_action_source_query_bad_priority;
 
-  --%test(G - Approval Task cancelation when Subflow deleted)
+  --%test(G - Approval Task cancelation when Subflow deleted - legacy pre 25.1)
   procedure approval_task_cleanup_sbfl_deletion;
 
   --%test(H - APEX Human Task - Setting Potential Owner and Business Admin)
   procedure AHT_set_pot_owner_and_business_admin;
 
+  --%test(I - APEX Human Task - Client Side Task Cancelation)
+  procedure AHT_client_side_task_cancelation;
 
+  --%test(J - APEX Human Task - Client Side Task Expiration)
+  procedure AHT_client_side_task_expiration;
+
+  --%test(K - APEX Human Task - Client Side Task Error State)
+  --%disabled
+  procedure AHT_client_side_task_error_state;  -- not currently supported in APEX 24.1/24.2
 
   --%afterall
   procedure tear_down_tests;

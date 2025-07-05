@@ -835,7 +835,12 @@ create or replace package body flow_api_pkg as
     , p_outcome       in flow_process_variables.prov_var_vc2%type default null
     )
   is
+    l_session_id   number;
   begin
+      -- create an APEX session if this has come in from outside APEX
+    if sys_context('apex$session','app_user')  is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+    end if; 
     flow_usertask_pkg.return_task_state_outcome   ( p_process_id    => p_process_id
                                                   , p_subflow_id    => p_subflow_id
                                                   , p_step_key      => p_step_key
@@ -843,6 +848,9 @@ create or replace package body flow_api_pkg as
                                                   , p_state_code    => p_state_code
                                                   , p_outcome       => p_outcome
                                                   );
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id ); 
+    end if;
   end return_task_state_outcome;
 
   function get_task_potential_owners 
