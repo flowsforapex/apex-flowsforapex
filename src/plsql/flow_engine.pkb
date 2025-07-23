@@ -1168,7 +1168,7 @@ begin
   , p1 => p_step_info.target_objt_subtag
   );
   apex_debug.trace
-  ( p_message => 'Runing Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
+  ( p_message => 'Running Step Context - sbfl_id : %0, sbfl_last_completed : %1, sbfl_prcs_id : %2'
   , p0 => p_sbfl_rec.sbfl_id
   , p1 => p_sbfl_rec.sbfl_last_completed
   , p2 => p_sbfl_rec.sbfl_prcs_id
@@ -1498,6 +1498,25 @@ begin
                 , p_lock_process => false 
                 , p_lock_subflow => true
                 );
+
+  -- prevent any external complete_step calls when the process is suspended
+  if  flow_instances.status (p_process_id) = flow_constants_pkg.gc_prcs_status_suspended 
+      and not p_recursive_call then
+      
+    apex_debug.info
+    ( p_message => 'Process %0 is suspended.  Cannot complete step on subflow %1.'
+    , p0        => p_process_id
+    , p1        => p_subflow_id
+    );
+    flow_errors.handle_instance_error
+    ( pi_prcs_id     => p_process_id
+    , pi_sbfl_id     => p_subflow_id
+    , pi_message_key => 'suspended-cannot-complete-step'
+    , p0            => p_process_id
+    , p1            => p_subflow_id
+    );
+    --F$MESSAGE 'suspended-cannot-complete-step' || 'Process %0 is suspended.  Cannot complete step on subflow %1.'
+  end if;
 
   -- check step key is valid
   if flow_engine_util.step_key_valid( pi_prcs_id            => p_process_id
@@ -1994,43 +2013,22 @@ begin
     , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
     );
 
-    -- see if instance can be reset to running
-    select count(sbfl_id)
-      into l_num_error_subflows
-      from flow_subflows sbfl 
-     where sbfl.sbfl_prcs_id = p_process_id
-       and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
-    ;
-    if l_num_error_subflows = 0 then
-      update flow_processes prcs
-         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
-           , prcs.prcs_was_altered = 'Y'
-           , prcs.prcs_last_update = systimestamp
-           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  )  
-       where prcs.prcs_id = p_process_id
-      ;
-      flow_logging.log_instance_event
-      ( p_process_id    => p_process_id
-      , p_objt_bpmn_id  => l_sbfl_rec.sbfl_current
-      , p_event         => flow_constants_pkg.gc_prcs_status_running
-      , p_event_level   => flow_constants_pkg.gc_logging_level_abnormal_events
-      );
-    else
-      -- mark instance as altered anyhow
-      flow_instances.set_was_altered (p_process_id => p_process_id);
-    end if;
+    -- see if instance can be reset to running - mark instance as altered anyhow
+    flow_instances.reset_process_to_running
+    ( p_subflow_rec => l_sbfl_rec
+    , p_comment     => p_comment
+    );
 
-    if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition then
-      -- restart object contains a timer.  run var exps and step forward immediately
+    if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition 
+    and l_sbfl_rec.sbfl_status = flow_constants_pkg.gc_sbfl_status_error  then
+      -- restart object contains a timer and sbfl in error => timer step with an error - run var exps and step forward immediately
+      -- note l_sbfl_rec is the subflow status when the call was made.    subflow has been updated subsequently...
       restart_failed_timer_step
       ( p_sbfl_rec => l_sbfl_rec
       , p_step_info => l_step_info
       );
     else
-      -- all other object types.  restart current task
+      -- all other object types, including a timer that is being startded as part of a resume.  restart current task
       run_step 
       ( p_sbfl_rec => l_sbfl_rec
       , p_step_info => l_step_info

@@ -86,23 +86,24 @@ ALTER TABLE flow_objects ADD CONSTRAINT objt_uk UNIQUE ( objt_dgrm_id,
 alter table flow_objects add constraint objt_attributes_ck check ( objt_attributes is json );
 
 CREATE TABLE flow_processes (
-    prcs_id             NUMBER
+    prcs_id                 NUMBER
         GENERATED ALWAYS AS IDENTITY ( START WITH 1 NOCACHE )
     NOT NULL,
-    prcs_dgrm_id        NUMBER NOT NULL,
-    prcs_name           VARCHAR2(150 CHAR) NOT NULL,
-    prcs_status         VARCHAR2(20 CHAR) NOT NULL,
-    prcs_init_ts        TIMESTAMP WITH TIME ZONE NOT NULL,
-    prcs_init_by        VARCHAR2(255 CHAR),
-    prcs_start_ts       TIMESTAMP WITH TIME ZONE,
-    prcs_complete_ts    TIMESTAMP WITH TIME ZONE,  
-    prcs_due_on         TIMESTAMP WITH TIME ZONE,
-    prcs_archived_ts    TIMESTAMP WITH TIME ZONE,
-    prcs_priority       NUMBER,
-    prcs_logging_level  NUMBER,
-    prcs_was_altered    VARCHAR2(1 CHAR),
-    prcs_last_update    TIMESTAMP WITH TIME ZONE,
-    prcs_last_update_by VARCHAR2(255 CHAR)
+    prcs_dgrm_id            NUMBER NOT NULL,
+    prcs_name               VARCHAR2(150 CHAR) NOT NULL,
+    prcs_process_bpmn_id    VARCHAR2(50 CHAR) ,
+    prcs_status             VARCHAR2(20 CHAR) NOT NULL,
+    prcs_init_ts            TIMESTAMP WITH TIME ZONE NOT NULL,
+    prcs_init_by            VARCHAR2(255 CHAR),
+    prcs_start_ts           TIMESTAMP WITH TIME ZONE,
+    prcs_complete_ts        TIMESTAMP WITH TIME ZONE,  
+    prcs_due_on             TIMESTAMP WITH TIME ZONE,
+    prcs_archived_ts        TIMESTAMP WITH TIME ZONE,
+    prcs_priority           NUMBER,
+    prcs_logging_level      NUMBER,
+    prcs_was_altered        VARCHAR2(1 CHAR),
+    prcs_last_update        TIMESTAMP WITH TIME ZONE,
+    prcs_last_update_by     VARCHAR2(255 CHAR)
 );
 
 ALTER TABLE flow_processes ADD CONSTRAINT prcs_pk PRIMARY KEY ( prcs_id );

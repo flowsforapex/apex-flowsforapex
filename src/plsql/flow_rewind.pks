@@ -35,10 +35,11 @@ as
 
   procedure return_to_prior_step
   (
-    p_process_id  in flow_processes.prcs_id%type
-  , p_subflow_id  in flow_subflows.sbfl_id%type
-  , p_new_step    in flow_objects.objt_bpmn_id%type
-  , p_comment     in flow_instance_event_log.lgpr_comment%type default null
+    p_process_id    in flow_processes.prcs_id%type
+  , p_subflow_id    in flow_subflows.sbfl_id%type
+  , p_new_step      in flow_objects.objt_bpmn_id%type
+  , p_is_last_step  in boolean default false
+  , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 
   procedure return_to_last_step
@@ -47,12 +48,12 @@ as
   , p_subflow_id  in flow_subflows.sbfl_id%type
   , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
-
+/*
   function get_prior_exclusive_gateway
   (
     p_process_id  in flow_processes.prcs_id%type
   , p_subflow_id  in flow_subflows.sbfl_id%type
-  ) return flow_objects.objt_bpmn_id%type;
+  ) return flow_objects.objt_bpmn_id%type;*/
 
   procedure rewind_from_subprocess
   (

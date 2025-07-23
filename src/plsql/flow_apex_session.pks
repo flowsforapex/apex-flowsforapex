@@ -16,8 +16,7 @@ as
  function create_api_session
   ( p_dgrm_id            in flow_diagrams.dgrm_id%type default null
   , p_prcs_id            in flow_processes.prcs_id%type default null
-  , p_as_business_admin  in boolean default false 
-  , p_business_admin     in flow_subflows.sbfl_apex_business_admin%type default null
+  , p_process_bpmn_id    in flow_objects.objt_bpmn_id%type default null
   ) return number;
 
  function create_api_session

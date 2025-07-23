@@ -81,6 +81,8 @@ drop view flow_p0008_instance_log_vw;
 drop view flow_p0008_message_subscriptions_vw;
 drop view flow_p0008_subflows_vw;
 drop view flow_p0008_variables_vw;
+drop view flow_p0008_vw;
+drop view flow_p0010_vw;
 drop view flow_p0010_instances_vw;
 drop view flow_p0013_attributes_vw;
 drop view flow_p0013_expressions_vw;
@@ -119,6 +121,7 @@ drop view flow_viewer_vw;
 drop view flow_apex_my_combined_task_list_vw;
 drop view flow_apex_task_inbox_my_tasks_vw;
 drop view flow_apex_task_inbox_vw;
+drop view flow_ai_prompts_vw;
 
 
 PROMPT >> Tables
@@ -150,6 +153,7 @@ drop table flow_rest_event_log cascade constraints;
 drop table flow_iterations cascade constraints;
 drop table flow_iterated_objects cascade constraints;
 drop table flow_simple_form_templates cascade constraints;
+drop table flow_ai_prompts cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================

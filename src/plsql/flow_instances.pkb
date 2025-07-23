@@ -182,6 +182,7 @@ create or replace package body flow_instances as
     , p_starting_object             in  flow_objects.objt_bpmn_id%type default null
     , p_requested_logging_level     in  flow_processes.prcs_logging_level%type default null
     , p_calculated_logging_level    out flow_processes.prcs_logging_level%type
+    , p_process_bpmn_id             out flow_objects.objt_bpmn_id%type
     )
   is
     l_bpmn_process_objt flow_objects%rowtype;
@@ -220,6 +221,7 @@ create or replace package body flow_instances as
     l_logging_level := greatest ( nvl(p_requested_logging_level,0)
                                 , l_logging_level );
     p_calculated_logging_level := l_logging_level;
+    p_process_bpmn_id          := l_bpmn_process_objt.objt_bpmn_id;
   end get_instance_attributes;
 
   procedure set_instance_name
@@ -255,9 +257,9 @@ create or replace package body flow_instances as
     ) return flow_processes.prcs_id%type
   is
     l_new_prcs_id            flow_processes.prcs_id%type;
-    l_bpmn_process_objt      flow_objects%rowtype;
     l_calc_logging_level     flow_processes.prcs_logging_level%type;
     l_instance_name          flow_processes.prcs_name%type;
+    l_process_objt_bpmn_id   flow_objects.objt_bpmn_id%type;
   begin
     apex_debug.enter
     ('create_process'
@@ -308,11 +310,13 @@ create or replace package body flow_instances as
                             , p_starting_object           => p_starting_object
                             , p_requested_logging_level   => p_logging_level
                             , p_calculated_logging_level  => l_calc_logging_level
+                            , p_process_bpmn_id           => l_process_objt_bpmn_id
                             );
 
     -- update the process with the logging level
     update flow_processes prcs
-       set prcs.prcs_logging_level = l_calc_logging_level
+       set prcs.prcs_logging_level    = l_calc_logging_level
+         , prcs.prcs_process_bpmn_id  = l_process_objt_bpmn_id
      where prcs.prcs_id = l_new_prcs_id
        ;
 
@@ -766,6 +770,52 @@ create or replace package body flow_instances as
       raise;
   end resume_process;
 
+  procedure reset_process_to_running
+  (
+    p_subflow_rec  in flow_subflows%rowtype 
+  , p_comment      in flow_instance_event_log.lgpr_comment%type default null
+  ) 
+  is
+    l_num_error_subflows  number;
+  begin
+    -- tries to reset the process instance to running after subflow errors are cleared
+    -- used on - subflow restart step, force next step, and resume process
+    -- assumes the flow_processes record is already locked
+    apex_debug.enter
+    ( 'reset_process_to_running'
+    , 'process_id', p_subflow_rec.sbfl_prcs_id
+    , 'subflow_id', p_subflow_rec.sbfl_id
+    );
+    -- see if instance can be reset to running
+    select count(sbfl_id)
+      into l_num_error_subflows
+      from flow_subflows sbfl 
+     where sbfl.sbfl_prcs_id = p_subflow_rec.sbfl_prcs_id
+       and sbfl.sbfl_status = flow_constants_pkg.gc_sbfl_status_error 
+    ;
+    if l_num_error_subflows = 0 then
+      update flow_processes prcs
+         set prcs.prcs_status = flow_constants_pkg.gc_prcs_status_running
+           , prcs.prcs_was_altered = 'Y'
+           , prcs.prcs_last_update = systimestamp
+           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
+                                                  , sys_context('userenv','os_user')
+                                                  , sys_context('userenv','session_user')
+                                                  )  
+       where prcs.prcs_id = p_subflow_rec.sbfl_prcs_id
+      ;
+      flow_logging.log_instance_event
+      ( p_process_id    => p_subflow_rec.sbfl_prcs_id
+      , p_objt_bpmn_id  => p_subflow_rec.sbfl_current
+      , p_event         => flow_constants_pkg.gc_prcs_status_running
+      , p_event_level   => flow_constants_pkg.gc_logging_level_abnormal_events
+      );
+    else
+      -- mark instance as altered anyhow
+      flow_instances.set_was_altered (p_process_id => p_subflow_rec.sbfl_prcs_id);
+    end if;
+  end reset_process_to_running;
+
   procedure terminate_process
     (
       p_process_id  in flow_processes.prcs_id%type
@@ -1028,6 +1078,19 @@ create or replace package body flow_instances as
        where prcs_id = p_process_id;
       return l_due_on;
   end due_on;
+
+  function status
+    ( p_process_id  in flow_processes.prcs_id%type
+    ) return flow_processes.prcs_status%type
+  is
+      l_status    flow_processes.prcs_status%type;
+  begin
+      select prcs_status
+        into l_status
+        from flow_processes
+       where prcs_id = p_process_id;
+      return l_status;
+  end status;
 
   procedure set_was_altered
     (
