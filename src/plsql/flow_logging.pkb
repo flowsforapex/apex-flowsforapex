@@ -423,8 +423,20 @@ create or replace package body flow_logging as
   , p_var_json          in flow_process_variables.prov_var_json%type default null
   )
   as 
+    l_logging_user  flow_variable_event_log.lgvr_user%type;
   begin 
     if event_logging_level(p_process_id) >= flow_constants_pkg.gc_logging_level_full then
+      
+      l_logging_user := case g_logging_hide_userid 
+        when 'true' then 
+          null
+        else 
+          coalesce  ( sys_context('apex$session','app_user') 
+                    , sys_context('userenv','os_user')
+                    , sys_context('userenv','session_user')
+                    )  
+        end;
+
       insert into flow_variable_event_log
       ( lgvr_prcs_id  
       , lgvr_scope
@@ -432,7 +444,8 @@ create or replace package body flow_logging as
       , lgvr_objt_id	  
       , lgvr_sbfl_id	  
       , lgvr_expr_set	  
-      , lgvr_timestamp  
+      , lgvr_timestamp 
+      , lgvr_user 
       , lgvr_var_type	  
       , lgvr_var_vc2 	  
       , lgvr_var_num  
@@ -449,6 +462,7 @@ create or replace package body flow_logging as
       , p_subflow_id 
       , p_expr_set 
       , systimestamp
+      , l_logging_user 
       , p_var_type 
       , p_var_vc2 
       , p_var_num  
