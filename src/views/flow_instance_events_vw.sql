@@ -11,11 +11,11 @@
 create or replace view flow_instance_events_vw as
 select lgpr_prcs_event as operation
      , lgpr_prcs_event description
-     , lgpr_objt_id as objt
+     , coalesce (objt.objt_name, lgpr_objt_id) as objt
      , lgpr_sbfl_id as subflow
      , lgpr_step_key as step_key
      , lgpr_severity as severity
-     , null as process_level
+     , lgpr_process_level as process_level
      , null as proc_var
      , null as value
      , lgpr_comment as event_comment
@@ -23,10 +23,13 @@ select lgpr_prcs_event as operation
      , lgpr_user as performed_by
      , lgpr_prcs_id as prcs_id 
   from flow_instance_event_log   
-union 
+  join flow_objects objt
+    on lgpr_objt_id = objt.objt_bpmn_id
+   and lgpr_dgrm_id = objt.objt_dgrm_id
+/*union 
 select 'variable set' as operation
      , 'Variable set' as description
-     , lgvr_objt_id as objt
+     , coalesce (objt.objt_name, lgvr_objt_id) as objt
      , lgvr_sbfl_id as subflow
      , null as step_key
      , 8 as severity
@@ -43,6 +46,11 @@ select 'variable set' as operation
      , lgvr_timestamp as performed_on
      , null as performed_by
      , lgvr_prcs_id as prcs_id 
-  from flow_variable_event_log
+  from flow_variable_event_log lgvr
+  join flow_processes prcs
+    on lgvr.lgvr_prcs_id = prcs.prcs_id
+  join flow_objects objt
+    on objt.objt_bpmn_id = lgvr.lgvr_objt_id
+   and objt.objt_dgrm_id = prcs.prcs_dgrm_id */
 order by performed_on
 with read only;

@@ -318,6 +318,7 @@ create or replace package body flow_logging as
       l_instance_log_rec.lgpr_prcs_id         := p_sbfl_rec.sbfl_prcs_id;
       l_instance_log_rec.lgpr_step_key        := p_sbfl_rec.sbfl_step_key;
       l_instance_log_rec.lgpr_sbfl_id         := p_sbfl_rec.sbfl_id;
+      l_instance_log_rec.lgpr_process_level   := p_sbfl_rec.sbfl_process_level;
       l_instance_log_rec.lgpr_dgrm_id         := p_sbfl_rec.sbfl_dgrm_id;
       l_instance_log_rec.lgpr_objt_id         := p_sbfl_rec.sbfl_current;
       l_instance_log_rec.lgpr_prcs_event      := p_event;   

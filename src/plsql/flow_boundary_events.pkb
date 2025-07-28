@@ -407,7 +407,7 @@ is
     ( p_process_id       => p_process_id
     , p_subflow_id       => p_subflow_id
     , p_event            => flow_constants_pkg.gc_step_event_interrupted
-    , p_event_level      => flow_constants_pkg.gc_logging_level_step_progression
+    , p_event_level      => flow_constants_pkg.gc_logging_level_routine
     , p_comment          => 'Interrupted by Boundary Event '||l_boundary_objt_bpmn_id
     );
     -- clean up any APEX Human Tasks started for the interrupted object

@@ -60,10 +60,11 @@ begin
 
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_instance_event_log 
-                          add ( lgpr_sbfl_id    NUMBER
-                              , lgpr_step_key   VARCHAR2(50)
-                              , lgpr_apex_task_id NUMBER
-                              , lgpr_severity    NUMBER
+                          add ( lgpr_sbfl_id       NUMBER
+                              , lgpr_step_key      VARCHAR2(50)
+                              , lgpr_apex_task_id  NUMBER
+                              , lgpr_severity      NUMBER
+                              , lgpr_process_level NUMBER
                               )';
       execute immediate 'alter table flow_instance_event_log 
                          modify lgpr_prcs_name null ';

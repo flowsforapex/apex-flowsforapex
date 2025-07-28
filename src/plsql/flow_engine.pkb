@@ -256,7 +256,7 @@ end flow_process_link_event;
         flow_logging.log_instance_event
         ( p_process_id => p_process_id
         , p_event      => l_process_end_status
-        , p_event_level => flow_constants_pkg.gc_logging_level_step_progression
+        , p_event_level => flow_constants_pkg.gc_logging_level_major_events
         );
         apex_debug.info 
         ( p_message => 'Process Completed with %1 Status: Process %0  '
@@ -949,7 +949,7 @@ begin
                               else flow_constants_pkg.gc_step_event_completed end
     , p_event_level     => case p_force_next_step
                               when true then flow_constants_pkg.gc_logging_level_abnormal_events
-                              else flow_constants_pkg.gc_logging_level_step_progression end
+                              else flow_constants_pkg.gc_logging_level_major_events end
     );
   end if;
   -- release subflow reservation
@@ -1855,7 +1855,7 @@ begin
       flow_logging.log_step_event 
       ( p_sbfl_rec    => l_sbfl_rec
       , p_event       => flow_constants_pkg.gc_step_event_work_started
-      , p_event_level => flow_constants_pkg.gc_logging_level_detailed
+      , p_event_level => flow_constants_pkg.gc_logging_level_routine
       );
       -- commit reservation if this is an external call
       if not p_called_internally then 
@@ -1913,7 +1913,7 @@ begin
         flow_logging.log_step_event 
         ( p_sbfl_rec    => l_sbfl_rec
         , p_event       => flow_constants_pkg.gc_step_event_work_paused
-        , p_event_level => flow_constants_pkg.gc_logging_level_detailed
+        , p_event_level => flow_constants_pkg.gc_logging_level_routine
         );
         -- commit pause if this is an external call
         if not p_called_internally then 
