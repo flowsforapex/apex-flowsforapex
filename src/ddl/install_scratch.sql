@@ -772,4 +772,21 @@ alter table flow_ai_prompts
                                       , aipr_model_name
                                       );
 
+  create table flow_bpmn_types 
+   ( bpmn_code varchar2(15)
+   , bpmn_object_name varchar2(100)
+   , bpmn_tag_name varchar2(100)
+   , bpmn_sub_tag_name varchar2(100)
+   , bpmn_icon varchar2(100)
+   , bpmn_super_type varchar2(20)
+   , bpmn_is_supported char(1) default 'y'
+   , bpmn_interrupting varchar2(1)
+   , constraint flow_bpmn_types_pk primary key (bpmn_code)
+                using index  enable
+   ) ;
+
+  create index flow_bpmn_types_tag2icon 
+  on flow_bpmn_types (bpmn_tag_name, bpmn_sub_tag_name, bpmn_icon, bpmn_interrupting) 
+  ; 
+  
                                       

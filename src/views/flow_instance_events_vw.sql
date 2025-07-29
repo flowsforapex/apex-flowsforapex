@@ -9,9 +9,13 @@
 --
 */
 create or replace view flow_instance_events_vw as
-select lgpr_prcs_event as operation
+with events as (
+     select lgpr_prcs_event as operation
      , lgpr_prcs_event description
      , coalesce (objt.objt_name, lgpr_objt_id) as objt
+     , coalesce (objt.objt_tag_name, 'bpmn:process') as object_type
+     , objt.objt_sub_tag_name as object_sub_type
+     , nvl( objt.objt_interrupting, 2) as object_interrupting
      , lgpr_sbfl_id as subflow
      , lgpr_step_key as step_key
      , lgpr_severity as severity
@@ -23,34 +27,31 @@ select lgpr_prcs_event as operation
      , lgpr_user as performed_by
      , lgpr_prcs_id as prcs_id 
   from flow_instance_event_log   
-  join flow_objects objt
+  left outer join flow_objects objt
     on lgpr_objt_id = objt.objt_bpmn_id
    and lgpr_dgrm_id = objt.objt_dgrm_id
-/*union 
-select 'variable set' as operation
-     , 'Variable set' as description
-     , coalesce (objt.objt_name, lgvr_objt_id) as objt
-     , lgvr_sbfl_id as subflow
-     , null as step_key
-     , 8 as severity
-     , null as process_level
-     , lgvr_var_name as proc_var
-     , case lgvr_var_type 
-          when 'VARCHAR2' then lgvr_var_vc2
-          when 'NUMBER' then to_char(lgvr_var_num)
-          when 'DATE' then to_char (lgvr_var_date, 'DD-MON-YY HH24:MI:SS')
-          when 'TIMESTAMP WITH TIME ZONE' then to_char (lgvr_var_tstz, 'DD-MON-YY HH24:MI:SS TZR')
-          when 'CLOB' then 'CLOB Value'
-          end as value
-     , lgvr_expr_set as event_comment
-     , lgvr_timestamp as performed_on
-     , null as performed_by
-     , lgvr_prcs_id as prcs_id 
-  from flow_variable_event_log lgvr
-  join flow_processes prcs
-    on lgvr.lgvr_prcs_id = prcs.prcs_id
-  join flow_objects objt
-    on objt.objt_bpmn_id = lgvr.lgvr_objt_id
-   and objt.objt_dgrm_id = prcs.prcs_dgrm_id */
-order by performed_on
+)
+select events.operation
+     , events.description
+     , events.objt
+     , events.object_type
+     , events.object_sub_type
+     , bpmn.bpmn_icon
+     , bpmn.bpmn_super_type as bpmn_super_type
+     , events.proc_var
+     , events.value
+     , events.subflow
+     , events.step_key
+     , events.severity
+     , events.process_level
+     , events.event_comment
+     , to_char(events.performed_on, 'YYYY-MM-DD HH24:MI:SSXFF TZR') as performed_on
+     , lower(events.performed_by) as performed_by
+     , events.prcs_id
+  from events
+  join flow_bpmn_types bpmn
+    on bpmn.bpmn_tag_name               = events.object_type
+   and nvl(bpmn.bpmn_sub_tag_name, 'X') = nvl(events.object_sub_type, 'X')
+   and nvl(bpmn.bpmn_interrupting, 2)   = events.object_interrupting
+order by events.performed_on
 with read only;

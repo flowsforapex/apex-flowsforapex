@@ -69,6 +69,10 @@ select prcs_id
        end as event_icon
      , operation
      , objt
+     , object_type
+     , object_sub_type
+     , bpmn_icon
+     , bpmn_super_type
      , proc_var
      , value
      , subflow
