@@ -780,7 +780,7 @@ alter table flow_ai_prompts
    , bpmn_icon varchar2(100)
    , bpmn_super_type varchar2(20)
    , bpmn_is_supported char(1) default 'y'
-   , bpmn_interrupting varchar2(1)
+   , bpmn_interrupting number(1)
    , constraint flow_bpmn_types_pk primary key (bpmn_code)
                 using index  enable
    ) ;

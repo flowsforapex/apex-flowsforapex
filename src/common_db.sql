@@ -194,6 +194,9 @@ PROMPT >> Viewer Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
 
+PROMPT >> Installing Data
+@data/insert_bpmn_type_data.sql
+
 PROMPT >> Engine Messages
 @data/install_engine_messages_de.sql
 @data/install_engine_messages_en.sql

@@ -50,7 +50,7 @@ select prcs_id
         when 'Gateway Processed' then 'subflow '||subflow||' • forward paths - '||event_comment
         when 'start called model' then event_comment
         when 'finish called model' then event_comment
-        else 'Object '||objt||'  subflow ' ||subflow||' • variable '||proc_var||' • value '||value        
+        else 'other operation on Object '||objt||'  subflow ' ||subflow     
        end as event_desc
      , 'u-color-44 fa fa-clock-o' as USER_COLOR
      , case operation
@@ -73,11 +73,8 @@ select prcs_id
      , object_sub_type
      , bpmn_icon
      , bpmn_super_type
-     , proc_var
-     , value
      , subflow
      , step_key
      , process_level
      , severity
-     , performed_by
 from flow_instance_events_vw;

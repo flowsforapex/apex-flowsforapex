@@ -45,8 +45,8 @@ select events.operation
      , events.severity
      , events.process_level
      , events.event_comment
-     , to_char(events.performed_on, 'YYYY-MM-DD HH24:MI:SSXFF TZR') as performed_on
-     , lower(events.performed_by) as performed_by
+     , events.performed_on
+     , events.performed_by
      , events.prcs_id
   from events
   join flow_bpmn_types bpmn

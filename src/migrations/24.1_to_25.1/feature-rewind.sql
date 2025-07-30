@@ -115,6 +115,23 @@ end;
 
 PROMPT >>> Table flow_processes altered 
 
+PROMPT >>> adding Table FLOW_BPMN_TYPES
+
+  create table flow_bpmn_types 
+   ( bpmn_code varchar2(15)
+   , bpmn_object_name varchar2(100)
+   , bpmn_tag_name varchar2(100)
+   , bpmn_sub_tag_name varchar2(100)
+   , bpmn_icon varchar2(100)
+   , bpmn_super_type varchar2(20)
+   , bpmn_is_supported char(1) default 'y'
+   , bpmn_interrupting number(1)
+   , constraint flow_bpmn_types_pk primary key (bpmn_code)
+                using index  enable
+   ) ;
+
+
+
 declare
   v_column_exists          number := 0; 
   l_existing_logging_level flow_configuration.cfig_value%type;

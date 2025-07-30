@@ -2,6 +2,7 @@ create or replace view flow_instance_variables_vw
 as
   select prov.prov_prcs_id
        , prov.prov_var_name
+       , prov.prov_var_name_uc
        , prov.prov_scope
        , prov.prov_var_type
        , prov.prov_var_vc2
