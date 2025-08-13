@@ -89,6 +89,7 @@ PROMPT >> Installing Views
 @views/flow_rest_processes_vw.sql
 @views/flow_rest_subflows_vw.sql
 @views/flow_viewer_vw.sql
+@views/flow_variable_event_timeline_vw
 
 PROMPT >> Installing Package Bodies
 PROMPT >>
@@ -126,6 +127,7 @@ PROMPT >> Engine
 @plsql/flow_admin_api.pkb
 @plsql/flow_statistics.pkb
 @plsql/flow_simple_form_template.pkb
+
 
 PROMPT >>
 PROMPT >> REST API Support

@@ -122,7 +122,7 @@ drop view flow_apex_my_combined_task_list_vw;
 drop view flow_apex_task_inbox_my_tasks_vw;
 drop view flow_apex_task_inbox_vw;
 drop view flow_ai_prompts_vw;
-
+drop view flow_variable_event_timeline_vw
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
@@ -154,6 +154,7 @@ drop table flow_iterations cascade constraints;
 drop table flow_iterated_objects cascade constraints;
 drop table flow_simple_form_templates cascade constraints;
 drop table flow_ai_prompts cascade constraints;
+drop table flow_bpmn_types cascade constraints;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
