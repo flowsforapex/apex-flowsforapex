@@ -1081,6 +1081,37 @@ as
     return l_file_name;
   end get_file_name;
 
+  function safe_enquote_literal(
+    p_value in varchar2
+  ) 
+  return varchar2
+  is
+  begin
+    if p_value is null then
+      return 'null';
+    else
+      begin
+        -- First try the standard approach
+        return dbms_assert.enquote_literal(p_value);
+      exception
+        when others then
+          -- If dbms_assert.enquote_literal fails, use alternative quoting
+          -- Replace single quotes with two single quotes and wrap in quotes
+          -- Also handle any potential length issues by truncating if necessary
+          declare
+            l_safe_value varchar2(32767);
+          begin
+            -- Limit to 4000 characters if longer to avoid issues
+            l_safe_value := case when length(p_value) > 4000 
+                              then substr(p_value, 1, 4000) 
+                              else p_value 
+                            end;
+            return '''' || replace(l_safe_value, '''', '''''') || '''';
+          end;
+      end;
+    end if;
+  end safe_enquote_literal;
+
 
   function get_sql_script(
       p_dgrm_id in number
@@ -1119,7 +1150,7 @@ as
     l_buffer := l_buffer||'  flow_diagram.upload_and_parse('||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_short_description => '||dbms_assert.enquote_literal(r_diagrams.dgrm_short_description)||','||utl_tcp.crlf;
-    l_buffer := l_buffer||'    pi_dgrm_description => '||dbms_assert.enquote_literal(r_diagrams.dgrm_description)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_description => '||safe_enquote_literal(r_diagrams.dgrm_description)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_icon => '||dbms_assert.enquote_literal(r_diagrams.dgrm_icon)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;

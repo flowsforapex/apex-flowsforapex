@@ -44,7 +44,7 @@ CREATE TABLE flow_diagrams (
     NOT NULL,
     dgrm_name              VARCHAR2(150 CHAR) NOT NULL,
     dgrm_short_description VARCHAR2(300 CHAR),
-    dgrm_description       CLOB,
+    dgrm_description       VARCHAR2(4000 CHAR),
     dgrm_icon              VARCHAR2(50 CHAR),
     dgrm_version           VARCHAR2(10 CHAR) DEFAULT '0' NOT NULL,
     dgrm_status            VARCHAR2(10 CHAR) DEFAULT 'draft' NOT NULL,

@@ -13,7 +13,7 @@ PROMPT >> Add dgrm_short_description
 
 PROMPT >> Add dgrm_description
 
-  alter table flow_diagrams add dgrm_description clob;
+  alter table flow_diagrams add dgrm_description varchar2(4000 char);
   comment on column flow_diagrams.dgrm_description is 'more detailed explanation of the diagram';
 
 PROMPT >> Add dgrm_icon
