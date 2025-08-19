@@ -13,8 +13,8 @@
              on sf.sbfl_iter_id = it.iter_id
            order by sbfl_current, it.iter_display_name
            )
-    select json_arrayagg (sl.subflows order by sl.sbfl_current asc, sl.sbfl_iteration_path asc returning varchar2(4000)) sbfl_array
+    select json_arrayagg (sl.subflows order by sl.sbfl_current asc, sl.sbfl_iteration_path asc returning clob pretty) sbfl_array
     from sbfl_list sl
     join flow_processes p
       on p.prcs_id = sl.sbfl_prcs_id
-    where p.prcs_id = xxxx;
+    where p.prcs_id = 13543;

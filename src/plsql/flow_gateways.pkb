@@ -83,13 +83,15 @@ as
       when no_data_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
-        , pi_message_key  => 'gateway-no-previous-gateway'
+        , pi_message_key  => 'gateway-no-previous-gw'
         );
+        -- $F4AMESSAGE 'gateway-no-previous-gw' || 'No previous opening parallel or inclusive gateway found for subflow %0.'
       when too_many_rows then
         flow_errors.handle_instance_error
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
-        , pi_message_key  => 'gateway-multiple-previous-gateways'
+        , pi_message_key  => 'gateway-multiple-previous-gws'
         );
+        -- $F4AMESSAGE 'gateway-multiple-previous-gws' || 'Multiple previous opening parallel or inclusive gateways found for subflow %0.'
     end;
     apex_debug.message ( 'Nearest previous opening parallel or inclusive gateway: %0 %1 %2 %3'
                        , l_gateway_bpmn_id
@@ -134,6 +136,7 @@ as
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
         , pi_message_key  => 'gateway-matching-object-error'
         );
+        -- $F4AMESSAGE 'gateway-matching-object-error' || 'Error retrieving matching gateway object for subflow %0, current step %1.'
     end;
     
     apex_debug.message ( p_message => 'Matching opening gateway: %0 '
@@ -187,13 +190,15 @@ as
       when no_data_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
-        , pi_message_key  => 'gateway-no-previous-gateway'
+        , pi_message_key  => 'gateway-no-previous-gw'
         );
+        -- $F4AMESSAGE 'gateway-no-previous-gateway' || 'No previous gateway found for subflow %0.'
       when too_many_rows then
         flow_errors.handle_instance_error
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
-        , pi_message_key  => 'gateway-multiple-previous-gateways'
+        , pi_message_key  => 'gateway-multiple-previous-gws'
         );
+        -- $F4AMESSAGE 'gateway-multiple-previous-gateways' || 'Multiple previous gateways found for subflow %0.'
     end;
     po_nearest_gateway_bpmn_id := l_gateway_bpmn_id;
     po_nearest_gateway_type    := l_gateway_type;
@@ -209,10 +214,11 @@ as
     , pi_routing_variable   in flow_process_variables.prov_var_vc2%type  
     ) return apex_t_varchar2
   is 
-    l_forward_routes   apex_t_varchar2;  -- routes specified in the routing variable
-    l_possible_routes  apex_t_varchar2;  -- all possible forward routes from the splitting gateway
-    l_bad_routes       apex_t_varchar2;  -- specified routes which are not valid routes
-    l_bad_route_string varchar2 (2000);
+    l_forward_routes          apex_t_varchar2;  -- routes specified in the routing variable
+    l_possible_routes         apex_t_varchar2;  -- all possible forward routes from the splitting gateway
+    l_bad_routes              apex_t_varchar2;  -- specified routes which are not valid routes
+    l_bad_route_string        varchar2 (2000);
+    e_gateway_invalid_route   exception;
   begin
     begin
       l_forward_routes := apex_string.split ( p_str => pi_routing_variable
@@ -224,7 +230,7 @@ as
           apex_debug.info ( p_message => '-- exclusive gateway - routing variable contains more than one forward route %0'
                           , p0 => l_bad_route_string
                           );
-          raise flow_errors.e_gateway_invalid_route;
+          raise e_gateway_invalid_route;
         end if;
       end if;
       -- get the possible forward routes
@@ -250,10 +256,10 @@ as
         , p0 => l_bad_routes.count
         , p1 => l_bad_route_string 
         );
-        raise flow_errors.e_gateway_invalid_route;
+        raise e_gateway_invalid_route;
       end if;
     exception
-      when flow_errors.e_gateway_invalid_route then
+      when e_gateway_invalid_route then
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id
         , pi_sbfl_id        => pi_sbfl_id
@@ -607,6 +613,7 @@ as
             , pi_message_key => 'timeout_locking_subflow'
             , p0 => l_subflow
             );
+            -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
           when others then
             flow_errors.handle_instance_error
             ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
@@ -640,6 +647,7 @@ as
               , pi_message_key => 'timeout_locking_subflow'
               , p0 => p_sbfl_info.sbfl_sbfl_id
               );
+              -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
             end if;
             l_gateway_forward_status := 'proceed';
           else

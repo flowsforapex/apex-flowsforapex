@@ -20,6 +20,8 @@ as
   -- APEX UserIDs used for Test Suite 24 (APEX Human Tasks)
   gc_tester1                            constant varchar2(20) := 'FLOWSTESTER1';
   gc_tester2                            constant varchar2(20) := 'FLOWSTESTER2';
+  gc_tester3                            constant varchar2(20) := 'FLOWSTESTER3';
+  gc_tester4                            constant varchar2(20) := 'FLOWSTESTER4';
 
 
 end test_constants;

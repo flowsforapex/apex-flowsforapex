@@ -275,9 +275,45 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'suspend-invalid-status', c_load_lang, q'[Only process instances currently in running or error status can be suspended.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'resume-invalid-status', c_load_lang, q'[Only process instances currently suspended can be resumed.]' );
+    values ( 'resume-invalid-status', c_load_lang, q'[Process instance %0 is in state %1.  Only process instances currently suspended can be resumed.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var_exp_plsql_other', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  PL/SQL error shown in event log. ]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'suspended-cannot-complete-step', c_load_lang, q'[This process instance is currently suspended.  Please try again later.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-matching-object-error', 'en', q'[Rewind - error getting matching object for rewind from subflow log. ]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-no-previous-gateway', 'en', q'[Rewind - no previous gateway found to rewind to.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-no-matched-object', 'en', q'[Rewind - no matching opening object found to rewind to.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-cant-gway-from-event', 'en', q'[Rewind - cannot rewind to previous gateway from event.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-unknown-gw-status', 'en', q'[Rewind - unknown gateway status on rewind to prior gateway. ]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-no-last-step', 'en', q'[Rewind - no last completed step found immediately before gateway to rewind to. ]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-not-wait-at-gateway', 'en', q'[Rewind - subflow is not waiting at a gateway to rewind to last step.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-parent-not-subproc', 'en', q'[Rewind - parent subflow is not a subprocess to rewind to.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-no-parent-call-act', 'en', q'[Rewind - no parent call activity subflow found to rewind to.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-parent-not-call-act', 'en', q'[Rewind - parent subflow is not a call activity to rewind to.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'gateway-no-previous-gw', c_load_lang, q'[No previous opening parallel or inclusive gateway found for subflow %0.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'gateway-multiple-previous-gws', c_load_lang, q'[Multiple previous opening parallel or inclusive gateways found for subflow %0.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'gateway-matching-object-error', c_load_lang, q'[Error retrieving matching gateway object for subflow %0, current step %1.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-split-event-based-gw', c_load_lang, q'[ Rewind - cannot rewind from an event based gateway that is still running.  Rewind one of the forward subflows back to the event based gateway first.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+  values ( 'rewind-no-current-step', c_load_lang, q'[Rewind - requested target step for rewind is not a valid transition from current step.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-step-reposition-error', c_load_lang, q'[Rewind - error repositioning step.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'rewind-force-step-not-error', c_load_lang, q'[Cannot force next step on subflow that is not in error status.]' );
 -- above here manually added for 25.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

@@ -55,6 +55,13 @@ create or replace package test_helper as
    , pi_current       in flow_objects.objt_bpmn_id%type
    ) return flow_subflows.sbfl_id%type;
 
+   -- get the stepkey for the subflow that has pi_current as the current object.
+
+   function get_step_key
+   ( pi_prcs_id       in flow_processes.prcs_id%type
+   , pi_current       in flow_objects.objt_bpmn_id%type
+   ) return flow_subflows.sbfl_step_key%type;
+
    -- check subflow log to see if an object in main diagram has completed
 
    function has_step_completed 

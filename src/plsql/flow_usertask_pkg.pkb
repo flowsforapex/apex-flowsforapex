@@ -1023,6 +1023,15 @@ as
       );
 
       flow_globals.set_is_recursive_step (true);
+      
+      -- uncomment to debug expirations - log into F4A instance log if this is an expiration
+      --  flow_logging.log_step_event
+      --  ( p_process_id => p_process_id
+      --  , p_subflow_id => p_subflow_id
+      --  , p_event => flow_constants_pkg.gc_step_event_expired
+      --  , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+      --  , p_comment => 'APEX Human Task : ' || p_apex_task_id || ' state: '||p_state_code||' - entering return_task_state_outcome'
+      --  );
 
       begin
         -- find and lock the subflow
@@ -1051,6 +1060,14 @@ as
       ( p_message => '--- Returning Approval Outcome - Found  Diagram %0'
       , p0 => l_sbfl_rec.sbfl_dgrm_id
       );
+      -- un-comment to debug task expiration
+      -- flow_logging.log_step_event
+      --   ( p_process_id => p_process_id
+      --   , p_subflow_id => p_subflow_id
+      --   , p_event => flow_constants_pkg.gc_step_event_expired
+      --   , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+      --   , p_comment => 'Found Diagram and subflow '
+      --   );
       if p_outcome is not null then
         -- get name of return variable
         begin
@@ -1109,6 +1126,7 @@ as
           -- complete task
           l_do_next_step := true;
         when apex_human_task.c_task_state_errored then
+          -- error task action not yet implemented as of APEX 24.2. Code here for future...        
           -- error task
           flow_logging.log_step_event
           ( p_sbfl_rec => l_sbfl_rec
@@ -1117,14 +1135,25 @@ as
           );  
           l_do_next_step := true; --TODO Change this to allow step restart
         when apex_human_task.c_task_state_expired then
+          -- APEX bug in APEX <= 24.2.7 means that state_code for an expired task is not set to 'EXPIRED' but to its previous state.
+          -- use of the plugin in APEX versions with this bug will result in expirations not getting returned wit status of 'EXPIRED'
+          -- users should use 'execute pl/sql' in place of the plugin.  p_state_code must be manually set to 'EXPIRED' in that case.
           -- expire task
           flow_logging.log_step_event
           ( p_sbfl_rec => l_sbfl_rec
           , p_event => flow_constants_pkg.gc_step_event_expired
           , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
           );   
+          -- uncomment to debug 
+          -- flow_logging.log_step_event
+          -- ( p_process_id => p_process_id
+          -- , p_subflow_id => p_subflow_id
+          -- , p_event => flow_constants_pkg.gc_step_event_expired
+          -- , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+          -- , p_comment => 'setting do next step'
+          -- );
           l_do_next_step := true; 
-        else
+        else   
           null;
       end case;
 

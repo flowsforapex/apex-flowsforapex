@@ -170,7 +170,7 @@ as
       apex_debug.message( p_message => 'Action: %0, PRCS: %1, SBFL: %2, STEP KEY: %3', p0 => apex_application.g_x01, 
       p1 => apex_application.g_x02, p2 => apex_application.g_x03 , p3 => apex_application.g_x04);
 
-      if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
+      if upper( apex_application.g_x01 )in ('COMPLETE-STEP', 'RESTART-STEP' ,'FORCE-NEXT-STEP') then
         select prcs_status
         into l_before_prcs_status
         from flow_instances_vw
@@ -411,7 +411,7 @@ as
       end case;
 
         apex_debug.message (p_message => 'after ajax handler case end');
-      if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
+      if upper( apex_application.g_x01 ) in ('COMPLETE-STEP', 'RESTART-STEP', 'FORCE-NEXT-STEP' )  then
         select prcs_status
         into l_after_prcs_status
         from flow_instances_vw
