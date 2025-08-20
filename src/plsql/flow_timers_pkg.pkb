@@ -1120,6 +1120,7 @@ end reschedule_timer;
       l_host_url := apex_util.host_url;
       
       if ( l_host_url like '%apex.oracle.com%'
+         or l_host_url like '%oracleapex.com%'
          or l_host_url like '%apex.oraclecorp.com%' 
          )
       then 

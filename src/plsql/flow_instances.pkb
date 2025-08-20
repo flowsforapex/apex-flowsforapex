@@ -282,7 +282,6 @@ create or replace package body flow_instances as
           ( prcs.prcs_name
           , prcs.prcs_dgrm_id
           , prcs.prcs_status
-          , prcs.prcs_logging_level
           , prcs.prcs_init_ts
           , prcs.prcs_last_update
           , prcs.prcs_init_by
@@ -291,7 +290,6 @@ create or replace package body flow_instances as
           ( l_instance_name
           , p_dgrm_id
           , flow_constants_pkg.gc_prcs_status_created
-          , greatest ( nvl(p_logging_level,0), flow_constants_pkg.gc_logging_level_detailed)  -- TODO Fix this to use the default logging level from the diagram
           , systimestamp
           , systimestamp
           , coalesce  ( sys_context('apex$session','app_user') 
