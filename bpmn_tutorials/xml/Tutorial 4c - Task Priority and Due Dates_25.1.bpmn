@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">
+  <bpmn:process id="Process_Tutorial4c" name="Tutorial 4c" isExecutable="true" apex:isStartable="true" apex:minLoggingLevel="0" apex:manualInput="false">
+    <bpmn:extensionElements>
+      <apex:dueOn>
+        <apex:expressionType>interval</apex:expressionType>
+      </apex:dueOn>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Event_1g4stqi">
+      <bpmn:outgoing>Flow_16pfhkf</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_04hvvpj" name="Priorities and Due Dates">
+      <bpmn:incoming>Flow_16pfhkf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ts4odn</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_16pfhkf" sourceRef="Event_1g4stqi" targetRef="Activity_04hvvpj" />
+    <bpmn:task id="Activity_03fe5g1" name="1.  Process&#10; Instance&#10; Priority and &#10;Due Date">
+      <bpmn:incoming>Flow_0ts4odn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q9tj7w</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ts4odn" sourceRef="Activity_04hvvpj" targetRef="Activity_03fe5g1" />
+    <bpmn:task id="Activity_0k5mueu" name="Setting Process Priority and Due Date">
+      <bpmn:incoming>Flow_1q9tj7w</bpmn:incoming>
+      <bpmn:outgoing>Flow_04kfywn</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1q9tj7w" sourceRef="Activity_03fe5g1" targetRef="Activity_0k5mueu" />
+    <bpmn:task id="Activity_1sx6tny" name="2 Task Priority and Due Date">
+      <bpmn:incoming>Flow_04kfywn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1htpo8q</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_04kfywn" sourceRef="Activity_0k5mueu" targetRef="Activity_1sx6tny" />
+    <bpmn:sequenceFlow id="Flow_1htpo8q" sourceRef="Activity_1sx6tny" targetRef="Activity_0133nx5" />
+    <bpmn:userTask id="Activity_0133nx5" name="Setting Task Priority and Due Date" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:incoming>Flow_1htpo8q</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r3ufvw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1yl8fo0" name="End Scheduling">
+      <bpmn:incoming>Flow_1r3ufvw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1r3ufvw" sourceRef="Activity_0133nx5" targetRef="Event_1yl8fo0" />
+    <bpmn:textAnnotation id="TextAnnotation_0t4o8e4">
+      <bpmn:text>To be able to track and schedule process instances and tasks, you can set a PRIORITY and a DUE DATE for both a PROCESS INSTANCE and for a USER TASK.
+
+These values are then shown in the Task Inbox, and can be used to determine what tasks to perform next.
+
+We'll start by looking at how to set PROCESS PRIORITY and DUE DATE, then look at how this can be done for a TASK...</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ltq2yb" sourceRef="Activity_04hvvpj" targetRef="TextAnnotation_0t4o8e4" />
+    <bpmn:textAnnotation id="TextAnnotation_06r02b3">
+      <bpmn:text>1.  Open this model in the Flow Modeler.
+2.  Click on the background canvas behind the model - so that the properties panel shows the Process object.
+3.  Select 'Scheduling' on the Process Properties Panel
+4.  Select 'Priority' inside the 'Scheduling' region.
+5.  The Priority can be set by several different methods:
+
+- Static Value - Set to 1 (Highest) down to 5 (Lowest).
+- Process Variable - Enter the name of a Process Variable that contains your chosen process priority
+- SQL - Enter a SQL Query that can return the required priority (1-5).
+- Expression - Enter a PL/SQL expression that returns your required process priority
+- Function Body - Enter a PL/SQL function body that returns your required process priority.
+
+Remember the Priority must be between 1 (Highest) and 5 (Lowest).</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0iesp4f" sourceRef="Activity_0k5mueu" targetRef="TextAnnotation_06r02b3" />
+    <bpmn:textAnnotation id="TextAnnotation_18hjgsv">
+      <bpmn:text>The Process Due Date can also be specified, in a similar way to the Priority.
+
+Due Date must be specified using a TIMESTAMP WITH TIME ZONE - so that it is fully defined when the completion is required if some users or your database server is in a different time zone to some other users.  
+
+A Simple DATE or DATE/TIME without a specified Time Zone may be converted using the time zone of the User or with UTC time zone -- and shouldn't be used.
+
+In addition to the methods for Priority, the Due Date can also be specified using these additional methods:
+
+- As an Interval - specifying how long after start it is required to complete.   For example, an instance is due 12 Hours after it is started, or after 30 days.  These intervals can be specified in Oracle Interval (Day to Second ) format:
+   DDD HH24:MI:SS
+   e.g., '000 12:00:00' or '030 00:00:00'
+or in ISO 8601 Duration / Period Format format:
+   P(ddD)(T)(hh24H)(miM)(ssS) 
+   e.g., PT12H or P30D
+- Using Oracle Scheduler Syntax (see documentation for DBMS_SCHEDULER)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_012d9xr" sourceRef="Activity_0k5mueu" targetRef="TextAnnotation_18hjgsv" />
+    <bpmn:textAnnotation id="TextAnnotation_0810uji">
+      <bpmn:text>Priority and Due Date can be set for User Tasks (Human Tasks).
+
+1.  Select the UserTask
+2.  In the Properties Panel for the UserTask, select 'Scheduling'
+3.  Then in the 'Scheduling' Region, select the 'Priority' item.
+
+Same setting methods exist as for the Instance Priority.
+
+Note that the Process Instance priority (defining the whole process) is available to you as a Process Variable named 'PROCESS_PRIORITY'.
+
+So if you want the Task to have the same priority as the process instance, choose 'Process Variable' input method, and set the Process Variable name to 'PROCESS_PRIORITY'.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_16lpjbj" sourceRef="Activity_0133nx5" targetRef="TextAnnotation_0810uji" />
+    <bpmn:textAnnotation id="TextAnnotation_1yf8nam">
+      <bpmn:text>...And similar for setting the Due Date.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1mrs5e3" sourceRef="Activity_0133nx5" targetRef="TextAnnotation_1yf8nam" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Tutorial4c">
+      <bpmndi:BPMNShape id="Event_1g4stqi_di" bpmnElement="Event_1g4stqi">
+        <dc:Bounds x="312" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04hvvpj_di" bpmnElement="Activity_04hvvpj" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="400" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03fe5g1_di" bpmnElement="Activity_03fe5g1" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="560" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k5mueu_di" bpmnElement="Activity_0k5mueu" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="720" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sx6tny_di" bpmnElement="Activity_1sx6tny" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1110" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d46kjr_di" bpmnElement="Activity_0133nx5" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1260" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yl8fo0_di" bpmnElement="Event_1yl8fo0" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1412" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1391" y="455" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0t4o8e4_di" bpmnElement="TextAnnotation_0t4o8e4">
+        <dc:Bounds x="380" y="140" width="240" height="208" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_06r02b3_di" bpmnElement="TextAnnotation_06r02b3">
+        <dc:Bounds x="740" y="60" width="400" height="270" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_18hjgsv_di" bpmnElement="TextAnnotation_18hjgsv">
+        <dc:Bounds x="570" y="540" width="520" height="330" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0810uji_di" bpmnElement="TextAnnotation_0810uji">
+        <dc:Bounds x="1260" y="60" width="350" height="270" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1yf8nam_di" bpmnElement="TextAnnotation_1yf8nam">
+        <dc:Bounds x="1260" y="540" width="100" height="54" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_16pfhkf_di" bpmnElement="Flow_16pfhkf">
+        <di:waypoint x="348" y="430" />
+        <di:waypoint x="400" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ts4odn_di" bpmnElement="Flow_0ts4odn">
+        <di:waypoint x="500" y="430" />
+        <di:waypoint x="560" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q9tj7w_di" bpmnElement="Flow_1q9tj7w">
+        <di:waypoint x="660" y="430" />
+        <di:waypoint x="720" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04kfywn_di" bpmnElement="Flow_04kfywn">
+        <di:waypoint x="820" y="430" />
+        <di:waypoint x="1110" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1htpo8q_di" bpmnElement="Flow_1htpo8q">
+        <di:waypoint x="1210" y="430" />
+        <di:waypoint x="1260" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r3ufvw_di" bpmnElement="Flow_1r3ufvw">
+        <di:waypoint x="1360" y="430" />
+        <di:waypoint x="1412" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ltq2yb_di" bpmnElement="Association_1ltq2yb">
+        <di:waypoint x="400" y="407" />
+        <di:waypoint x="300" y="360" />
+        <di:waypoint x="300" y="244" />
+        <di:waypoint x="380" y="244" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0iesp4f_di" bpmnElement="Association_0iesp4f">
+        <di:waypoint x="741" y="390" />
+        <di:waypoint x="690" y="320" />
+        <di:waypoint x="690" y="190" />
+        <di:waypoint x="740" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_012d9xr_di" bpmnElement="Association_012d9xr">
+        <di:waypoint x="727" y="469" />
+        <di:waypoint x="670" y="520" />
+        <di:waypoint x="450" y="520" />
+        <di:waypoint x="450" y="690" />
+        <di:waypoint x="570" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_16lpjbj_di" bpmnElement="Association_16lpjbj">
+        <di:waypoint x="1264" y="393" />
+        <di:waypoint x="1210" y="350" />
+        <di:waypoint x="1210" y="94" />
+        <di:waypoint x="1260" y="94" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1mrs5e3_di" bpmnElement="Association_1mrs5e3">
+        <di:waypoint x="1310" y="470" />
+        <di:waypoint x="1310" y="540" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
