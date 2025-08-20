@@ -7,6 +7,7 @@ as
        , lgvr_scope
        , lgvr_expr_set
        , lgvr_timestamp at time zone sessiontimezone as lgvr_timestamp
+       , lgvr_user
        , lgvr_var_type
        , case
            when lgvr_var_vc2  is not null then lgvr_var_vc2

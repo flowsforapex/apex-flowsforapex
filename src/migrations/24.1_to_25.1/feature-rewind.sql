@@ -60,10 +60,11 @@ begin
 
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_instance_event_log 
-                          add ( lgpr_sbfl_id    NUMBER
-                              , lgpr_step_key   VARCHAR2(50)
-                              , lgpr_apex_task_id NUMBER
-                              , lgpr_severity    NUMBER
+                          add ( lgpr_sbfl_id       NUMBER
+                              , lgpr_step_key      VARCHAR2(50)
+                              , lgpr_apex_task_id  NUMBER
+                              , lgpr_severity      NUMBER
+                              , lgpr_process_level NUMBER
                               )';
       execute immediate 'alter table flow_instance_event_log 
                          modify lgpr_prcs_name null ';
@@ -112,6 +113,25 @@ begin
 end;
 /
 
+PROMPT >>> Table flow_processes altered 
+
+PROMPT >>> adding Table FLOW_BPMN_TYPES
+
+  create table flow_bpmn_types 
+   ( bpmn_code varchar2(15)
+   , bpmn_object_name varchar2(100)
+   , bpmn_tag_name varchar2(100)
+   , bpmn_sub_tag_name varchar2(100)
+   , bpmn_icon varchar2(100)
+   , bpmn_super_type varchar2(20)
+   , bpmn_is_supported char(1) default 'y'
+   , bpmn_interrupting number(1)
+   , constraint flow_bpmn_types_pk primary key (bpmn_code)
+                using index  enable
+   ) ;
+
+
+
 declare
   v_column_exists          number := 0; 
   l_existing_logging_level flow_configuration.cfig_value%type;
@@ -132,7 +152,25 @@ begin
 end;
 /
 
-PROMPT >>> Table flow_processes altered 
+declare
+  v_column_exists          number := 0; 
+begin
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'LGVR_USER'
+     and upper(table_name)  = 'FLOW_VARIABLE_EVENT_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_variable_event_log 
+                          add ( lgvr_user  VARCHAR2(255 char)
+                              )';
+  end if;
+end;
+/
+
+
+
 
 PROMPT >>> Migrate logging configuration for flow_processes and flow_configuration
 

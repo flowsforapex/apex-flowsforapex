@@ -1855,7 +1855,7 @@ begin
       flow_logging.log_step_event 
       ( p_sbfl_rec    => l_sbfl_rec
       , p_event       => flow_constants_pkg.gc_step_event_work_started
-      , p_event_level => flow_constants_pkg.gc_logging_level_detailed
+      , p_event_level => flow_constants_pkg.gc_logging_level_routine
       );
       -- commit reservation if this is an external call
       if not p_called_internally then 
@@ -1913,7 +1913,7 @@ begin
         flow_logging.log_step_event 
         ( p_sbfl_rec    => l_sbfl_rec
         , p_event       => flow_constants_pkg.gc_step_event_work_paused
-        , p_event_level => flow_constants_pkg.gc_logging_level_detailed
+        , p_event_level => flow_constants_pkg.gc_logging_level_routine
         );
         -- commit pause if this is an external call
         if not p_called_internally then 
