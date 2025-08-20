@@ -278,7 +278,6 @@ create or replace package body flow_log_admin as
   return t_archive_location
   is
     l_archive_location              t_archive_location;
-    e_archive_bad_destination_json  exception;
     l_destination_json              flow_configuration.cfig_value%type;
   begin
     apex_debug.enter ( 'get_archive_location');
