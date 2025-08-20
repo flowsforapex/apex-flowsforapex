@@ -1,3 +1,5 @@
+whenever sqlerror exit rollback
+
 set define '^'
 set concat '.'
 set serveroutput on
@@ -105,4 +107,3 @@ PROMPT >> Finished Installation of Flows4APEX
 PROMPT >> ====================================
 
 spool off
-
