@@ -336,7 +336,6 @@ create or replace package body flow_log_admin as
        -- ( pi_message_key    => 'archive-destination-null'
        -- , p0 => p_archive_type
        -- );
-       -- -- $F4AMESSAGE 'archive-destination-null' || 'Error in archive destination configuration parameter.  Parameter: %0' 
         raise;
       when others then 
         apex_debug.info 
