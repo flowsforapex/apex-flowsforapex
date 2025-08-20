@@ -203,48 +203,33 @@ as
       l_str_tab.extend();
       l_str_tab(i) := apex_application.g_json(i);
     end loop;
-    
+
     l_clob := apex_string.join_clob( p_table => l_str_tab, p_sep => null );
-    
-    apex_json.parse
-    (
-      p_values => l_values
-    , p_source => l_clob
-    );
-    
+
+    begin
+      apex_json.parse
+      (
+        p_values => l_values
+      , p_source => l_clob
+      );
+    exception
+      when others then
+        flow_errors.handle_general_error( pi_message_key => 'plugin-diagram-not-parsable');
+    end;
+
     l_id      := apex_json.get_number( p_values => l_values, p_path => 'regions[1].data.id' );
     l_content := apex_json.get_clob( p_values => l_values, p_path => 'regions[1].data.content');
-    
+
     flow_diagram.update_diagram
     (
       pi_dgrm_id      => l_id
     , pi_dgrm_content => l_content
     );
-    
-    apex_json.open_object;
-    
-    apex_json.write( p_name => 'success', p_value => true );
-    
-    apex_json.write
-    (
-      p_name  => 'message'
-    , p_value => flow_api_pkg.message( p_message_key => 'plugin-diagram-saved', p_lang => apex_util.get_session_lang() )
-    );
-    
-    apex_json.close_all;
-  exception
-    when others then
-      apex_json.open_object;
-      
-      apex_json.write( p_name => 'success', p_value => false );
-      
-      apex_json.write
-      (
-        p_name  => 'message'
-      , p_value => flow_api_pkg.message( p_message_key => 'plugin-diagram-not-parsable', p_lang => apex_util.get_session_lang() )
-      );
 
-      apex_json.close_all;
+    apex_json.open_object;
+    apex_json.write( p_name => 'success', p_value => true );
+    apex_json.write( p_name  => 'message', p_value => flow_api_pkg.message( p_message_key => 'plugin-diagram-saved', p_lang => apex_util.get_session_lang() ) );
+    apex_json.close_all;
   end save;
 
 
