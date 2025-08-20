@@ -1,6 +1,6 @@
 PROMPT >> Inital System Configuration for new systems
 begin
-  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_level'                                 ,p_value => 'standard');
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_default_level'                         ,p_value => '1');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_hide_userid'                           ,p_value => 'false');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_language'                              ,p_value => 'en');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_retain_logs_after_prcs_completion_days',p_value => '60');
@@ -27,6 +27,8 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'rest_base'                                     ,p_value => null );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_archive_location'                      ,p_value => null );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_bpmn_location'                         ,p_value => null );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_bpmn_enabled'                          ,p_value => 'false' );
+  flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_bpmn_retain_days'                       ,p_value => '60' );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_edition'                               ,p_value => 'community' );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_key'                                   ,p_value => '' );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'licensed_to'                                   ,p_value => '' );

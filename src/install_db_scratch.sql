@@ -15,6 +15,9 @@ PROMPT >> Common Objects
 PROMPT >> Adding Comments
 @ddl/install_ddl_comments.sql
 
+PROMPT >> Installing Database Scheduler Objects
+@ddl/create_scheduler_objects.sql
+
 PROMPT >> Initial Engine Configuration
 PROMPT >> =============================
 PROMPT >> 

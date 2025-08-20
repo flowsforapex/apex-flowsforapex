@@ -280,6 +280,7 @@ create or replace package body flow_log_admin as
   is
     l_archive_location              t_archive_location;
     e_archive_bad_destination_json  exception;
+    e_archive_destination_null      exception;
     l_destination_json              flow_configuration.cfig_value%type;
   begin
     apex_debug.enter ( 'get_archive_location');
@@ -292,7 +293,10 @@ create or replace package body flow_log_admin as
     ( p_message => 'Retrieved configuration parameter %0 contents %1'
     , p0 => p_archive_type
     , p1 => l_destination_json
-    );                         
+    );             
+    if l_destination_json is null then
+      raise e_archive_destination_null;
+    end if;            
     -- dbms_output.put_line('archive destination'||l_destination_json);
     apex_json.parse (p_source => l_destination_json);
 
@@ -329,6 +333,13 @@ create or replace package body flow_log_admin as
     end case;
     return l_archive_location;
     exception
+    when e_archive_destination_null then
+        flow_errors.handle_general_error
+        ( pi_message_key    => 'archive-destination-null'
+        , p0 => p_archive_type
+        );
+        -- $F4AMESSAGE 'archive-destination-null' || 'Error in archive destination configuration parameter.  Parameter: %0' 
+        return null;
       when others then 
         apex_debug.info 
         ( p_message => ' --- Error in %0 configuration parameter definition. Value :'
