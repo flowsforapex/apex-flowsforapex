@@ -103,7 +103,6 @@ f4a.plugins.modeler = f4a.plugins.modeler || {
             x01: "SAVE",
         })
         .then( ( pData ) => {
-            console.log(pData);
             apex.message.clearErrors();
             if ( pData.success ) {
                 this.modelerElement.changed = false;

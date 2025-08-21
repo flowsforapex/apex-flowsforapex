@@ -121,6 +121,20 @@ create or replace package body flow_logging as
       );
     end if;
   exception
+    when flow_log_admin.e_archive_destination_null then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'archive-destination-null'
+      , p0 => 'archive destination null'
+      );
+      --$F4AMESSAGE 'archive-destination-null' || 'No archive or logging destination has been configured - See Configurations > Logging or Archiving' 
+      raise;
+    when flow_log_admin.e_archive_bad_destination_json then
+      flow_errors.handle_general_error
+      ( pi_message_key => 'archive-destination-bad-json'
+      , p0 => 'archive destination bad JSON'
+      );
+      -- $F4AMESSAGE 'archive-destination-bad-json' || 'Error in archive destination configuration parameter.  Parameter: %0'
+      raise;
     when others then
       flow_errors.handle_general_error
       ( pi_message_key => 'logging-diagram-event'
