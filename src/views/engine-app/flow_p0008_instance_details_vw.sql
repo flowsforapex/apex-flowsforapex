@@ -4,6 +4,7 @@ as
        prcs_id,
        prcs_name,
        dgrm_name,
+       dgrm_short_description,
        dgrm_version,
        prcs_status as status,
        prcs_priority as priority,

@@ -4,6 +4,7 @@ as
        , prcs.prcs_name
        , dgrm.dgrm_id
        , dgrm.dgrm_name
+       , dgrm.dgrm_short_description
        , dgrm.dgrm_version
        , dgrm.dgrm_status
        , prcs.prcs_priority

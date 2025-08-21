@@ -38,12 +38,7 @@ as
          , decode(inst_nums.total_cnt, 0, null, inst_nums.total_cnt) as instances 
          , case when not exists( select null from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id ) then 'No' else 'Yes' end as diagram_parsed
          , case when not exists( select null from flow_objects objt where objt.objt_dgrm_id = d.dgrm_id ) then 'fa-times-circle-o fa-lg u-danger-text' else 'fa-check-circle-o fa-lg u-success-text' end as diagram_parsed_icon
-         , case dgrm_status
-             when 'draft'      then 'fa fa-wrench'
-             when 'released'   then 'fa fa-check'
-             when 'deprecated' then 'fa fa-ban'
-             when 'archived'   then 'fa fa-archive'
-           end as dgrm_status_icon
+         , dgrm_status_icon
          , nullif(inst_nums.created_cnt, 0) as instance_created
          , apex_page.get_url(p_page => 10, p_items => 'P10_FILTER_DGRM_ID,IR_PRCS_STATUS', p_values => d.dgrm_id||',created', p_clear_cache => 'RP,RIR') as instance_created_link
          , nullif(inst_nums.running_cnt, 0) as instance_running

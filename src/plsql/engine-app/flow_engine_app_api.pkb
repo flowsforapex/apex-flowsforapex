@@ -1081,6 +1081,37 @@ as
     return l_file_name;
   end get_file_name;
 
+  function safe_enquote_literal(
+    p_value in varchar2
+  ) 
+  return varchar2
+  is
+  begin
+    if p_value is null then
+      return 'null';
+    else
+      begin
+        -- First try the standard approach
+        return dbms_assert.enquote_literal(p_value);
+      exception
+        when others then
+          -- If dbms_assert.enquote_literal fails, use alternative quoting
+          -- Replace single quotes with two single quotes and wrap in quotes
+          -- Also handle any potential length issues by truncating if necessary
+          declare
+            l_safe_value varchar2(4000);
+          begin
+            -- Limit to 4000 characters if longer to avoid issues
+            l_safe_value := case when length(p_value) > 4000 
+                              then substr(p_value, 1, 4000) 
+                              else p_value 
+                            end;
+            return '''' || replace(l_safe_value, '''', '''''') || '''';
+          end;
+      end;
+    end if;
+  end safe_enquote_literal;
+
 
   function get_sql_script(
       p_dgrm_id in number
@@ -1089,7 +1120,7 @@ as
   is
     l_split_content apex_t_varchar2;
     l_sql clob;
-    l_buffer varchar2(32767);  
+    l_buffer clob;
     r_diagrams flow_diagrams%rowtype;
   begin 
     dbms_lob.createtemporary(l_sql,true, DBMS_LOB.CALL);
@@ -1118,6 +1149,9 @@ as
     l_buffer := l_buffer||utl_tcp.crlf;
     l_buffer := l_buffer||'  flow_diagram.upload_and_parse('||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_short_description => '||dbms_assert.enquote_literal(r_diagrams.dgrm_short_description)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_description => '||safe_enquote_literal(r_diagrams.dgrm_description)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_icon => '||dbms_assert.enquote_literal(r_diagrams.dgrm_icon)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_content => l_dgrm_content'||utl_tcp.crlf||');'||utl_tcp.crlf;
@@ -1226,12 +1260,15 @@ as
     l_warning     pls_integer := 0;
     l_mime_type   varchar2(100) := 'application/octet';
     type r_flow   is record (
-      dgrm_id       flow_diagrams.dgrm_id%type, 
-      dgrm_name     flow_diagrams.dgrm_name%type,
-      dgrm_version  flow_diagrams.dgrm_version%type,
-      dgrm_status   flow_diagrams.dgrm_status%type,
-      dgrm_category flow_diagrams.dgrm_category%type,
-      filename      varchar2(300)
+      dgrm_id                flow_diagrams.dgrm_id%type, 
+      dgrm_name              flow_diagrams.dgrm_name%type,
+      dgrm_short_description flow_diagrams.dgrm_short_description%type,
+      dgrm_description       flow_diagrams.dgrm_description%type,
+      dgrm_icon              flow_diagrams.dgrm_icon%type,
+      dgrm_version           flow_diagrams.dgrm_version%type,
+      dgrm_status            flow_diagrams.dgrm_status%type,
+      dgrm_category          flow_diagrams.dgrm_category%type,
+      filename               varchar2(300)
     );
     type t_flows  is table of r_flow index by binary_integer;
     l_flows       t_flows;
@@ -1250,6 +1287,9 @@ as
       select 
         dgrm_id, 
         dgrm_name,
+        dgrm_short_description,
+        dgrm_description,
+        dgrm_icon,
         dgrm_version,
         dgrm_status,
         dgrm_category,
@@ -1285,6 +1325,9 @@ as
         if ( p_download_as = 'BPMN' ) then
           l_json_object := json_object_t('{}');
           l_json_object.put('dgrm_name' ,  l_flows(i).dgrm_name);
+          l_json_object.put('dgrm_short_description' ,  l_flows(i).dgrm_short_description);
+          l_json_object.put('dgrm_description' ,  l_flows(i).dgrm_description);
+          l_json_object.put('dgrm_icon' ,  l_flows(i).dgrm_icon);
           l_json_object.put('dgrm_version' ,  l_flows(i).dgrm_version);
           l_json_object.put('dgrm_status' ,  l_flows(i).dgrm_status);
           l_json_object.put('dgrm_category' ,  l_flows(i).dgrm_category);
@@ -1418,13 +1461,16 @@ as
     
     
     function upload_and_parse(
-        pi_import_from     in varchar2,
-        pi_dgrm_name       in flow_diagrams.dgrm_name%type,
-        pi_dgrm_category   in flow_diagrams.dgrm_category%type,
-        pi_dgrm_version    in flow_diagrams.dgrm_version%type,
-        pi_dgrm_content    in flow_diagrams.dgrm_content%type,
-        pi_file_name       in varchar2,
-        pi_force_overwrite in varchar2
+        pi_import_from            in varchar2,
+        pi_dgrm_name              in flow_diagrams.dgrm_name%type,
+        pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type,
+        pi_dgrm_description       in flow_diagrams.dgrm_description%type default null,
+        pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null,
+        pi_dgrm_category          in flow_diagrams.dgrm_category%type,
+        pi_dgrm_version           in flow_diagrams.dgrm_version%type,
+        pi_dgrm_content           in flow_diagrams.dgrm_content%type,
+        pi_file_name              in varchar2,
+        pi_force_overwrite        in varchar2
     ) return flow_diagrams.dgrm_id%type
     is
         l_dgrm_id flow_diagrams.dgrm_id%type;
@@ -1442,6 +1488,9 @@ as
             
         l_dgrm_id := flow_diagram.import_diagram(
             pi_dgrm_name => pi_dgrm_name,
+            pi_dgrm_short_description => pi_dgrm_short_description,
+            pi_dgrm_description => pi_dgrm_description,
+            pi_dgrm_icon => pi_dgrm_icon,
             pi_dgrm_version => pi_dgrm_version,
             pi_dgrm_category => pi_dgrm_category,
             pi_dgrm_content => l_dgrm_content,
@@ -1464,18 +1513,21 @@ as
         pi_force_overwrite in varchar2
     )
     as
-        l_dgrm_id       flow_diagrams.dgrm_id%type;
-        l_dgrm_name     flow_diagrams.dgrm_name%type;
-        l_dgrm_category flow_diagrams.dgrm_category%type;
-        l_dgrm_version  flow_diagrams.dgrm_version%type;
-        l_dgrm_content  flow_diagrams.dgrm_content%type;
-        l_file          varchar2(300);
-        l_json_array    json_array_t;
-        l_json_object   json_object_t;
-        l_blob_content  blob;
-        l_json_file     blob;
-        l_bpmn_file     blob;
-        l_clob          clob;
+        l_dgrm_id                flow_diagrams.dgrm_id%type;
+        l_dgrm_name              flow_diagrams.dgrm_name%type;
+        l_dgrm_short_description flow_diagrams.dgrm_short_description%type;
+        l_dgrm_description       flow_diagrams.dgrm_description%type;
+        l_dgrm_icon              flow_diagrams.dgrm_icon%type;
+        l_dgrm_category          flow_diagrams.dgrm_category%type;
+        l_dgrm_version           flow_diagrams.dgrm_version%type;
+        l_dgrm_content           flow_diagrams.dgrm_content%type;
+        l_file                   varchar2(300);
+        l_json_array             json_array_t;
+        l_json_object            json_object_t;
+        l_blob_content           blob;
+        l_json_file              blob;
+        l_bpmn_file              blob;
+        l_clob                   clob;
     begin
         select blob_content
         into l_blob_content
@@ -1487,12 +1539,15 @@ as
         );
         l_json_array := json_array_t.parse(l_json_file);
         for i in 0..l_json_array.get_size() - 1 loop
-            l_json_object := treat(l_json_array.get(i) as json_object_t);
-            l_dgrm_name     := l_json_object.get_String('dgrm_name');
-            l_dgrm_version  := l_json_object.get_String('dgrm_version');
-            l_dgrm_category := l_json_object.get_String('dgrm_category');
-            l_dgrm_name     := l_json_object.get_String('dgrm_name');
-            l_file          := l_json_object.get_String('file');   
+            l_json_object            := treat(l_json_array.get(i) as json_object_t);
+            l_dgrm_name              := l_json_object.get_String('dgrm_name');
+            l_dgrm_short_description := l_json_object.get_String('dgrm_short_description');
+            l_dgrm_description       := l_json_object.get_String('dgrm_description');
+            l_dgrm_icon              := l_json_object.get_String('dgrm_icon');
+            l_dgrm_version           := l_json_object.get_String('dgrm_version');
+            l_dgrm_category          := l_json_object.get_String('dgrm_category');
+            l_dgrm_name              := l_json_object.get_String('dgrm_name');
+            l_file                   := l_json_object.get_String('file');   
             l_bpmn_file := apex_zip.get_file_content(
                 p_zipped_blob => l_blob_content,
                 p_file_name   => l_file
@@ -1504,6 +1559,9 @@ as
             l_dgrm_id := upload_and_parse(
                   pi_import_from => 'text'
                 , pi_dgrm_name => l_dgrm_name
+                , pi_dgrm_short_description => l_dgrm_short_description
+                , pi_dgrm_description => l_dgrm_description
+                , pi_dgrm_icon => l_dgrm_icon
                 , pi_dgrm_category => l_dgrm_category
                 , pi_dgrm_version => l_dgrm_version
                 , pi_dgrm_content => l_clob
@@ -1535,25 +1593,34 @@ as
   
 
   procedure process_page_p7(
-    pio_dgrm_id      in out nocopy flow_diagrams.dgrm_id%type,
-    pi_dgrm_name     in flow_diagrams.dgrm_name%type,
-    pi_dgrm_version  in flow_diagrams.dgrm_version%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_new_version   in flow_diagrams.dgrm_version%type,
-    pi_cascade       in varchar2,
-    pi_request       in varchar2)
+    pio_dgrm_id               in out nocopy flow_diagrams.dgrm_id%type
+  , pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_new_version            in flow_diagrams.dgrm_version%type
+  , pi_cascade                in varchar2
+  , pi_request                in varchar2)
   as
   begin
     case pi_request
       when 'CREATE' then
         pio_dgrm_id := flow_diagram.create_diagram(
                          pi_dgrm_name => pi_dgrm_name,
+                         pi_dgrm_short_description => pi_dgrm_short_description,
+                         pi_dgrm_description => pi_dgrm_description,
+                         pi_dgrm_icon => pi_dgrm_icon,
                          pi_dgrm_category => pi_dgrm_category,
                          pi_dgrm_version => pi_dgrm_version);
       when 'SAVE' then
         flow_diagram.edit_diagram(
           pi_dgrm_id => pio_dgrm_id,
           pi_dgrm_name => pi_dgrm_name,
+          pi_dgrm_short_description => pi_dgrm_short_description,
+          pi_dgrm_description => pi_dgrm_description,
+          pi_dgrm_icon => pi_dgrm_icon,
           pi_dgrm_category => pi_dgrm_category,
           pi_dgrm_version => pi_dgrm_version);
       when 'DELETE' then
