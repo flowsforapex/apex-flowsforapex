@@ -314,6 +314,8 @@ begin
     values ( 'rewind-step-reposition-error', c_load_lang, q'[Rewind - error repositioning step.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'rewind-force-step-not-error', c_load_lang, q'[Cannot force next step on subflow that is not in error status.]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ( 'archive-destination-null', c_load_lang, q'[No archive or logging destination has been configured - See Configurations > Logging or Archiving]' );
 -- above here manually added for 25.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

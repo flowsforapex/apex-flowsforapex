@@ -184,18 +184,6 @@ comment on column FLOW_INSTANCE_STATS.STPR_DURATION_50PC_SEC is ' ';
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_90PC_SEC is ' ';       
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_MAX_SEC is ' ';    
 
-comment on column FLOW_INSTANCE_TIMELINE_VW.OPERATION is ' ';              
-comment on column FLOW_INSTANCE_TIMELINE_VW.DESCRIPTION is ' ';            
-comment on column FLOW_INSTANCE_TIMELINE_VW.OBJT is ' ';                   
-comment on column FLOW_INSTANCE_TIMELINE_VW.SUBFLOW is ' ';                
-comment on column FLOW_INSTANCE_TIMELINE_VW.PROCESS_LEVEL is ' ';          
-comment on column FLOW_INSTANCE_TIMELINE_VW.PROC_VAR is ' ';               
-comment on column FLOW_INSTANCE_TIMELINE_VW.VALUE is ' ';                  
-comment on column FLOW_INSTANCE_TIMELINE_VW.EVENT_COMMENT is ' ';
-comment on column FLOW_INSTANCE_TIMELINE_VW.PERFORMED_ON is ' ';             
-comment on column FLOW_INSTANCE_TIMELINE_VW.PERFORMED_BY is ' ';             
-comment on column FLOW_INSTANCE_TIMELINE_VW.PRCS_ID is ' ';   
-
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_PRCS_ID is ' ';            
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_VAR_NAME is ' ';           
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_SCOPE is ' ';              
@@ -269,14 +257,7 @@ comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_ORDER is ' ';
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_VAR_NAME is ' ';         
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_VAR_TYPE is ' ';         
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_TYPE is ' ';             
-comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_EXPRESSION is ' ';       
-
-comment on column FLOW_PARSER_LOG.PLOG_ID is ' ';                       
-comment on column FLOW_PARSER_LOG.PLOG_DGRM_ID is ' ';                  
-comment on column FLOW_PARSER_LOG.PLOG_BPMN_ID is ' ';                  
-comment on column FLOW_PARSER_LOG.PLOG_LOG_TIME is ' ';                 
-comment on column FLOW_PARSER_LOG.PLOG_PARSE_STEP is ' ';               
-comment on column FLOW_PARSER_LOG.PLOG_PAYLOAD is ' ';              
+comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_EXPRESSION is ' ';                  
 
 comment on column FLOW_PROCESSES.PRCS_ID is ' ';                        
 comment on column FLOW_PROCESSES.PRCS_DGRM_ID is ' ';                   

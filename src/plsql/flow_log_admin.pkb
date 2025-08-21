@@ -27,7 +27,6 @@ create or replace package body flow_log_admin as
   , oci_credential_static_id       flow_types_pkg.t_vc200  -- APEX Static ID of Credential
   );
 
-
   function get_instance_json_summary
   ( p_process_id     in flow_processes.prcs_id%type
   ) return clob
@@ -279,7 +278,6 @@ create or replace package body flow_log_admin as
   return t_archive_location
   is
     l_archive_location              t_archive_location;
-    e_archive_bad_destination_json  exception;
     l_destination_json              flow_configuration.cfig_value%type;
   begin
     apex_debug.enter ( 'get_archive_location');
@@ -288,11 +286,15 @@ create or replace package body flow_log_admin as
                              ( p_config_key  => p_archive_type
                              , p_default_value  => null);
 
+         
+    if l_destination_json is null then
+      raise e_archive_destination_null;
+    end if;   
     apex_debug.message 
     ( p_message => 'Retrieved configuration parameter %0 contents %1'
     , p0 => p_archive_type
     , p1 => l_destination_json
-    );                         
+    );             
     -- dbms_output.put_line('archive destination'||l_destination_json);
     apex_json.parse (p_source => l_destination_json);
 
@@ -329,18 +331,19 @@ create or replace package body flow_log_admin as
     end case;
     return l_archive_location;
     exception
+    when e_archive_destination_null then
+       -- flow_errors.handle_general_error
+       -- ( pi_message_key    => 'archive-destination-null'
+       -- , p0 => p_archive_type
+       -- );
+        raise;
       when others then 
         apex_debug.info 
         ( p_message => ' --- Error in %0 configuration parameter definition. Value :'
         , p0  => flow_constants_pkg.gc_config_logging_archive_location
         , p1  => l_destination_json
         );
-        flow_errors.handle_general_error
-        ( pi_message_key    => 'archive-destination-bad-json'
-        , p0 => l_destination_json
-        );  
-        -- $F4AMESSAGE 'archive-destination-bad-json' || 'Error in archive destination configuration parameter.  Parameter: %0' 
-      return null;
+        raise e_archive_bad_destination_json;
   end get_archive_location;
 
   procedure archive_to_database
@@ -572,6 +575,23 @@ create or replace package body flow_log_admin as
       end loop;      
     end if;
   exception  
+    when e_archive_destination_null then
+      flow_errors.handle_general_error
+      ( pi_message_key  => 'archive-destination-null'
+      , p0 => flow_constants_pkg.gc_config_logging_archive_location
+      );
+      raise;
+    when e_archive_bad_destination_json then
+      flow_errors.handle_general_error
+      ( pi_message_key  => 'archive-destination-bad-json'
+      , p0 => flow_constants_pkg.gc_config_logging_archive_location
+      );
+      raise;
+    when e_upload_failed_exception then
+      flow_errors.handle_general_error( pi_message_key  => 'log-archive-error'
+                                      , p0 => apex_web_service.g_status_code);
+      raise;
+    
     when others then
       flow_errors.handle_general_error( pi_message_key  => 'log-archive-error'
                                       , p0 => apex_web_service.g_status_code);

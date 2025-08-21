@@ -16,6 +16,10 @@ create or replace package flow_log_admin
   accessible by ( flow_admin_api, flow_instances , flow_diagram, flow_logging)
   as
 
+  e_archive_destination_null      exception;
+  e_archive_bad_destination_json  exception; 
+  e_upload_failed_exception       exception;
+
   function get_instance_json_summary
   ( p_process_id        in flow_processes.prcs_id%type
   ) return clob;

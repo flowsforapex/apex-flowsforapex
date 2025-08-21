@@ -18,8 +18,8 @@
     , "keepTempFiles": false
     , "content":
       [
-        { "content_type": "plaintext", "path": "/", "name": "install_scratch.sql", "add_show_errors": false },
-        { "content_type": "plaintext", "path": "types/", "name": "flow_t_correlated_message.sql", "add_show_errors": false }
+        { "content_type": "plaintext", "path": "/", "name": "install_scratch.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "types/", "name": "flow_t_correlated_message.sql", "add_show_errors": false }
       ]
     }
   , {

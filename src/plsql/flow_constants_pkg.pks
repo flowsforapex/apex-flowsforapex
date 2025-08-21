@@ -391,7 +391,6 @@ as
   gc_logging_level_abnormal_events     constant number := 1;
   gc_logging_level_major_events        constant number := 2;
   gc_logging_level_routine             constant number := 4;
-  gc_logging_level_detailed            constant number := 6;
   gc_logging_level_full                constant number := 8;
 
 -- Config Parameter Keys

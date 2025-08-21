@@ -4,6 +4,7 @@ as
        null as action,
        prov_prcs_id,
        prov_var_name,
+       prov_var_name_uc,
        prov_var_type,
        prov_scope, 
        ( select nvl(objt.objt_name, 'Main Diagram')
