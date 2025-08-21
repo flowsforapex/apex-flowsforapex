@@ -1099,7 +1099,7 @@ as
           -- Replace single quotes with two single quotes and wrap in quotes
           -- Also handle any potential length issues by truncating if necessary
           declare
-            l_safe_value varchar2(32767);
+            l_safe_value varchar2(4000);
           begin
             -- Limit to 4000 characters if longer to avoid issues
             l_safe_value := case when length(p_value) > 4000 
