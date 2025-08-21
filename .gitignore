@@ -3,7 +3,7 @@ todo.md
 README.pdf
 .DS_Store
 node_modules
-*/*.log
+*.log
 local_diagrams
 test/models/*.zip
 */*.zip
