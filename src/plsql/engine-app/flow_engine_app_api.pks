@@ -287,7 +287,9 @@ as
   );
 
   procedure set_archiving_settings(
-    pi_archiving_enabled  in flow_configuration.cfig_value%type
+    pi_archiving_enabled             in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purging        in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purge_days     in flow_configuration.cfig_value%type
   );
 
   procedure set_statistics_settings(

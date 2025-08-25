@@ -964,7 +964,7 @@ create or replace package body flow_instances as
     -- cancel any apex human tasks
     flow_usertask_pkg.cancel_all_apex_tasks ( p_process_id => p_process_id );
     -- if instance archiving is enabled and instance is not yet archived, run instance archive now before
-    -- process data is deleted from run time tables to ensure arcchive is full audit trail
+    -- process data is deleted from run time tables to ensure archive is full audit trail
     if l_is_not_archived then
       if flow_engine_util.get_config_value ( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled 
                                            , p_default_value => flow_constants_pkg.gc_config_default_logging_archive_enabled

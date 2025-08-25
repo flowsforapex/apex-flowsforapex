@@ -409,6 +409,8 @@ as
   gc_config_logging_bpmn_location       constant varchar2(50 char) := 'logging_bpmn_location';
   gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
+  gc_config_completed_prcs_purging      constant varchar2(50 char) := 'completed_prcs_purging';
+  gc_config_completed_prcs_purge_days   constant varchar2(50 char) := 'completed_prcs_purge_after_completion_days';
   gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
   gc_config_default_workspace           constant varchar2(50 char) := 'default_workspace';
   gc_config_default_application         constant varchar2(50 char) := 'default_application';
@@ -461,6 +463,7 @@ as
   gc_config_default_stats_retain_summary_daily  constant varchar2(2000 char) := '180';
   gc_config_default_stats_retain_summary_month  constant varchar2(2000 char) := '9';
   gc_config_default_stats_retain_summary_qtr    constant varchar2(2000 char) := '36';
+  gc_config_default_completed_prcs_purging      constant varchar2(2000 char) := gc_vcbool_false;
 
 -- Staistics Period
   gc_stats_period_day                   constant varchar2(20 char) := 'DAY';

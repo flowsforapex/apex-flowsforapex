@@ -2033,12 +2033,15 @@ as
 
 
   procedure set_archiving_settings(
-    pi_archiving_enabled  in flow_configuration.cfig_value%type
+    pi_archiving_enabled             in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purging        in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purge_days     in flow_configuration.cfig_value%type
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled  , p_value => pi_archiving_enabled);
-
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled     , p_value => pi_archiving_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purging     , p_value => pi_completed_prcs_purging);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purge_days  , p_value => pi_completed_prcs_purge_days);
   end set_archiving_settings;
 
 
