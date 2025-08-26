@@ -4,7 +4,7 @@ create or replace package body flow_engine as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2020-2022.
--- (c) Copyright Flowquest Limited. 2024.
+-- (c) Copyright Flowquest Limited. 2024-2025.
 --
 -- Created  11-Sep-2020  Richard Allen (Flowquest)
 -- Modified 30-May-2022  Moritz Klein (MT AG)
@@ -1441,7 +1441,7 @@ begin
       , pi_sbfl_id     => p_sbfl_rec.sbfl_id
       , pi_message_key => 'feature-requires-ee'
       );
-      -- $F4AMESSAGE 'no_next_step_found' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.' 
+      -- $F4AMESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.' 
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       null;
   -- let error run back to run_step

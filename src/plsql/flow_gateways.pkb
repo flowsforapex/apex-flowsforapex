@@ -5,7 +5,7 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Consulting Limited. 2021-24
+-- (c) Copyright Flowquest Consulting Limited. 2021-2025
 --
 -- Created    06-May-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
@@ -192,13 +192,13 @@ as
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
         , pi_message_key  => 'gateway-no-previous-gw'
         );
-        -- $F4AMESSAGE 'gateway-no-previous-gateway' || 'No previous gateway found for subflow %0.'
+        -- $F4AMESSAGE 'gateway-no-previous-gw' || 'No previous gateway found for subflow %0.'
       when too_many_rows then
         flow_errors.handle_instance_error
         ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
         , pi_message_key  => 'gateway-multiple-previous-gws'
         );
-        -- $F4AMESSAGE 'gateway-multiple-previous-gateways' || 'Multiple previous gateways found for subflow %0.'
+        -- $F4AMESSAGE 'gateway-multiple-previous-gws' || 'Multiple previous gateways found for subflow %0.'
     end;
     po_nearest_gateway_bpmn_id := l_gateway_bpmn_id;
     po_nearest_gateway_type    := l_gateway_type;
@@ -513,7 +513,7 @@ as
         , pi_message_key    => 'gateway-bad-expression'
         , p0 => pi_objt_bpmn_id||flow_constants_pkg.gc_prov_suffix_route
         );
-        -- $F4AMESSAGE 'gateway-bad_expression' || 'Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).'  
+        -- $F4AMESSAGE 'gateway-bad-expression' || 'Bad gateway routing expression.  This can occur if you attempt to bind a variable with embedded colon (:).'  
       when too_many_rows then
         flow_errors.handle_instance_error
         ( pi_prcs_id        => pi_prcs_id

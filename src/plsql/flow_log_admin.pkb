@@ -3,12 +3,12 @@ create or replace package body flow_log_admin as
   -- Flows for APEX - flow_log_admin.pkb
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
-  -- (c) Copyright Flowquest Consulting Limited. 2024
+  -- (c) Copyright Flowquest Consulting Limited. 2024-25
   --
   -- Created    18-Feb-2023  Richard Allen (Oracle)
   -- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
   --
-  -- Package flow_log_admin manaes the Flows for APEX log tables, including
+  -- Package flow_log_admin manages the Flows for APEX log tables, including
   --    - creation of instance archive summary
   --    - archiving of instance logs
   --    - purging of instance log tables 
@@ -332,10 +332,6 @@ create or replace package body flow_log_admin as
     return l_archive_location;
     exception
     when e_archive_destination_null then
-       -- flow_errors.handle_general_error
-       -- ( pi_message_key    => 'archive-destination-null'
-       -- , p0 => p_archive_type
-       -- );
         raise;
       when others then 
         apex_debug.info 
@@ -580,22 +576,26 @@ create or replace package body flow_log_admin as
       ( pi_message_key  => 'archive-destination-null'
       , p0 => flow_constants_pkg.gc_config_logging_archive_location
       );
+      -- $F4AMESSAGE 'archive-destination-null' || 'No archive or logging destination has been configured - See Configurations > Logging or Archiving'
       raise;
     when e_archive_bad_destination_json then
       flow_errors.handle_general_error
       ( pi_message_key  => 'archive-destination-bad-json'
       , p0 => flow_constants_pkg.gc_config_logging_archive_location
       );
+      -- $F4AMESSAGE 'archive-destination-bad-json' || 'Error in archive destination configuration parameter.  Parameter: %0'
       raise;
     when e_upload_failed_exception then
       flow_errors.handle_general_error( pi_message_key  => 'log-archive-error'
                                       , p0 => apex_web_service.g_status_code);
+      -- $F4AMESSAGE 'log-archive-error' || 'Error occurred while archiving log for process %0.'
       raise;
     
     when others then
       flow_errors.handle_general_error( pi_message_key  => 'log-archive-error'
                                       , p0 => apex_web_service.g_status_code);
-      raise;      
+      -- $F4AMESSAGE 'log-archive-error' || 'Error occurred while archiving log for process %0.'
+      raise;
   end archive_completed_instances;
 
 end flow_log_admin;

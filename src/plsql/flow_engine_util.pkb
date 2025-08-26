@@ -847,7 +847,6 @@ end get_object_tag;
     end;
   end lock_all_for_process;
 
-
   function get_scope
   (  p_process_id  in flow_processes.prcs_id%type
   ,  p_subflow_id  in flow_subflows.sbfl_id%type

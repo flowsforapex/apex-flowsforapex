@@ -965,6 +965,7 @@ as
       , pi_message_key => 'timeout_locking_subflow'
       , p0 => l_sbfl_id
       );
+      -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
     when e_task_id_proc_var_not_found then
       flow_errors.handle_instance_error
       ( pi_prcs_id     => p_process_id
@@ -972,6 +973,7 @@ as
       , pi_message_key => 'apex-task-not-found'
       , p0 => p_apex_task_id 
       );
+      -- $F4AMESSAGE 'apex-task-not-found' || 'APEX Human Task %0 not found in Flows for APEX Process'
     when e_task_id_duplicate_found then
       flow_errors.handle_instance_error
       ( pi_prcs_id     => p_process_id
@@ -979,6 +981,7 @@ as
       , pi_message_key => 'apex-task-on-multiple-steps'
       , p0 => p_apex_task_id
       );
+      -- $F4AMESSAGE 'apex-task-on-multiple-steps' || 'APEX Human Task %0 found associated with more than one Flows for APEX process step.'
     when e_task_not_current_step then
       flow_errors.handle_instance_error
       ( pi_prcs_id     => p_process_id
@@ -986,6 +989,7 @@ as
       , pi_message_key => 'apex-task-not-current-step'
       , p0 => p_apex_task_id
       );
+      -- $F4AMESSAGE 'apex-task-not-current-step' || 'APEX Human Task %0 is not the current step in Flows for APEX Process.'
     when e_task_no_return_var then
       flow_errors.handle_instance_error
       ( pi_prcs_id     => p_process_id
@@ -993,6 +997,7 @@ as
       , pi_message_key => 'apex-task-invalid-return-var'
       , p0 => p_apex_task_id
       );      
+      -- $F4AMESSAGE 'apex-task-invalid-return-var' || 'APEX Human Task result process variable is not defined or invalid.'
   end return_approval_result;
 
   procedure return_task_state_outcome
@@ -1173,6 +1178,7 @@ as
         , pi_message_key => 'timeout_locking_subflow'
         , p0 => p_subflow_id
         );
+        -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'
       when e_task_id_not_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
@@ -1180,6 +1186,7 @@ as
         , pi_message_key => 'apex-task-not-found'
         , p0 => p_apex_task_id 
         );
+        -- $F4AMESSAGE 'apex-task-not-found' || 'APEX Human Task %0 not found in Flows for APEX Process'
       when e_task_id_duplicate_found then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
@@ -1187,6 +1194,7 @@ as
         , pi_message_key => 'apex-task-on-multiple-steps'
         , p0 => p_apex_task_id
         );
+        -- $F4AMESSAGE 'apex-task-on-multiple-steps' || 'APEX Human Task %0 found associated with more than one Flows for APEX process step.'
       when e_task_not_current_step then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
@@ -1194,6 +1202,7 @@ as
         , pi_message_key => 'apex-task-not-current-step'
         , p0 => p_apex_task_id
         );
+        -- $F4AMESSAGE 'apex-task-not-current-step' || 'APEX Human Task %0 is not the current step of the Process.  Step may have completed all ready.'
       when e_task_no_return_var then
         flow_errors.handle_instance_error
         ( pi_prcs_id     => p_process_id
@@ -1201,6 +1210,7 @@ as
         , pi_message_key => 'apex-task-invalid-return-var'
         , p0 => p_apex_task_id
         );      
+        -- $F4AMESSAGE 'apex-task-invalid-return-var' || 'APEX Human Task %0 is missing a return variable.'
     end return_task_state_outcome;
 
 end flow_usertask_pkg;

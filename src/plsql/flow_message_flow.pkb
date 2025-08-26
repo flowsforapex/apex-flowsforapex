@@ -158,6 +158,7 @@ create or replace package body flow_message_flow as
           , pi_sbfl_id      => p_sbfl_info.sbfl_id
           , pi_message_key  => 'msgflow-not-correlated' 
           );
+          -- F4A$MESSAGE 'msgflow-not-correlated' || 'Received message does not match an expected message.'
         when e_msgflow_correlated_msg_locked then
           -- message sent correated but is locked by another message
           flow_errors.handle_instance_error
@@ -165,6 +166,7 @@ create or replace package body flow_message_flow as
           , pi_sbfl_id      => p_sbfl_info.sbfl_id
           , pi_message_key  => 'msgflow-lock-timeout-msub' 
           );
+          -- F4A$MESSAGE 'msgflow-lock-timeout-msub' || 'Message Subscription locked by another user.   Try again.'
         when e_msgflow_mag_already_consumed then
           -- message correlated but receiving object is no longer the current object in its subflow
           flow_errors.handle_instance_error
@@ -172,6 +174,7 @@ create or replace package body flow_message_flow as
           , pi_sbfl_id      => p_sbfl_info.sbfl_id
           , pi_message_key  => 'msgflow-no-longer-current-step'
           );
+          -- F4A$MESSAGE 'msgflow-no-longer-current-step' || 'Message correlated but receiving object is no longer the current object in its subflow.'
         when e_msgflow_feature_requires_ee then
           -- feature not supported without Enterprise Edition licence
           flow_errors.handle_instance_error
@@ -179,6 +182,7 @@ create or replace package body flow_message_flow as
           , pi_sbfl_id      => p_sbfl_info.sbfl_id
           , pi_message_key  => 'feature-requires-ee'
           );
+          -- F4A$MESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.'
       end;
     else
       begin
@@ -191,6 +195,7 @@ create or replace package body flow_message_flow as
           , pi_message_key  => 'msgflow-endpoint-not-supported' 
           , p0 => l_message.endpoint
           );
+          -- F4A$MESSAGE 'msgflow-endpoint-not-supported' || 'Message endpoint specified ( %0) not supported.'
       end;
     end case;
 

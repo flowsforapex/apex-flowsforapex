@@ -149,7 +149,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var_exp_sql_other', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  SQL error shown in event log.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'var_exp_sql_too_many_rows', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.]' );
+    values ( 'exec_sql_too_many_rows', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  Query returns multiple rows.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var_exp_static_general', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  See error in event log.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -207,19 +207,17 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'plugin-multiple-rows', c_load_lang, q'[Multiple rows found. Please enable the 'Enable Call Activities' setting in the viewer plugin attributes.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-cancelation-error', c_load_lang, q'[Error attempting to cancel APEX workflow task (task_id: %1 ) for process step : %0.)]' );
+    values ( 'apex-task-cancelation-error', c_load_lang, q'[Error attempting to cancel APEX Human Task (task_id: %1 ) for process step : %0.)]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-not-supported', c_load_lang, q'[APEX Workflow Feature use requires Oracle APEX v%0.]' );
+    values ( 'apex-task-not-found', c_load_lang, q'[APEX Human Task %0 not found in Flows for APEX Process]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-not-found', c_load_lang, q'[APEX Workflow Task %0 not found in Flows for APEX Process]' );
+    values ( 'apex-task-on-multiple-steps', c_load_lang, q'[APEX Human Task %0 found associated with more than one Flows for APEX process step.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-on-multiple-steps', c_load_lang, q'[APEX Workflow Task %0 found associated with more than one Flows for APEX process step.]' );
+    values ( 'apex-task-not-current-step', c_load_lang, q'[APEX Human Task %0 is not the current step of the Process.  Step may have completed all ready.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-not-current-step', c_load_lang, q'[APEX Workflow Task %0 is not the current step of the Process.  Step may have completed all ready.]' );
+    values ( 'apex-task-invalid-result-var', c_load_lang, q'[APEX Human Task result process variable is not defined or invalid.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-invalid-result-var', c_load_lang, q'[APEX Workflow Task result process variable is not defined or invalid.]' );
-  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'apex-task-creation-error', c_load_lang, q'[Error creating APEX Workflow task %0 in application %1.  see debug for details.]' );
+    values ( 'apex-task-creation-error', c_load_lang, q'[Error creating APEX Human task %0 in application %1.  see debug for details.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'apex-task-priority-error', c_load_lang, q'[Error evaluating Priority.  Priority must be between 1 and 5.  Priority: %0.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -229,7 +227,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'diagram-archive-has-instances', c_load_lang, q'[You tried to archive a diagram that has running instances.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'var_exp_sql_too_many_values', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  Query returns more than one value.]' );
+    values ( 'exec_sql_too_many_values', c_load_lang, q'[Error executing SQL Query - query returns more than one value.]' );
   -- below here manually added for 23.1 dev
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'apex-task-business-ref-null', c_load_lang, q'[Error creating Approval Task - Business Ref / System of Record Primary Key must be not null.]' ); 
@@ -242,7 +240,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-not-correlated', c_load_lang, q'[Received message does not match an expected message.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'msgflow-no-longer-current-step', c_load_lang, q'[Process step receiving message has already occured (incorrect step key provided).]' ); 
+    values ( 'msgflow-no-longer-current-step', c_load_lang, q'[Message correlated but receiving object is no longer the current object in its subflow.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'msgflow-lock-timeout-msub', c_load_lang, q'[Message Subscription locked by another user.   Try again.]' ); 
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -275,7 +273,7 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'suspend-invalid-status', c_load_lang, q'[Only process instances currently in running or error status can be suspended.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
-    values ( 'resume-invalid-status', c_load_lang, q'[Process instance %0 is in state %1.  Only process instances currently suspended can be resumed.]' );
+    values ( 'resume-invalid-status', c_load_lang, q'[Only process instances currently in suspended status can be resumed.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'var_exp_plsql_other', c_load_lang, q'[Error setting process variable %1 in process id %0 (set %2).  PL/SQL error shown in event log. ]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
@@ -316,7 +314,20 @@ begin
     values ( 'rewind-force-step-not-error', c_load_lang, q'[Cannot force next step on subflow that is not in error status.]' );
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( 'archive-destination-null', c_load_lang, q'[No archive or logging destination has been configured - See Configurations > Logging or Archiving]' );
--- above here manually added for 25.1 dev
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('exec_sql_too_many_cols', c_load_lang, 'Error executing SQl Query - query returns more than one column.');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('exec_sql_other', c_load_lang, 'Error executing SQL Query.  SQL error shown in event log.');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('exec_plsql_other', c_load_lang, 'Error executing PL/SQL.  PL/SQL error shown in event log.');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('logging-event-level', c_load_lang, 'Flows - Internal error while getting the logging level');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('timer-internal-error', c_load_lang, 'Timer internal error  for object %0. Type: %1; Value: %2');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('rewind-no-parent-subflow', c_load_lang, 'Rewind - no parent subflow found.');
+
+  -- above here manually added for 25.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( '', c_load_lang, q'[  ]' );

@@ -712,6 +712,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'feature-requires-ee'
       );
+      -- F4A$MESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.'
       raise;
     when e_prcs_not_suspendable then
       -- only running or errored process can be suspended
@@ -719,6 +720,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'suspend-invalid-status'
       );
+      -- F4A$MESSAGE 'suspend-invalid-status' || 'Only process instances currently in running or error status can be suspended.'
       raise;
   end suspend_process;
 
@@ -758,6 +760,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'feature-requires-ee'
       );
+      -- F4A$MESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.'
       raise;
     when e_prcs_not_suspended then
       -- only suspended process can be resumed
@@ -765,6 +768,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'resume-invalid-status'
       );
+      -- F4A$MESSAGE 'resume-invalid-status' || 'Only process instances currently in suspended status can be resumed.'
       raise;
   end resume_process;
 

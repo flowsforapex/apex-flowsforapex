@@ -215,6 +215,7 @@ as
     exception
       when others then
         flow_errors.handle_general_error( pi_message_key => 'plugin-diagram-not-parsable');
+        -- $F4AMESSAGE 'plugin-diagram-not-parsable' || 'Diagram content is not valid JSON.'
     end;
 
     l_id      := apex_json.get_number( p_values => l_values, p_path => 'regions[1].data.id' );

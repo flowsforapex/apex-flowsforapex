@@ -186,7 +186,7 @@ as
           , pi_sbfl_id      => p_subflow_id
           , pi_message_key  => 'apex-task-multiple-process'
           );
-          -- F4A$MESSAGE 'apex-session-multiple-process' || 'Error creating APEX session.  BPMN diagram contains multiple Process objects.'
+          -- F4A$MESSAGE 'apex-task-multiple-process' || 'Error creating APEX session.  BPMN diagram contains multiple Process objects.'
       when e_apex_session_missing_param then
           flow_errors.handle_instance_error
           ( pi_prcs_id      => p_process_id
@@ -243,6 +243,7 @@ as
           , pi_message_key  => 'async-no-username'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-no-username' || 'Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.'
     end if;
     if l_app_id is null then
       flow_errors.handle_instance_error
@@ -251,6 +252,7 @@ as
           , pi_message_key  => 'async-no-appid'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-no-appid' || 'Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.'
     end if;
     if l_page_id is null then
       flow_errors.handle_instance_error
@@ -259,6 +261,7 @@ as
           , pi_message_key  => 'async-no-pageid'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-no-pageid' || 'Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.'
     end if;
     -- create apex session
     begin
@@ -275,6 +278,7 @@ as
           , pi_message_key  => 'async-invalid_params'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-invalid_params' || 'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
           raise flow_constants_pkg.ge_invalid_session_params;
     end;
     return v('APP_SESSION');
@@ -309,12 +313,14 @@ as
           , pi_message_key  => 'async-invalid_params'
           , p0              => 'API Call'
           );
+          -- $F4AMESSAGE 'async-invalid_params' || 'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
           raise flow_constants_pkg.ge_invalid_session_params;
         else
           flow_errors.handle_general_error
           ( pi_message_key  => 'async-invalid_params'
           , p0 => 'Default Parameters in Configurations'
           );
+          -- $F4AMESSAGE 'async-invalid_params' || 'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
           raise flow_constants_pkg.ge_invalid_session_params;
         end if;
     end;
