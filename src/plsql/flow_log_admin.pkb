@@ -92,6 +92,8 @@ create or replace package body flow_log_admin as
                            'severity'                   value lgpr_severity,
                            'object'                     value lgpr_objt_id,
                            'stepKey'                    value lgpr_step_key,
+                           'subflowID'                  value lgpr_sbfl_id,
+                           'processLevel'               value lgpr_process_level,
                            'diagram'                    value lgpr_dgrm_id,
                            'timestamp'                  value lgpr_timestamp,
                            'user'                       value lgpr_user,
@@ -143,6 +145,7 @@ create or replace package body flow_log_admin as
                                                'expr_set'        value lgvr.lgvr_expr_set,
                                                'type'            value lgvr.lgvr_var_type,
                                                'timestamp'       value lgvr.lgvr_timestamp,
+                                               'user'            value lgvr.lgvr_user,
                                                'newValue'        value case lgvr.lgvr_var_type
                                                           when 'VARCHAR2'                   then lgvr.lgvr_var_vc2
                                                           when 'NUMBER'                     then to_char(lgvr.lgvr_var_num)
