@@ -5,6 +5,7 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates. 2025.
 --
 -- Created  10-Dec-2021 Dennis Amthor - MT AG  
 -- Modified 22-May-2022 Moritz Klein - MT AG
@@ -639,28 +640,6 @@ as
     l_dgrm_id_deprecated  flow_diagrams.dgrm_id%type;
     l_dgrm_content        clob;
   begin
-/*    update flow_diagrams
-       set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated
-     where dgrm_name = (
-           select dgrm_name 
-             from flow_diagrams
-            where dgrm_id = pi_dgrm_id)
-       and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
-    returning dgrm_id into l_dgrm_id_deprecated;
-
-    if l_dgrm_id_deprecated is not null then 
-      -- log deprecation of old diagram
-      apex_debug.message ( p_message => 'Release Diagram - Diagram %0 being deprecated in favor of new diagram %1.)'
-      , p0 => l_dgrm_id_deprecated
-      , p1 => pi_dgrm_id
-      );
-      flow_logging.log_diagram_event 
-      ( p_dgrm_id         => l_dgrm_id_deprecated
-      , p_dgrm_status     => flow_constants_pkg.gc_dgrm_status_deprecated
-      , p_comment         => 'Diagram deprecated when dgrm_id '||pi_dgrm_id||' released.'
-      );
-    end if; */
-
     -- deprecate existing released version of model if one exists
     begin
       select dgrm_id
@@ -783,7 +762,7 @@ as
     when e_has_running_instances then
           -- initial process start so call general error (instance not yet running)
           flow_errors.handle_general_error ( pi_message_key => 'diagram-archive-has-instances');
-          -- $F4AMESSAGE 'version-not-found' || 'Cannot find specified diagram version.  Please check version specification.'
+          -- $F4AMESSAGE 'diagram-archive-has-instances' || 'Cannot find specified diagram version.  Please check version specification.'
   end archive_diagram;   
 
   function get_diagram_name
