@@ -293,6 +293,13 @@ as
             , p_items => 'P7_DGRM_ID'
             , p_values => apex_application.g_x02
           );
+
+        when 'PROCESS-VARIABLE-HISTORY' then
+          l_url := apex_page.get_url(
+              p_page => 21
+            , p_items => 'P21_PRCS_ID,P21_VAR_NAME,P21_VAR_NAME_UC,P21_SCOPE'
+            , p_values => apex_application.g_x02||','||apex_application.g_x03||','||apex_application.g_x04||','||apex_application.g_x05
+          );  
         when 'INSTANCES-PER-STEP' then
           l_url := apex_page.get_url(
               p_page => 19
