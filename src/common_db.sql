@@ -79,6 +79,7 @@ PROMPT >> Installing Views
 @views/flow_instance_scopes_vw.sql
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
+@views/flow_instance_events_vw.sql
 @views/flow_diagrams_instanciated_lov.sql
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
@@ -173,6 +174,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
+@views/engine-app/flow_p0019_vw.sql
 @views/engine-app/flow_p0020_instance_timeline_vw.sql
 
 
