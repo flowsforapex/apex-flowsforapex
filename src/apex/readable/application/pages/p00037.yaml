@@ -43,6 +43,60 @@ server-cache:
   caching: Disabled
 
 regions: 
+- # ====== Region: Automation - Purge Statistics ===============
+  id: 4859659349240114
+  identification: 
+    name: Automation - Purge Statistics
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+          name, 
+          static_id, 
+          polling_interval, 
+          polling_status_code, 
+          polling_status, 
+          polling_last_run_timestamp, 
+          polling_next_run_timestamp
+      from apex_appl_automations
+      where application_id = :app_id
+      
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
 - # ====== Region: Statistics ==================================
   id: 8608203121575437
   identification: 
@@ -81,6 +135,60 @@ regions:
     settings: 
       output-as: HTML
       expand-shortcuts: false
+
+- # ====== Region: Automation - Gather Daily Statistics ========
+  id: 14374214007956774
+  identification: 
+    name: Automation - Gather Daily Statistics
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+          name, 
+          static_id, 
+          polling_interval, 
+          polling_status_code, 
+          polling_status, 
+          polling_last_run_timestamp, 
+          polling_next_run_timestamp
+      from apex_appl_automations
+      where application_id = :app_id
+      
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
 
 - # ====== Region: Breadcrumb ==================================
   id: 27538437580351975
@@ -323,6 +431,696 @@ page-items:
     store-value-encrypted-in-session-state: false
     restricted-characters: All characters can be saved.
 
+- # ====== Page Item: P37_NAME_1 ===============================
+  id: 4859720703240115
+  identification: 
+    name: P37_NAME_1
+    type: Display Only
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_STATIC_ID_1 ==========================
+  id: 4859803239240116
+  identification: 
+    name: P37_STATIC_ID_1
+    type: Display Only
+
+  label: 
+    label: Static Id
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: STATIC_ID
+    data-type: VARCHAR2
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_STATUS_1 =====================
+  id: 4859947218240117
+  identification: 
+    name: P37_POLLING_STATUS_1
+    type: Display Only
+
+  label: 
+    label: Polling Status
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: POLLING_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_INTERVAL_1 ===================
+  id: 4860022218240118
+  identification: 
+    name: P37_POLLING_INTERVAL_1
+    type: Display Only
+
+  label: 
+    label: Polling Interval
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: POLLING_INTERVAL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_LAST_RUN_TIMESTAMP_1 =========
+  id: 4860169479240119
+  identification: 
+    name: P37_POLLING_LAST_RUN_TIMESTAMP_1
+    type: Display Only
+
+  label: 
+    label: Polling Last Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: POLLING_LAST_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_NEXT_RUN_TIMESTAMP_1 =========
+  id: 4860208998240120
+  identification: 
+    name: P37_POLLING_NEXT_RUN_TIMESTAMP_1
+    type: Display Only
+
+  label: 
+    label: Polling Next Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: POLLING_NEXT_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_STATUS_CODE_1 ================
+  id: 4860303242240121
+  identification: 
+    name: P37_POLLING_STATUS_CODE_1
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Statistics # 4859659349240114
+    column: POLLING_STATUS_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_NAME =================================
+  id: 14377573837956770
+  identification: 
+    name: P37_NAME
+    type: Display Only
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_STATIC_ID ============================
+  id: 14377636673956771
+  identification: 
+    name: P37_STATIC_ID
+    type: Display Only
+
+  label: 
+    label: Static Id
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: STATIC_ID
+    data-type: VARCHAR2
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_INTERVAL =====================
+  id: 14377735556956772
+  identification: 
+    name: P37_POLLING_INTERVAL
+    type: Display Only
+
+  label: 
+    label: Polling Interval
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: POLLING_INTERVAL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_STATUS_CODE ==================
+  id: 14636483847502423
+  identification: 
+    name: P37_POLLING_STATUS_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 130
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: POLLING_STATUS_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_STATUS =======================
+  id: 14636566639502424
+  identification: 
+    name: P37_POLLING_STATUS
+    type: Display Only
+
+  label: 
+    label: Polling Status
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: POLLING_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_LAST_RUN_TIMESTAMP ===========
+  id: 14636685133502425
+  identification: 
+    name: P37_POLLING_LAST_RUN_TIMESTAMP
+    type: Display Only
+
+  label: 
+    label: Polling Last Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: POLLING_LAST_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_POLLING_NEXT_RUN_TIMESTAMP ===========
+  id: 14636716808502426
+  identification: 
+    name: P37_POLLING_NEXT_RUN_TIMESTAMP
+    type: Display Only
+
+  label: 
+    label: Polling Next Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 110
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+    column: POLLING_NEXT_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
 buttons: 
 - # ====== Button: SAVE ========================================
   id: 3336931358771696
@@ -387,6 +1185,297 @@ buttons:
   server-side-condition: 
     type: Never
 
+- # ====== Button: ENABLE_1 ====================================
+  id: 4860681240240124
+  identification: 
+    button-name: ENABLE_1
+    label: Enable
+
+  layout: 
+    sequence: 20
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P37_STATIC_ID_1.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P37_STATIC_ID_1.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P37_POLLING_STATUS_CODE_1
+    value: DISABLED
+
+- # ====== Button: DISABLE_1 ===================================
+  id: 4860737620240125
+  identification: 
+    button-name: DISABLE_1
+    label: Disable
+
+  layout: 
+    sequence: 30
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P37_STATIC_ID_1.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P37_STATIC_ID_1.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P37_POLLING_STATUS_CODE_1
+    value: ACTIVE
+
+- # ====== Button: SEE_LOGS_1 ==================================
+  id: 4860832913240126
+  identification: 
+    button-name: SEE_LOGS_1
+    label: See Logs
+
+  layout: 
+    sequence: 40
+    region: Automation - Purge Statistics # 4859659349240114
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:41:P41_STATIC_ID:&P37_STATIC_ID.'
+      page: 41 # Automation Logs
+      clear-cache: 41
+      values: 
+        p41_static_id: '&P37_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: SEE_LOGS ====================================
+  id: 4894936412115110
+  identification: 
+    button-name: SEE_LOGS
+    label: See Logs
+
+  layout: 
+    sequence: 190
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:41:P41_STATIC_ID:&P37_STATIC_ID.'
+      page: 41 # Automation Logs
+      clear-cache: 41
+      values: 
+        p41_static_id: '&P37_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: ENABLE ======================================
+  id: 4895385806115110
+  identification: 
+    button-name: ENABLE
+    label: Enable
+
+  layout: 
+    sequence: 150
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P37_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P37_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P37_POLLING_STATUS_CODE
+    value: DISABLED
+
+- # ====== Button: DISABLE =====================================
+  id: 4895788183115110
+  identification: 
+    button-name: DISABLE
+    label: Disable
+
+  layout: 
+    sequence: 170
+    region: Automation - Gather Daily Statistics # 14374214007956774
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P37_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P37_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P37_POLLING_STATUS_CODE
+    value: ACTIVE
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close Dialog - Automation_1 =========
+  id: 4860962453240127
+  identification: 
+    name: Close Dialog - Automation_1
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Automation - Purge Statistics # 4859659349240114
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 4861058913240128
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: window.location.reload();
+
+    execution: 
+      sequence: 10
+      event: Close Dialog - Automation_1 # 4860962453240127
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Dialog - Automation ===========
+  id: 4901082893108850
+  identification: 
+    name: Close Dialog - Automation
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Automation - Gather Daily Statistics # 14374214007956774
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 4901439462108850
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: window.location.reload();
+
+    execution: 
+      sequence: 10
+      event: Close Dialog - Automation # 4901082893108850
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
 computations: 
 - # ====== Computation: P37_STATS_RETAIN_DAILY =================
   id: 3287570384239516
@@ -442,6 +1531,32 @@ computations:
                , p_default_value => flow_constants_pkg.gc_config_default_stats_retain_summary_qtr
              );
 
+- # ====== Computation: P37_STATIC_ID_1 ========================
+  id: 4860412063240122
+  identification: 
+    item-name: P37_STATIC_ID_1
+
+  execution: 
+    sequence: 40
+    point: Before Header
+
+  computation: 
+    type: Static Value
+    static-value: flows-for-apex-purge-statistics
+
+- # ====== Computation: P37_STATIC_ID ==========================
+  id: 4900885174110851
+  identification: 
+    item-name: P37_STATIC_ID
+
+  execution: 
+    sequence: 130
+    point: Before Header
+
+  computation: 
+    type: Static Value
+    static-value: flows-for-apex-gather-daily-statistics
+
 processes: 
 - # ====== Process: Set Settings ===============================
   id: 3339267970771698
@@ -473,4 +1588,30 @@ processes:
 
   server-side-condition: 
     when-button-pressed: SAVE # 3337626931771697
+
+- # ====== Process: Initialize form Configuration - Statistics_1
+  id: 4860593046240123
+  identification: 
+    name: Initialize form Configuration - Statistics_1
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Automation - Purge Statistics # 4859659349240114
+
+  execution: 
+    sequence: 30
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Initialize form Configuration - Statistics =
+  id: 4900451808112931
+  identification: 
+    name: Initialize form Configuration - Statistics
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Automation - Gather Daily Statistics # 14374214007956774
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
 

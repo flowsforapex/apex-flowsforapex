@@ -1,0 +1,63 @@
+---
+- # ====== Component Group: Flows for APEX Components ==========
+  id: 4817123621810257
+  identification: 
+    name: Flows for APEX Components
+
+  subscription: 
+    version-number: 3820754388
+
+  comments: 
+    comments: Contains all of the components required in a Flows for APEX application.
+
+  components: 
+  - # ====== Component:  =========================================
+    id: 4818250997788363
+    component: 
+      application-item: PROCESS_ID # 4817631731796132
+
+  - # ====== Component:  =========================================
+    id: 4818421433788362
+    component: 
+      application-item: SUBFLOW_ID # 4817822903793230
+
+  - # ====== Component:  =========================================
+    id: 4818745259788362
+    component: 
+      application-item: STEP_KEY # 4818094936791614
+
+  - # ====== Component:  =========================================
+    id: 4819019978780559
+    component: 
+      plug-in: Flows for APEX - Manage Flow Instance # 92418934266670712
+
+  - # ====== Component:  =========================================
+    id: 4819247630780558
+    component: 
+      plug-in: Flows for APEX - Manage Flow Instance Step # 151286992364012459
+
+  - # ====== Component:  =========================================
+    id: 4819591311780558
+    component: 
+      plug-in: Flows for APEX - Manage Flow Instance Variables # 84719765847460987
+
+  - # ====== Component:  =========================================
+    id: 4819861299780558
+    component: 
+      plug-in: 'Flows for APEX - Return APEX Human Task State and Outcome ' # 5348613982934
+
+  - # ====== Component:  =========================================
+    id: 4820178057780558
+    component: 
+      plug-in: Flows for APEX - Viewer (25.1) # 7028045730394045
+
+  - # ====== Component:  =========================================
+    id: 4820401783780558
+    component: 
+      plug-in: Flows for APEX - Return to Flows for APEX # 12315927534327459869
+
+  - # ====== Component:  =========================================
+    id: 4820725397780558
+    component: 
+      plug-in: Flows for APEX - Viewer # 52324636500430595707
+

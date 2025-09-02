@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -16,7 +16,7 @@ wwv_flow_imp_shared.create_list_of_values(
 ,p_lov_name=>'LOGGING_LEVELS'
 ,p_lov_query=>'.'||wwv_flow_imp.id(11503678828527)||'.'
 ,p_location=>'STATIC'
-,p_version_scn=>1842736134
+,p_version_scn=>3588742803
 );
 wwv_flow_imp_shared.create_static_lov_data(
  p_id=>wwv_flow_imp.id(11844748828527)
@@ -38,19 +38,13 @@ wwv_flow_imp_shared.create_static_lov_data(
 );
 wwv_flow_imp_shared.create_static_lov_data(
  p_id=>wwv_flow_imp.id(12991310828526)
-,p_lov_disp_sequence=>4
+,p_lov_disp_sequence=>5
 ,p_lov_disp_value=>'Routine'
 ,p_lov_return_value=>'4'
 );
 wwv_flow_imp_shared.create_static_lov_data(
- p_id=>wwv_flow_imp.id(13402327828526)
-,p_lov_disp_sequence=>5
-,p_lov_disp_value=>'Detailed'
-,p_lov_return_value=>'6'
-);
-wwv_flow_imp_shared.create_static_lov_data(
  p_id=>wwv_flow_imp.id(13844636828526)
-,p_lov_disp_sequence=>6
+,p_lov_disp_sequence=>8
 ,p_lov_disp_value=>'Full / Debug'
 ,p_lov_return_value=>'8'
 );

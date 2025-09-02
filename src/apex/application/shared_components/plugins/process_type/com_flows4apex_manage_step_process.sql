@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -18,13 +18,13 @@ wwv_flow_imp_shared.create_plugin(
 ,p_display_name=>'Flows for APEX - Manage Flow Instance Step'
 ,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('PROCESS TYPE','COM.FLOWS4APEX.MANAGE_STEP.PROCESS'),'')
-,p_api_version=>2
+,p_api_version=>1
 ,p_execution_function=>'flow_plugin_manage_instance_step.execution'
 ,p_substitute_attributes=>true
-,p_version_scn=>1760507031
+,p_version_scn=>1999265505
 ,p_subscribe_plugin_settings=>true
-,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.'
-,p_version_identifier=>'24.1'
+,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step. The step timing functions Start and Pause are also available.'
+,p_version_identifier=>'25.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
@@ -178,6 +178,23 @@ wwv_flow_imp_shared.create_plugin_attr_value(
 ,p_display_value=>'Release Step'
 ,p_return_value=>'release'
 ,p_help_text=>'This option is used to release a Flow Instance Step.'
+);
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(99399170460571)
+,p_plugin_attribute_id=>wwv_flow_imp.id(151293410221019612)
+,p_display_sequence=>40
+,p_display_value=>'Start Work'
+,p_return_value=>'start'
+,p_help_text=>'This is used to send a ''flow_start_step'' call to the workflow engine, which logs that a user has now started working on the task. This is only used to gather timing information, and separate waiting time from working time.'
+);
+wwv_flow_imp_shared.create_plugin_attr_value(
+ p_id=>wwv_flow_imp.id(99856001457100)
+,p_plugin_attribute_id=>wwv_flow_imp.id(151293410221019612)
+,p_display_sequence=>50
+,p_display_value=>'Pause Work'
+,p_return_value=>'pause'
+,p_help_text=>'This is used to send a ''flow_pause_step'' call to the workflow engine, which logs that a user has now paused working on the task. This is only used to gather timing information, and separate waiting time from working time. Use in conjunction with an e'
+||'arlier Start Work event.'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
  p_id=>wwv_flow_imp.id(151289804975012472)

@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -22,6 +22,11 @@ wwv_flow_imp_page.create_page(
 '/* Adjust width of IRR Settings to be auto */',
 '.a-IRR-controls-cell--label {',
 '    width: auto;',
+'}',
+'',
+'/*Tweak was altered icon font size*/',
+'span.flow-was-altered-icon {',
+'    font-size: 24px;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(12495618547053880299)
 ,p_page_template_options=>'#DEFAULT#'
@@ -78,34 +83,23 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>30
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_query_type=>'TABLE'
-,p_query_table=>'FLOW_P0010_VW'
+,p_query_table=>'FLOW_VIEWER_VW'
 ,p_query_where=>'prcs_id = :P10_PRCS_ID'
 ,p_include_rowid_column=>false
-,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION'
-,p_ajax_items_to_submit=>'P10_PRCS_ID,P10_PRCS_NAME'
-,p_plug_query_no_data_found=>'No process selected'
-,p_plugin_init_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( config ) {',
-'    config.allowDownload = false;',
-'    return config;',
-'}'))
+,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION.251'
+,p_ajax_items_to_submit=>'P10_PRCS_ID'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
-  'attribute_01', 'DGRM_CONTENT',
-  'attribute_02', 'ALL_CURRENT',
-  'attribute_03', 'PRDG_ID',
-  'attribute_04', 'ALL_COMPLETED',
-  'attribute_05', 'PRDG_PRDG_ID',
-  'attribute_06', 'ALL_ERRORS',
-  'attribute_07', 'CALLING_OBJT',
-  'attribute_08', 'Y',
-  'attribute_09', 'Y',
-  'attribute_11', 'Y',
-  'attribute_12', 'BREADCRUMB',
-  'attribute_13', 'DRILLDOWN_ALLOWED',
-  'attribute_14', 'Y',
-  'attribute_15', 'N',
-  'attribute_16', 'Y',
-  'attribute_17', 'ITERATION_DATA')).to_clob
+  'badges_data', 'BADGES_DATA',
+  'call_activity_data', 'CALL_ACTIVITY_DATA',
+  'diagram_identifier', 'PRDG_ID',
+  'diagram_xml', 'DGRM_CONTENT',
+  'enable_mousewheel_zoom', 'N',
+  'highlighting_data', 'HIGHLIGHTING_DATA',
+  'iteration_data', 'ITERATION_DATA',
+  'refresh_on_load', 'Y',
+  'show_toolbar', 'Y',
+  'use_bpmn_colors', 'Y',
+  'user_task_data', 'USER_TASK_DATA')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(12493545854579486121)
@@ -414,7 +408,8 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'PRCS_WAS_ALTERED'
 ,p_display_order=>190
 ,p_column_identifier=>'S'
-,p_column_label=>'Run Was Altered'
+,p_column_label=>'&nbsp;'
+,p_column_html_expression=>'{if PRCS_WAS_ALTERED/}<span class="flow-was-altered-icon fa fa-2x fa-exclamation-triangle-o u-warning-text" title="Ran with errors or interventions - see logs"></span>{endif/}'
 ,p_column_type=>'STRING'
 ,p_column_alignment=>'CENTER'
 ,p_use_as_row_header=>'N'
@@ -437,7 +432,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>10
-,p_report_columns=>'CHECKBOX:BTN:QUICK_ACTION:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_CATEGORY:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:PRCS_DGRM_STATUS_ICON'
+,p_report_columns=>'PRCS_DGRM_CATEGORY:CHECKBOX:BTN:PRCS_WAS_ALTERED:QUICK_ACTION:PRCS_NAME:PRCS_BUSINESS_REF:PRCS_DGRM_NAME:PRCS_DGRM_VERSION:PRCS_STATUS:PRCS_INIT_DATE:PRCS_LAST_UPDATE:'
 ,p_sort_column_1=>'PRCS_DGRM_CATEGORY'
 ,p_sort_direction_1=>'ASC'
 ,p_sort_column_2=>'PRCS_NAME'

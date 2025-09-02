@@ -26,46 +26,10 @@
     mime-type: application/json
     file-character-set: Unicode UTF-8
 
-- # ====== Static Application File: css/flows4apex.min.css =====
-  id: 6501580077493881
-  identification: 
-    file-name: css/flows4apex.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
 - # ====== Static Application File: css/flows4apex.css.map =====
   id: 6501813752493881
   identification: 
     file-name: css/flows4apex.css.map
-
-  attributes: 
-    mime-type: application/json
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/20.1/flows4apex.dark.css
-  id: 8134369338179677
-  identification: 
-    file-name: css/20.1/flows4apex.dark.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/20.1/flows4apex.dark.min
-  id: 8134925047181290
-  identification: 
-    file-name: css/20.1/flows4apex.dark.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/20.1/flows4apex.dark.css
-  id: 8135246488181290
-  identification: 
-    file-name: css/20.1/flows4apex.dark.css.map
 
   attributes: 
     mime-type: application/json
@@ -134,8 +98,35 @@
     mime-type: application/json
     file-character-set: Unicode UTF-8
 
+- # ====== Static Application File: bpmn-io/bpmn-font/css/bpmn-e
+  id: 14357665744109308
+  identification: 
+    file-name: bpmn-io/bpmn-font/css/bpmn-embedded.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: bpmn-io/bpmn-font/css/bpmn-e
+  id: 14372062501975164
+  identification: 
+    file-name: bpmn-io/bpmn-font/css/bpmn-embedded.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.min.css =====
+  id: 14831848939650172
+  identification: 
+    file-name: css/flows4apex.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
 - # ====== Static Application File: js/flows4apex.min.js =======
-  id: 15834189710706142
+  id: 14931411956358658
   identification: 
     file-name: js/flows4apex.min.js
 
@@ -215,69 +206,6 @@
     mime-type: application/json
     file-character-set: Unicode UTF-8
 
-- # ====== Static Application File: css/21.1/flows4apex.dark.css
-  id: 18105510024371205
-  identification: 
-    file-name: css/21.1/flows4apex.dark.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.1/flows4apex.dark.min
-  id: 18106106010373782
-  identification: 
-    file-name: css/21.1/flows4apex.dark.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.1/flows4apex.dark.css
-  id: 18106414269373783
-  identification: 
-    file-name: css/21.1/flows4apex.dark.css.map
-
-  attributes: 
-    mime-type: application/json
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.1/flows4apex.light.cs
-  id: 18106877801374789
-  identification: 
-    file-name: css/21.1/flows4apex.light.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.1/flows4apex.light.mi
-  id: 18107437347376260
-  identification: 
-    file-name: css/21.1/flows4apex.light.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.1/flows4apex.light.cs
-  id: 18107777094376261
-  identification: 
-    file-name: css/21.1/flows4apex.light.css.map
-
-  attributes: 
-    mime-type: application/json
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/20.2/flows4apex.dark.css
-  id: 18118519760185449
-  identification: 
-    file-name: css/20.2/flows4apex.dark.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
 - # ====== Static Application File: workflow_black.svg =========
   id: 26991323914877414
   identification: 
@@ -302,24 +230,6 @@
 
   attributes: 
     mime-type: image/svg+xml
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.2/flows4apex.dark.css
-  id: 32200728748850876
-  identification: 
-    file-name: css/21.2/flows4apex.dark.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/21.2/flows4apex.light.cs
-  id: 32200948477850895
-  identification: 
-    file-name: css/21.2/flows4apex.light.css
-
-  attributes: 
-    mime-type: text/css
     file-character-set: Unicode UTF-8
 
 - # ====== Static Application File: flows-apex.svg =============

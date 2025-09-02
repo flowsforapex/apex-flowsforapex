@@ -203,7 +203,7 @@ page-items:
     label-column-span: Page Template Default
 
   appearance: 
-    template: Optional - Floating
+    template: Required - Floating
     template-options: 
     - '#DEFAULT#'
     width: 30
@@ -569,6 +569,10 @@ validations:
     error-message: Invalid JSON format
     display-location: Inline with Field and in Notification
     associated-item: P51_SFTE_CONTENT # 5592198462964018
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P51_SFTE_CONTENT
 
 processes: 
 - # ====== Process: Initialize form Edit Simple Form Template ==

@@ -47,6 +47,223 @@ server-cache:
   caching: Disabled
 
 regions: 
+- # ====== Region: Flow Model Logging ==========================
+  id: 698538188607064
+  identification: 
+    name: Flow Model Logging
+    title: Process Definition Logging
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: Logging # 11160422865040074
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Message Flow Logs ===========================
+  id: 698697005607065
+  identification: 
+    name: Message Flow Logs
+    title: Message Flow Logs
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: Logging # 11160422865040074
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Instance Run Time Logging ===================
+  id: 698742325607066
+  identification: 
+    name: Instance Run Time Logging
+    title: Instance Run Time Logging
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: Logging # 11160422865040074
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: General =====================================
+  id: 699109611607069
+  identification: 
+    name: General
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: Logging # 11160422865040074
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Automation - Purge Logs	 ====================
+  id: 4599201032694446
+  identification: 
+    name: 'Automation - Purge Logs	'
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+          name, 
+          static_id, 
+          polling_interval, 
+          polling_status_code, 
+          polling_status, 
+          polling_last_run_timestamp, 
+          polling_next_run_timestamp
+      from apex_appl_automations
+      where application_id = :app_id
+      
+
+  layout: 
+    sequence: 80
+    parent-region: Logging # 11160422865040074
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
 - # ====== Region: JSON Configuration ==========================
   id: 7537546705451722
   identification: 
@@ -64,8 +281,8 @@ regions:
       from dual
 
   layout: 
-    sequence: 30
-    parent-region: Logging # 11160422865040074
+    sequence: 10
+    parent-region: Flow Model Logging # 698538188607064
     slot: SUB_REGIONS
     start-new-layout: false
     start-new-row: true
@@ -188,6 +405,7 @@ regions:
     template: Standard
     template-options: 
     - '#DEFAULT#'
+    - t-Region--noPadding
     - t-Region--scrollBody
     render-components: Above Content
 
@@ -251,6 +469,187 @@ regions:
       - '#DEFAULT#'
 
 page-items: 
+- # ====== Page Item: P32_LOGGING_BPMN_ENABLED =================
+  id: 698912728607067
+  identification: 
+    name: P32_LOGGING_BPMN_ENABLED
+    type: Switch
+
+  label: 
+    label: Log Changes to Models / BPMN Diagrams
+    alignment: Left
+
+  settings: 
+    use-defaults: false
+    on-value: true
+    on-label: Yes
+    off-value: false
+    off-label: No
+
+  layout: 
+    sequence: 10
+    region: Flow Model Logging # 698538188607064
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_LOGGING_BPMN_RETAIN_DAYS =============
+  id: 699024570607068
+  identification: 
+    name: P32_LOGGING_BPMN_RETAIN_DAYS
+    type: Text Field
+
+  label: 
+    label: BPMN Diagram Log Retention (Days)
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Flow Model Logging # 698538188607064
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 720
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_LOGGING_DEFAULT_LEVEL ================
+  id: 699208407607070
+  identification: 
+    name: P32_LOGGING_DEFAULT_LEVEL
+    type: Radio Group
+
+  label: 
+    label: Default Level
+    alignment: Left
+
+  settings: 
+    number-of-columns: 5
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 20
+    region: Instance Run Time Logging # 698742325607066
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2:none;0,abnormal events;1,major events;2,routine;4,full/debug;8'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: |
+      If not defined at Instance creation or inside the BPMN Model.
+      
+      <ul>
+          <li><strong>abnormal events</strong> - errors, manual intervention, restarts, ...</li>
+          <li><strong>major events</strong> - add process start, stop, step current, completion, ...</li>
+          <li><strong>routine</strong> - add step reserve / release, call activity start / complete, ...</li>
+          <li><strong>full / debug</strong> - add process variable setting </li>
+      </ul>
+      
+
 - # ====== Page Item: P32_LOGGING_LANGUAGE =====================
   id: 3133819152214452
   identification: 
@@ -267,7 +666,7 @@ page-items:
 
   layout: 
     sequence: 10
-    region: Logging # 11160422865040074
+    region: General # 699109611607069
     slot: BODY
     alignment: Left
     start-new-layout: false
@@ -314,73 +713,10 @@ page-items:
     restricted-characters: All characters can be saved.
 
   help: 
-    inline-help-text: Language used to display error messages and log events.
+    inline-help-text: Language used for error messages and log events in the event logs.
 
-- # ====== Page Item: P32_LOGGING_LEVEL ========================
-  id: 3134229968214453
-  identification: 
-    name: P32_LOGGING_LEVEL
-    type: Radio Group
-
-  label: 
-    label: Level
-    alignment: Left
-
-  settings: 
-    number-of-columns: 4
-    page-action-on-selection: None
-
-  layout: 
-    sequence: 20
-    region: Logging # 11160422865040074
-    slot: BODY
-    alignment: Left
-    start-new-layout: false
-    start-new-row: true
-    column: Automatic
-    new-column: true
-    column-span: Automatic
-    label-column-span: Page Template Default
-
-  appearance: 
-    template: Required - Floating
-    template-options: 
-    - '#DEFAULT#'
-    - t-Form-fieldContainer--radioButtonGroup
-
-  validation: 
-    value-required: false
-
-  list-of-values: 
-    type: Static Values
-    static-values: 'STATIC2:off;off,standard;standard,secure;secure,full;full'
-    display-extra-values: true
-    display-null-value: false
-
-  advanced: 
-    warn-on-unsaved-changes: Page Default
-
-  source: 
-    type: Null
-    used: Only when current value in session state is null
-
-  session-state: 
-    storage: Per Session (Persistent)
-
-  security: 
-    session-state-protection: Unrestricted
-    store-value-encrypted-in-session-state: false
-    escape-special-characters: true
-    restricted-characters: All characters can be saved.
-
-  help: 
-    inline-help-text: |
-      <ul>
-          <li><strong>off</strong> - logging is disabled	</li>
-          <li><strong>standard</strong> (default) - logs instance events</li>
-          <li><strong>secure</strong> - logs model events and instance events	</li>
-          <li><strong>full</strong> - logs model, instance and process variable events		</li>
-      </ul>
+  comments: 
+    comments: This is NOT the display language for error messages in a user session, which come from the user's environment.
 
 - # ====== Page Item: P32_LOGGING_HIDE_USERID ==================
   id: 3134666000214454
@@ -400,8 +736,8 @@ page-items:
     off-label: No
 
   layout: 
-    sequence: 30
-    region: Logging # 11160422865040074
+    sequence: 10
+    region: General # 699109611607069
     slot: BODY
     alignment: Left
     start-new-layout: false
@@ -459,8 +795,8 @@ page-items:
     off-label: No
 
   layout: 
-    sequence: 60
-    region: Logging # 11160422865040074
+    sequence: 10
+    region: Message Flow Logs # 698697005607065
     slot: BODY
     alignment: Left
     start-new-layout: false
@@ -511,15 +847,15 @@ page-items:
     disabled: false
 
   layout: 
-    sequence: 70
-    region: Logging # 11160422865040074
+    sequence: 30
+    region: Message Flow Logs # 698697005607065
     slot: BODY
     alignment: Left
     start-new-layout: false
     start-new-row: true
     column: Automatic
     new-column: true
-    column-span: Automatic
+    column-span: 2
     label-column-span: Page Template Default
 
   appearance: 
@@ -567,15 +903,15 @@ page-items:
     disabled: false
 
   layout: 
-    sequence: 40
-    region: Logging # 11160422865040074
+    sequence: 30
+    region: Instance Run Time Logging # 698742325607066
     slot: BODY
     alignment: Left
     start-new-layout: false
     start-new-row: true
     column: Automatic
     new-column: true
-    column-span: 3
+    column-span: 2
     label-column-span: Page Template Default
 
   appearance: 
@@ -615,6 +951,351 @@ page-items:
   security: 
     session-state-protection: Unrestricted
     store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_NAME =================================
+  id: 4599469681694448
+  identification: 
+    name: P32_NAME
+    type: Display Only
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_STATIC_ID ============================
+  id: 4599532517694449
+  identification: 
+    name: P32_STATIC_ID
+    type: Display Only
+
+  label: 
+    label: Static Id
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: STATIC_ID
+    data-type: VARCHAR2
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_POLLING_INTERVAL =====================
+  id: 4599631400694450
+  identification: 
+    name: P32_POLLING_INTERVAL
+    type: Display Only
+
+  label: 
+    label: Polling Interval
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: POLLING_INTERVAL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_POLLING_STATUS_CODE ==================
+  id: 4858379691240101
+  identification: 
+    name: P32_POLLING_STATUS_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: POLLING_STATUS_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_POLLING_STATUS =======================
+  id: 4858462483240102
+  identification: 
+    name: P32_POLLING_STATUS
+    type: Display Only
+
+  label: 
+    label: Polling Status
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: POLLING_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_POLLING_LAST_RUN_TIMESTAMP ===========
+  id: 4858580977240103
+  identification: 
+    name: P32_POLLING_LAST_RUN_TIMESTAMP
+    type: Display Only
+
+  label: 
+    label: Polling Last Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: POLLING_LAST_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_POLLING_NEXT_RUN_TIMESTAMP ===========
+  id: 4858612652240104
+  identification: 
+    name: P32_POLLING_NEXT_RUN_TIMESTAMP
+    type: Display Only
+
+  label: 
+    label: Polling Next Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+    column: POLLING_NEXT_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
     restricted-characters: All characters can be saved.
 
 buttons: 
@@ -716,6 +1397,121 @@ buttons:
 
     warn-on-unsaved-changes: Do Not Check
 
+- # ====== Button: ENABLE ======================================
+  id: 4858854781240106
+  identification: 
+    button-name: ENABLE
+    label: Enable
+
+  layout: 
+    sequence: 90
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P32_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P32_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P32_POLLING_STATUS_CODE
+    value: DISABLED
+
+- # ====== Button: DISABLE =====================================
+  id: 4859010098240108
+  identification: 
+    button-name: DISABLE
+    label: Disable
+
+  layout: 
+    sequence: 100
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P32_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P32_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P32_POLLING_STATUS_CODE
+    value: ACTIVE
+
+- # ====== Button: SEE_LOGS ====================================
+  id: 4859455070240112
+  identification: 
+    button-name: SEE_LOGS
+    label: See Logs
+
+  layout: 
+    sequence: 110
+    region: 'Automation - Purge Logs	' # 4599201032694446
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:41:P41_STATIC_ID:&P32_STATIC_ID.'
+      page: 41 # Automation Logs
+      clear-cache: 41
+      values: 
+        p41_static_id: '&P32_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
 dynamic-actions: 
 - # ====== Dynamic Action: On dialog close =====================
   id: 3792574755923554
@@ -778,7 +1574,91 @@ dynamic-actions:
       fire-when-event-result-is: True
       fire-on-initialization: false
 
+- # ====== Dynamic Action: Close Dialog - Automation ===========
+  id: 4859276071240110
+  identification: 
+    name: Close Dialog - Automation
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: 'Automation - Purge Logs	' # 4599201032694446
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 4859398961240111
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: window.location.reload();
+
+    execution: 
+      sequence: 10
+      event: Close Dialog - Automation # 4859276071240110
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
 computations: 
+- # ====== Computation: P32_LOGGING_DEFAULT_LEVEL ==============
+  id: 699251795607071
+  identification: 
+    item-name: P32_LOGGING_DEFAULT_LEVEL
+
+  execution: 
+    sequence: 80
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>  flow_constants_pkg.gc_config_logging_default_level
+               , p_default_value => flow_constants_pkg.gc_logging_level_major_events
+             );
+
+- # ====== Computation: P32_LOGGING_BPMN_ENABLED ===============
+  id: 699345077607072
+  identification: 
+    item-name: P32_LOGGING_BPMN_ENABLED
+
+  execution: 
+    sequence: 90
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>  flow_constants_pkg.gc_config_logging_bpmn_enabled
+               , p_default_value => flow_constants_pkg.gc_vcbool_false
+             );
+
+- # ====== Computation: P32_LOGGING_BPMN_RETAIN_DAYS ===========
+  id: 699482732607073
+  identification: 
+    item-name: P32_LOGGING_BPMN_RETAIN_DAYS
+
+  execution: 
+    sequence: 100
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>  flow_constants_pkg.gc_config_logging_bpmn_retain_days
+               , p_default_value => '720'
+             );
+
 - # ====== Computation: P32_LOGGING_LANGUAGE ===================
   id: 3146072745214471
   identification: 
@@ -795,24 +1675,6 @@ computations:
       return flow_engine_util.get_config_value(
                  p_config_key => flow_constants_pkg.gc_config_logging_language
                , p_default_value => flow_constants_pkg.gc_config_default_logging_language
-             );
-
-- # ====== Computation: P32_LOGGING_LEVEL ======================
-  id: 3146443044214471
-  identification: 
-    item-name: P32_LOGGING_LEVEL
-
-  execution: 
-    sequence: 20
-    point: Before Regions
-
-  computation: 
-    type: Function Body
-    language: PL/SQL
-    pl/sql-function-body: |
-      return flow_engine_util.get_config_value(
-                 p_config_key =>  flow_constants_pkg.gc_config_logging_level
-               , p_default_value => flow_constants_pkg.gc_config_default_logging_level
              );
 
 - # ====== Computation: P32_LOGGING_HIDE_USERID ================
@@ -887,6 +1749,19 @@ computations:
                , p_default_value => flow_constants_pkg.gc_config_default_log_retain_msg_flow_logs
              );
 
+- # ====== Computation: P32_STATIC_ID ==========================
+  id: 4858744415240105
+  identification: 
+    item-name: P32_STATIC_ID
+
+  execution: 
+    sequence: 110
+    point: Before Header
+
+  computation: 
+    type: Static Value
+    static-value: flows-for-apex-purge-logs
+
 processes: 
 - # ====== Process: Set Settings ===============================
   id: 3150354905214473
@@ -901,11 +1776,13 @@ processes:
     pl/sql-code: |
       flow_engine_app_api.set_logging_settings(
         pi_logging_language          => :P32_LOGGING_LANGUAGE
-      , pi_logging_level             => :P32_LOGGING_LEVEL
+      , pi_logging_default_level     => :P32_LOGGING_DEFAULT_LEVEL
       , pi_logging_hide_userid       => :P32_LOGGING_HIDE_USERID
       , pi_logging_retain_logs       => :P32_LOGGING_RETAIN_LOGS
       , pi_logging_message_flow_recd => :P32_LOGGING_MESSAGE_FLOW_RECD
       , pi_logging_retain_msg_flow   => :P32_LOGGING_RETAIN_MSG_FLOW
+      , pi_logging_bpmn_enabled      => :P32_LOGGING_BPMN_ENABLED
+      , pi_logging_bpmn_retain_days  => :p32_LOGGING_BPMN_RETAIN_DAYS
       );
 
   execution: 
@@ -921,4 +1798,17 @@ processes:
 
   server-side-condition: 
     when-button-pressed: SAVE # 3138033307214457
+
+- # ====== Process: Initialize form Configuration - Logging ====
+  id: 4599381652694447
+  identification: 
+    name: Initialize form Configuration - Logging
+    type: Form - Initialization
+    execution-chain: None
+    form-region: 'Automation - Purge Logs	' # 4599201032694446
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
 

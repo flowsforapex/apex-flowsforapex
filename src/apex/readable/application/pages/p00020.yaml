@@ -19,6 +19,16 @@ navigation:
   cursor-focus: Do not focus cursor
   warn-on-unsaved-changes: true
 
+css: 
+  inline: |
+    .fa4-bpmn-icon-report {
+        font-size: 2rem;
+    }
+    td:has(.fa4-severity-danger) {
+        background: var(--ut-palette-warning);
+        color: var(--ut-palette-warning-contrast);
+    }
+
 security: 
   authentication: Page Requires Authentication
   deep-linking: Application Default
@@ -49,12 +59,13 @@ regions:
     table-owner: Parsing Schema
     table-name: FLOW_P0020_INSTANCE_TIMELINE_VW
     include-rowid-column: false
-    where-clause: 'prcs_id = :p20_prcs_id'
+    where-clause: 'prcs_id = :P20_PRCS_ID'
     page-items-to-submit: 
     - P20_PRCS_ID
 
   order-by: 
-    type: None
+    type: Static Value
+    order-by-clause: PERFORMED_ON ASC
 
   layout: 
     sequence: 20
@@ -70,6 +81,7 @@ regions:
     template: Standard
     template-options: 
     - '#DEFAULT#'
+    - t-Region--noPadding
     - t-Region--scrollBody
     render-components: Above Content
 
@@ -95,10 +107,11 @@ regions:
 
     appearance: 
       template-type: Theme
-      template: Timeline
+      template: Standard
       template-options: 
       - '#DEFAULT#'
-      - t-Timeline--compact
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
 
     pagination: 
       type: Row Ranges X to Y (with next and previous links)
@@ -140,38 +153,6 @@ regions:
     security: 
       escape-special-characters: true
 
-  - # ====== Column: EVENT_DATE ==================================
-    id: 2033826985569017
-    identification: 
-      column-name: EVENT_DATE
-      type: Plain Text
-
-    heading: 
-      heading: Event Date
-      alignment: center
-
-    layout: 
-      sequence: 90
-      column-alignment: start
-
-    accessibility: 
-      value-identifies-row: false
-
-    sorting: 
-      sortable: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    advanced: 
-      compute-sum: false
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
   - # ====== Column: USER_NAME ===================================
     id: 2033971970569018
     identification: 
@@ -183,46 +164,14 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 100
+      sequence: 30
       column-alignment: start
 
     accessibility: 
       value-identifies-row: false
 
     sorting: 
-      sortable: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    advanced: 
-      compute-sum: false
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: EVENT_TITLE =================================
-    id: 2034066823569019
-    identification: 
-      column-name: EVENT_TITLE
-      type: Plain Text
-
-    heading: 
-      heading: Event Title
-      alignment: center
-
-    layout: 
-      sequence: 110
-      column-alignment: start
-
-    accessibility: 
-      value-identifies-row: false
-
-    sorting: 
-      sortable: true
+      sortable: false
 
     export-/-printing: 
       include-in-export-/-print: true
@@ -244,17 +193,17 @@ regions:
 
     heading: 
       heading: Event Type
-      alignment: center
+      alignment: start
 
     layout: 
-      sequence: 160
+      sequence: 50
       column-alignment: start
 
     accessibility: 
       value-identifies-row: false
 
     sorting: 
-      sortable: true
+      sortable: false
 
     export-/-printing: 
       include-in-export-/-print: true
@@ -272,179 +221,6 @@ regions:
     id: 2034206989569021
     identification: 
       column-name: EVENT_STATUS
-      type: Plain Text
-
-    heading: 
-      heading: Event Status
-      alignment: center
-
-    layout: 
-      sequence: 130
-      column-alignment: start
-
-    accessibility: 
-      value-identifies-row: false
-
-    sorting: 
-      sortable: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    advanced: 
-      compute-sum: false
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: EVENT_DESC ==================================
-    id: 2034344167569022
-    identification: 
-      column-name: EVENT_DESC
-      type: Plain Text
-
-    heading: 
-      heading: Event Desc
-      alignment: center
-
-    layout: 
-      sequence: 140
-      column-alignment: start
-
-    accessibility: 
-      value-identifies-row: false
-
-    sorting: 
-      sortable: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    advanced: 
-      compute-sum: false
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: USER_COLOR ==================================
-    id: 2034410284569023
-    identification: 
-      column-name: USER_COLOR
-      type: Plain Text
-
-    heading: 
-      heading: User Color
-      alignment: center
-
-    layout: 
-      sequence: 150
-      column-alignment: start
-
-    accessibility: 
-      value-identifies-row: false
-
-    sorting: 
-      sortable: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    advanced: 
-      compute-sum: false
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: EVENT_ICON ==================================
-    id: 2034561911569024
-    identification: 
-      column-name: EVENT_ICON
-      type: Plain Text
-
-    heading: 
-      heading: Event Icon
-      alignment: center
-
-    layout: 
-      sequence: 170
-      column-alignment: start
-
-    accessibility: 
-      value-identifies-row: false
-
-    sorting: 
-      sortable: true
-
-    export-/-printing: 
-      include-in-export-/-print: true
-
-    advanced: 
-      compute-sum: false
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: OPERATION ===================================
-    id: 2034609242569025
-    identification: 
-      column-name: OPERATION
-      type: Hidden
-
-    layout: 
-      sequence: 10
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: OBJT ========================================
-    id: 2034718627569026
-    identification: 
-      column-name: OBJT
-      type: Hidden
-
-    layout: 
-      sequence: 20
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: PROC_VAR ====================================
-    id: 2034875865569027
-    identification: 
-      column-name: PROC_VAR
-      type: Hidden
-
-    layout: 
-      sequence: 50
-
-    ui-defaults-reference: 
-      table-owner: Parsing Schema
-
-    security: 
-      escape-special-characters: true
-
-  - # ====== Column: VALUE =======================================
-    id: 2034999078569028
-    identification: 
-      column-name: VALUE
       type: Hidden
 
     layout: 
@@ -456,14 +232,85 @@ regions:
     security: 
       escape-special-characters: true
 
+  - # ====== Column: EVENT_ICON ==================================
+    id: 2034561911569024
+    identification: 
+      column-name: EVENT_ICON
+      type: Hidden
+
+    layout: 
+      sequence: 130
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: OBJT ========================================
+    id: 2034718627569026
+    identification: 
+      column-name: OBJT
+      type: Plain Text
+
+    heading: 
+      heading: Object
+      alignment: start
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: |2
+         <div class="u-flex u-align-items-center">
+            <div class="u-flex-item u-flex-grow-0 fa4-bpmn-icon-report"><span class="#BPMN_ICON#"></span></div>
+            <div class="u-flex-item margin-left-sm">{IF OBJT/}#OBJT#{else/}Process{endif/}</div>
+         </div>
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
   - # ====== Column: SUBFLOW =====================================
     id: 2035024196569029
     identification: 
       column-name: SUBFLOW
-      type: Hidden
+      type: Plain Text
+
+    heading: 
+      heading: Subflow
+      alignment: start
 
     layout: 
-      sequence: 30
+      sequence: 100
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
 
     ui-defaults-reference: 
       table-owner: Parsing Schema
@@ -475,10 +322,27 @@ regions:
     id: 2035187927569030
     identification: 
       column-name: PROCESS_LEVEL
-      type: Hidden
+      type: Plain Text
+
+    heading: 
+      heading: Process Level
+      alignment: start
 
     layout: 
-      sequence: 40
+      sequence: 90
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
 
     ui-defaults-reference: 
       table-owner: Parsing Schema
@@ -486,14 +350,253 @@ regions:
     security: 
       escape-special-characters: true
 
-  - # ====== Column: PERFORMED_BY ================================
-    id: 2035208015569031
+  - # ====== Column: SEVERITY ====================================
+    id: 4862053519240138
     identification: 
-      column-name: PERFORMED_BY
-      type: Hidden
+      column-name: SEVERITY
+      type: Plain Text
+
+    heading: 
+      heading: Severity
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: |
+        {case SEVERITY/}
+        {when 1/}
+         <div class="u-flex u-align-items-center fa4-severity-danger">
+            <div class="u-flex-item u-flex-grow-0"><span class="fa fa-2x fa-exclamation-triangle-o"></span></div>
+            <div class="u-flex-item margin-left-sm">#SEVERITY#</div>
+         </div>
+        {otherwise/}
+        #SEVERITY#
+        {endcase/}
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PERFORMED_ON ================================
+    id: 4862259247240140
+    identification: 
+      column-name: PERFORMED_ON
+      type: Plain Text
+
+    heading: 
+      heading: Performed On
+      alignment: start
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 'YYYY-MM-DD HH24:MI:SSXFF TZR'
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: EVENT_COMMENT ===============================
+    id: 4862394930240141
+    identification: 
+      column-name: EVENT_COMMENT
+      type: Plain Text
+
+    heading: 
+      heading: Event Comment
+      alignment: start
 
     layout: 
       sequence: 70
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: STEP_KEY ====================================
+    id: 13978455212687930
+    identification: 
+      column-name: STEP_KEY
+      type: Plain Text
+
+    heading: 
+      heading: Step Key
+      alignment: start
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: OBJECT_TYPE =================================
+    id: 13978595218687931
+    identification: 
+      column-name: OBJECT_TYPE
+      type: Plain Text
+
+    heading: 
+      heading: Object Type
+      alignment: start
+
+    layout: 
+      sequence: 140
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: OBJECT_SUB_TYPE =============================
+    id: 13978600287687932
+    identification: 
+      column-name: OBJECT_SUB_TYPE
+      type: Plain Text
+
+    heading: 
+      heading: Object Sub Type
+      alignment: start
+
+    layout: 
+      sequence: 150
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BPMN_ICON ===================================
+    id: 13979087302687936
+    identification: 
+      column-name: BPMN_ICON
+      type: Hidden
+
+    layout: 
+      sequence: 160
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BPMN_SUPER_TYPE =============================
+    id: 13979189930687937
+    identification: 
+      column-name: BPMN_SUPER_TYPE
+      type: Plain Text
+
+    heading: 
+      heading: BPMN Super Type
+      alignment: start
+
+    layout: 
+      sequence: 170
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
 
     ui-defaults-reference: 
       table-owner: Parsing Schema
@@ -562,7 +665,7 @@ regions:
       input-field: Top of Faceted Search Region
 
     layout: 
-      sequence: 10
+      sequence: 20
 
     source: 
       database-column(s): OPERATION,DESCRIPTION,OBJT,PROC_VAR,EVENT_COMMENT,PERFORMED_BY
@@ -570,18 +673,18 @@ regions:
     security: 
       store-value-encrypted-in-session-state: false
 
-  - # ====== Facet: P20_OPERATION ================================
+  - # ====== Facet: P20_EVENT_TYPE ===============================
     id: 2035670797569035
     identification: 
-      name: P20_OPERATION
+      name: P20_EVENT_TYPE
       type: Checkbox Group
 
     label: 
-      label: Operation
+      label: Event Type
       show-label-for-current-facet: true
 
     layout: 
-      sequence: 20
+      sequence: 50
 
     list-of-values: 
       type: Distinct Values
@@ -608,7 +711,7 @@ regions:
       initially-collapsed: false
 
     source: 
-      database-column: OPERATION
+      database-column: EVENT_TYPE
       data-type: VARCHAR2
 
     multiple-values: 
@@ -629,7 +732,7 @@ regions:
       show-label-for-current-facet: true
 
     layout: 
-      sequence: 30
+      sequence: 60
 
     list-of-values: 
       type: Distinct Values
@@ -666,54 +769,6 @@ regions:
       store-value-encrypted-in-session-state: false
       escape-special-characters: true
 
-  - # ====== Facet: P20_PROC_VAR =================================
-    id: 2035831132569037
-    identification: 
-      name: P20_PROC_VAR
-      type: Checkbox Group
-
-    label: 
-      label: Process Variable
-      show-label-for-current-facet: true
-
-    layout: 
-      sequence: 40
-
-    list-of-values: 
-      type: Distinct Values
-      sort-direction: Ascending
-      include-null-option: false
-
-    list-entries: 
-      compute-counts: true
-      show-counts: true
-      zero-count-entries: Hide
-      sort-by-top-counts: true
-      show-selected-first: false
-      maximum-displayed-entries: 5
-      display-filter-initially: false
-
-    actions-menu: 
-      filter: false
-      chart: true
-
-    advanced: 
-      show-chart-initially: false
-      display-toggling: false
-      collapsible: true
-      initially-collapsed: false
-
-    source: 
-      database-column: PROC_VAR
-      data-type: VARCHAR2
-
-    multiple-values: 
-      type: No
-
-    security: 
-      store-value-encrypted-in-session-state: false
-      escape-special-characters: true
-
   - # ====== Facet: P20_SUBFLOW ==================================
     id: 2035945696569038
     identification: 
@@ -725,7 +780,7 @@ regions:
       show-label-for-current-facet: true
 
     layout: 
-      sequence: 50
+      sequence: 70
 
     list-of-values: 
       type: Distinct Values
@@ -774,7 +829,7 @@ regions:
       show-label-for-current-facet: true
 
     layout: 
-      sequence: 60
+      sequence: 80
 
     list-of-values: 
       type: Distinct Values
@@ -823,7 +878,7 @@ regions:
       show-label-for-current-facet: true
 
     layout: 
-      sequence: 70
+      sequence: 90
 
     list-of-values: 
       type: Distinct Values
@@ -850,7 +905,7 @@ regions:
       initially-collapsed: false
 
     source: 
-      database-column: PERFORMED_BY
+      database-column: USER_NAME
       data-type: VARCHAR2
 
     multiple-values: 
@@ -858,6 +913,104 @@ regions:
 
     security: 
       store-value-encrypted-in-session-state: false
+      escape-special-characters: true
+
+  - # ====== Facet: P20_SEVERITY =================================
+    id: 4861924678240137
+    identification: 
+      name: P20_SEVERITY
+      type: Checkbox Group
+
+    label: 
+      label: Severity
+      show-label-for-current-facet: true
+
+    layout: 
+      sequence: 30
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LOGGING_LEVELS # 11503678828527
+      include-null-option: false
+
+    list-entries: 
+      compute-counts: true
+      show-counts: true
+      zero-count-entries: Hide
+      sort-by-top-counts: false
+      show-selected-first: false
+      maximum-displayed-entries: 7
+      display-filter-initially: false
+
+    actions-menu: 
+      filter: true
+      chart: true
+
+    advanced: 
+      show-chart-initially: false
+      display-toggling: false
+      collapsible: false
+
+    source: 
+      database-column: SEVERITY
+      data-type: NUMBER
+
+    multiple-values: 
+      type: No
+
+    security: 
+      store-value-encrypted-in-session-state: true
+      escape-special-characters: true
+
+  - # ====== Facet: P20_BPMN_SUPER_TYPE ==========================
+    id: 13979253390687938
+    identification: 
+      name: P20_BPMN_SUPER_TYPE
+      type: Checkbox Group
+
+    label: 
+      label: BPMN Step Type
+      show-label-for-current-facet: true
+
+    layout: 
+      sequence: 40
+
+    list-of-values: 
+      type: Distinct Values
+      sort-direction: Ascending
+      include-null-option: false
+
+    list-entries: 
+      compute-counts: true
+      show-counts: true
+      zero-count-entries: Hide
+      sort-by-top-counts: true
+      show-selected-first: false
+      maximum-displayed-entries: 7
+      display-filter-initially: false
+
+    actions-menu: 
+      filter: true
+      chart: true
+
+    advanced: 
+      show-chart-initially: false
+      display-toggling: false
+      collapsible: false
+
+    source: 
+      database-column: BPMN_SUPER_TYPE
+      data-type: VARCHAR2
+
+    multiple-values: 
+      type: No
+
+    default: 
+      type: Static
+      static-value: 'activity:collaboration'
+
+    security: 
+      store-value-encrypted-in-session-state: true
       escape-special-characters: true
 
   filters: 
@@ -875,7 +1028,7 @@ regions:
       collapsed-search-field: false
 
     layout: 
-      sequence: 10
+      sequence: 20
 
     source: 
       database-column(s): OPERATION,DESCRIPTION,OBJT,PROC_VAR,EVENT_COMMENT,PERFORMED_BY
@@ -883,17 +1036,17 @@ regions:
     security: 
       store-value-encrypted-in-session-state: false
 
-  - # ====== Filter: P20_OPERATION ===============================
+  - # ====== Filter: P20_EVENT_TYPE ==============================
     id: 2035670797569035
     identification: 
-      name: P20_OPERATION
+      name: P20_EVENT_TYPE
       type: Checkbox Group
 
     label: 
-      label: Operation
+      label: Event Type
 
     layout: 
-      sequence: 20
+      sequence: 50
 
     list-of-values: 
       type: Distinct Values
@@ -912,7 +1065,7 @@ regions:
       type: None
 
     source: 
-      database-column: OPERATION
+      database-column: EVENT_TYPE
       data-type: VARCHAR2
 
     multiple-values: 
@@ -932,7 +1085,7 @@ regions:
       label: Step
 
     layout: 
-      sequence: 30
+      sequence: 60
 
     list-of-values: 
       type: Distinct Values
@@ -961,45 +1114,6 @@ regions:
       store-value-encrypted-in-session-state: false
       escape-special-characters: true
 
-  - # ====== Filter: P20_PROC_VAR ================================
-    id: 2035831132569037
-    identification: 
-      name: P20_PROC_VAR
-      type: Checkbox Group
-
-    label: 
-      label: Process Variable
-
-    layout: 
-      sequence: 40
-
-    list-of-values: 
-      type: Distinct Values
-      sort-direction: Ascending
-      include-null-option: false
-
-    list-entries: 
-      compute-counts: true
-      show-counts: true
-      zero-count-entries: Hide
-      sort-by-top-counts: true
-      show-selected-first: false
-      client-side-filtering: false
-
-    suggestions: 
-      type: None
-
-    source: 
-      database-column: PROC_VAR
-      data-type: VARCHAR2
-
-    multiple-values: 
-      type: No
-
-    security: 
-      store-value-encrypted-in-session-state: false
-      escape-special-characters: true
-
   - # ====== Filter: P20_SUBFLOW =================================
     id: 2035945696569038
     identification: 
@@ -1010,7 +1124,7 @@ regions:
       label: Subflow
 
     layout: 
-      sequence: 50
+      sequence: 70
 
     list-of-values: 
       type: Distinct Values
@@ -1050,7 +1164,7 @@ regions:
       label: Process Level
 
     layout: 
-      sequence: 60
+      sequence: 80
 
     list-of-values: 
       type: Distinct Values
@@ -1090,7 +1204,7 @@ regions:
       label: Performed By
 
     layout: 
-      sequence: 70
+      sequence: 90
 
     list-of-values: 
       type: Distinct Values
@@ -1109,7 +1223,7 @@ regions:
       type: None
 
     source: 
-      database-column: PERFORMED_BY
+      database-column: USER_NAME
       data-type: VARCHAR2
 
     multiple-values: 
@@ -1117,6 +1231,88 @@ regions:
 
     security: 
       store-value-encrypted-in-session-state: false
+      escape-special-characters: true
+
+  - # ====== Filter: P20_SEVERITY ================================
+    id: 4861924678240137
+    identification: 
+      name: P20_SEVERITY
+      type: Checkbox Group
+
+    label: 
+      label: Severity
+
+    layout: 
+      sequence: 30
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LOGGING_LEVELS # 11503678828527
+      include-null-option: false
+
+    list-entries: 
+      compute-counts: true
+      show-counts: true
+      zero-count-entries: Hide
+      sort-by-top-counts: false
+      show-selected-first: false
+      client-side-filtering: false
+
+    suggestions: 
+      type: None
+
+    source: 
+      database-column: SEVERITY
+      data-type: NUMBER
+
+    multiple-values: 
+      type: No
+
+    security: 
+      store-value-encrypted-in-session-state: true
+      escape-special-characters: true
+
+  - # ====== Filter: P20_BPMN_SUPER_TYPE =========================
+    id: 13979253390687938
+    identification: 
+      name: P20_BPMN_SUPER_TYPE
+      type: Checkbox Group
+
+    label: 
+      label: BPMN Step Type
+
+    layout: 
+      sequence: 40
+
+    list-of-values: 
+      type: Distinct Values
+      sort-direction: Ascending
+      include-null-option: false
+
+    list-entries: 
+      compute-counts: true
+      show-counts: true
+      zero-count-entries: Hide
+      sort-by-top-counts: true
+      show-selected-first: false
+      client-side-filtering: false
+
+    suggestions: 
+      type: None
+
+    source: 
+      database-column: BPMN_SUPER_TYPE
+      data-type: VARCHAR2
+
+    multiple-values: 
+      type: No
+
+    default: 
+      type: Static
+      static-value: 'activity:collaboration'
+
+    security: 
+      store-value-encrypted-in-session-state: true
       escape-special-characters: true
 
 - # ====== Region: Breadcrumb ==================================

@@ -126,6 +126,65 @@ regions:
       expand-shortcuts: false
 
 page-items: 
+- # ====== Page Item: P35_DEFAULT_BUSINESS_ADMIN ===============
+  id: 2609073604291449
+  identification: 
+    name: P35_DEFAULT_BUSINESS_ADMIN
+    type: Text Field
+
+  label: 
+    label: Default APEX Business Admin
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Engine # 65920170325464220
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: 'The username to be used as Business Administrator on APEX Human Tasks when no Business Admin is specified in a Task or in the process diagram. 	'
+
 - # ====== Page Item: P35_DUPLICATE_STEP_PREVENTION ============
   id: 3221987342231713
   identification: 
@@ -581,6 +640,24 @@ buttons:
     warn-on-unsaved-changes: Do Not Check
 
 computations: 
+- # ====== Computation: P35_DEFAULT_BUSINESS_ADMIN =============
+  id: 2609118871291450
+  identification: 
+    item-name: P35_DEFAULT_BUSINESS_ADMIN
+
+  execution: 
+    sequence: 140
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key =>flow_constants_pkg.gc_config_default_apex_business_admin
+               , p_default_value => flow_constants_pkg.gc_config_default_default_username
+             );
+
 - # ====== Computation: P35_DEFAULT_WORKSPACE ==================
   id: 3230456644231715
   identification: 
@@ -708,6 +785,7 @@ processes:
       , pi_default_application       => :P35_DEFAULT_APPLICATIONID
       , pi_default_pageid            => :P35_DEFAULT_PAGEID
       , pi_default_username          => :P35_DEFAULT_USERNAME
+      , pi_default_business_admin    => :P35_DEFAULT_BUSINESS_ADMIN
       );
 
   execution: 

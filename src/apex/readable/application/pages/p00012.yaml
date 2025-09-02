@@ -46,13 +46,13 @@ regions:
   id: 6161598858353963900
   identification: 
     name: Flow Monitor (&P12_PRCS_NAME.)
-    type: Flows for APEX - Viewer
+    type: Flows for APEX - Viewer (25.1)
 
   source: 
     location: Local Database
     type: Table / View
     table-owner: Parsing Schema
-    table-name: FLOW_INSTANCE_DETAILS_VW
+    table-name: FLOW_VIEWER_VW
     include-rowid-column: false
     where-clause: 'prcs_id = :P12_PRCS_ID'
     page-items-to-submit: 
@@ -99,17 +99,13 @@ regions:
   attributes: 
     settings: 
       diagram-xml: DGRM_CONTENT
-      use-bpmn-colors: true
-      add-highlighting: true
-      current-nodes: ALL_CURRENT
-      completed-nodes: ALL_COMPLETED
-      error-nodes: ALL_ERRORS
-      enable-call-activities: true
       diagram-identifier: PRDG_ID
-      calling-diagram-identifier: PRDG_PRDG_ID
-      calling-object-id: CALLING_OBJT
-      breadcrumb-text: BREADCRUMB
-      allow-drilldown-on-diagram-level: DRILLDOWN_ALLOWED
+      use-bpmn-colors: true
+      highlighting-data: HIGHLIGHTING_DATA
+      call-activity-data: CALL_ACTIVITY_DATA
+      iteration-data: ITERATION_DATA
+      user-task-data: USER_TASK_DATA
+      badges-data: BADGES_DATA
       refresh-on-load: true
       show-toolbar: true
       enable-mousewheel-zoom: false

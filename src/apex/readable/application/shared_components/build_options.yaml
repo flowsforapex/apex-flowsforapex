@@ -1,4 +1,17 @@
 ---
+- # ====== Build Option: Enterprise Edition ====================
+  id: 14832835672621379
+  identification: 
+    name: Enterprise Edition
+
+  status: 
+    status: Include
+    default-on-export: Exclude
+    on-upgrade-keep-status: false
+
+  subscription: 
+    version-number: 3787462948
+
 - # ====== Build Option: Exclude ===============================
   id: 88199069651756122
   identification: 

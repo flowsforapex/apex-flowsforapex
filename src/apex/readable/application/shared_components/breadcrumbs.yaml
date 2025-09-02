@@ -5,6 +5,66 @@
     name: Breadcrumb
 
   entries: 
+  - # ====== Entry: Automations ==================================
+    id: 85667185327137
+    identification: 
+      name: Automations
+      page-number: 43
+
+    execution: 
+      sequence: 10
+
+    appearance: 
+      parent-entry: Configuration # 11904723133918726
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:::'
+        page: 43 # Configuration - Automations
+
+  - # ====== Entry: Execution Logs ===============================
+    id: 102671663267533
+    identification: 
+      name: Execution Logs
+      page-number: 41
+
+    execution: 
+      sequence: 10
+
+    appearance: 
+      parent-entry: Automations # 85667185327137
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:::'
+        page: 41 # Automation Logs
+
+  - # ====== Entry: Messages =====================================
+    id: 105837896752703
+    identification: 
+      name: Messages
+      page-number: 42
+
+    execution: 
+      sequence: 10
+
+    appearance: 
+      parent-entry: Execution Logs # 102671663267533
+
+  - # ====== Entry: Running Task Status ==========================
+    id: 140186243817871
+    identification: 
+      name: Running Task Status
+      page-number: 19
+
+    execution: 
+      sequence: 10
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:19:&APP_SESSION.::&DEBUG.:::'
+        page: 19 # Running Task Status
+
   - # ====== Entry: Instance Timeline - &P20_PRCS_NAME. ==========
     id: 2116968797571265
     identification: 
@@ -100,10 +160,10 @@
         page: 32 # Configuration - Logging
         clear-cache: 32
 
-  - # ====== Entry: Archiving ====================================
+  - # ====== Entry: Instance Archiving and Purging ===============
     id: 3308475687313586
     identification: 
-      name: Archiving
+      name: Instance Archiving and Purging
       page-number: 33
 
     execution: 
@@ -115,7 +175,7 @@
     link: 
       target: 
         url: 'f?p=&APP_ID.:33:&SESSION.::&DEBUG.:33::'
-        page: 33 # Configuration - Archiving
+        page: 33 # Configuration - Instance Archiving and Purging
         clear-cache: 33
 
   - # ====== Entry: Engine App ===================================
@@ -253,6 +313,23 @@
         url: 'f?p=&APP_ID.:9:&SESSION.::&DEBUG.:9::'
         page: 9 # Configuration
         clear-cache: 9
+
+  - # ====== Entry: Configuration - AI Prompts ===================
+    id: 12564649699238488
+    identification: 
+      name: Configuration - AI Prompts
+      page-number: 44
+
+    execution: 
+      sequence: 10
+
+    appearance: 
+      parent-entry: Configuration # 11904723133918726
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:44:&APP_SESSION.::&DEBUG.:::'
+        page: 44 # Configuration - AI Prompts
 
   - # ====== Entry: Flow Management ==============================
     id: 34530380979770009

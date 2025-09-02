@@ -2998,6 +2998,98 @@ regions:
       security: 
         escape-special-characters: true
 
+    - # ====== Column: LGSF_STEP_KEY ===============================
+      id: 6768618283665624
+      identification: 
+        column-name: LGSF_STEP_KEY
+        type: Plain Text
+
+      heading: 
+        heading: Lgsf Step Key
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 150
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGSF_APEX_TASK_ID ===========================
+      id: 6768769198665625
+      identification: 
+        column-name: LGSF_APEX_TASK_ID
+        type: Link
+
+      heading: 
+        heading: APEX Task Id
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 160
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      link: 
+        target: 
+          url: 'f?p=&APP_ID.:18:&SESSION.::&DEBUG.:18:P18_APEX_TASK_ID:#LGSF_APEX_TASK_ID#'
+          page: 18 # APEX Human Task details
+          clear-cache: 18
+          values: 
+            p18_apex_task_id: '#LGSF_APEX_TASK_ID#'
+
+        link-text: '#LGSF_APEX_TASK_ID#'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
     printing: 
       output: 
         layout: Default Report Layout
@@ -4009,6 +4101,116 @@ regions:
 
       security: 
         escape-special-characters: false
+
+    - # ====== Column: SBFL_DIAGRAM_LEVEL ==========================
+      id: 6766626143665604
+      identification: 
+        column-name: SBFL_DIAGRAM_LEVEL
+        type: Hidden
+
+      heading: 
+        heading: Diagram Level
+
+      layout: 
+        sequence: 170
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_SCOPE ==================================
+      id: 6766763108665605
+      identification: 
+        column-name: SBFL_SCOPE
+        type: Plain Text
+
+      heading: 
+        heading: Scope
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 180
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_APEX_TASK_ID ===========================
+      id: 6766838228665606
+      identification: 
+        column-name: SBFL_APEX_TASK_ID
+        type: Link
+
+      heading: 
+        heading: APEX Task Id
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 190
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      link: 
+        target: 
+          url: 'f?p=&APP_ID.:18:&SESSION.::&DEBUG.:18:P18_APEX_TASK_ID:#SBFL_APEX_TASK_ID#'
+          page: 18 # APEX Human Task details
+          clear-cache: 18
+          values: 
+            p18_apex_task_id: '#SBFL_APEX_TASK_ID#'
+
+        link-text: '#SBFL_APEX_TASK_ID#'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
 
     - # ====== Column: SBFL_STEP_KEY ===============================
       id: 62703949642232509

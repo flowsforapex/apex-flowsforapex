@@ -5,14 +5,14 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
 ,p_default_owner=>'FLOWS4APEX'
 );
 wwv_flow_imp_shared.create_plugin(
- p_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_plugin_type=>'REGION TYPE'
 ,p_name=>'COM.FLOWS4APEX.VIEWER.REGION'
 ,p_display_name=>'Flows for APEX - Viewer'
@@ -37,8 +37,8 @@ wwv_flow_imp_shared.create_plugin(
 ,p_files_version=>922
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(49041559670646437847)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49041650540929134195)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -53,8 +53,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'You can choose from any CLOB column of the region source.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(49041558490616432029)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49041649360899128377)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>30
@@ -65,7 +65,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'ALL_CURRENT'
 ,p_column_data_types=>'VARCHAR2'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(48872363434558962706)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(48872454304841659054)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -75,8 +75,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Leave empty if you don''t want to highlight current nodes.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(48925434507723838082)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48925525378006534430)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>70
@@ -90,8 +90,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_help_text=>'Choose the column containing the diagram identifier of the currently displayed diagram (normally the prdg_id for running instances and the dgrm_id for displaying plain models).'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(49047760679593436066)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49047851549876132414)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40
@@ -102,7 +102,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'ALL_COMPLETED'
 ,p_column_data_types=>'VARCHAR2'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(48872363434558962706)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(48872454304841659054)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -112,8 +112,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Leave empty if you don''t want to highlight completed nodes.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(48925435916496839839)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48925526786779536187)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>80
@@ -124,7 +124,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'PRDG_PRDG_ID'
 ,p_column_data_types=>'NUMBER'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(104132057364667011)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(104222927647363359)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -133,8 +133,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'In the context of call activities this is the diagram that contains the activity which called the currently displayed diagram (normally the prdg_prdg_id for running instances and the calling_dgrm for displaying plain models).'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(49047759420063427098)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49047850290346123446)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>50
@@ -145,7 +145,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'ALL_ERRORS'
 ,p_column_data_types=>'VARCHAR2'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(48872363434558962706)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(48872454304841659054)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -155,8 +155,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Leave empty if you don''t want to highlight error nodes.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(48925437461211841205)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48925528331494537553)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>7
 ,p_display_sequence=>90
@@ -167,7 +167,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'CALLING_OBJT'
 ,p_column_data_types=>'VARCHAR2'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(104132057364667011)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(104222927647363359)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -176,8 +176,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'In the context of call activities this is the call activity which called the current displayed diagram (normally the prdg_prdg_id for running instances or the calling dgrm_id).'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(48886261588328959501)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48886352458611655849)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>8
 ,p_display_sequence=>120
@@ -195,8 +195,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Remember to add your driving page items to "Page Items to Submit" for this to work properly.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(48872363434558962706)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48872454304841659054)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>9
 ,p_display_sequence=>20
@@ -212,8 +212,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'The highlighting colors will always take precedence over the bpmn colors defined in the diagram.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(48872280664970943403)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48872371535253639751)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>140
@@ -230,8 +230,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Can be further configured by using the JavaScript Initialization Code in the region attributes.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(49803907314390654371)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49803998184673350719)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>12
 ,p_display_sequence=>100
@@ -242,7 +242,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'BREADCRUMB'
 ,p_column_data_types=>'VARCHAR2'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(104132057364667011)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(104222927647363359)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -251,8 +251,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'You can click on the breadcrumb entries in the viewer to move up to the parent diagrams of the curently displayed diagram.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(49804713902910666897)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49804804773193363245)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>13
 ,p_display_sequence=>110
@@ -263,7 +263,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_default_value=>'DRILLDOWN_ALLOWED'
 ,p_column_data_types=>'NUMBER'
 ,p_is_translatable=>false
-,p_depending_on_attribute_id=>wwv_flow_imp.id(104132057364667011)
+,p_depending_on_attribute_id=>wwv_flow_imp.id(104222927647363359)
 ,p_depending_on_has_to_exist=>true
 ,p_depending_on_condition_type=>'EQUALS'
 ,p_depending_on_expression=>'Y'
@@ -278,8 +278,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '</ul>'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(104132057364667011)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(104222927647363359)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>14
 ,p_display_sequence=>60
@@ -295,8 +295,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Be sure to setup the other attributes for building up the correct diagram call structure.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(3653257702162964)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(3744127984859312)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>15
 ,p_display_sequence=>150
@@ -311,8 +311,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Makes most sense if you''re putting the viewer full screen on a separate page, otherwise this might interfere with normal web page navigation.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(36109064230444913)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(36199934513141261)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>16
 ,p_display_sequence=>15
@@ -328,8 +328,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'As this can lead to unexpected results, we strongly recommend to only use one option at once.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(36702621479317294)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(36793491762013642)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>17
 ,p_display_sequence=>55
@@ -347,8 +347,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the JSON structure of the iteration data.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(5461417218678527)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(5552287501374875)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>18
 ,p_display_sequence=>180
@@ -366,8 +366,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'The URLs for a single process instance need to be wrapped in a JSON object. See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the required JSON structure of this attribute.'))
 );
 wwv_flow_imp_shared.create_plugin_std_attribute(
- p_id=>wwv_flow_imp.id(48859105243699546287)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48859196113982242635)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'INIT_JAVASCRIPT_CODE'
 ,p_is_required=>false
 ,p_depending_on_has_to_exist=>true
@@ -404,49 +404,49 @@ wwv_flow_imp_shared.create_plugin_std_attribute(
 '</ul>'))
 );
 wwv_flow_imp_shared.create_plugin_std_attribute(
- p_id=>wwv_flow_imp.id(49042060333655360973)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(49042151203938057321)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'SOURCE_LOCATION'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48877354741159920984)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48877445611442617332)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_diagram_loaded'
 ,p_display_name=>'Diagram Loaded'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48875481319341258612)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48875572189623954960)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_element_click'
 ,p_display_name=>'Click on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48875481743923258612)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48875572614205954960)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_element_dblclick'
 ,p_display_name=>'Doubleclick on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48875480580920258597)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48875571451202954945)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_element_hover'
 ,p_display_name=>'Hover on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48875482155076258613)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48875573025358954961)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_element_mousedown'
 ,p_display_name=>'Mousedown on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48875482539600258613)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48875573409882954961)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_element_mouseup'
 ,p_display_name=>'Mouseup on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(48875480930145258612)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(48875571800427954960)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_name=>'mtbv_element_out'
 ,p_display_name=>'Leave Element'
 );
@@ -579,8 +579,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(5457683071562451)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(5548553354258799)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_file_name=>'js/flows4apex.apex.viewer.js'
 ,p_mime_type=>'text/javascript'
 ,p_file_charset=>'utf-8'
@@ -1540,8 +1540,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(5458747919563021)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(5549618202259369)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_file_name=>'css/bpmn-embedded.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -1592,8 +1592,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(5459049022563022)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(5549919305259370)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_file_name=>'css/bpmn-js.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -1820,8 +1820,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(5459459970563022)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(5550330253259370)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_file_name=>'css/diagram-js.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -1900,8 +1900,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(5459877752563023)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(5550748035259371)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_file_name=>'css/flows4apex.viewer.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -3968,8 +3968,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(15858978863996991)
-,p_plugin_id=>wwv_flow_imp.id(52324545630147899359)
+ p_id=>wwv_flow_imp.id(15949849146693339)
+,p_plugin_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_file_name=>'js/flows4apex.viewer.min.js'
 ,p_mime_type=>'text/javascript'
 ,p_file_charset=>'utf-8'

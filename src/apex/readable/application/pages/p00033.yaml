@@ -1,10 +1,10 @@
 ---
-# ====== Page: Configuration - Archiving =====================
+# ====== Page: Configuration - Instance Archiving and Purging 
 id: 33
 identification: 
-  name: Configuration - Archiving
+  name: Configuration - Instance Archiving and Purging
   alias: CONFIGURATION-ARCHIVING
-  title: Configuration - Archiving
+  title: Configuration - Instance Archiving and Purging
 
 appearance: 
   page-mode: Normal
@@ -65,7 +65,7 @@ regions:
 
   layout: 
     sequence: 10
-    parent-region: Archiving # 11186537419048718
+    parent-region: Instance Summary Archiving # 11186537419048718
     slot: SUB_REGIONS
     start-new-layout: false
     start-new-row: true
@@ -168,14 +168,68 @@ regions:
     security: 
       escape-special-characters: true
 
-- # ====== Region: Archiving ===================================
+- # ====== Region: Automation - Daily Instance Summary Archive =
+  id: 9479602182841663
+  identification: 
+    name: Automation - Daily Instance Summary Archive
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+          name, 
+          static_id, 
+          polling_interval, 
+          polling_status_code, 
+          polling_status, 
+          polling_last_run_timestamp, 
+          polling_next_run_timestamp
+      from apex_appl_automations
+      where application_id = :app_id
+      
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Instance Summary Archiving ==================
   id: 11186537419048718
   identification: 
-    name: Archiving
+    name: Instance Summary Archiving
     type: Static Content
 
   layout: 
-    sequence: 10
+    sequence: 20
     parent-region: No Parent
     slot: BODY
     start-new-layout: false
@@ -206,6 +260,99 @@ regions:
     settings: 
       output-as: HTML
       expand-shortcuts: false
+
+- # ====== Region: Completed Process Instance Purging ==========
+  id: 13980151483687947
+  identification: 
+    name: Completed Process Instance Purging
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Automation - Purge Completed Instances ======
+  id: 14768878313669603
+  identification: 
+    name: Automation - Purge Completed Instances
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+          name, 
+          static_id, 
+          polling_interval, 
+          polling_status_code, 
+          polling_status, 
+          polling_last_run_timestamp, 
+          polling_next_run_timestamp
+      from apex_appl_automations
+      where application_id = :app_id
+      
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
 
 - # ====== Region: Breadcrumb ==================================
   id: 24201499202577457
@@ -270,7 +417,7 @@ page-items:
 
   layout: 
     sequence: 20
-    region: Archiving # 11186537419048718
+    region: Instance Summary Archiving # 11186537419048718
     slot: BODY
     alignment: Left
     start-new-layout: false
@@ -314,7 +461,7 @@ page-items:
 
   layout: 
     sequence: 30
-    region: Archiving # 11186537419048718
+    region: Instance Summary Archiving # 11186537419048718
     slot: BODY
 
   advanced: 
@@ -331,6 +478,800 @@ page-items:
   security: 
     session-state-protection: Unrestricted
     store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_NAME =================================
+  id: 9481460141841660
+  identification: 
+    name: P33_NAME
+    type: Display Only
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_STATIC_ID ============================
+  id: 9481522977841661
+  identification: 
+    name: P33_STATIC_ID
+    type: Display Only
+
+  label: 
+    label: Static Id
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: STATIC_ID
+    data-type: VARCHAR2
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_INTERVAL =====================
+  id: 9481621860841662
+  identification: 
+    name: P33_POLLING_INTERVAL
+    type: Display Only
+
+  label: 
+    label: Polling Interval
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: POLLING_INTERVAL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_STATUS_CODE ==================
+  id: 9740370151387313
+  identification: 
+    name: P33_POLLING_STATUS_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 130
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: POLLING_STATUS_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_STATUS =======================
+  id: 9740452943387314
+  identification: 
+    name: P33_POLLING_STATUS
+    type: Display Only
+
+  label: 
+    label: Polling Status
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: POLLING_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_LAST_RUN_TIMESTAMP ===========
+  id: 9740571437387315
+  identification: 
+    name: P33_POLLING_LAST_RUN_TIMESTAMP
+    type: Display Only
+
+  label: 
+    label: Polling Last Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: POLLING_LAST_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_NEXT_RUN_TIMESTAMP ===========
+  id: 9740603112387316
+  identification: 
+    name: P33_POLLING_NEXT_RUN_TIMESTAMP
+    type: Display Only
+
+  label: 
+    label: Polling Next Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 110
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+    column: POLLING_NEXT_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_COMPLETED_PRCS_PURGING ===============
+  id: 13980340513687949
+  identification: 
+    name: P33_COMPLETED_PRCS_PURGING
+    type: Switch
+
+  label: 
+    label: Enable Completed Process Instance Purging
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: Completed Process Instance Purging # 13980151483687947
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_COMPLETED_PRCS_PURGE_DAYS ============
+  id: 14768604768669601
+  identification: 
+    name: P33_COMPLETED_PRCS_PURGE_DAYS
+    type: Text Field
+
+  label: 
+    label: Retention period before purging  (Days after instance completed / terminated)
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Completed Process Instance Purging # 13980151483687947
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_NAME_1 ===============================
+  id: 14768998600669604
+  identification: 
+    name: P33_NAME_1
+    type: Display Only
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_STATIC_ID_1 ==========================
+  id: 14769114762669606
+  identification: 
+    name: P33_STATIC_ID_1
+    type: Display Only
+
+  label: 
+    label: Static Id
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: STATIC_ID
+    data-type: VARCHAR2
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_STATUS_1 =====================
+  id: 14769269001669607
+  identification: 
+    name: P33_POLLING_STATUS_1
+    type: Display Only
+
+  label: 
+    label: Polling Status
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: POLLING_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_INTERVAL_1 ===================
+  id: 14769302729669608
+  identification: 
+    name: P33_POLLING_INTERVAL_1
+    type: Display Only
+
+  label: 
+    label: Polling Interval
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: POLLING_INTERVAL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_LAST_RUN_TIMESTAMP_1 =========
+  id: 14769415111669609
+  identification: 
+    name: P33_POLLING_LAST_RUN_TIMESTAMP_1
+    type: Display Only
+
+  label: 
+    label: Polling Last Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: POLLING_LAST_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_NEXT_RUN_TIMESTAMP_1 =========
+  id: 14769597769669610
+  identification: 
+    name: P33_POLLING_NEXT_RUN_TIMESTAMP_1
+    type: Display Only
+
+  label: 
+    label: Polling Next Run Timestamp
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: POLLING_NEXT_RUN_TIMESTAMP
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_POLLING_STATUS_CODE_1 ================
+  id: 14769611463669611
+  identification: 
+    name: P33_POLLING_STATUS_CODE_1
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+    column: POLLING_STATUS_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
     restricted-characters: All characters can be saved.
 
 buttons: 
@@ -432,6 +1373,236 @@ buttons:
 
     warn-on-unsaved-changes: Do Not Check
 
+- # ====== Button: SEE_LOGS ====================================
+  id: 4880796912147213
+  identification: 
+    button-name: SEE_LOGS
+    label: See Logs
+
+  layout: 
+    sequence: 190
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:41:P41_STATIC_ID:&P33_STATIC_ID.'
+      page: 41 # Automation Logs
+      clear-cache: 41
+      values: 
+        p41_static_id: '&P33_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: ENABLE ======================================
+  id: 4881119153147212
+  identification: 
+    button-name: ENABLE
+    label: Enable
+
+  layout: 
+    sequence: 150
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P33_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P33_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P33_POLLING_STATUS_CODE
+    value: DISABLED
+
+- # ====== Button: DISABLE =====================================
+  id: 4881512778147212
+  identification: 
+    button-name: DISABLE
+    label: Disable
+
+  layout: 
+    sequence: 170
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P33_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P33_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P33_POLLING_STATUS_CODE
+    value: ACTIVE
+
+- # ====== Button: ENABLE_1 ====================================
+  id: 14769779291669612
+  identification: 
+    button-name: ENABLE_1
+    label: Enable
+
+  layout: 
+    sequence: 80
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P33_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P33_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P33_POLLING_STATUS_CODE_1
+    value: DISABLED
+
+- # ====== Button: DISABLE_1 ===================================
+  id: 14769876647669613
+  identification: 
+    button-name: DISABLE_1
+    label: Disable
+
+  layout: 
+    sequence: 90
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40:P40_STATIC_ID:&P33_STATIC_ID.'
+      page: 40 # Enable/Disable Automation
+      clear-cache: 40
+      values: 
+        p40_static_id: '&P33_STATIC_ID.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  server-side-condition: 
+    type: Item = Value
+    item: P33_POLLING_STATUS_CODE_1
+    value: ACTIVE
+
+- # ====== Button: SEE_LOGS_1 ==================================
+  id: 14769968479669614
+  identification: 
+    button-name: SEE_LOGS_1
+    label: See Logs
+
+  layout: 
+    sequence: 100
+    region: Automation - Purge Completed Instances # 14768878313669603
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:41:P41_STATIC_ID:&P33_STATIC_ID_1.'
+      page: 41 # Automation Logs
+      clear-cache: 41
+      values: 
+        p41_static_id: '&P33_STATIC_ID_1.'
+
+    warn-on-unsaved-changes: Do Not Check
+
 dynamic-actions: 
 - # ====== Dynamic Action: On dialog close =====================
   id: 3746400769530328
@@ -494,6 +1665,36 @@ dynamic-actions:
       fire-when-event-result-is: True
       fire-on-initialization: false
 
+- # ====== Dynamic Action: Close Dialog - Automation ===========
+  id: 4886604122139954
+  identification: 
+    name: Close Dialog - Automation
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Automation - Daily Instance Summary Archive # 9479602182841663
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 4887009223139953
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: window.location.reload();
+
+    execution: 
+      sequence: 10
+      event: Close Dialog - Automation # 4886604122139954
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
 computations: 
 - # ====== Computation: P33_LOGGING_ARCHIVE_ENABLED ============
   id: 3170508084223084
@@ -501,7 +1702,7 @@ computations:
     item-name: P33_LOGGING_ARCHIVE_ENABLED
 
   execution: 
-    sequence: 50
+    sequence: 20
     point: Before Regions
 
   computation: 
@@ -512,6 +1713,68 @@ computations:
                  p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled
                , p_default_value => flow_constants_pkg.gc_config_default_logging_archive_enabled
              );
+
+- # ====== Computation: P33_STATIC_ID ==========================
+  id: 4886405701142240
+  identification: 
+    item-name: P33_STATIC_ID
+
+  execution: 
+    sequence: 120
+    point: Before Header
+
+  computation: 
+    type: Static Value
+    static-value: flows-for-apex-daily-instance-archive
+
+- # ====== Computation: P33_COMPLETED_PRCS_PURGING =============
+  id: 13980453602687950
+  identification: 
+    item-name: P33_COMPLETED_PRCS_PURGING
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_completed_prcs_purging
+               , p_default_value => flow_constants_pkg.gc_config_default_completed_prcs_purging
+             );
+
+- # ====== Computation: P33_COMPLETED_PRCS_PURGE_DAYS ==========
+  id: 14768745596669602
+  identification: 
+    item-name: P33_COMPLETED_PRCS_PURGE_DAYS
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+                 p_config_key => flow_constants_pkg.gc_config_completed_prcs_purge_days
+               , p_default_value => '365'
+             );
+
+- # ====== Computation: P33_STATIC_ID_1 ========================
+  id: 14770002399669615
+  identification: 
+    item-name: P33_STATIC_ID_1
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: Static Value
+    static-value: flows-for-apex-purge-completed-instances
 
 processes: 
 - # ====== Process: Set Settings ===============================
@@ -526,7 +1789,9 @@ processes:
     language: PL/SQL
     pl/sql-code: |
       flow_engine_app_api.set_archiving_settings(
-        pi_archiving_enabled  => :P33_LOGGING_ARCHIVE_ENABLED
+        pi_archiving_enabled           => :P33_LOGGING_ARCHIVE_ENABLED
+      , pi_completed_prcs_purging     => :P33_COMPLETED_PRCS_PURGING      
+      , pi_completed_prcs_purge_days  => :P33_COMPLETED_PRCS_PURGE_DAYS
       );
 
   execution: 
@@ -542,4 +1807,30 @@ processes:
 
   server-side-condition: 
     when-button-pressed: SAVE # 3164119045223081
+
+- # ====== Process: Initialize form Configuration - Archiving ==
+  id: 4891568334128002
+  identification: 
+    name: Initialize form Configuration - Archiving
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Automation - Daily Instance Summary Archive # 9479602182841663
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Initialize form Configuration - Archiving - 
+  id: 14770181791669616
+  identification: 
+    name: Initialize form Configuration - Archiving - Instance Ourging
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Automation - Purge Completed Instances # 14768878313669603
+
+  execution: 
+    sequence: 30
+    point: Before Header
+    run-process: Once Per Page Visit (default)
 

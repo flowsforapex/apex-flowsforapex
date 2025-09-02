@@ -4,7 +4,7 @@ id: 100
 identification: 
   name: Flows for APEX
   alias: FLOWS4APEX
-  version: 24.1
+  version: 25.1
 
 row-search: 
   tokenize: false
@@ -111,10 +111,12 @@ javascript:
 
 css: 
   file-urls: 
-  - '#APP_IMAGES#css/flows4apex#MIN#.css'
+  - '#APP_IMAGES#css/flows4apex#MIN#.css'
+  - '#APP_FILES#bpmn-io/bpmn-font/css/bpmn-embedded#MIN#.css'
 
 attributes: 
   theme: Universal Theme # 42
+  global-page: 0
   enable-end-users-to-choose-theme-style: false
   add-"built-with-apex"-to-footer: true
   auto-dismiss-success-messages: false
@@ -171,9 +173,6 @@ component-settings:
   identification: 
     name: NATIVE_MAP_REGION
     type: Region
-
-  settings: 
-    attribute-1: Y
 
   subscription: 
     version-number: 1760504774

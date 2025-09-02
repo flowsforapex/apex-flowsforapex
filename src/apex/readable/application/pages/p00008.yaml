@@ -33,6 +33,19 @@ css:
     .is-active .t-Tabs-link {
         font-weight: 700;
     }
+    
+    /*Style instance intervention badge*/
+    .flow-prcs-mod-badge.u-warning {
+        width: fit-content;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 1rem;
+    }
+    .flow-prcs-mod-badge-icon {
+        font-size: 24px;
+    }
 
 security: 
   authentication: Page Requires Authentication
@@ -947,7 +960,7 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 46
+      sequence: 120
       column-alignment: start
 
     accessibility: 
@@ -979,8 +992,40 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 16
+      sequence: 110
       column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LOGGING_LEVEL ===============================
+    id: 4862831662240146
+    identification: 
+      column-name: LOGGING_LEVEL
+      type: Plain Text
+
+    heading: 
+      heading: Logging Level
+      alignment: end
+
+    layout: 
+      sequence: 100
+      column-alignment: end
 
     accessibility: 
       value-identifies-row: false
@@ -1011,7 +1056,7 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 5
+      sequence: 90
       column-alignment: start
 
     accessibility: 
@@ -1043,7 +1088,7 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 6
+      sequence: 140
       column-alignment: start
 
     accessibility: 
@@ -1075,7 +1120,7 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 26
+      sequence: 150
       column-alignment: start
 
     accessibility: 
@@ -1107,7 +1152,7 @@ regions:
       alignment: center
 
     layout: 
-      sequence: 36
+      sequence: 40
       column-alignment: start
 
     accessibility: 
@@ -1139,7 +1184,7 @@ regions:
       alignment: end
 
     layout: 
-      sequence: 1
+      sequence: 20
       column-alignment: end
 
     accessibility: 
@@ -1171,11 +1216,78 @@ regions:
       alignment: start
 
     layout: 
-      sequence: 2
+      sequence: 30
       column-alignment: start
 
     accessibility: 
       value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: DGRM_SHORT_DESCRIPTION ======================
+    id: 12331046562495703
+    identification: 
+      column-name: DGRM_SHORT_DESCRIPTION
+      type: Plain Text
+
+    heading: 
+      heading: Model Short Description
+      alignment: start
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: WAS_ALTERED =================================
+    id: 12331184072495704
+    identification: 
+      column-name: WAS_ALTERED
+      type: Plain Text
+
+    heading: 
+      heading: Instance Execution
+      alignment: start
+
+    layout: 
+      sequence: 160
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: '{if WAS_ALTERED/}<div class="flow-prcs-mod-badge u-warning"><span aria-hidden="true" class="fa fa-exclamation-triangle-o fa-2x flow-prcs-mod-badge-icon"></span><span class="flow-prcs-mod-badge-text">administrator intervention</span></div>{endif/}'
 
     sorting: 
       sortable: true
@@ -1199,11 +1311,11 @@ regions:
       type: Plain Text
 
     heading: 
-      heading: Model
+      heading: Model Name
       alignment: start
 
     layout: 
-      sequence: 3
+      sequence: 60
       column-alignment: start
 
     accessibility: 
@@ -1234,7 +1346,7 @@ regions:
       type: Hidden
 
     layout: 
-      sequence: 4
+      sequence: 80
 
     ui-defaults-reference: 
       table-owner: Parsing Schema
@@ -1657,6 +1769,7 @@ regions:
              ACTION,
              PROV_PRCS_ID,
              PROV_VAR_NAME,
+             PROV_VAR_NAME_UC,
              PROV_VAR_TYPE,
              PROV_SCOPE,
              CALLING_OBJECT,
@@ -2008,6 +2121,7 @@ regions:
           <button type="button" title="&APP_TEXT$APP_P8_VAR_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P8_VAR_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon #CURRENT_CLASS# variable-actions-btn js-menuButton" 
           data-menu="variable_row_action_menu"
           data-name="#PROV_VAR_NAME#"
+          data-name-uc="#PROV_VAR_NAME_UC#"
           data-type="#PROV_VAR_TYPE#"
           data-prcs="#PROV_PRCS_ID#"
           data-scope="#PROV_SCOPE#"
@@ -2057,6 +2171,24 @@ regions:
 
       security: 
         escape-special-characters: false
+
+    - # ====== Column: PROV_VAR_NAME_UC ============================
+      id: 13979892406687944
+      identification: 
+        column-name: PROV_VAR_NAME_UC
+        type: Hidden
+
+      heading: 
+        heading: Prov Var Name Uc
+
+      layout: 
+        sequence: 130
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: true
 
     - # ====== Column: PROV_SCOPE ==================================
       id: 55103738997434701
@@ -2385,7 +2517,9 @@ regions:
     table-owner: Parsing Schema
     table-name: FLOW_P0008_INSTANCE_LOG_VW
     include-rowid-column: false
-    where-clause: 'lgpr_prcs_id = :P8_PRCS_ID'
+    where-clause: |
+      lgpr_prcs_id = :P8_PRCS_ID
+      and lgpr_severity < 3 
     page-items-to-submit: 
     - P8_PRCS_ID
 
@@ -3058,7 +3192,7 @@ regions:
              TIMER_STATUS_INFO,
              case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 't-Button--success'
              end as current_class,
-             case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 1 else 0
+             case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 1 else 1
              end as current_level,
              SBFL_ITERATION_PATH
         from FLOW_P0008_SUBFLOWS_VW
@@ -4284,13 +4418,13 @@ regions:
   id: 6133652177393567089
   identification: 
     name: Flow Viewer
-    type: Flows for APEX - Viewer
+    type: Flows for APEX - Viewer (25.1)
 
   source: 
     location: Local Database
     type: Table / View
     table-owner: Parsing Schema
-    table-name: FLOW_P0008_VW
+    table-name: FLOW_VIEWER_VW
     include-rowid-column: false
     where-clause: 'prcs_id = :P8_PRCS_ID'
     page-items-to-submit: 
@@ -4336,24 +4470,16 @@ regions:
   attributes: 
     settings: 
       diagram-xml: DGRM_CONTENT
-      use-bpmn-colors: true
-      add-highlighting: true
-      current-nodes: ALL_CURRENT
-      completed-nodes: ALL_COMPLETED
-      error-nodes: ALL_ERRORS
-      iteration-data: ITERATION_DATA
-      enable-call-activities: true
       diagram-identifier: PRDG_ID
-      calling-diagram-identifier: PRDG_PRDG_ID
-      calling-object-id: CALLING_OBJT
-      breadcrumb-text: BREADCRUMB
-      allow-drilldown-on-diagram-level: DRILLDOWN_ALLOWED
+      use-bpmn-colors: true
+      highlighting-data: HIGHLIGHTING_DATA
+      call-activity-data: CALL_ACTIVITY_DATA
+      iteration-data: ITERATION_DATA
+      user-task-data: USER_TASK_DATA
+      badges-data: BADGES_DATA
       refresh-on-load: true
       show-toolbar: true
       enable-mousewheel-zoom: false
-
-    messages: 
-      when-no-data-found: No process selected
 
 page-items: 
 - # ====== Page Item: P8_REPOSITION_TEXT =======================
@@ -5600,7 +5726,7 @@ page-items:
     used: Only when current value in session state is null
 
   session-state: 
-    data-type: VARCHAR2
+    data-type: CLOB
     storage: Per Session (Persistent)
 
   quick-picks: 
@@ -7027,12 +7153,13 @@ dynamic-actions:
       code: |
         var runningSelector = "button.clickable-action";
         var processRows = apex.jQuery( "#subflows tr" );
+        var prcsStatus = apex.items.P8_PRCS_STATUS.value;
         
         processRows.has( runningSelector ).addClass( "flow-running" );
         
         apex.jQuery(".subflow-actions-btn").each(function(){
           var sbflStatus = apex.jQuery(this).data("status");
-          apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" ? false : true );
+          apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" || sbflStatus === "suspended" || prcsStatus === "suspended" ? false : true );
         });
         
         $("td[headers*=subflow_status_col]").each(function() {

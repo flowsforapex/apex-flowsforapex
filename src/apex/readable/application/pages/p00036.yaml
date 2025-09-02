@@ -294,7 +294,7 @@ page-items:
     value-3: FREQ=MINUTELY;INTERVAL=10
     label-4: 1 Min
     value-4: FREQ=MINUTELY;INTERVAL=10
-    label-5: 10 Sec (Production Use - not for apex.oracle.com)
+    label-5: 10 Sec (Production Use - not for oracleapex.com)
     value-5: FREQ=SECONDLY;INTERVAL=10
 
   security: 

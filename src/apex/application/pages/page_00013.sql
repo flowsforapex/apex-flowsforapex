@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -1137,6 +1137,28 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_heading_alignment=>'LEFT'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(6768618283665624)
+,p_db_column_name=>'LGSF_STEP_KEY'
+,p_display_order=>150
+,p_column_identifier=>'N'
+,p_column_label=>'Lgsf Step Key'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(6768769198665625)
+,p_db_column_name=>'LGSF_APEX_TASK_ID'
+,p_display_order=>160
+,p_column_identifier=>'O'
+,p_column_label=>'APEX Task Id'
+,p_column_link=>'f?p=&APP_ID.:18:&SESSION.::&DEBUG.:18:P18_APEX_TASK_ID:#LGSF_APEX_TASK_ID#'
+,p_column_linktext=>'#LGSF_APEX_TASK_ID#'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(5121788220250659)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -1144,7 +1166,8 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'51218'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'LGSF_SBFL_ID:LGSF_SBFL_PROCESS_LEVEL:LGSF_USER:LGSF_WAS_CURRENT:LGSF_STARTED:LGSF_COMPLETED:LGSF_COMMENT'
+,p_display_rows=>10
+,p_report_columns=>'LGSF_STEP_KEY:LGSF_SBFL_ID:LGSF_SBFL_PROCESS_LEVEL:LGSF_USER:LGSF_WAS_CURRENT:LGSF_STARTED:LGSF_COMPLETED:LGSF_APEX_TASK_ID:LGSF_COMMENT:'
 ,p_sort_column_1=>'LGSF_COMPLETED'
 ,p_sort_direction_1=>'DESC'
 );
@@ -1323,6 +1346,38 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_heading_alignment=>'LEFT'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(6766626143665604)
+,p_db_column_name=>'SBFL_DIAGRAM_LEVEL'
+,p_display_order=>170
+,p_column_identifier=>'R'
+,p_column_label=>'Diagram Level'
+,p_column_type=>'NUMBER'
+,p_display_text_as=>'HIDDEN_ESCAPE_SC'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(6766763108665605)
+,p_db_column_name=>'SBFL_SCOPE'
+,p_display_order=>180
+,p_column_identifier=>'S'
+,p_column_label=>'Scope'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(6766838228665606)
+,p_db_column_name=>'SBFL_APEX_TASK_ID'
+,p_display_order=>190
+,p_column_identifier=>'T'
+,p_column_label=>'APEX Task Id'
+,p_column_link=>'f?p=&APP_ID.:18:&SESSION.::&DEBUG.:18:P18_APEX_TASK_ID:#SBFL_APEX_TASK_ID#'
+,p_column_linktext=>'#SBFL_APEX_TASK_ID#'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(5132231896296558)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -1331,7 +1386,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>10
-,p_report_columns=>'SBFL_ID:SBFL_STEP_KEY:SBFL_PROCESS_LEVEL:SBFL_BECAME_CURRENT:SBFL_WORK_STARTED:SBFL_LAST_UPDATE:'
+,p_report_columns=>'SBFL_ID:SBFL_STEP_KEY:SBFL_PROCESS_LEVEL:SBFL_BECAME_CURRENT:SBFL_WORK_STARTED:SBFL_LAST_UPDATE:SBFL_APEX_TASK_ID:'
 ,p_sort_column_1=>'SBFL_LAST_UPDATE'
 ,p_sort_direction_1=>'DESC'
 );

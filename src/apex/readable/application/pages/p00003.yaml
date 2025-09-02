@@ -522,7 +522,9 @@ regions:
     pl/sql-expression: |
       :P3_APEX_UPGRADE_DETECTED is not null or
       :P3_VERSION_MISMATCH is not null or
-      flow_timers_pkg.get_timer_status = 'FALSE'
+      flow_timers_pkg.get_timer_status = 'FALSE' or
+      flow_engine_app_api.flow_apex_automation_disabled() or 
+      flow_engine_app_api.flow_apex_automation_failure()
 
   customization: 
     customizable: Not Customizable By End Users
@@ -618,6 +620,102 @@ regions:
   server-side-condition: 
     type: Item is NOT NULL
     item: P3_APEX_UPGRADE_DETECTED
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Automation disabled =========================
+  id: 4861192074240129
+  identification: 
+    name: Automation disabled
+    type: Static Content
+
+  source: 
+    html-code: At least one automation is disabled, check it from the Automation configuration page.
+
+  layout: 
+    sequence: 50
+    parent-region: Errors # 3511439830851727
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-expanded
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_engine_app_api.flow_apex_automation_disabled()
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Automation failed ===========================
+  id: 4861325467240131
+  identification: 
+    name: Automation failed
+    type: Static Content
+
+  source: 
+    html-code: At least one automation failed for the last execution, check it from the Automation configuration page.
+
+  layout: 
+    sequence: 60
+    parent-region: Errors # 3511439830851727
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-expanded
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_engine_app_api.flow_apex_automation_failure()
 
   customization: 
     customizable: Not Customizable By End Users

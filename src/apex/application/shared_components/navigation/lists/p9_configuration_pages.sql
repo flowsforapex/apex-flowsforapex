@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(3291351989268379)
 ,p_name=>'P9_CONFIGURATION_PAGES'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>1760504778
+,p_version_scn=>3770182256
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(3291576005268381)
@@ -29,10 +29,10 @@ wwv_flow_imp_shared.create_list_item(
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(3291958597268382)
 ,p_list_item_display_sequence=>20
-,p_list_item_link_text=>'Archiving'
+,p_list_item_link_text=>'Completed Instance Archiving and Purging'
 ,p_list_item_link_target=>'f?p=&APP_ID.:33:&SESSION.::&DEBUG.::::'
 ,p_list_item_icon=>'fa-archive'
-,p_list_text_01=>'Enable archiving, instance archive location'
+,p_list_text_01=>'Configure process instance archiving and purging'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp_shared.create_list_item(
@@ -88,6 +88,24 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_icon=>'fa-file-signature'
 ,p_list_text_01=>'Edition, license information'
 ,p_translate_list_text_y_n=>'Y'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(4807112393506933)
+,p_list_item_display_sequence=>90
+,p_list_item_link_text=>'Automations'
+,p_list_item_link_target=>'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:43,CIR,RIR:::'
+,p_list_item_icon=>'fa-calendar-clock'
+,p_list_text_01=>'Manage and monitor automations'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(12583258855978108)
+,p_list_item_display_sequence=>100
+,p_list_item_link_text=>'AI Prompts'
+,p_list_item_link_target=>'f?p=&APP_ID.:44:&SESSION.::&DEBUG.:RP:::'
+,p_list_item_icon=>'fa-ai'
+,p_list_text_01=>'AI Prompts and Quick Actions'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp.component_end;

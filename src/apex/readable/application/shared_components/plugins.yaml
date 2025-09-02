@@ -1,4 +1,137 @@
 ---
+- # ====== Plugin: Flows for APEX - Return APEX Human Task State
+  id: 5348613982934
+  identification: 
+    name: 'Flows for APEX - Return APEX Human Task State and Outcome '
+    internal-name: COM.FLOWS4APEX.RETURN.TASK.STATE.PROCESS
+    type: Process
+
+  advanced: 
+    quick-pick: false
+
+  subscription: 
+    version-number: 2547897255
+
+  source: 
+    pl/sql-code: |
+      function execution
+        ( p_process in apex_plugin.t_process
+        , p_plugin  in apex_plugin.t_plugin 
+        )
+      return apex_plugin.t_process_exec_result
+      as
+          l_result     apex_plugin.t_process_exec_result;
+      
+          --attributes
+          l_attribute1 p_process.attribute_01%type  := p_process.attribute_01;
+          l_attribute2 p_process.attribute_02%type  := p_process.attribute_02;
+          l_attribute3 p_process.attribute_03%type  := p_process.attribute_03;
+      
+      begin
+      
+          --debug
+          if apex_application.g_debug 
+          then
+              apex_plugin_util.debug_process
+                ( p_plugin         => p_plugin
+                , p_process        => p_process
+                );
+          end if;
+      
+          flow_api_pkg.return_task_state_outcome ( p_process_id   => apex_util.get_session_state(l_attribute1),
+                                                   p_subflow_id   => apex_util.get_session_state(l_attribute2),
+                                                   p_step_key     => apex_util.get_session_state(l_attribute3),
+                                                   p_apex_task_id => apex_util.get_session_state('APEX$TASK_ID'),
+                                                   p_state_code   => apex_util.get_session_state('APEX$TASK_STATE'),
+                                                   p_outcome      => apex_util.get_session_state('APEX$TASK_OUTCOME'));
+      
+          return l_result;
+      end execution;    
+
+  callbacks: 
+    api-interface: Function
+    execution-function-name: execution
+
+  supported-for: 
+    component-type: 
+    - Task Definition Actions
+
+  custom-attributes: 
+    substitute-attribute-values: true
+
+  information: 
+    version: 25.1
+    about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
+
+  custom-attributes: 
+  - # ====== Custom Attribute: Task Parameter containing Process I
+    id: 5666423982932
+    identification: 
+      attribute: 1
+      name: Task Parameter containing Process ID
+      scope: Component
+
+    layout: 
+      sequence: 10
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+
+    default: 
+      value: PROCESS_ID
+
+  - # ====== Custom Attribute: Task Parameter containing Subflow I
+    id: 6198453820638
+    identification: 
+      attribute: 2
+      name: Task Parameter containing Subflow ID
+      scope: Component
+
+    layout: 
+      sequence: 20
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: true
+
+    default: 
+      value: SUBFLOW_ID
+
+    supported-for: 
+      component-type: 
+      - Task Definition Actions
+
+  - # ====== Custom Attribute: Task Parameter containing Step Key 
+    id: 6505956816363
+    identification: 
+      attribute: 3
+      name: Task Parameter containing Step Key
+      scope: Component
+
+    layout: 
+      sequence: 30
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: true
+
+    default: 
+      value: STEP_KEY
+
+    supported-for: 
+      component-type: 
+      - Task Definition Actions
+
 - # ====== Plugin: Avatar ======================================
   id: 2440674778679855
   identification: 
@@ -4949,6 +5082,464 @@
     settings: 
       type: Link
 
+- # ====== Plugin: Flows for APEX - Viewer (25.1) ==============
+  id: 7028045730394045
+  identification: 
+    name: Flows for APEX - Viewer (25.1)
+    internal-name: COM.FLOWS4APEX.VIEWER.REGION.251
+    type: Region
+
+  advanced: 
+    quick-pick: false
+
+  subscription: 
+    version-number: 3820754388
+
+  callbacks: 
+    api-interface: 3
+    render-procedure/function-name: flow_viewer.render
+    ajax-procedure/function-name: flow_viewer.ajax
+
+  standard-attributes: 
+    attributes: 
+    - Region Source supports different Data Sources
+    - Has "Page Items to Submit" Attribute
+    - Has "Order By" Attribute
+    - Has "No Data Found Message" Attribute
+    - Has "Initialization JavaScript Code" Attribute
+
+  custom-attributes: 
+    substitute-attribute-values: false
+
+  css: 
+    file-urls: 
+    - '#PLUGIN_FILES#css/flows4apex.viewer.css'
+
+  javascript: 
+    file-urls: 
+    - '#PLUGIN_FILES#js/flows4apex.apex.viewer.js'
+    - '#PLUGIN_FILES#js/flows4apex.viewer.min.js'
+
+  information: 
+    version: 25.1
+    about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
+
+  standard-attributes: 
+  - # ====== Standard Attribute: INIT_JAVASCRIPT_CODE ============
+    id: 7038350823394062
+    identification: 
+      name: INIT_JAVASCRIPT_CODE
+
+    value: 
+      required: false
+
+    help: 
+      help-text: |
+        Enter a JavaScript function that takes a configuration object for the Flow Viewer, modifies the object, and returns it.<br/>
+        This allows advanced customization of the Flow Viewer including:<br/>
+        <ul>
+        <li>Change highlighting options for elements depending on the process status</li>
+        <li>Disable button for downloading model as svg in the viewer toolbar</li>
+        </ul>
+
+    examples: 
+      examples: |
+        <p></p>
+        <pre>
+        function( config ) {
+            config.currentStyle = {
+                'fill': 'green',
+                'border': 'black',
+                'label': 'black'
+            }
+            config.completedStyle = {
+                'fill': 'grey',
+                'border': 'black',
+                'label': 'black'
+            }
+            config.errorStyle = {
+                'fill': 'red',
+                'border': 'black',
+                'label': 'white'
+            };
+            config.allowDownload = false;
+            return config;
+        }
+        </pre>
+        <p></p>
+
+  - # ====== Standard Attribute: SOURCE_LOCATION =================
+    id: 7038733369394062
+    identification: 
+      name: SOURCE_LOCATION
+
+    value: 
+      required: true
+
+  custom-attributes: 
+  - # ====== Custom Attribute: Diagram XML =======================
+    id: 7028280487394050
+    identification: 
+      static-id: diagram_xml
+      attribute: 1
+      name: Diagram XML
+      scope: Component
+
+    layout: 
+      sequence: 10
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+      data-types: 
+      - Clob
+
+    default: 
+      value: DGRM_CONTENT
+
+    help: 
+      help-text: |
+        Choose the column containing the diagram XML.<br />
+        You can choose from any CLOB column of the region source.
+
+  - # ====== Custom Attribute: Diagram Identifier ================
+    id: 7029049874394051
+    identification: 
+      static-id: diagram_identifier
+      attribute: 2
+      name: Diagram Identifier
+      scope: Component
+
+    layout: 
+      sequence: 20
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      data-types: 
+      - Number
+
+    default: 
+      value: PRDG_ID
+
+    help: 
+      help-text: Choose the column containing the diagram identifier of the currently displayed diagram (normally the prdg_id for running instances and the dgrm_id for displaying plain models).
+
+  - # ====== Custom Attribute: Refresh On Load ===================
+    id: 7031053111394053
+    identification: 
+      static-id: refresh_on_load
+      attribute: 10
+      name: Refresh On Load
+      scope: Component
+
+    layout: 
+      sequence: 100
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: Y
+
+    help: 
+      help-text: |
+        Leaving this at "Yes" will make the plugin try to refresh itself on page load.<br />
+        This typically makes sense if your query will immediately return a row.<br />
+        If your query doesn't return a row on page load you should set this to "No".<br />
+        Then use a dynamic action to listen on your driving page item(s) and trigger a refresh on the plugin region.<br />
+        Remember to add your driving page items to "Page Items to Submit" for this to work properly.
+
+  - # ====== Custom Attribute: Show Toolbar ======================
+    id: 7031805107394053
+    identification: 
+      static-id: show_toolbar
+      attribute: 11
+      name: Show Toolbar
+      scope: Component
+
+    layout: 
+      sequence: 110
+
+    settings: 
+      type: Yes/No
+      common: false
+      show-in-wizard: false
+      required: false
+      translatable: false
+
+    default: 
+      value: N
+
+    help: 
+      help-text: |
+        Enable this to show a toolbar in the viewer to control the zoom level and be able to download a svg file from the currently shown model.<br/>
+        Can be further configured by using the JavaScript Initialization Code in the region attributes.
+
+  - # ====== Custom Attribute: Enable Mousewheel Zoom ============
+    id: 7033425981394053
+    identification: 
+      static-id: enable_mousewheel_zoom
+      attribute: 12
+      name: Enable Mousewheel Zoom
+      scope: Component
+
+    layout: 
+      sequence: 120
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: N
+
+    help: 
+      help-text: |
+        Enable this to control the zoom level with the mousewheel.<br/>
+        Makes most sense if you're putting the viewer full screen on a separate page, otherwise this might interfere with normal web page navigation.
+
+  - # ====== Custom Attribute: Use BPMN Colors ===================
+    id: 7033856343394053
+    identification: 
+      static-id: use_bpmn_colors
+      attribute: 3
+      name: Use BPMN Colors
+      scope: Component
+
+    layout: 
+      sequence: 30
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: N
+
+    help: 
+      help-text: |
+        Choose if you want the plugin to show the colors defined in the diagram using the bpmn color standard.<br />
+        If you additionally enable the following option <strong>Add Highlighting</strong>, this will take precedence over the bpmn colors.<br />
+        As this can lead to unexpected results, we strongly recommend to only use one option at once.
+
+  - # ====== Custom Attribute: Iteration Data ====================
+    id: 7034260139394053
+    identification: 
+      static-id: iteration_data
+      attribute: 6
+      name: Iteration Data
+      scope: Component
+
+    layout: 
+      sequence: 60
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      data-types: 
+      - Varchar2
+      - Clob
+
+    help: 
+      help-text: |
+        Choose the column holding the data of iterating elements in the diagram.<br/>
+        If existing, according elements will show an option to open the list of instances and select the highlighted instance.<br/>
+        Leave empty if you don't want to show iteration data in the viewer.<br/>
+        <br/>
+        See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the JSON structure of the iteration data.
+
+  - # ====== Custom Attribute: User Task Data ====================
+    id: 7034632043394054
+    identification: 
+      static-id: user_task_data
+      attribute: 7
+      name: User Task Data
+      scope: Component
+
+    layout: 
+      sequence: 70
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      data-types: 
+      - Varchar2
+      - Clob
+
+    help: 
+      help-text: |
+        Choose the column holding the URLs generated for APEX Page or APEX Simple Form User Tasks.<br/>
+        If existing, users that are eligible to work on a task can directly click on the icon next to the User Tasks to open the referenced page.<br/>
+        Leave empty if you don't want to link User Tasks directly in the viewer.<br/>
+        <br/>
+        The URLs for a single process instance need to be wrapped in a JSON object. See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the required JSON structure of this attribute.
+
+  - # ====== Custom Attribute: Highlighting Data =================
+    id: 7047814619408907
+    identification: 
+      static-id: highlighting_data
+      attribute: 4
+      name: Highlighting Data
+      scope: Component
+
+    layout: 
+      sequence: 40
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      data-types: 
+      - Varchar2
+      - Clob
+
+  - # ====== Custom Attribute: Call Activity Data ================
+    id: 7052686319426598
+    identification: 
+      static-id: call_activity_data
+      attribute: 5
+      name: Call Activity Data
+      scope: Component
+
+    layout: 
+      sequence: 50
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      data-types: 
+      - Varchar2
+      - Clob
+
+  - # ====== Custom Attribute: Badges Data =======================
+    id: 7054666153432814
+    identification: 
+      static-id: badges_data
+      attribute: 8
+      name: Badges Data
+      scope: Component
+
+    layout: 
+      sequence: 80
+
+    settings: 
+      type: Region SQL Statement Column
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      data-types: 
+      - Varchar2
+      - Clob
+
+  events: 
+  - # ====== Event: mtbv_diagram_loaded ==========================
+    id: 7039099084394064
+    identification: 
+      name: Diagram Loaded
+      internal-name: mtbv_diagram_loaded
+
+  - # ====== Event: mtbv_element_click ===========================
+    id: 7039523725394064
+    identification: 
+      name: Click on Element
+      internal-name: mtbv_element_click
+
+  - # ====== Event: mtbv_element_dblclick ========================
+    id: 7039906048394064
+    identification: 
+      name: Doubleclick on Element
+      internal-name: mtbv_element_dblclick
+
+  - # ====== Event: mtbv_element_hover ===========================
+    id: 7040361997394064
+    identification: 
+      name: Hover on Element
+      internal-name: mtbv_element_hover
+
+  - # ====== Event: mtbv_element_mousedown =======================
+    id: 7040704429394064
+    identification: 
+      name: Mousedown on Element
+      internal-name: mtbv_element_mousedown
+
+  - # ====== Event: mtbv_element_mouseup =========================
+    id: 7041134511394064
+    identification: 
+      name: Mouseup on Element
+      internal-name: mtbv_element_mouseup
+
+  - # ====== Event: mtbv_element_out =============================
+    id: 7041474362394064
+    identification: 
+      name: Leave Element
+      internal-name: mtbv_element_out
+
+  files: 
+  - # ====== File: css/flows4apex.viewer.css =====================
+    id: 7041922812394065
+    identification: 
+      file-name: css/flows4apex.viewer.css
+
+    attributes: 
+      mime-type: text/css
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/flows4apex.apex.viewer.js ==================
+    id: 7042297644394065
+    identification: 
+      file-name: js/flows4apex.apex.viewer.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/flows4apex.viewer.min.js ===================
+    id: 7043146864394067
+    identification: 
+      file-name: js/flows4apex.viewer.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/flows4apex.apex.viewer.min.js ==============
+    id: 14887351347905094
+    identification: 
+      file-name: js/flows4apex.apex.viewer.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
 - # ====== Plugin: Flows for APEX - Manage Flow Instance Variabl
   id: 84719765847460987
   identification: 
@@ -4960,10 +5551,10 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1760506622
+    version-number: 3139074521
 
   callbacks: 
-    api-interface: Procedure
+    api-interface: Function
     execution-function-name: flow_plugin_manage_instance_variables.execution
 
   supported-for: 
@@ -4974,7 +5565,7 @@
     substitute-attribute-values: true
 
   information: 
-    version: 24.1
+    version: 25.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
     help-text: Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).
 
@@ -5547,10 +6138,10 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1760506622
+    version-number: 3139072720
 
   callbacks: 
-    api-interface: Procedure
+    api-interface: Function
     execution-function-name: flow_plugin_manage_instance.execution
 
   supported-for: 
@@ -5562,7 +6153,7 @@
     substitute-attribute-values: true
 
   information: 
-    version: 24.1
+    version: 25.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
     help-text: Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.
 
@@ -6294,7 +6885,7 @@
         </pre>
 
 - # ====== Plugin: Flows for APEX - Modeler ====================
-  id: 116648167005824213
+  id: 120492855282971514
   identification: 
     name: Flows for APEX - Modeler
     internal-name: COM.FLOWS4APEX.MODELER.REGION
@@ -6304,10 +6895,10 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1760506632
+    version-number: 3890871883
 
   callbacks: 
-    api-interface: Function
+    api-interface: 3
     render-procedure/function-name: flow_modeler.render
     ajax-procedure/function-name: flow_modeler.ajax
 
@@ -6322,13 +6913,7 @@
 
   css: 
     file-urls: 
-    - '#PLUGIN_FILES#css/bpmn-embedded.css'
-    - '#PLUGIN_FILES#css/bpmn-js-bpmnlint.css'
-    - '#PLUGIN_FILES#css/bpmn-js.css'
-    - '#PLUGIN_FILES#css/color-picker.css'
-    - '#PLUGIN_FILES#css/diagram-js.css'
     - '#PLUGIN_FILES#css/flows4apex.modeler.css'
-    - '#PLUGIN_FILES#css/properties-panel.css'
 
   javascript: 
     file-urls: 
@@ -6336,12 +6921,12 @@
     - '#PLUGIN_FILES#js/flows4apex.modeler.min.js'
 
   information: 
-    version: 24.1
+    version: 25.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
 
   standard-attributes: 
   - # ====== Standard Attribute: SOURCE_LOCATION =================
-    id: 116654779214824242
+    id: 120499467491971543
     identification: 
       name: SOURCE_LOCATION
 
@@ -6349,26 +6934,44 @@
       required: true
 
   files: 
-  - # ====== File: js/flows4apex.apex.modeler.js =================
-    id: 5446191022531663
+  - # ====== File: js/614.min.js =================================
+    id: 2790748262723205
     identification: 
-      file-name: js/flows4apex.apex.modeler.js
+      file-name: js/614.min.js
 
     attributes: 
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/8f3abbcbc983396e1f13da87e63ec9af.ttf =======
-    id: 5447625127531698
+  - # ====== File: js/628.min.js =================================
+    id: 2791140829723204
     identification: 
-      file-name: js/8f3abbcbc983396e1f13da87e63ec9af.ttf
+      file-name: js/628.min.js
 
     attributes: 
-      mime-type: application/octet-stream
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/67327b11b40603c60e46.ttf ===================
+    id: 2797198718604427
+    identification: 
+      file-name: js/67327b11b40603c60e46.ttf
+
+    attributes: 
+      mime-type: font/ttf
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/f6283f7ccaed1249d9ebbcc5a55d5970.ttf =======
+    id: 2797476540604426
+    identification: 
+      file-name: js/f6283f7ccaed1249d9ebbcc5a55d5970.ttf
+
+    attributes: 
+      mime-type: font/ttf
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/77.min.js ==================================
-    id: 5448086297531698
+    id: 4042546247999721
     identification: 
       file-name: js/77.min.js
 
@@ -6377,7 +6980,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/658.min.js =================================
-    id: 5448422765531699
+    id: 4042855767999721
     identification: 
       file-name: js/658.min.js
 
@@ -6386,7 +6989,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/839.min.js =================================
-    id: 5448866774531699
+    id: 4043280479999723
     identification: 
       file-name: js/839.min.js
 
@@ -6395,7 +6998,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/914.min.js =================================
-    id: 5449221657531700
+    id: 4043685716999723
     identification: 
       file-name: js/914.min.js
 
@@ -6403,17 +7006,8 @@
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/a5a5b09031edbc161f4f.ttf ===================
-    id: 5449669759531700
-    identification: 
-      file-name: js/a5a5b09031edbc161f4f.ttf
-
-    attributes: 
-      mime-type: application/octet-stream
-      file-character-set: Unicode UTF-8
-
   - # ====== File: js/editor.worker.js ===========================
-    id: 5450022707531700
+    id: 4044093579999723
     identification: 
       file-name: js/editor.worker.js
 
@@ -6421,8 +7015,17 @@
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
+  - # ====== File: js/flows4apex.modeler.min.js ==================
+    id: 4044470195999724
+    identification: 
+      file-name: js/flows4apex.modeler.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
   - # ====== File: js/html.worker.js =============================
-    id: 5450498221531701
+    id: 4044891984999726
     identification: 
       file-name: js/html.worker.js
 
@@ -6431,7 +7034,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/json.worker.js =============================
-    id: 5450897428531701
+    id: 4045285323999726
     identification: 
       file-name: js/json.worker.js
 
@@ -6439,62 +7042,8 @@
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/flows4apex.modeler.min.js ==================
-    id: 5452033929537773
-    identification: 
-      file-name: js/flows4apex.modeler.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: css/bpmn-embedded.css =========================
-    id: 5453098251539078
-    identification: 
-      file-name: css/bpmn-embedded.css
-
-    attributes: 
-      mime-type: text/css
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: css/bpmn-js.css ===============================
-    id: 5453345734539078
-    identification: 
-      file-name: css/bpmn-js.css
-
-    attributes: 
-      mime-type: text/css
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: css/bpmn-js-bpmnlint.css ======================
-    id: 5453754540539078
-    identification: 
-      file-name: css/bpmn-js-bpmnlint.css
-
-    attributes: 
-      mime-type: text/css
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: css/color-picker.css ==========================
-    id: 5454126112539079
-    identification: 
-      file-name: css/color-picker.css
-
-    attributes: 
-      mime-type: text/css
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: css/diagram-js.css ============================
-    id: 5454524647539079
-    identification: 
-      file-name: css/diagram-js.css
-
-    attributes: 
-      mime-type: text/css
-      file-character-set: Unicode UTF-8
-
   - # ====== File: css/flows4apex.modeler.css ====================
-    id: 5454925771539079
+    id: 4234785498604480
     identification: 
       file-name: css/flows4apex.modeler.css
 
@@ -6502,13 +7051,22 @@
       mime-type: text/css
       file-character-set: Unicode UTF-8
 
-  - # ====== File: css/properties-panel.css ======================
-    id: 5455341942539080
+  - # ====== File: js/flows4apex.apex.modeler.js =================
+    id: 9290879299678964
     identification: 
-      file-name: css/properties-panel.css
+      file-name: js/flows4apex.apex.modeler.js
 
     attributes: 
-      mime-type: text/css
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/flows4apex.apex.modeler.min.js =============
+    id: 14885532317908380
+    identification: 
+      file-name: js/flows4apex.apex.modeler.min.js
+
+    attributes: 
+      mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
 - # ====== Plugin: Flows for APEX - Manage Flow Instance Step ==
@@ -6522,10 +7080,10 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1760507031
+    version-number: 1999265505
 
   callbacks: 
-    api-interface: Procedure
+    api-interface: Function
     execution-function-name: flow_plugin_manage_instance_step.execution
 
   supported-for: 
@@ -6536,9 +7094,9 @@
     substitute-attribute-values: true
 
   information: 
-    version: 24.1
+    version: 25.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
-    help-text: Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step.
+    help-text: Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step. The step timing functions Start and Pause are also available.
 
   custom-attributes: 
   - # ====== Custom Attribute: Step Key ==========================
@@ -6911,6 +7469,32 @@
       help-text: Allows you to define the action you want to apply to the Flow Instance.
 
     entries: 
+    - # ====== Entry: Start Work ===================================
+      id: 99399170460571
+      entry: 
+        sequence: 40
+        display: Start Work
+        return: start
+
+      advanced: 
+        quick-pick: false
+
+      help: 
+        help-text: This is used to send a 'flow_start_step' call to the workflow engine, which logs that a user has now started working on the task. This is only used to gather timing information, and separate waiting time from working time.
+
+    - # ====== Entry: Pause Work ===================================
+      id: 99856001457100
+      entry: 
+        sequence: 50
+        display: Pause Work
+        return: pause
+
+      advanced: 
+        quick-pick: false
+
+      help: 
+        help-text: This is used to send a 'flow_pause_step' call to the workflow engine, which logs that a user has now paused working on the task. This is only used to gather timing information, and separate waiting time from working time. Use in conjunction with an earlier Start Work event.
+
     - # ====== Entry: Complete Step ================================
       id: 151293761015022797
       entry: 
@@ -7012,7 +7596,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1760507033
+    version-number: 3139077689
 
   source: 
     pl/sql-code: |
@@ -7046,7 +7630,7 @@
       end execution;    
 
   callbacks: 
-    api-interface: Procedure
+    api-interface: Function
     execution-function-name: execution
 
   supported-for: 
@@ -7057,7 +7641,7 @@
     substitute-attribute-values: true
 
   information: 
-    version: 24.1
+    version: 25.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
 
   custom-attributes: 
@@ -7082,7 +7666,7 @@
       value: PROCESS_ID
 
 - # ====== Plugin: Flows for APEX - Viewer =====================
-  id: 52324545630147899359
+  id: 52324636500430595707
   identification: 
     name: Flows for APEX - Viewer
     internal-name: COM.FLOWS4APEX.VIEWER.REGION
@@ -7128,7 +7712,7 @@
 
   standard-attributes: 
   - # ====== Standard Attribute: INIT_JAVASCRIPT_CODE ============
-    id: 48859105243699546287
+    id: 48859196113982242635
     identification: 
       name: INIT_JAVASCRIPT_CODE
 
@@ -7171,7 +7755,7 @@
         <p></p>
 
   - # ====== Standard Attribute: SOURCE_LOCATION =================
-    id: 49042060333655360973
+    id: 49042151203938057321
     identification: 
       name: SOURCE_LOCATION
 
@@ -7180,7 +7764,7 @@
 
   custom-attributes: 
   - # ====== Custom Attribute: Enable Mousewheel Zoom ============
-    id: 3653257702162964
+    id: 3744127984859312
     identification: 
       static-id: attribute_15
       attribute: 15
@@ -7206,7 +7790,7 @@
         Makes most sense if you're putting the viewer full screen on a separate page, otherwise this might interfere with normal web page navigation.
 
   - # ====== Custom Attribute: User Task URLs ====================
-    id: 5461417218678527
+    id: 5552287501374875
     identification: 
       static-id: attribute_18
       attribute: 18
@@ -7234,7 +7818,7 @@
         The URLs for a single process instance need to be wrapped in a JSON object. See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the required JSON structure of this attribute.
 
   - # ====== Custom Attribute: Use BPMN Colors ===================
-    id: 36109064230444913
+    id: 36199934513141261
     identification: 
       static-id: attribute_16
       attribute: 16
@@ -7261,7 +7845,7 @@
         As this can lead to unexpected results, we strongly recommend to only use one option at once.
 
   - # ====== Custom Attribute: Iteration Data ====================
-    id: 36702621479317294
+    id: 36793491762013642
     identification: 
       static-id: attribute_17
       attribute: 17
@@ -7289,7 +7873,7 @@
         See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the JSON structure of the iteration data.
 
   - # ====== Custom Attribute: Enable Call Activities ============
-    id: 104132057364667011
+    id: 104222927647363359
     identification: 
       static-id: attribute_14
       attribute: 14
@@ -7316,7 +7900,7 @@
         Be sure to setup the other attributes for building up the correct diagram call structure.
 
   - # ====== Custom Attribute: Show Toolbar ======================
-    id: 48872280664970943403
+    id: 48872371535253639751
     identification: 
       static-id: attribute_11
       attribute: 11
@@ -7342,7 +7926,7 @@
         Can be further configured by using the JavaScript Initialization Code in the region attributes.
 
   - # ====== Custom Attribute: Add Highlighting ==================
-    id: 48872363434558962706
+    id: 48872454304841659054
     identification: 
       static-id: attribute_09
       attribute: 9
@@ -7369,7 +7953,7 @@
         The highlighting colors will always take precedence over the bpmn colors defined in the diagram.
 
   - # ====== Custom Attribute: Refresh On Load ===================
-    id: 48886261588328959501
+    id: 48886352458611655849
     identification: 
       static-id: attribute_08
       attribute: 8
@@ -7398,7 +7982,7 @@
         Remember to add your driving page items to "Page Items to Submit" for this to work properly.
 
   - # ====== Custom Attribute: Diagram Identifier ================
-    id: 48925434507723838082
+    id: 48925525378006534430
     identification: 
       static-id: attribute_03
       attribute: 3
@@ -7424,7 +8008,7 @@
       help-text: Choose the column containing the diagram identifier of the currently displayed diagram (normally the prdg_id for running instances and the dgrm_id for displaying plain models).
 
   - # ====== Custom Attribute: Calling Diagram Identifier ========
-    id: 48925435916496839839
+    id: 48925526786779536187
     identification: 
       static-id: attribute_05
       attribute: 5
@@ -7447,7 +8031,7 @@
       value: PRDG_PRDG_ID
 
     condition: 
-      depending-on-custom-attribute: Enable Call Activities # 104132057364667011
+      depending-on-custom-attribute: Enable Call Activities # 104222927647363359
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7458,7 +8042,7 @@
         In the context of call activities this is the diagram that contains the activity which called the currently displayed diagram (normally the prdg_prdg_id for running instances and the calling_dgrm for displaying plain models).
 
   - # ====== Custom Attribute: Calling Object ID =================
-    id: 48925437461211841205
+    id: 48925528331494537553
     identification: 
       static-id: attribute_07
       attribute: 7
@@ -7481,7 +8065,7 @@
       value: CALLING_OBJT
 
     condition: 
-      depending-on-custom-attribute: Enable Call Activities # 104132057364667011
+      depending-on-custom-attribute: Enable Call Activities # 104222927647363359
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7492,7 +8076,7 @@
         In the context of call activities this is the call activity which called the current displayed diagram (normally the prdg_prdg_id for running instances or the calling dgrm_id).
 
   - # ====== Custom Attribute: Current Nodes =====================
-    id: 49041558490616432029
+    id: 49041649360899128377
     identification: 
       static-id: attribute_02
       attribute: 2
@@ -7515,7 +8099,7 @@
       value: ALL_CURRENT
 
     condition: 
-      depending-on-custom-attribute: Add Highlighting # 48872363434558962706
+      depending-on-custom-attribute: Add Highlighting # 48872454304841659054
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7527,7 +8111,7 @@
         Leave empty if you don't want to highlight current nodes.
 
   - # ====== Custom Attribute: Diagram XML =======================
-    id: 49041559670646437847
+    id: 49041650540929134195
     identification: 
       static-id: attribute_01
       attribute: 1
@@ -7552,7 +8136,7 @@
         You can choose from any CLOB column of the region source.
 
   - # ====== Custom Attribute: Error Nodes =======================
-    id: 49047759420063427098
+    id: 49047850290346123446
     identification: 
       static-id: attribute_06
       attribute: 6
@@ -7575,7 +8159,7 @@
       value: ALL_ERRORS
 
     condition: 
-      depending-on-custom-attribute: Add Highlighting # 48872363434558962706
+      depending-on-custom-attribute: Add Highlighting # 48872454304841659054
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7587,7 +8171,7 @@
         Leave empty if you don't want to highlight error nodes.
 
   - # ====== Custom Attribute: Completed Nodes ===================
-    id: 49047760679593436066
+    id: 49047851549876132414
     identification: 
       static-id: attribute_04
       attribute: 4
@@ -7610,7 +8194,7 @@
       value: ALL_COMPLETED
 
     condition: 
-      depending-on-custom-attribute: Add Highlighting # 48872363434558962706
+      depending-on-custom-attribute: Add Highlighting # 48872454304841659054
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7622,7 +8206,7 @@
         Leave empty if you don't want to highlight completed nodes.
 
   - # ====== Custom Attribute: Breadcrumb Text ===================
-    id: 49803907314390654371
+    id: 49803998184673350719
     identification: 
       static-id: attribute_12
       attribute: 12
@@ -7645,7 +8229,7 @@
       value: BREADCRUMB
 
     condition: 
-      depending-on-custom-attribute: Enable Call Activities # 104132057364667011
+      depending-on-custom-attribute: Enable Call Activities # 104222927647363359
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7656,7 +8240,7 @@
         You can click on the breadcrumb entries in the viewer to move up to the parent diagrams of the curently displayed diagram.
 
   - # ====== Custom Attribute: Allow Drilldown On Diagram Level ==
-    id: 49804713902910666897
+    id: 49804804773193363245
     identification: 
       static-id: attribute_13
       attribute: 13
@@ -7679,7 +8263,7 @@
       value: DRILLDOWN_ALLOWED
 
     condition: 
-      depending-on-custom-attribute: Enable Call Activities # 104132057364667011
+      depending-on-custom-attribute: Enable Call Activities # 104222927647363359
       depending-on-condition-type: equal to
       expression: Y
       always-evaluate: true
@@ -7697,50 +8281,50 @@
 
   events: 
   - # ====== Event: mtbv_element_hover ===========================
-    id: 48875480580920258597
+    id: 48875571451202954945
     identification: 
       name: Hover on Element
       internal-name: mtbv_element_hover
 
   - # ====== Event: mtbv_element_out =============================
-    id: 48875480930145258612
+    id: 48875571800427954960
     identification: 
       name: Leave Element
       internal-name: mtbv_element_out
 
   - # ====== Event: mtbv_element_click ===========================
-    id: 48875481319341258612
+    id: 48875572189623954960
     identification: 
       name: Click on Element
       internal-name: mtbv_element_click
 
   - # ====== Event: mtbv_element_dblclick ========================
-    id: 48875481743923258612
+    id: 48875572614205954960
     identification: 
       name: Doubleclick on Element
       internal-name: mtbv_element_dblclick
 
   - # ====== Event: mtbv_element_mousedown =======================
-    id: 48875482155076258613
+    id: 48875573025358954961
     identification: 
       name: Mousedown on Element
       internal-name: mtbv_element_mousedown
 
   - # ====== Event: mtbv_element_mouseup =========================
-    id: 48875482539600258613
+    id: 48875573409882954961
     identification: 
       name: Mouseup on Element
       internal-name: mtbv_element_mouseup
 
   - # ====== Event: mtbv_diagram_loaded ==========================
-    id: 48877354741159920984
+    id: 48877445611442617332
     identification: 
       name: Diagram Loaded
       internal-name: mtbv_diagram_loaded
 
   files: 
   - # ====== File: js/flows4apex.apex.viewer.js ==================
-    id: 5457683071562451
+    id: 5548553354258799
     identification: 
       file-name: js/flows4apex.apex.viewer.js
 
@@ -7749,7 +8333,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: css/bpmn-embedded.css =========================
-    id: 5458747919563021
+    id: 5549618202259369
     identification: 
       file-name: css/bpmn-embedded.css
 
@@ -7758,7 +8342,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: css/bpmn-js.css ===============================
-    id: 5459049022563022
+    id: 5549919305259370
     identification: 
       file-name: css/bpmn-js.css
 
@@ -7767,7 +8351,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: css/diagram-js.css ============================
-    id: 5459459970563022
+    id: 5550330253259370
     identification: 
       file-name: css/diagram-js.css
 
@@ -7776,7 +8360,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: css/flows4apex.viewer.css =====================
-    id: 5459877752563023
+    id: 5550748035259371
     identification: 
       file-name: css/flows4apex.viewer.css
 
@@ -7785,7 +8369,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/flows4apex.viewer.min.js ===================
-    id: 15858978863996991
+    id: 15949849146693339
     identification: 
       file-name: js/flows4apex.viewer.min.js
 

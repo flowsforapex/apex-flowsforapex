@@ -5,7 +5,7 @@
     name: P8_SUBFLOW_ROW_ACTION_MENU
 
   subscription: 
-    version-number: 1842640680
+    version-number: 3106868787
 
   source: 
     type: Static Values
@@ -21,6 +21,12 @@
 
     is-current: 
       type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
 
     user-defined-attributes: 
       translatable: false
@@ -73,6 +79,7 @@
 
     layout: 
       sequence: 90
+      parent-entry: Rewind Actions # 13523166993737391
 
     is-current: 
       type: Target Page
@@ -91,6 +98,7 @@
 
     layout: 
       sequence: 100
+      parent-entry: Rewind Actions # 13523166993737391
 
     is-current: 
       type: Target Page
@@ -109,6 +117,7 @@
 
     layout: 
       sequence: 110
+      parent-entry: Rewind Actions # 13523166993737391
 
     is-current: 
       type: Target Page
@@ -127,6 +136,7 @@
 
     layout: 
       sequence: 120
+      parent-entry: Rewind Actions # 13523166993737391
 
     is-current: 
       type: Target Page
@@ -145,6 +155,7 @@
 
     layout: 
       sequence: 130
+      parent-entry: Rewind Actions # 13523166993737391
 
     is-current: 
       type: Target Page
@@ -163,6 +174,7 @@
 
     layout: 
       sequence: 140
+      parent-entry: Rewind Actions # 13523166993737391
 
     is-current: 
       type: Target Page
@@ -170,6 +182,25 @@
     user-defined-attributes: 
       translatable: false
       1.: rewind-call-activity-on-resume
+
+  - # ====== Entry: Rewind to Matching Link Event ================
+    id: 40847519512288
+    label: 
+      label: Rewind to Matching Link Event
+
+    icon: 
+      image/icon-css-classes: fa-step-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 150
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-link-event-on-resume
 
   - # ====== Entry: Complete =====================================
     id: 2407770381394791
@@ -262,6 +293,24 @@
     user-defined-attributes: 
       translatable: false
       1.: release-step
+
+  - # ====== Entry: Rewind Actions ===============================
+    id: 13523166993737391
+    label: 
+      label: Rewind Actions
+
+    icon: 
+      image/icon-css-classes: fa-fast-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 85
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-sub-menu
 
   - # ====== Entry: - ============================================
     id: 73474529421861842
@@ -391,7 +440,7 @@
     name: P9_CONFIGURATION_PAGES
 
   subscription: 
-    version-number: 1760504778
+    version-number: 3770182256
 
   source: 
     type: Static Values
@@ -423,10 +472,10 @@
       translatable: false
       1.: Language, level, user information, retention time, bpmn location, message flows
 
-  - # ====== Entry: Archiving ====================================
+  - # ====== Entry: Completed Instance Archiving and Purging =====
     id: 3291958597268382
     label: 
-      label: Archiving
+      label: Completed Instance Archiving and Purging
 
     icon: 
       image/icon-css-classes: fa-archive
@@ -440,14 +489,14 @@
     link: 
       target: 
         url: 'f?p=&APP_ID.:33:&SESSION.::&DEBUG.::::'
-        page: 33 # Configuration - Archiving
+        page: 33 # Configuration - Instance Archiving and Purging
 
     click-counting: 
       count-clicks: false
 
     user-defined-attributes: 
       translatable: false
-      1.: Enable archiving, instance archive location
+      1.: Configure process instance archiving and purging
 
   - # ====== Entry: Engine App ===================================
     id: 3292372844268382
@@ -580,6 +629,33 @@
       translatable: false
       1.: Summaries retention time
 
+  - # ====== Entry: Automations ==================================
+    id: 4807112393506933
+    label: 
+      label: Automations
+
+    icon: 
+      image/icon-css-classes: fa-calendar-clock
+
+    layout: 
+      sequence: 90
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:43,CIR,RIR:::'
+        page: 43 # Configuration - Automations
+        clear-cache: 43,CIR,RIR
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Manage and monitor automations
+
   - # ====== Entry: License ======================================
     id: 11497553424163179
     label: 
@@ -605,6 +681,33 @@
     user-defined-attributes: 
       translatable: true
       1.: Edition, license information
+
+  - # ====== Entry: AI Prompts ===================================
+    id: 12583258855978108
+    label: 
+      label: AI Prompts
+
+    icon: 
+      image/icon-css-classes: fa-ai
+
+    layout: 
+      sequence: 100
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:44:&SESSION.::&DEBUG.:RP:::'
+        page: 44 # Configuration - AI Prompts
+        clear-cache: RP
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: AI Prompts and Quick Actions
 
 - # ====== List: P8_SUBFLOW_HEADER_ACTION_MENU =================
   id: 4409050172512221
@@ -1158,7 +1261,7 @@
     name: P8_VARIABLE_ROW_ACTION_MENU
 
   subscription: 
-    version-number: 1760504778
+    version-number: 3839474193
 
   source: 
     type: Static Values
@@ -1199,6 +1302,24 @@
     user-defined-attributes: 
       translatable: false
       1.: delete-process-variable
+
+  - # ====== Entry: History ======================================
+    id: 14924955272586233
+    label: 
+      label: History
+
+    icon: 
+      image/icon-css-classes: fa-info-circle-o
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: process-variable-history
 
 - # ====== List: P8_VARIABLE_HEADER_ACTION_MENU ================
   id: 7390393853616382
@@ -1516,12 +1637,30 @@
     name: P2_ROW_ACTION_MENU
 
   subscription: 
-    version-number: 1760504785
+    version-number: 2491071935
 
   source: 
     type: Static Values
 
   entries: 
+  - # ====== Entry: Show instance progress =======================
+    id: 5827453000687575
+    label: 
+      label: Show instance progress
+
+    icon: 
+      image/icon-css-classes: fa-traffic-light
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: instances-per-step
+
   - # ====== Entry: Show Details =================================
     id: 39902501487857435
     label: 
@@ -2112,7 +2251,7 @@
     name: Desktop Navigation Menu
 
   subscription: 
-    version-number: 1760504789
+    version-number: 2163469949
 
   source: 
     type: Static Values
