@@ -117,7 +117,7 @@ f4a.plugins.modeler = f4a.plugins.modeler || {
                     },
                 ] );
             }
-        } );
+        });
     },
 
     getDiagram: async function () {
