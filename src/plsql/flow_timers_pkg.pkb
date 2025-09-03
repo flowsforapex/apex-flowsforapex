@@ -3,11 +3,13 @@ create or replace package body flow_timers_pkg as
 -- Flows for APEX - flow_timers_pkg.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2025.
 --
 -- Created 2020        Franco Soldaro
 -- Edited  2020        Moritz Klein - MT AG  
 -- Edited  24-Feb-2023 Richard Allen, Oracle
 -- Edited  05-Jun-2023 Louis Moreaux, Insum
+-- Edited  20-May-2024 Richard Allen, Flowquest
 --
 */
   lock_timeout             exception;
@@ -654,6 +656,7 @@ create or replace package body flow_timers_pkg as
         , p2             => l_timer_def.timer_type
         , p3             => l_timer_def.timer_definition
         );
+        -- $F4AMESSAGE 'timer-definition-error' || 'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3]'
       when others then
         flow_errors.handle_instance_error
         (
@@ -665,7 +668,8 @@ create or replace package body flow_timers_pkg as
         , p2             => l_timer_def.timer_type
         , p3             => l_timer_def.timer_definition
         );
-    end;    
+        -- $F4AMESSAGE 'timer-definition-error' || 'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3]'
+    end;
 
     insert into flow_timers
       (

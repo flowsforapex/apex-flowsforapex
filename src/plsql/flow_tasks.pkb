@@ -43,72 +43,6 @@ create or replace package body flow_tasks as
     return l_return;
   end get_task_type;
 
-/*  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error (appears not to be used)
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_script_object in flow_objects.objt_bpmn_id%type 
-  , p_error_type    in varchar2
-  , p_error_stack   in varchar2 default null
-  )
-  is 
-    l_prcs_id   flow_processes.prcs_id%type;
-    l_sbfl_id   flow_subflows.sbfl_id%type;
-  begin 
-        apex_debug.enter 
-      ( 'handle_script_error'
-      , 'p_script_object: ', p_script_object
-      , 'p_error_type ', p_error_type 
-      );
-       -- lock process and subflow
-      select prcs.prcs_id, sbfl.sbfl_id
-        into l_prcs_id, l_sbfl_id
-        from flow_processes prcs
-        join flow_subflows sbfl 
-          on prcs.prcs_id = sbfl.sbfl_prcs_id
-       where prcs.prcs_id = p_process_id
-         and sbfl.sbfl_id = p_subflow_id
-      for update wait 2;
-      -- set subflow to error status
-      update flow_subflows sbfl
-         set sbfl.sbfl_current        = p_script_object
-           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_error
-           , sbfl.sbfl_last_update    = systimestamp 
-           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  )         
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
-      ;
-      -- set instance to error status
-      update flow_processes prcs
-         set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_error
-           , prcs.prcs_last_update    = systimestamp
-           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  )  
-       where prcs.prcs_id = p_process_id
-      ;
-      -- log error as instance event
-      flow_logging.log_step_event
-      ( p_process_id  => p_process_id 
-      , p_objt_bpmn_id => p_script_object
-      , p_event       => flow_constants_pkg.gc_step_event_error
-      , p_comment     => case p_error_type
-                         when 'failed'      then 'ScriptTask failed on object '
-                         when 'stop_engine' then 'User Script Requested ScriptTask Stop on object '
-                         end 
-                         || p_script_object|| ' error data....'||p_error_stack
-      );
-
-      apex_debug.message 
-      ( p_message => 'Script failed in ScriptTask.  Object: %0.'
-      , p0        => p_script_object
-      , p_level   => 2
-      );
-  end handle_script_error;*/
-
   procedure process_task
     ( p_sbfl_info     in flow_subflows%rowtype
     , p_step_info     in flow_types_pkg.flow_step_info
@@ -266,6 +200,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
 
   end process_scriptTask;
 
@@ -333,6 +268,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'wrong-default-workspace' || 'Process %0: ServiceTask %1 failed: the default workspace defined in the configuration parameter is not valid.'
     when flow_services.e_workspace_not_found then
       rollback;
       apex_debug.info( p_message => 'Rollback initiated after workspace not found'
@@ -344,6 +280,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'workspace-not-found' || 'Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model.'
     when flow_services.e_email_no_from then 
       rollback;
       apex_debug.info 
@@ -356,6 +293,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-no-from' || 'Process %0: ServiceTask %1 failed: attribute "From" and default email sender are not defined. Please check the model and or the configuration parameter.'
     when flow_services.e_email_no_to then 
       rollback;
       apex_debug.info 
@@ -368,6 +306,8 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-no-to' || 'Process %0: ServiceTask %1 failed: attribute "To" not defined. Please check the model.'
+
     when flow_services.e_email_no_template then
       rollback;
       apex_debug.info 
@@ -380,6 +320,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       ); 
+      -- F4A$MESSAGE 'email-no-template' || 'Process %0: ServiceTask %1 failed: attribute "Template" not defined. Please check the model.'
     when flow_services.e_email_no_body then
       rollback;
       apex_debug.info 
@@ -392,6 +333,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-no-body' || 'Process %0: ServiceTask %1 failed: attribute "Body" not defined. Please check the model.'
     when flow_services.e_json_not_valid then
       rollback;
       apex_debug.info 
@@ -404,6 +346,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-placeholder-json-invalid' || 'Process %0: ServiceTask %1 failed: placeholder JSON object is not valid. Please check the model.'
     when flow_services.e_email_failed then
       rollback;
       apex_debug.info 
@@ -416,6 +359,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-failed' || 'Process %0: ServiceTask %1 failed see error log and check the model.'
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       rollback;
       apex_debug.info 

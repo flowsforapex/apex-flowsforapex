@@ -221,7 +221,7 @@ as
       , pi_sbfl_id        => pi_sbfl_id
       , pi_message_key    => 'exec_sql_too_many_rows'
       );
-      -- $F4AMESSAGE 'var_exp_sql_too_many_rows' || 'Error executing SQL Query - query returns more than one row.'  
+      -- $F4AMESSAGE 'exec_sql_too_many_rows' || 'Error executing SQL Query - query returns more than one row.'  
     when e_var_exp_must_return_one_column then
       apex_exec.close (l_context);
       flow_errors.handle_instance_error
@@ -229,7 +229,7 @@ as
       , pi_sbfl_id        => pi_sbfl_id
       , pi_message_key    => 'exec_sql_too_many_values'
       );
-      -- $F4AMESSAGE 'exec_sql_too_many_cols' || 'Error executing SQl Query - query returns more than one column.'  
+      -- $F4AMESSAGE 'exec_sql_too_many_values' || 'Error executing SQL Query - query returns more than one value.'  
     when others then
       apex_debug.error
       ( p_message => 'Error executing SQL query for process id %1. SQLERRM: %2'

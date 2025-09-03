@@ -712,6 +712,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'feature-requires-ee'
       );
+      -- F4A$MESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.'
       raise;
     when e_prcs_not_suspendable then
       -- only running or errored process can be suspended
@@ -719,6 +720,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'suspend-invalid-status'
       );
+      -- F4A$MESSAGE 'suspend-invalid-status' || 'Only process instances currently in running or error status can be suspended.'
       raise;
   end suspend_process;
 
@@ -758,6 +760,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'feature-requires-ee'
       );
+      -- F4A$MESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.'
       raise;
     when e_prcs_not_suspended then
       -- only suspended process can be resumed
@@ -765,6 +768,7 @@ create or replace package body flow_instances as
       ( pi_prcs_id      => p_process_id
       , pi_message_key  => 'resume-invalid-status'
       );
+      -- F4A$MESSAGE 'resume-invalid-status' || 'Only process instances currently in suspended status can be resumed.'
       raise;
   end resume_process;
 
@@ -964,7 +968,7 @@ create or replace package body flow_instances as
     -- cancel any apex human tasks
     flow_usertask_pkg.cancel_all_apex_tasks ( p_process_id => p_process_id );
     -- if instance archiving is enabled and instance is not yet archived, run instance archive now before
-    -- process data is deleted from run time tables to ensure arcchive is full audit trail
+    -- process data is deleted from run time tables to ensure archive is full audit trail
     if l_is_not_archived then
       if flow_engine_util.get_config_value ( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled 
                                            , p_default_value => flow_constants_pkg.gc_config_default_logging_archive_enabled
