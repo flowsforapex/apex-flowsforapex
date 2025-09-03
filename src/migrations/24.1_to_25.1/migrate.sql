@@ -21,6 +21,7 @@ PROMPT >> -------------------------------------------
 @@feature-apex-human-task-enhs.sql
 @@feature-AIPrompts.sql
 @@feature-AQMessageFlow.sql
+@@feature-rest-enhancements.sql
 
 @@set_flows_version.sql
 

@@ -94,6 +94,7 @@
       , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_message_subscriptions_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_step_event_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "views/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
       ]
     },

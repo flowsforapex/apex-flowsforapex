@@ -87,6 +87,7 @@ PROMPT >> Installing Views
 @views/flow_rest_message_subscriptions_vw.sql
 @views/flow_rest_process_vars_vw.sql
 @views/flow_rest_processes_vw.sql
+@views/flow_rest_step_event_log_vw.sql
 @views/flow_rest_subflows_vw.sql
 @views/flow_viewer_vw.sql
 @views/flow_variable_event_timeline_vw
