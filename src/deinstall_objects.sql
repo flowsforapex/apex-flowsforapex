@@ -116,6 +116,7 @@ drop view flow_rest_diagrams_vw;
 drop view flow_rest_message_subscriptions_vw;
 drop view flow_rest_process_vars_vw;
 drop view flow_rest_processes_vw;
+drop view flow_rest_step_event_log_vw;
 drop view flow_rest_subflows_vw;
 drop view flow_viewer_vw;
 drop view flow_apex_my_combined_task_list_vw;
