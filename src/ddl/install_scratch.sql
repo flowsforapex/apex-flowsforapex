@@ -559,8 +559,6 @@ create table flow_step_event_log
 
 create index flow_lgsf_ix on flow_step_event_log (lgsf_prcs_id, lgsf_objt_id );
 
-create index flow_lgse_ix on flow_step_events (lgse_prcs_id, lgse_objt_bpmn_id );
-
 create table flow_variable_event_log
 ( lgvr_prcs_id			    number not null
 , lgvr_scope                number not null

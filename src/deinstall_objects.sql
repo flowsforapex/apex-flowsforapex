@@ -49,6 +49,7 @@ drop package flow_log_admin;
 drop package flow_process_vars;
 drop package flow_statistics;
 drop package flow_simple_form_template;
+drop package flow_ai_prompt_ee;
 drop package flow_rest_constants;
 drop package flow_rest;
 drop package flow_rest_auth;
@@ -80,6 +81,7 @@ drop view flow_p0007_calling_diagrams_vw;
 drop view flow_p0008_instance_log_vw;
 drop view flow_p0008_message_subscriptions_vw;
 drop view flow_p0008_subflows_vw;
+drop view flow_p0008_subflows_debug_vw;
 drop view flow_p0008_variables_vw;
 drop view flow_p0008_vw;
 drop view flow_p0010_vw;
@@ -87,6 +89,7 @@ drop view flow_p0010_instances_vw;
 drop view flow_p0013_attributes_vw;
 drop view flow_p0013_expressions_vw;
 drop view flow_p0013_instance_log_vw;
+drop view flow_p0013_step_events_vw;
 drop view flow_p0013_step_log_vw;
 drop view flow_p0013_subflows_vw;
 drop view flow_p0013_variable_log_vw;
@@ -95,6 +98,7 @@ drop view flow_p0014_instance_log_vw;
 drop view flow_p0014_step_log_vw;
 drop view flow_p0014_subflows_vw;
 drop view flow_p0014_variable_log_vw;
+drop view flow_p0019_vw;
 drop view flow_p0020_instance_timeline_vw;
 drop view flow_task_inbox_vw;
 drop view flow_instance_connections_lov;
@@ -122,7 +126,10 @@ drop view flow_apex_my_combined_task_list_vw;
 drop view flow_apex_task_inbox_my_tasks_vw;
 drop view flow_apex_task_inbox_vw;
 drop view flow_ai_prompts_vw;
-drop view flow_variable_event_timeline_vw
+drop view flow_variable_event_timeline_vw;
+drop view flow_instance_events_vw;
+drop view flow_instance_summary_json_vw;
+drop view flow_my_originated_instances_vw;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
@@ -155,6 +162,8 @@ drop table flow_iterated_objects cascade constraints;
 drop table flow_simple_form_templates cascade constraints;
 drop table flow_ai_prompts cascade constraints;
 drop table flow_bpmn_types cascade constraints;
+
+drop type flow_t_correlated_message;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
