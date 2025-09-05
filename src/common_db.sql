@@ -51,6 +51,7 @@ PROMPT >> Engine
 @plsql/flow_statistics.pks
 @plsql/flow_iteration.pks
 @plsql/flow_simple_form_template.pks
+@plsql/flow_ai_prompt_ee.pks
 
 PROMPT >>
 PROMPT >> REST API Support
