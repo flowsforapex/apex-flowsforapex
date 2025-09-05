@@ -1447,7 +1447,7 @@ end lock_var;
           , p0 => l_parameter.name
           , p1 => to_char(l_parameter.value.number_value)
           , p2 => l_parameter.data_type
-          , p3 => to_char(l_parameter.value.date_value)
+          , p3 => to_char(l_parameter.value.date_value, flow_constants_pkg.gc_prov_default_date_format)
           , p4 => l_parameter.value.varchar2_value
           , p5 => pi_scope
           );                              
