@@ -14,3 +14,8 @@ f4a-modeler {
   --color-flows-dark-stroke: white;
 
 }
+
+@font-face {
+    font-family: "codicon";
+    src: url("../fonts/codicon.ttf");
+}

@@ -6895,7 +6895,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 3890871883
+    version-number: 3910110322
 
   callbacks: 
     api-interface: 3
@@ -6913,11 +6913,12 @@
 
   css: 
     file-urls: 
+    - '#PLUGIN_FILES#fonts/codicon.ttf'
     - '#PLUGIN_FILES#css/flows4apex.modeler.css'
 
   javascript: 
     file-urls: 
-    - '#PLUGIN_FILES#js/flows4apex.apex.modeler.js'
+    - '#PLUGIN_FILES#js/flows4apex.apex.modeler.js'
     - '#PLUGIN_FILES#js/flows4apex.modeler.min.js'
 
   information: 
@@ -6934,89 +6935,8 @@
       required: true
 
   files: 
-  - # ====== File: js/614.min.js =================================
-    id: 2790748262723205
-    identification: 
-      file-name: js/614.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/628.min.js =================================
-    id: 2791140829723204
-    identification: 
-      file-name: js/628.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/67327b11b40603c60e46.ttf ===================
-    id: 2797198718604427
-    identification: 
-      file-name: js/67327b11b40603c60e46.ttf
-
-    attributes: 
-      mime-type: font/ttf
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/f6283f7ccaed1249d9ebbcc5a55d5970.ttf =======
-    id: 2797476540604426
-    identification: 
-      file-name: js/f6283f7ccaed1249d9ebbcc5a55d5970.ttf
-
-    attributes: 
-      mime-type: font/ttf
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/77.min.js ==================================
-    id: 4042546247999721
-    identification: 
-      file-name: js/77.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/658.min.js =================================
-    id: 4042855767999721
-    identification: 
-      file-name: js/658.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/839.min.js =================================
-    id: 4043280479999723
-    identification: 
-      file-name: js/839.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/914.min.js =================================
-    id: 4043685716999723
-    identification: 
-      file-name: js/914.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/editor.worker.js ===========================
-    id: 4044093579999723
-    identification: 
-      file-name: js/editor.worker.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
   - # ====== File: js/flows4apex.modeler.min.js ==================
-    id: 4044470195999724
+    id: 16693711513236933
     identification: 
       file-name: js/flows4apex.modeler.min.js
 
@@ -7024,26 +6944,62 @@
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/html.worker.js =============================
-    id: 4044891984999726
+  - # ====== File: js/editor.worker.js ===========================
+    id: 16694874414236926
     identification: 
-      file-name: js/html.worker.js
+      file-name: js/editor.worker.js
 
     attributes: 
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/json.worker.js =============================
-    id: 4045285323999726
+  - # ====== File: js/839.min.js =================================
+    id: 16695289499236924
     identification: 
-      file-name: js/json.worker.js
+      file-name: js/839.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/77.min.js ==================================
+    id: 16695688562236924
+    identification: 
+      file-name: js/77.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/914.min.js =================================
+    id: 16696039707236924
+    identification: 
+      file-name: js/914.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/658.min.js =================================
+    id: 16696449220236923
+    identification: 
+      file-name: js/658.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/614.min.js =================================
+    id: 16696887722236923
+    identification: 
+      file-name: js/614.min.js
 
     attributes: 
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
   - # ====== File: css/flows4apex.modeler.css ====================
-    id: 4234785498604480
+    id: 16697359518234962
     identification: 
       file-name: css/flows4apex.modeler.css
 
@@ -7052,7 +7008,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/flows4apex.apex.modeler.js =================
-    id: 9290879299678964
+    id: 16697701073232598
     identification: 
       file-name: js/flows4apex.apex.modeler.js
 
@@ -7060,10 +7016,46 @@
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/flows4apex.apex.modeler.min.js =============
-    id: 14885532317908380
+  - # ====== File: fonts/codicon.ttf =============================
+    id: 16698256606223144
     identification: 
-      file-name: js/flows4apex.apex.modeler.min.js
+      file-name: fonts/codicon.ttf
+
+    attributes: 
+      mime-type: font/ttf
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/628.min.js =================================
+    id: 16700592627179281
+    identification: 
+      file-name: js/628.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/f6283f7ccaed1249d9eb.ttf ===================
+    id: 16703072089179271
+    identification: 
+      file-name: js/f6283f7ccaed1249d9eb.ttf
+
+    attributes: 
+      mime-type: font/ttf
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/json.worker.js =============================
+    id: 16704061488167257
+    identification: 
+      file-name: js/json.worker.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: js/html.worker.js =============================
+    id: 16705501095159597
+    identification: 
+      file-name: js/html.worker.js
 
     attributes: 
       mime-type: text/javascript

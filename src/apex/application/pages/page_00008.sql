@@ -301,6 +301,8 @@ wwv_flow_imp_page.create_report_columns(
 ,p_column_alignment=>'RIGHT'
 ,p_heading_alignment=>'RIGHT'
 ,p_disable_sort_column=>'N'
+,p_display_as=>'TEXT_FROM_LOV_ESC'
+,p_named_lov=>wwv_flow_imp.id(11503678828527)
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );

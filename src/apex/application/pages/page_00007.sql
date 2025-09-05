@@ -919,7 +919,6 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_position=>'EDIT'
 ,p_warn_on_unsaved_changes=>null
 ,p_icon_css_classes=>'fa-ai'
-,p_required_patch=>wwv_flow_imp.id(14832835672621379)
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(26091600150304603)
@@ -1387,6 +1386,9 @@ wwv_flow_imp_page.create_page_computation(
 ,p_computation_type=>'EXPRESSION'
 ,p_computation_language=>'PLSQL'
 ,p_computation=>'flow_ai_prompt_ee.get_quick_actions'
+,p_compute_when=>'P0_LICENSE_EDITION'
+,p_compute_when_text=>'enterprise'
+,p_compute_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(12585230149920411)
@@ -1396,6 +1398,9 @@ wwv_flow_imp_page.create_page_computation(
 ,p_computation_type=>'EXPRESSION'
 ,p_computation_language=>'PLSQL'
 ,p_computation=>'flow_ai_prompt_ee.get_AI_message (p_prompt_key => ''welcome-msg'')'
+,p_compute_when=>'P0_LICENSE_EDITION'
+,p_compute_when_text=>'enterprise'
+,p_compute_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(12585301451920412)
@@ -1405,6 +1410,9 @@ wwv_flow_imp_page.create_page_computation(
 ,p_computation_type=>'EXPRESSION'
 ,p_computation_language=>'PLSQL'
 ,p_computation=>'flow_ai_prompt_ee.get_AI_message (p_prompt_key => ''action-prompt'')'
+,p_compute_when=>'P0_LICENSE_EDITION'
+,p_compute_when_text=>'enterprise'
+,p_compute_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(14731199791171501)
@@ -1414,6 +1422,9 @@ wwv_flow_imp_page.create_page_computation(
 ,p_computation_type=>'EXPRESSION'
 ,p_computation_language=>'PLSQL'
 ,p_computation=>'flow_ai_prompt_ee.get_system_prompt'
+,p_compute_when=>'P0_LICENSE_EDITION'
+,p_compute_when_text=>'enterprise'
+,p_compute_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
 );
 wwv_flow_imp_page.create_page_validation(
  p_id=>wwv_flow_imp.id(26093582071304622)

@@ -793,7 +793,7 @@ function openProcessVariableHistory( action, element ){
   data.x02 = prcsId;
   data.x03 = varName;
   data.x04 = varNameUC;
-  data.x04 = varScope;
+  data.x05 = varScope;
   sendToServer(data);
 }
 

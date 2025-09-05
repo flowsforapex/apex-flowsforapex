@@ -1017,7 +1017,7 @@ regions:
     id: 4862831662240146
     identification: 
       column-name: LOGGING_LEVEL
-      type: Plain Text
+      type: Plain Text (based on List of Values)
 
     heading: 
       heading: Logging Level
@@ -1029,6 +1029,10 @@ regions:
 
     accessibility: 
       value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LOGGING_LEVELS # 11503678828527
 
     sorting: 
       sortable: true
