@@ -5,6 +5,7 @@ create or replace view flow_rest_diagrams_vw
         , version
         , status 
         , category 
+        , content
         , links
       )
   as
@@ -13,7 +14,8 @@ create or replace view flow_rest_diagrams_vw
         , d.dgrm_version  as version
         , d.dgrm_status   as status
         , d.dgrm_category as category
+        , d.dgrm_content  as content
         , json_array(
             flow_rest_api_v1.get_links_string_http_GET('diagram',d.dgrm_id) format json
           ) links
-    from flow_diagrams d;
+    from flow_diagrams d;   

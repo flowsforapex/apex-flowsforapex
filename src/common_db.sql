@@ -51,6 +51,7 @@ PROMPT >> Engine
 @plsql/flow_statistics.pks
 @plsql/flow_iteration.pks
 @plsql/flow_simple_form_template.pks
+@plsql/flow_ai_prompt_ee.pks
 
 PROMPT >>
 PROMPT >> REST API Support
@@ -79,6 +80,7 @@ PROMPT >> Installing Views
 @views/flow_instance_scopes_vw.sql
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
+@views/flow_instance_events_vw.sql
 @views/flow_diagrams_instanciated_lov.sql
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
@@ -87,6 +89,7 @@ PROMPT >> Installing Views
 @views/flow_rest_message_subscriptions_vw.sql
 @views/flow_rest_process_vars_vw.sql
 @views/flow_rest_processes_vw.sql
+@views/flow_rest_step_event_log_vw.sql
 @views/flow_rest_subflows_vw.sql
 @views/flow_viewer_vw.sql
 @views/flow_variable_event_timeline_vw
@@ -173,6 +176,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
+@views/engine-app/flow_p0019_vw.sql
 @views/engine-app/flow_p0020_instance_timeline_vw.sql
 
 
