@@ -13,8 +13,9 @@
 PROMPT >> Recreate FLOW_BPMN_TYPES Data
 
 begin
-  delete from flow_bpmn_types;
-  commit;
+  delete /*+ NOPARALLEL */ 
+  from flow_bpmn_types;
+  -- note: no parallel hint required to run on Autonomous Database
 
   insert into FLOW_BPMN_TYPES 
     ( BPMN_CODE,BPMN_OBJECT_NAME,BPMN_TAG_NAME,BPMN_SUB_TAG_NAME,BPMN_ICON,BPMN_SUPER_TYPE,BPMN_IS_SUPPORTED,BPMN_INTERRUPTING )
