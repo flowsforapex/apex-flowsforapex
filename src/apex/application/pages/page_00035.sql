@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -88,6 +88,25 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_position=>'NEXT'
 ,p_button_alignment=>'RIGHT'
 ,p_icon_css_classes=>'fa-save'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(2609073604291449)
+,p_name=>'P35_DEFAULT_BUSINESS_ADMIN'
+,p_item_sequence=>70
+,p_item_plug_id=>wwv_flow_imp.id(65920170325464220)
+,p_prompt=>'Default APEX Business Admin'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_begin_on_new_line=>'N'
+,p_colspan=>3
+,p_field_template=>wwv_flow_imp.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_inline_help_text=>'The username to be used as Business Administrator on APEX Human Tasks when no Business Admin is specified in a Task or in the process diagram. 	'
+,p_encrypt_session_state_yn=>'N'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(3221987342231713)
@@ -279,6 +298,19 @@ wwv_flow_imp_page.create_page_computation(
 '         , p_default_value => flow_constants_pkg.gc_config_default_default_username',
 '       );'))
 );
+wwv_flow_imp_page.create_page_computation(
+ p_id=>wwv_flow_imp.id(2609118871291450)
+,p_computation_sequence=>140
+,p_computation_item=>'P35_DEFAULT_BUSINESS_ADMIN'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>flow_constants_pkg.gc_config_default_apex_business_admin',
+'         , p_default_value => flow_constants_pkg.gc_config_default_default_username',
+'       );'))
+);
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(3233135486231716)
 ,p_process_sequence=>10
@@ -293,6 +325,7 @@ wwv_flow_imp_page.create_page_process(
 ', pi_default_application       => :P35_DEFAULT_APPLICATIONID',
 ', pi_default_pageid            => :P35_DEFAULT_PAGEID',
 ', pi_default_username          => :P35_DEFAULT_USERNAME',
+', pi_default_business_admin    => :P35_DEFAULT_BUSINESS_ADMIN',
 ');'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'

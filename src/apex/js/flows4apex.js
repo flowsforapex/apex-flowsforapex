@@ -260,24 +260,29 @@ function bulkTerminateFlowInstance(action, element) {
     sendToServer(data, options);
   } else {
     openModalConfirmWithComment( action, element, "APP_CONFIRM_TERMINATE_INSTANCE", "APP_TERMINATE_INSTANCE" );
-  }
+  } 
 }
 
 function suspendFlowInstance(action, element) {
-  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-    apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getflowInstanceData(action, element);
-    data.x03 = getConfirmComment();
+  if (apex.items.P0_LICENSE_EDITION.value === "enterprise") {
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+        apex.theme.closeRegion( "instance_action_dialog" );
+        var data = getflowInstanceData(action, element);
+        data.x03 = getConfirmComment();
 
-    var options = {};
-    options.messageKey = "APP_INSTANCE_SUSPENDED";
-    options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
-    options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
-    options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
-    sendToServer(data, options);
+        var options = {};
+        options.messageKey = "APP_INSTANCE_SUSPENDED";
+        options.reloadPage = apex.item("pFlowStepId").getValue() === "8" ? true : false;
+        options.refreshRegion = apex.item("pFlowStepId").getValue() === "8" ? [] : ["flow-instances", "flow-monitor"];
+        options.ItemsToSet = apex.item("pFlowStepId").getValue() === "8" ? {} : {"P10_PRCS_ID": data.x02, "P10_PRCS_NAME": apex.jQuery( element ).attr("data-name") };
+        sendToServer(data, options);
+    } else {
+        openModalConfirmWithComment( action, element, "APP_CONFIRM_SUSPEND_INSTANCE", "APP_SUSPEND_INSTANCE" );
+    }
   } else {
-    openModalConfirmWithComment( action, element, "APP_CONFIRM_SUSPEND_INSTANCE", "APP_SUSPEND_INSTANCE" );
+    apex.theme.openRegion("enterprise-edition-dg");
   }
+  
 }
 
 function resumeFlowInstance(action, element) {
@@ -778,6 +783,20 @@ function deleteProcessVariable(action, focusElement){
   });
 }
 
+function openProcessVariableHistory( action, element ){
+  var prcsId = apex.jQuery(element).attr("data-prcs");
+  var varName = apex.jQuery(element).attr("data-name");
+  var varNameUC = apex.jQuery(element).attr("data-name-uc");
+  var varScope = apex.jQuery(element).attr("data-scope");
+  var data = {};
+  data.x01 = action;
+  data.x02 = prcsId;
+  data.x03 = varName;
+  data.x04 = varNameUC;
+  data.x05 = varScope;
+  sendToServer(data);
+}
+
 function bulkDeleteProcessVariable(action){
   apex.message.confirm( apex.lang.getMessage("APP_CONFIRM_DELETE_PROCESS_VARIABLE"), function( okPressed ) {
     if( okPressed ) {
@@ -823,17 +842,22 @@ function restartStep( action, element){
 }
 
 function forceNextStep( action, element){
-  if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
-    apex.theme.closeRegion( "instance_action_dialog" );
-    var data = getSubflowData(action, element);
-    data.x05 = getConfirmComment();
-    var options = {};
-    options.messageKey = "APP_FORCE_NEXT_STEP";
-    options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "task-list"];
-    sendToServer(data, options);
+  if (apex.items.P0_LICENSE_EDITION.value === "enterprise"){
+    if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
+        apex.theme.closeRegion( "instance_action_dialog" );
+        var data = getSubflowData(action, element);
+        data.x05 = getConfirmComment();
+        var options = {};
+        options.messageKey = "APP_FORCE_NEXT_STEP";
+        options.refreshRegion = ["subflows", "flow-monitor", "process-variables", "flow-instance-events", "message-subscriptions", "task-list"];
+        sendToServer(data, options);
+    } else {
+        openModalConfirmWithComment( action, element, "APP_CONFIRM_FORCE_NEXT_STEP", "APP_TITLE_FORCE_NEXT_STEP" );
+    }
   } else {
-    openModalConfirmWithComment( action, element, "APP_CONFIRM_FORCE_NEXT_STEP", "APP_TITLE_FORCE_NEXT_STEP" );
+    apex.theme.openRegion("enterprise-edition-dg");
   }
+  
 }
 
 function bulkRestartStep( action, element ){
@@ -1288,6 +1312,12 @@ function initActions(){
           }
         },
         {
+          name: "process-variable-history",
+          action: function ( event, focusElement ) {
+            openProcessVariableHistory( this.name, focusElement );
+          }
+        },
+        {
           name: "bulk-delete-process-variable",
           action: function ( event, focusElement ) {
             bulkDeleteProcessVariable( this.name );
@@ -1527,7 +1557,7 @@ function initPage2() {
     $( "#parsed_drgm table th.a-IRR-header--group" )
       .attr( "colspan", "6" )
       .after(
-        '<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'
+        '<th colspan="6" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'
       );
 
     $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
@@ -1790,8 +1820,8 @@ function initPage8() {
       ui.menu.items = menuItems;
     } );
 
-    apex
-      .jQuery( "#subflow_row_action_menu" )
+        apex
+        .jQuery( "#subflow_row_action_menu" )
       .on( "menubeforeopen", function ( event, ui ) {
         var rowBtn = apex.jQuery( ".subflow-actions-btn.is-active" );
         var menuItems = ui.menu.items;
@@ -1823,28 +1853,26 @@ function initPage8() {
           if ( item.action === "reschedule-timer" ) {
             item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
-          if ( item.action === "delete-on-resume" ) {
+          if ( item.id === "rewind-sub-menu" ) {
             item.disabled = prcsStatus !== "suspended" ? true : false;
-          } 
-          if ( item.action === "return-prev-gw-resume" ) {
-            item.disabled = prcsStatus !== "suspended" ? true : false;
-          } 
-          if ( item.action === "reposition-subflow" ) {
-            item.disabled = prcsStatus !== "suspended" ? true : false;
-          } 
-          if (item.action === "rewind-last-step") {
-              var canRewind = prcsStatus === "suspended" && sbflStatus === "waiting at gateway";
-              item.disabled = !canRewind;
+            /*It is a submenu*/
+            let subMenuItems = item.menu.items;
+            subMenuItems = subMenuItems.map(function(subItem){
+ 
+                if (subItem.id === "rewind-last-step") {
+                    console.log(prcsStatus);
+                    console.log(sbflStatus);
+                    console.log(canRewind);
+                    var canRewind = prcsStatus === "suspended" && sbflStatus === "waiting at gateway";
+                    subItem.disabled = !canRewind;
+                }
+                if ( ["delete-on-resume", "return-prev-gw-resume", "reposition-subflow", "rewind-subprocess-on-resume", "rewind-call-activity-on-resume", "rewind-link-event-on-resume"].includes(subItem.id)) {
+                    subItem.disabled = prcsStatus !== "suspended" ? true : false;
+                }
+                return subItem;
+            });
+            item.menu.items = subMenuItems;   
           }
-          if ( item.action === "rewind-subprocess-on-resume" ) {
-            item.disabled = prcsStatus !== "suspended" ? true : false;
-          } 
-          if ( item.action === "rewind-call-activity-on-resume" ) {
-            item.disabled = prcsStatus !== "suspended" ? true : false;
-          } 
-          if ( item.action === "rewind-link-event-on-resume" ) {
-            item.disabled = prcsStatus !== "suspended" ? true : false;
-          } 
           return item;
         } );
         ui.menu.items = menuItems;

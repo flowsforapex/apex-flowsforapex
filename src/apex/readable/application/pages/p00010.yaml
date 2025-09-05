@@ -28,6 +28,11 @@ css:
     .a-IRR-controls-cell--label {
         width: auto;
     }
+    
+    /*Tweak was altered icon font size*/
+    span.flow-was-altered-icon {
+        font-size: 24px;
+    }
 
 security: 
   authentication: Page Requires Authentication
@@ -280,18 +285,17 @@ regions:
   id: 6127698437330102702
   identification: 
     name: Flow Viewer
-    type: Flows for APEX - Viewer
+    type: Flows for APEX - Viewer (25.1)
 
   source: 
     location: Local Database
     type: Table / View
     table-owner: Parsing Schema
-    table-name: FLOW_P0010_VW
+    table-name: FLOW_VIEWER_VW
     include-rowid-column: false
     where-clause: 'prcs_id = :P10_PRCS_ID'
     page-items-to-submit: 
     - P10_PRCS_ID
-    - P10_PRCS_NAME
 
   order-by: 
     type: None
@@ -335,31 +339,16 @@ regions:
   attributes: 
     settings: 
       diagram-xml: DGRM_CONTENT
-      use-bpmn-colors: true
-      add-highlighting: true
-      current-nodes: ALL_CURRENT
-      completed-nodes: ALL_COMPLETED
-      error-nodes: ALL_ERRORS
-      iteration-data: ITERATION_DATA
-      enable-call-activities: true
       diagram-identifier: PRDG_ID
-      calling-diagram-identifier: PRDG_PRDG_ID
-      calling-object-id: CALLING_OBJT
-      breadcrumb-text: BREADCRUMB
-      allow-drilldown-on-diagram-level: DRILLDOWN_ALLOWED
+      use-bpmn-colors: true
+      highlighting-data: HIGHLIGHTING_DATA
+      call-activity-data: CALL_ACTIVITY_DATA
+      iteration-data: ITERATION_DATA
+      user-task-data: USER_TASK_DATA
+      badges-data: BADGES_DATA
       refresh-on-load: true
       show-toolbar: true
       enable-mousewheel-zoom: false
-
-    messages: 
-      when-no-data-found: No process selected
-
-    advanced: 
-      initialization-javascript-function: |
-        function( config ) {
-            config.allowDownload = false;
-            return config;
-        }
 
 - # ====== Region: Flow Instances ==============================
   id: 12493545854579486121
@@ -509,7 +498,7 @@ regions:
         type: Plain Text
 
       heading: 
-        heading: Run Was Altered
+        heading: '&nbsp;'
         alignment: center
 
       single-row-view: 
@@ -521,6 +510,9 @@ regions:
 
       accessibility: 
         value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '{if PRCS_WAS_ALTERED/}<span class="flow-was-altered-icon fa fa-2x fa-exclamation-triangle-o u-warning-text" title="Ran with errors or interventions - see logs"></span>{endif/}'
 
       source: 
         primary-key: false

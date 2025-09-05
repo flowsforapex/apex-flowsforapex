@@ -8,7 +8,7 @@
   execution: 
     type: Scheduled
     schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=0
-    schedule-status: Disabled
+    schedule-status: Active
     actions-initiated-on: Always
 
   action-execution: 
@@ -51,7 +51,7 @@
   execution: 
     type: Scheduled
     schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=0
-    schedule-status: Disabled
+    schedule-status: Active
     actions-initiated-on: Always
 
   action-execution: 
@@ -154,5 +154,67 @@
 
     error: 
       error-message: Flows for APEX - Error purging log tables.
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Purge Completed Instance
+  id: 14794647413752629
+  identification: 
+    name: Flows for APEX - Purge Completed Instances
+    static-id: flows-for-apex-purge-completed-instances
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYMINUTE=0
+    schedule-status: Active
+    actions-initiated-on: Rows returned
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select prcs_id, prcs_complete_ts, prcs_status
+      from flow_processes
+      where prcs_complete_ts <  SYSTIMESTAMP - NUMTODSINTERVAL (TO_NUMBER(flow_admin_api.get_config_value(
+                   p_config_key    => 'completed_prcs_purge_after_completion_days',
+                   p_default_value => '365'
+                 )) 
+                 , 'DAY')
+        and flow_admin_api.get_config_value(
+                   p_config_key    => 'completed_prcs_purging',
+                   p_default_value => 'Y'
+                 ) = 'Y'
+        and prcs_status in ('completed', 'terminated')
+
+  column-mapping: 
+    primary-key-column: PRCS_ID
+
+  action-execution: 
+    commit: Each Row
+    action-error-handling: Ignore
+
+  comments: 
+    comments: Purges (deletes) process instances from the active Flows for APEX system, n days after the instance completed or was terminated.  Individual process purging is logged in the automation log.
+
+  actions: 
+  - # ====== Action: Purge Instance ==============================
+    id: 14794958511752617
+    identification: 
+      name: Purge Instance
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_api_pkg.flow_delete (p_process_id => :PRCS_ID, p_comment => 'deleted by completed instance purge automation on &SYSDATE.');
+            apex_automation.log_info ( 'Process Instance deleted: '||:PRCS_ID || '( status : '|| :PRCS_STATUS || ' - on ' || :PRCS_COMPLETE_TS ||' )');
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: 'Error purging :PRCS_ID'
       stop-execution-on-error: true
 

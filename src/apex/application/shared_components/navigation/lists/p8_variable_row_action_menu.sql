@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(7074608790273038)
 ,p_name=>'P8_VARIABLE_ROW_ACTION_MENU'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>1760504778
+,p_version_scn=>3839474193
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(7074803452273042)
@@ -31,6 +31,14 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_link_text=>'Delete'
 ,p_list_item_icon=>'fa-trash-o'
 ,p_list_text_01=>'delete-process-variable'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(14924955272586233)
+,p_list_item_display_sequence=>30
+,p_list_item_link_text=>'History'
+,p_list_item_icon=>'fa-info-circle-o'
+,p_list_text_01=>'process-variable-history'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp.component_end;

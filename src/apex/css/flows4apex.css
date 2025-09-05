@@ -2,31 +2,37 @@
 .ffa-color--created {
   background-color: #d9b13b!important;
   color: #463400!important;
+  --ut-badgelist-label-text-color: #463400;
 }
 
 .ffa-color--completed {
   background-color: #8c9eb0!important;
   color: #283a4d!important;
+  --ut-badgelist-label-text-color: #283a4d;
 }
 
 .ffa-color--running {
   background-color: #6aad42!important;
   color: white!important;
+  --ut-badgelist-label-text-color: white;
 }
 
 .ffa-color--suspended {
-  background-color: #0057B8!important;
+  background-color: var(--ut-palette-info) !important;
   color: white!important;
+  --ut-badgelist-label-text-color: white;
 }
 
 .ffa-color--terminated {
   background-color: #d76a27!important;
   color: white!important;
+  --ut-badgelist-label-text-color: white;
 }
 
 .ffa-color--error {
   background-color: #d2423b!important;
   color: white!important;
+  --ut-badgelist-label-text-color: white;
 }
 
 .ffa-color--delete-on-resume {

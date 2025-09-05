@@ -43,6 +43,46 @@ server-cache:
   caching: Disabled
 
 regions: 
+- # ====== Region: Additional Information ======================
+  id: 12334032691495733
+  identification: 
+    name: Additional Information
+    type: Static Content
+
+  layout: 
+    sequence: 110
+    parent-region: Import Flow # 19000369704190884
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-collapsed
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
 - # ====== Region: Import Flow =================================
   id: 19000369704190884
   identification: 
@@ -145,7 +185,7 @@ page-items:
     page-action-on-selection: None
 
   layout: 
-    sequence: 60
+    sequence: 30
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -189,6 +229,133 @@ page-items:
     session-state-protection: Unrestricted
     store-value-encrypted-in-session-state: false
     escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_DGRM_SHORT_DESCRIPTION ================
+  id: 12331219101495705
+  identification: 
+    name: P6_DGRM_SHORT_DESCRIPTION
+    type: Textarea
+
+  label: 
+    label: Short Description
+    alignment: Left
+
+  settings: 
+    resizable: false
+    auto-height: false
+    character-counter: true
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: Additional Information # 12334032691495733
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+    height: 5
+
+  validation: 
+    value-required: false
+    maximum-length: 300
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: A more detailed description can be provided after import on the model's detail page
+
+- # ====== Page Item: P6_DGRM_ICON =============================
+  id: 12334193465495734
+  identification: 
+    name: P6_DGRM_ICON
+    type: Popup LOV
+
+  label: 
+    label: Icon
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Additional Information # 12334032691495733
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+
+  validation: 
+    value-required: false
+    maximum-length: 300
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: APEX_ICONS_LOV # 12461890405272053
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: No Icon
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
     restricted-characters: All characters can be saved.
 
 - # ====== Page Item: P6_DGRM_ID ===============================
@@ -239,7 +406,7 @@ page-items:
     disabled: false
 
   layout: 
-    sequence: 40
+    sequence: 90
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -295,7 +462,7 @@ page-items:
     trim-spaces: Leading and Trailing
 
   layout: 
-    sequence: 70
+    sequence: 40
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -354,7 +521,7 @@ page-items:
     disabled: false
 
   layout: 
-    sequence: 50
+    sequence: 100
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -417,7 +584,7 @@ page-items:
     type: No
 
   layout: 
-    sequence: 30
+    sequence: 80
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -482,7 +649,7 @@ page-items:
     allow-multiple-files: false
 
   layout: 
-    sequence: 80
+    sequence: 50
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -531,7 +698,7 @@ page-items:
     use-defaults: true
 
   layout: 
-    sequence: 90
+    sequence: 60
     region: Import Flow # 19000369704190884
     slot: BODY
     alignment: Left
@@ -918,6 +1085,36 @@ dynamic-actions:
 
   actions: 
   - # ====== Action: Hide ========================================
+    id: 12334242066495735
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Region
+      region: Additional Information # 12334032691495733
+
+    execution: 
+      sequence: 30
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 12334368074495736
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Region
+      region: Additional Information # 12334032691495733
+
+    execution: 
+      sequence: 30
+      event: Change Mode # 34632685881575828
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
     id: 34632715356575829
     identification: 
       action: Hide
@@ -930,6 +1127,7 @@ dynamic-actions:
       - P6_DGRM_VERSION
       - P6_IMPORT_FROM
       - P6_DGRM_CONTENT
+      - P6_DGRM_SHORT_DESCRIPTION
 
     execution: 
       sequence: 20
@@ -949,6 +1147,7 @@ dynamic-actions:
       - P6_DGRM_NAME
       - P6_DGRM_VERSION
       - P6_IMPORT_FROM
+      - P6_DGRM_SHORT_DESCRIPTION
 
     execution: 
       sequence: 20
@@ -989,7 +1188,7 @@ dynamic-actions:
       button: IMPORT_AND_EDIT # 19019773259332915
 
     execution: 
-      sequence: 30
+      sequence: 40
       event: Change Mode # 34632685881575828
       fire-when-event-result-is: True
       fire-on-initialization: true
@@ -1004,7 +1203,7 @@ dynamic-actions:
       button: IMPORT_AND_EDIT # 19019773259332915
 
     execution: 
-      sequence: 30
+      sequence: 40
       event: Change Mode # 34632685881575828
       fire-when-event-result-is: False
       fire-on-initialization: true
@@ -1198,6 +1397,8 @@ processes:
           l_dgrm_id := flow_engine_app_api.upload_and_parse(
                            pi_import_from => :P6_IMPORT_FROM,
                            pi_dgrm_name => :P6_DGRM_NAME,
+                           pi_dgrm_short_description => :P6_DGRM_SHORT_DESCRIPTION,
+                           pi_dgrm_icon => :P6_DGRM_ICON,
                            pi_dgrm_category => :P6_DGRM_CATEGORY,
                            pi_dgrm_version => :P6_DGRM_VERSION,
                            pi_dgrm_content => :P6_DGRM_CONTENT,
@@ -1281,10 +1482,10 @@ processes:
     value: multiple
 
 branches: 
-- # ====== Branch: Go To Page 4 ================================
+- # ====== Branch: Go To Page 7 ================================
   id: 19019818946332916
   identification: 
-    name: Go To Page 4
+    name: Go To Page 7
 
   execution: 
     sequence: 10
@@ -1293,11 +1494,11 @@ branches:
   behavior: 
     type: Page or URL (Redirect)
     target: 
-      url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4:P4_DGRM_ID:&P6_DGRM_ID.&success_msg=#SUCCESS_MSG#'
-      page: 4 # Flow Modeler
-      clear-cache: 4
+      url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:&P6_DGRM_ID.&success_msg=#SUCCESS_MSG#'
+      page: 7 # Flow
+      clear-cache: 7
       values: 
-        p4_dgrm_id: '&P6_DGRM_ID.'
+        p7_dgrm_id: '&P6_DGRM_ID.'
 
   server-side-condition: 
     type: Request = Value

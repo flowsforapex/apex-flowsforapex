@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -14,6 +14,32 @@ wwv_flow_imp.component_begin (
 wwv_flow_imp_shared.create_menu(
  p_id=>wwv_flow_imp.id(12495636486941880396)
 ,p_name=>'Breadcrumb'
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(85667185327137)
+,p_parent_id=>wwv_flow_imp.id(11904723133918726)
+,p_short_name=>'Automations'
+,p_link=>'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:::'
+,p_page_id=>43
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(102671663267533)
+,p_parent_id=>wwv_flow_imp.id(85667185327137)
+,p_short_name=>'Execution Logs'
+,p_link=>'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:::'
+,p_page_id=>41
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(105837896752703)
+,p_parent_id=>wwv_flow_imp.id(102671663267533)
+,p_short_name=>'Messages'
+,p_page_id=>42
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(140186243817871)
+,p_short_name=>'Running Task Status'
+,p_link=>'f?p=&APP_ID.:19:&APP_SESSION.::&DEBUG.:::'
+,p_page_id=>19
 );
 wwv_flow_imp_shared.create_menu_option(
  p_id=>wwv_flow_imp.id(2116968797571265)
@@ -57,7 +83,7 @@ wwv_flow_imp_shared.create_menu_option(
 wwv_flow_imp_shared.create_menu_option(
  p_id=>wwv_flow_imp.id(3308475687313586)
 ,p_parent_id=>wwv_flow_imp.id(11904723133918726)
-,p_short_name=>'Archiving'
+,p_short_name=>'Instance Archiving and Purging'
 ,p_link=>'f?p=&APP_ID.:33:&SESSION.::&DEBUG.:33::'
 ,p_page_id=>33
 );
@@ -114,6 +140,13 @@ wwv_flow_imp_shared.create_menu_option(
 ,p_short_name=>'Configuration'
 ,p_link=>'f?p=&APP_ID.:9:&SESSION.::&DEBUG.:9::'
 ,p_page_id=>9
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(12564649699238488)
+,p_parent_id=>wwv_flow_imp.id(11904723133918726)
+,p_short_name=>'Configuration - AI Prompts'
+,p_link=>'f?p=&APP_ID.:44:&APP_SESSION.::&DEBUG.:::'
+,p_page_id=>44
 );
 wwv_flow_imp_shared.create_menu_option(
  p_id=>wwv_flow_imp.id(34530380979770009)

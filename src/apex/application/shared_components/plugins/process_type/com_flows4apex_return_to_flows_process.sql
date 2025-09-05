@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -47,12 +47,12 @@ wwv_flow_imp_shared.create_plugin(
 '',
 '    return l_result;',
 'end execution;    '))
-,p_api_version=>2
+,p_api_version=>1
 ,p_execution_function=>'execution'
 ,p_substitute_attributes=>true
-,p_version_scn=>1760507033
+,p_version_scn=>3139077689
 ,p_subscribe_plugin_settings=>true
-,p_version_identifier=>'24.1'
+,p_version_identifier=>'25.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_imp_shared.create_plugin_attribute(

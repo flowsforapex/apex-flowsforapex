@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -71,6 +71,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(20088203370380088)
 ,p_prompt=>'License Key'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_colspan=>3
 ,p_field_template=>wwv_flow_imp.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
@@ -86,6 +87,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(20088203370380088)
 ,p_prompt=>'Licensed To'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_colspan=>3
 ,p_field_template=>wwv_flow_imp.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'
@@ -101,6 +103,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(20088203370380088)
 ,p_prompt=>'License Expiry Date'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_colspan=>3
 ,p_field_template=>wwv_flow_imp.id(12495522847445880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_encrypt_session_state_yn=>'N'

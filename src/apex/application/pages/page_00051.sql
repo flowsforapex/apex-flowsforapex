@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -140,7 +140,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>600
-,p_field_template=>wwv_flow_imp.id(12495522847445880132)
+,p_field_template=>wwv_flow_imp.id(12495522548744880132)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
@@ -220,6 +220,8 @@ wwv_flow_imp_page.create_page_validation(
 ,p_validation2=>'SQL'
 ,p_validation_type=>'EXPRESSION'
 ,p_error_message=>'Invalid JSON format'
+,p_validation_condition=>'P51_SFTE_CONTENT'
+,p_validation_condition_type=>'ITEM_IS_NOT_NULL'
 ,p_associated_item=>wwv_flow_imp.id(5592198462964018)
 ,p_error_display_location=>'INLINE_WITH_FIELD_AND_NOTIFICATION'
 );

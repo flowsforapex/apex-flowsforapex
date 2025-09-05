@@ -959,7 +959,7 @@ regions:
         use-column-heading: true
 
       layout: 
-        sequence: 50
+        sequence: 60
         column-alignment: start
 
       accessibility: 
@@ -1000,7 +1000,7 @@ regions:
         use-column-heading: true
 
       layout: 
-        sequence: 60
+        sequence: 80
         column-alignment: start
 
       accessibility: 
@@ -1042,7 +1042,7 @@ regions:
         use-column-heading: true
 
       layout: 
-        sequence: 70
+        sequence: 90
         column-alignment: start
 
       accessibility: 
@@ -1083,7 +1083,89 @@ regions:
         use-column-heading: true
 
       layout: 
-        sequence: 80
+        sequence: 100
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGVR_SCOPE ==================================
+      id: 13978125676687927
+      identification: 
+        column-name: LGVR_SCOPE
+        type: Plain Text
+
+      heading: 
+        heading: Scope
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 50
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: LGVR_USER ===================================
+      id: 13978285248687928
+      identification: 
+        column-name: LGVR_USER
+        type: Plain Text
+
+      heading: 
+        heading: User
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
         column-alignment: start
 
       accessibility: 
@@ -1796,7 +1878,11 @@ regions:
     table-owner: Parsing Schema
     table-name: FLOW_P0014_INSTANCE_LOG_VW
     include-rowid-column: false
-    where-clause: 'lgpr_prcs_id = :P14_PRCS_ID'
+    where-clause: |
+      lgpr_prcs_id = :P14_PRCS_ID
+      and ( lgpr_objt_id is null
+      or lgpr_severity < 3 )
+      
     page-items-to-submit: 
     - P14_PRCS_ID
 
@@ -2287,6 +2373,47 @@ regions:
 
       security: 
         escape-special-characters: false
+
+    - # ====== Column: LGPR_SEVERITY ===============================
+      id: 13978311766687929
+      identification: 
+        column-name: LGPR_SEVERITY
+        type: Plain Text
+
+      heading: 
+        heading: Severity
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 130
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
 
     printing: 
       output: 

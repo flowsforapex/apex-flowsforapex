@@ -89,6 +89,47 @@ regions:
       - '#DEFAULT#'
       - js-addActions
 
+- # ====== Region: Additional Information ======================
+  id: 12332479321495717
+  identification: 
+    name: Additional Information
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Attributes # 26003019626877931
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-collapsed
+    - t-Region--scrollBody
+    - margin-top-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
 - # ====== Region: Attributes ==================================
   id: 26003019626877931
   identification: 
@@ -143,7 +184,7 @@ regions:
   id: 28425138174759832
   identification: 
     name: Flow Viewer
-    type: Flows for APEX - Viewer
+    type: Flows for APEX - Viewer (25.1)
 
   source: 
     location: Local Database
@@ -197,10 +238,8 @@ regions:
   attributes: 
     settings: 
       diagram-xml: DGRM_CONTENT
-      use-bpmn-colors: true
-      add-highlighting: false
-      enable-call-activities: false
       diagram-identifier: DGRM_ID
+      use-bpmn-colors: true
       refresh-on-load: true
       show-toolbar: true
       enable-mousewheel-zoom: false
@@ -818,7 +857,7 @@ regions:
     type: Static Content
 
   layout: 
-    sequence: 10
+    sequence: 20
     parent-region: Attributes # 26003019626877931
     slot: SUB_REGIONS
     start-new-layout: false
@@ -2051,7 +2090,7 @@ regions:
       type: Plain Text
 
     heading: 
-      heading: Diagram ID
+      heading: Diagram Id
       alignment: start
 
     layout: 
@@ -2205,6 +2244,132 @@ regions:
       escape-special-characters: true
 
 page-items: 
+- # ====== Page Item: P7_DGRM_SHORT_DESCRIPTION ================
+  id: 6978801192365548
+  identification: 
+    name: P7_DGRM_SHORT_DESCRIPTION
+    type: Textarea
+
+  label: 
+    label: Short Description
+    alignment: Left
+
+  settings: 
+    resizable: false
+    auto-height: false
+    character-counter: true
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: Additional Information # 12332479321495717
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+    height: 5
+
+  validation: 
+    value-required: false
+    maximum-length: 300
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_SHORT_DESCRIPTION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_DESCRIPTION ======================
+  id: 6978916392365549
+  identification: 
+    name: P7_DGRM_DESCRIPTION
+    type: Rich Text Editor
+
+  label: 
+    label: Description
+    alignment: Left
+
+  settings: 
+    library: Oracle Rich Text Library
+    format: Markdown
+    minimum-height: 180
+    allow-custom-html: false
+
+  layout: 
+    sequence: 30
+    region: Additional Information # 12332479321495717
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_DESCRIPTION
+    data-type: CLOB
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
 - # ====== Page Item: P7_OBJT_LIST =============================
   id: 7336178189307043
   identification: 
@@ -2325,6 +2490,229 @@ page-items:
     store-value-encrypted-in-session-state: false
     restricted-characters: All characters can be saved.
 
+- # ====== Page Item: P7_DGRM_ICON =============================
+  id: 12332384979495716
+  identification: 
+    name: P7_DGRM_ICON
+    type: Popup LOV
+
+  label: 
+    label: Icon
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Additional Information # 12332479321495717
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: APEX_ICONS_LOV # 12461890405272053
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: No Icon
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_ICON
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_PROCESS_DEF ======================
+  id: 12584366831920402
+  identification: 
+    name: P7_DGRM_PROCESS_DEF
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: CLOB
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_QUICK_ACTIONS =========================
+  id: 12584473818920403
+  identification: 
+    name: P7_QUICK_ACTIONS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: CLOB
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_SYSTEM_PROMPT =========================
+  id: 12584576321920404
+  identification: 
+    name: P7_SYSTEM_PROMPT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_AI_WELCOME ============================
+  id: 12584604037920405
+  identification: 
+    name: P7_AI_WELCOME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_AI_IA_PROMPT ==========================
+  id: 12584796862920406
+  identification: 
+    name: P7_AI_IA_PROMPT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
 - # ====== Page Item: P7_DGRM_LAST_UPDATE ======================
   id: 24212748636956111
   identification: 
@@ -2335,7 +2723,7 @@ page-items:
     value-protected: true
 
   layout: 
-    sequence: 100
+    sequence: 140
     region: Attributes # 26003019626877931
     slot: BODY
 
@@ -2474,7 +2862,7 @@ page-items:
     disabled: false
 
   layout: 
-    sequence: 40
+    sequence: 80
     region: Attributes # 26003019626877931
     slot: BODY
     alignment: Left
@@ -2542,7 +2930,7 @@ page-items:
     send-on-page-submit: true
 
   layout: 
-    sequence: 60
+    sequence: 100
     region: Attributes # 26003019626877931
     slot: BODY
     alignment: Left
@@ -2830,6 +3218,34 @@ buttons:
     type: Item is NOT NULL
     item: P7_DGRM_ID
 
+- # ====== Button: AskFlo ======================================
+  id: 12584243948920401
+  identification: 
+    button-name: AskFlo
+    label: Ask Flo
+
+  layout: 
+    sequence: 10
+    region: Flow Viewer # 28425138174759832
+    slot: EDIT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-ai
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
 - # ====== Button: NEW_VERSION =================================
   id: 24215404585956138
   identification: 
@@ -2837,7 +3253,7 @@ buttons:
     label: New Version
 
   layout: 
-    sequence: 50
+    sequence: 90
     region: Attributes # 26003019626877931
     slot: BODY
     start-new-layout: false
@@ -2845,7 +3261,7 @@ buttons:
     column: Automatic
     new-column: true
     column-span: 3
-    alignment: Right
+    alignment: Left center
 
   appearance: 
     button-template: Text with Icon
@@ -2877,7 +3293,7 @@ buttons:
     label: Release
 
   layout: 
-    sequence: 80
+    sequence: 120
     region: Attributes # 26003019626877931
     slot: BODY
     start-new-layout: false
@@ -2885,7 +3301,7 @@ buttons:
     column: Automatic
     new-column: false
     column-span: Automatic
-    alignment: Right
+    alignment: Left center
 
   appearance: 
     button-template: Text with Icon
@@ -2919,7 +3335,7 @@ buttons:
     label: Deprecate
 
   layout: 
-    sequence: 70
+    sequence: 110
     region: Attributes # 26003019626877931
     slot: BODY
     start-new-layout: false
@@ -2927,7 +3343,7 @@ buttons:
     column: Automatic
     new-column: true
     column-span: 3
-    alignment: Right
+    alignment: Left center
 
   appearance: 
     button-template: Text with Icon
@@ -2961,7 +3377,7 @@ buttons:
     label: Archive
 
   layout: 
-    sequence: 90
+    sequence: 130
     region: Attributes # 26003019626877931
     slot: BODY
     start-new-layout: false
@@ -2969,7 +3385,7 @@ buttons:
     column: Automatic
     new-column: false
     column-span: Automatic
-    alignment: Right
+    alignment: Left center
 
   appearance: 
     button-template: Text with Icon
@@ -3135,7 +3551,7 @@ buttons:
     label: Modify Diagram
 
   layout: 
-    sequence: 10
+    sequence: 20
     region: Flow Viewer # 28425138174759832
     slot: EDIT
     start-new-layout: false
@@ -3236,6 +3652,115 @@ dynamic-actions:
       event: Click on Archive # 8024957923825618
       fire-when-event-result-is: True
       fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Chatbot ========================
+  id: 12584832494920407
+  identification: 
+    name: Open Chatbot
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: AskFlo # 12584243948920401
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: (apex.items.P0_LICENSE_EDITION.value === "enterprise")
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 4862581901240143
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Enterprise Edition # 4862440282240142
+
+    execution: 
+      sequence: 10
+      event: Open Chatbot # 12584832494920407
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Get optimised diagram =======================
+    id: 12584979387920408
+    identification: 
+      name: Get optimised diagram
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        select dgrm_process_def
+        from   flow_optimised_diagrams_vw_EE
+        where  dgrm_id = :P7_DGRM_ID
+      items-to-submit: 
+      - P7_DGRM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_DGRM_PROCESS_DEF
+
+    execution: 
+      sequence: 10
+      event: Open Chatbot # 12584832494920407
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Launch Assistant ============================
+    id: 12585045083920409
+    identification: 
+      name: Launch Assistant
+      action: Open AI Assistant
+
+    generative-ai: 
+      service: OpenAI ChatGPT 4o # 1446946413060929
+      system-prompt: '&P7_SYSTEM_PROMPT.'
+      welcome-message: '&P7_AI_WELCOME.'
+
+    appearance: 
+      display-as: Dialog
+      title: Ask Flo - Flows for APEX AI Assistant
+
+    initial-prompt: 
+      type: Item
+      item: P7_DGRM_PROCESS_DEF
+      displayed-message: Using the diagram &P7_DGRM_NAME. (Version &P7_DGRM_VERSION.)
+      immediate-action-prompt: '&P7_AI_IA_PROMPT.'
+
+    use-response: 
+      type: NONE
+
+    execution: 
+      sequence: 20
+      event: Open Chatbot # 12584832494920407
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+        
+            const quickActions = JSON.parse( apex.items.P7_QUICK_ACTIONS.value );
+        
+            for (const element of quickActions) {
+                options.view.quickActions.push( element );
+            }
+        
+            apex.debug.log( "options", options);
+            return options;
+        }
 
 - # ====== Dynamic Action: Viewer Diagram Loaded ===============
   id: 16955083547047750
@@ -3754,6 +4279,82 @@ computations:
       , p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode
       );
 
+- # ====== Computation: P7_QUICK_ACTIONS =======================
+  id: 12585113764920410
+  identification: 
+    item-name: P7_QUICK_ACTIONS
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_quick_actions
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: P7_AI_WELCOME ==========================
+  id: 12585230149920411
+  identification: 
+    item-name: P7_AI_WELCOME
+
+  execution: 
+    sequence: 20
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_AI_message (p_prompt_key => 'welcome-msg')
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: P7_AI_IA_PROMPT ========================
+  id: 12585301451920412
+  identification: 
+    item-name: P7_AI_IA_PROMPT
+
+  execution: 
+    sequence: 30
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_AI_message (p_prompt_key => 'action-prompt')
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: P7_SYSTEM_PROMPT =======================
+  id: 14731199791171501
+  identification: 
+    item-name: P7_SYSTEM_PROMPT
+
+  execution: 
+    sequence: 40
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_system_prompt
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
 - # ====== Computation: FLOW_PAGE_TITLE ========================
   id: 34403109564171417
   identification: 
@@ -3809,13 +4410,16 @@ processes:
     pl/sql-code: |
       flow_engine_app_api.process_page_p7
       (
-        pio_dgrm_id      => :p7_dgrm_id
-      , pi_dgrm_name     => :p7_dgrm_name
-      , pi_dgrm_version  => :p7_dgrm_version
-      , pi_dgrm_category => :p7_dgrm_category
-      , pi_new_version   => :p7_new_version
-      , pi_cascade       => :p7_cascade
-      , pi_request       => :request
+        pio_dgrm_id               => :p7_dgrm_id
+      , pi_dgrm_name              => :p7_dgrm_name
+      , pi_dgrm_short_description => :p7_dgrm_short_description
+      , pi_dgrm_description       => :p7_dgrm_description
+      , pi_dgrm_icon              => :p7_dgrm_icon
+      , pi_dgrm_version           => :p7_dgrm_version
+      , pi_dgrm_category          => :p7_dgrm_category
+      , pi_new_version            => :p7_new_version
+      , pi_cascade                => :p7_cascade
+      , pi_request                => :request
       );
 
   execution: 

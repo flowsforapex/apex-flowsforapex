@@ -1,1 +1,0 @@
-{"version":3,"sources":["flows4apex.dark.css"],"names":[],"mappings":"AAAA,sC,CACE,uB,CAGF,wC,CACE,uB","file":"flows4apex.dark.css","sourcesContent":[".ffa-color--created .t-BadgeList-label {\r\n  color: #463400!important;\r\n}\r\n\r\n.ffa-color--completed .t-BadgeList-label {\r\n  color: #283a4d!important;\r\n}"]}

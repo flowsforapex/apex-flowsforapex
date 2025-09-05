@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -19,18 +19,12 @@ wwv_flow_imp_shared.create_list_of_values(
 ,p_query_table=>'FLOW_DIAGRAMS_PARSED_LOV'
 ,p_return_column_name=>'DGRM_ID'
 ,p_display_column_name=>'DGRM_NAME'
+,p_icon_column_name=>'DGRM_ICON'
 ,p_group_column_name=>'DGRM_CATEGORY'
 ,p_group_sort_direction=>'ASC'
 ,p_default_sort_column_name=>'DGRM_NAME'
 ,p_default_sort_direction=>'ASC'
-,p_version_scn=>1760504927
-);
-wwv_flow_imp_shared.create_list_of_values_cols(
- p_id=>wwv_flow_imp.id(9100877958535115)
-,p_query_column_name=>'DGRM_NAME'
-,p_heading=>'Name'
-,p_display_sequence=>10
-,p_data_type=>'VARCHAR2'
+,p_version_scn=>2848491218
 );
 wwv_flow_imp_shared.create_list_of_values_cols(
  p_id=>wwv_flow_imp.id(9604120679701834)
@@ -48,18 +42,33 @@ wwv_flow_imp_shared.create_list_of_values_cols(
 ,p_data_type=>'VARCHAR2'
 );
 wwv_flow_imp_shared.create_list_of_values_cols(
+ p_id=>wwv_flow_imp.id(9100877958535115)
+,p_query_column_name=>'DGRM_NAME'
+,p_heading=>'Name'
+,p_display_sequence=>30
+,p_data_type=>'VARCHAR2'
+);
+wwv_flow_imp_shared.create_list_of_values_cols(
  p_id=>wwv_flow_imp.id(9101564040535117)
 ,p_query_column_name=>'DGRM_STATUS'
 ,p_heading=>'Status'
-,p_display_sequence=>30
+,p_display_sequence=>40
 ,p_data_type=>'VARCHAR2'
 );
 wwv_flow_imp_shared.create_list_of_values_cols(
  p_id=>wwv_flow_imp.id(9101910594535117)
 ,p_query_column_name=>'DGRM_VERSION'
 ,p_heading=>'Version'
-,p_display_sequence=>40
+,p_display_sequence=>50
 ,p_data_type=>'NUMBER'
+);
+wwv_flow_imp_shared.create_list_of_values_cols(
+ p_id=>wwv_flow_imp.id(12520711332641192)
+,p_query_column_name=>'DGRM_ICON'
+,p_heading=>'Icon'
+,p_display_sequence=>60
+,p_data_type=>'VARCHAR2'
+,p_is_visible=>'N'
 );
 wwv_flow_imp.component_end;
 end;

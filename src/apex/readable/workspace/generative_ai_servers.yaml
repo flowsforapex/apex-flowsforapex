@@ -1,0 +1,18 @@
+---
+- # ====== Generative AI Service: OpenAI ChatGPT 4o ============
+  id: 1446946413060929
+  identification: 
+    name: OpenAI ChatGPT 4o
+
+  endpoint-url: 
+    url: 'https://api.openai.com/v1'
+
+  advanced: 
+    static-id: F4A_AI_SERVICE
+    prompt-on-install: true
+
+  generative-ai-service: 
+    generative-ai-service-provider: Open AI
+    default-generative-ai-service: false
+    generative-ai-service-model-to-use: gpt-4o
+

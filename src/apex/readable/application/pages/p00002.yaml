@@ -384,7 +384,7 @@ regions:
       id: 24214647255956130
       identification: 
         column-name: DGRM_NAME
-        type: Plain Text
+        type: Link
 
       heading: 
         heading: Name
@@ -399,6 +399,16 @@ regions:
 
       accessibility: 
         value-identifies-row: false
+
+      link: 
+        target: 
+          url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:#DGRM_ID#'
+          page: 7 # Flow
+          clear-cache: 7
+          values: 
+            p7_dgrm_id: '#DGRM_ID#'
+
+        link-text: '#DGRM_NAME#'
 
       source: 
         primary-key: false
@@ -1688,7 +1698,7 @@ dynamic-actions:
 
     settings: 
       code: |
-        $("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after('<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>');
+        $("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after('<th colspan="6" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>');
         
         $( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {
               var status = $( this ).children("i").data("status");
@@ -1696,6 +1706,8 @@ dynamic-actions:
                 $( this ).parent().addClass( "ffa-color--created" );
               } else if ( status == "completed" ) {
                 $( this ).parent().addClass( "ffa-color--completed" );
+              } else if ( status == "suspended" ) {
+                $( this ).parent().addClass( "ffa-color--suspended" );  
               } else if ( status == "running" ) {
                 $( this ).parent().addClass( "ffa-color--running" );
               } else if ( status == "terminated" ) {

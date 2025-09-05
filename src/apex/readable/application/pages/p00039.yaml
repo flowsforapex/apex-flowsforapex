@@ -200,7 +200,7 @@ page-items:
     start-new-row: true
     column: Automatic
     new-column: true
-    column-span: Automatic
+    column-span: 3
     label-column-span: Page Template Default
 
   appearance: 
@@ -249,7 +249,7 @@ page-items:
     start-new-row: true
     column: Automatic
     new-column: true
-    column-span: Automatic
+    column-span: 3
     label-column-span: Page Template Default
 
   appearance: 
@@ -298,7 +298,7 @@ page-items:
     start-new-row: true
     column: Automatic
     new-column: true
-    column-span: Automatic
+    column-span: 3
     label-column-span: Page Template Default
 
   appearance: 

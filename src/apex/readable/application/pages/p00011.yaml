@@ -312,7 +312,7 @@ page-items:
     width: 30
 
   validation: 
-    value-required: true
+    value-required: false
 
   advanced: 
     warn-on-unsaved-changes: Page Default

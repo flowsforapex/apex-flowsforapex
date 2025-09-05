@@ -5,7 +5,7 @@
     name: LOGGING_LEVELS
 
   subscription: 
-    version-number: 1842736134
+    version-number: 3588742803
 
   source: 
     location: Static Values
@@ -35,21 +35,14 @@
   - # ====== Entry: Routine ======================================
     id: 12991310828526
     entry: 
-      sequence: 4
+      sequence: 5
       display: Routine
       return: 4
-
-  - # ====== Entry: Detailed =====================================
-    id: 13402327828526
-    entry: 
-      sequence: 5
-      display: Detailed
-      return: 6
 
   - # ====== Entry: Full / Debug =================================
     id: 13844636828526
     entry: 
-      sequence: 6
+      sequence: 8
       display: Full / Debug
       return: 8
 
@@ -95,7 +88,7 @@
     name: DIAGRAMS_PARSED_LOV
 
   subscription: 
-    version-number: 1760504927
+    version-number: 2848491218
 
   source: 
     location: Local Database
@@ -110,6 +103,7 @@
     sort-direction: Ascending (Nulls Last)
     group: DGRM_CATEGORY
     group-sort-direction: Ascending (Nulls Last)
+    icon: DGRM_ICON
 
   columns: 
   - # ====== Column: DGRM_NAME ===================================
@@ -122,7 +116,7 @@
       heading: Name
 
     layout: 
-      sequence: 10
+      sequence: 30
 
     source: 
       data-type: VARCHAR2
@@ -158,7 +152,7 @@
       heading: Status
 
     layout: 
-      sequence: 30
+      sequence: 40
 
     source: 
       data-type: VARCHAR2
@@ -176,7 +170,7 @@
       heading: Version
 
     layout: 
-      sequence: 40
+      sequence: 50
 
     source: 
       data-type: NUMBER
@@ -198,6 +192,24 @@
 
     advanced: 
       searchable: false
+
+  - # ====== Column: DGRM_ICON ===================================
+    id: 12520711332641192
+    identification: 
+      column-name: DGRM_ICON
+      show: false
+
+    heading: 
+      heading: Icon
+
+    layout: 
+      sequence: 60
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
 
 - # ====== List of Values: FLOW_REST_ROLES =====================
   id: 2384141954898413
@@ -335,6 +347,69 @@
       sequence: 2
       display: SQL Script
       return: SQL
+
+- # ====== List of Values: APEX_ICONS_LOV ======================
+  id: 12461890405272053
+  identification: 
+    name: APEX_ICONS_LOV
+
+  subscription: 
+    version-number: 2843504695
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select icon_name as display_value
+           , icon_name as return_value
+           , icon_name as icon
+        from APEX_DG_BUILTIN_FONTAPEX;
+
+  column-mapping: 
+    return: RETURN_VALUE
+    display: DISPLAY_VALUE
+    default-sort: Use Order By from Query
+    icon: ICON
+
+- # ====== List of Values: P44_PROMPT_TYPES ====================
+  id: 12568179604221251
+  identification: 
+    name: P44_PROMPT_TYPES
+
+  subscription: 
+    version-number: 2850265115
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: System =======================================
+    id: 12568477235221250
+    entry: 
+      sequence: 1
+      display: System
+      return: system
+
+  - # ====== Entry: Welcome ======================================
+    id: 12568867645221249
+    entry: 
+      sequence: 2
+      display: Welcome
+      return: welcome
+
+  - # ====== Entry: Immediate Action =============================
+    id: 12569240949221249
+    entry: 
+      sequence: 3
+      display: Immediate Action
+      return: immediateaction
+
+  - # ====== Entry: Quick Action =================================
+    id: 12569649774221249
+    entry: 
+      sequence: 4
+      display: Quick Action
+      return: quickaction
 
 - # ====== List of Values: P6_MODE =============================
   id: 13102745982982601

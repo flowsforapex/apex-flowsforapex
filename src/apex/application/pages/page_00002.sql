@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -123,6 +123,8 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_display_order=>20
 ,p_column_identifier=>'B'
 ,p_column_label=>'Name'
+,p_column_link=>'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:#DGRM_ID#'
+,p_column_linktext=>'#DGRM_NAME#'
 ,p_column_type=>'STRING'
 ,p_heading_alignment=>'LEFT'
 ,p_use_as_row_header=>'N'
@@ -855,7 +857,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after(''<th colspan="5" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'');',
+'$("#parsed_drgm table th.a-IRR-header--group").attr("colspan", "6").after(''<th colspan="6" class="a-IRR-header a-IRR-header--group" id="instances_column_group_heading" style="text-align: center;">Instances</th>'');',
 '',
 '$( ".a-IRR-headerLabel, .a-IRR-headerLink" ).each( function () {',
 '      var status = $( this ).children("i").data("status");',
@@ -863,6 +865,8 @@ wwv_flow_imp_page.create_page_da_action(
 '        $( this ).parent().addClass( "ffa-color--created" );',
 '      } else if ( status == "completed" ) {',
 '        $( this ).parent().addClass( "ffa-color--completed" );',
+'      } else if ( status == "suspended" ) {',
+'        $( this ).parent().addClass( "ffa-color--suspended" );  ',
 '      } else if ( status == "running" ) {',
 '        $( this ).parent().addClass( "ffa-color--running" );',
 '      } else if ( status == "terminated" ) {',

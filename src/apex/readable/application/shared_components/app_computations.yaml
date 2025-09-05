@@ -1,4 +1,25 @@
 ---
+- # ====== Application Computation: P0_LICENSE_EDITION =========
+  id: 14845215945423867
+  identification: 
+    item-name: P0_LICENSE_EDITION
+
+  execution: 
+    sequence: 10
+    point: AFTER_LOGIN
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_admin_api.get_config_value(
+         p_config_key => 'license_edition',
+         p_default_value => 'community'
+      )
+
+  subscription: 
+    version-number: 3787892091
+
 - # ====== Application Computation: APP_NAME_TITLE =============
   id: 34570910330109834
   identification: 

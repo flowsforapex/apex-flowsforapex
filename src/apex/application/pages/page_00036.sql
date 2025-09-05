@@ -5,7 +5,7 @@ begin
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
-,p_release=>'24.1.8'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -131,7 +131,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_quick_pick_value_03=>'FREQ=MINUTELY;INTERVAL=10'
 ,p_quick_pick_label_04=>'1 Min'
 ,p_quick_pick_value_04=>'FREQ=MINUTELY;INTERVAL=10'
-,p_quick_pick_label_05=>'10 Sec (Production Use - not for apex.oracle.com)'
+,p_quick_pick_label_05=>'10 Sec (Production Use - not for oracleapex.com)'
 ,p_quick_pick_value_05=>'FREQ=SECONDLY;INTERVAL=10'
 );
 wwv_flow_imp_page.create_page_item(

@@ -1,4 +1,43 @@
 ---
+- # ====== Application Item: PROCESS_ID ========================
+  id: 4817631731796132
+  identification: 
+    name: PROCESS_ID
+    scope: Application
+
+  security: 
+    session-state-protection: Checksum Required - Application Level
+    escape-special-characters: true
+
+  subscription: 
+    version-number: 2476399481
+
+- # ====== Application Item: SUBFLOW_ID ========================
+  id: 4817822903793230
+  identification: 
+    name: SUBFLOW_ID
+    scope: Application
+
+  security: 
+    session-state-protection: Checksum Required - Application Level
+    escape-special-characters: true
+
+  subscription: 
+    version-number: 2476402114
+
+- # ====== Application Item: STEP_KEY ==========================
+  id: 4818094936791614
+  identification: 
+    name: STEP_KEY
+    scope: Application
+
+  security: 
+    session-state-protection: Checksum Required - Application Level
+    escape-special-characters: true
+
+  subscription: 
+    version-number: 2476405619
+
 - # ====== Application Item: THEME_PLUGIN_CLASS ================
   id: 6189993961233425
   identification: 
