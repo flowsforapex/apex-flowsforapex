@@ -7,7 +7,7 @@
 
 ## Installing Tests in Your Environment ##
 
-Using the github repository, go through the following steps to install the test environment on your system:
+Using the GitHub repository, go through the following steps to install the test environment on your system:
 
 1. Ensure that you have utPLSQL installed and working in your environment.  
 2. Install the test BPMN models / diagrams into your APEX workspace using the SQL install scripts in `test/models/sql`.
@@ -23,7 +23,7 @@ Using the github repository, go through the following steps to install the test 
    
 6. Using the Configurations Panel > Timers (or otherwise) make sure that your timers are enabled and running every 10 seconds.
    
-7. Using the Configurations Panel > Engine.   Make sure that the default parameters use a valid AppID, App Page and Default User ID on the system undertest.
+7. Using the Configurations Panel > Engine.   Make sure that the default parameters use a valid AppID, App Page and Default User ID on the system under test.
    
 8. Edit the Test Constants file (`test\plsql\test_constants.pks`) to set any appropriate User IDs and APEX APP IDs for the testing environment.
 

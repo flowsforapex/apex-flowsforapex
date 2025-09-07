@@ -31,3 +31,7 @@ myvar
 apex.oraclecorp.com
 SYSTIMESTAMP
 ffa
+plsql
+md
+merge-then-resplit
+bpmnlint

@@ -57,7 +57,7 @@ begin
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 7f - Iterations and Looped Sub Processes', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 7g - Iterations and Looped Nested Sub Processes', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 8a - The Full Monty (the top half!)', pi_dgrm_version => '25.1');
-  flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 8c - Background Session Configuration', pi_dgrm_version => '24.1');
+  flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 8c - Background Session Configuration', pi_dgrm_version => '25.1');
 end;
 /
 

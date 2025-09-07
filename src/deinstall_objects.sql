@@ -2,9 +2,12 @@ PROMPT >> Removing Flows4APEX Database Objects
 PROMPT >> ====================================
 
 PROMPT >> Scheduler Objects
-sys.dbms_scheduler.drop_job     (job_name => 'APEX_FLOW_STEP_TIMERS_J');
-sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P');
-sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P');
+begin
+  sys.dbms_scheduler.drop_job     (job_name => 'APEX_FLOW_STEP_TIMERS_J');
+  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P');
+  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P');
+end;
+/
 
 PROMPT >> Packages
 drop package flow_logging;
@@ -168,3 +171,4 @@ drop type flow_t_correlated_message;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
+
