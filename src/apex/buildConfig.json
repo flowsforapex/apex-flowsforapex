@@ -268,7 +268,7 @@
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6b - Lanes and More Lanes_25.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 6c - User Assignment - Putting it all together_25.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7a - MessageFlow Basics_25.1.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7b - Process Collaboration and MessageFlow Example (EE)_25.1.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7b - Process Collaboration and MessageFlow Example_25.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7e - Introduction to Iterations and Tasks_25.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7f - Iterations and Looped Sub Processes_25.1.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "sql/", "name": "Tutorial 7g - Iterations and Looped Nested Sub Processes_25.1.sql", "add_show_errors": false }
