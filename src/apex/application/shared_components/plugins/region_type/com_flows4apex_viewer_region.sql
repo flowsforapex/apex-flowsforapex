@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_plugin(
  p_id=>wwv_flow_imp.id(52324636500430595707)
 ,p_plugin_type=>'REGION TYPE'
 ,p_name=>'COM.FLOWS4APEX.VIEWER.REGION'
-,p_display_name=>'Flows for APEX - Viewer'
+,p_display_name=>'Flows for APEX - Viewer (deprecated)'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('REGION TYPE','COM.FLOWS4APEX.VIEWER.REGION'),'')
 ,p_javascript_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '#PLUGIN_FILES#js/flows4apex.apex.viewer.js',
@@ -30,7 +30,7 @@ wwv_flow_imp_shared.create_plugin(
 ,p_ajax_function=>'flow_viewer.ajax'
 ,p_standard_attributes=>'SOURCE_LOCATION:AJAX_ITEMS_TO_SUBMIT:ORDER_BY:NO_DATA_FOUND_MESSAGE:INIT_JAVASCRIPT_CODE'
 ,p_substitute_attributes=>false
-,p_version_scn=>1760507033
+,p_version_scn=>3976453786
 ,p_subscribe_plugin_settings=>true
 ,p_version_identifier=>'24.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'

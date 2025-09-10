@@ -184,7 +184,7 @@ regions:
   id: 28425138174759832
   identification: 
     name: Flow Viewer
-    type: Flows for APEX - Viewer (25.1)
+    type: Flows for APEX - Viewer
 
   source: 
     location: Local Database

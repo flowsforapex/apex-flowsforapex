@@ -663,3 +663,35 @@ regions:
         font-color: '#000000'
         alignment: center
 
+dynamic-actions: 
+- # ====== Dynamic Action: On Dialog Close - Enable/Disable ====
+  id: 4863215062240150
+  identification: 
+    name: On Dialog Close - Enable/Disable
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Automations # 9166221988802596
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 16803302695123701
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Automations # 9166221988802596
+
+    execution: 
+      sequence: 10
+      event: On Dialog Close - Enable/Disable # 4863215062240150
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

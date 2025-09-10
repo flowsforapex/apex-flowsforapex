@@ -46,7 +46,7 @@ regions:
   id: 6161598858353963900
   identification: 
     name: Flow Monitor (&P12_PRCS_NAME.)
-    type: Flows for APEX - Viewer (25.1)
+    type: Flows for APEX - Viewer
 
   source: 
     location: Local Database

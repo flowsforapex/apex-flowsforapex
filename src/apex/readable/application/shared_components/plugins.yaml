@@ -5082,10 +5082,10 @@
     settings: 
       type: Link
 
-- # ====== Plugin: Flows for APEX - Viewer (25.1) ==============
+- # ====== Plugin: Flows for APEX - Viewer =====================
   id: 7028045730394045
   identification: 
-    name: Flows for APEX - Viewer (25.1)
+    name: Flows for APEX - Viewer
     internal-name: COM.FLOWS4APEX.VIEWER.REGION.251
     type: Region
 
@@ -5093,7 +5093,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 3820754388
+    version-number: 3979109545
 
   callbacks: 
     api-interface: 3
@@ -5117,7 +5117,7 @@
 
   javascript: 
     file-urls: 
-    - '#PLUGIN_FILES#js/flows4apex.apex.viewer.js'
+    - '#PLUGIN_FILES#js/flows4apex.apex.viewer.js'
     - '#PLUGIN_FILES#js/flows4apex.viewer.min.js'
 
   information: 
@@ -7657,10 +7657,10 @@
     default: 
       value: PROCESS_ID
 
-- # ====== Plugin: Flows for APEX - Viewer =====================
+- # ====== Plugin: Flows for APEX - Viewer (deprecated) ========
   id: 52324636500430595707
   identification: 
-    name: Flows for APEX - Viewer
+    name: Flows for APEX - Viewer (deprecated)
     internal-name: COM.FLOWS4APEX.VIEWER.REGION
     type: Region
 
@@ -7668,7 +7668,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1760507033
+    version-number: 3976453786
 
   callbacks: 
     api-interface: Function
@@ -7688,14 +7688,14 @@
 
   css: 
     file-urls: 
-    - '#PLUGIN_FILES#css/diagram-js.css'
-    - '#PLUGIN_FILES#css/bpmn-js.css'
-    - '#PLUGIN_FILES#css/bpmn-embedded.css'
+    - '#PLUGIN_FILES#css/diagram-js.css'
+    - '#PLUGIN_FILES#css/bpmn-js.css'
+    - '#PLUGIN_FILES#css/bpmn-embedded.css'
     - '#PLUGIN_FILES#css/flows4apex.viewer.css'
 
   javascript: 
     file-urls: 
-    - '#PLUGIN_FILES#js/flows4apex.apex.viewer.js'
+    - '#PLUGIN_FILES#js/flows4apex.apex.viewer.js'
     - '#PLUGIN_FILES#js/flows4apex.viewer.min.js'
 
   information: 
