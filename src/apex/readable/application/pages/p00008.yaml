@@ -4422,7 +4422,7 @@ regions:
   id: 6133652177393567089
   identification: 
     name: Flow Viewer
-    type: Flows for APEX - Viewer (25.1)
+    type: Flows for APEX - Viewer
 
   source: 
     location: Local Database

@@ -14,7 +14,7 @@ wwv_flow_imp.component_begin (
 wwv_flow_imp_shared.create_component_group(
  p_id=>wwv_flow_imp.id(4817123621810257)
 ,p_name=>'Flows for APEX Components'
-,p_version_scn=>3820754388
+,p_version_scn=>3979109545
 ,p_group_comment=>'Contains all of the components required in a Flows for APEX application.'
 );
 wwv_flow_imp_shared.create_comp_grp_component(

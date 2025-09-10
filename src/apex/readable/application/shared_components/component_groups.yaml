@@ -5,7 +5,7 @@
     name: Flows for APEX Components
 
   subscription: 
-    version-number: 3820754388
+    version-number: 3979109545
 
   comments: 
     comments: Contains all of the components required in a Flows for APEX application.
@@ -49,7 +49,7 @@
   - # ====== Component:  =========================================
     id: 4820178057780558
     component: 
-      plug-in: Flows for APEX - Viewer (25.1) # 7028045730394045
+      plug-in: Flows for APEX - Viewer # 7028045730394045
 
   - # ====== Component:  =========================================
     id: 4820401783780558
@@ -59,5 +59,5 @@
   - # ====== Component:  =========================================
     id: 4820725397780558
     component: 
-      plug-in: Flows for APEX - Viewer # 52324636500430595707
+      plug-in: Flows for APEX - Viewer (deprecated) # 52324636500430595707
 
