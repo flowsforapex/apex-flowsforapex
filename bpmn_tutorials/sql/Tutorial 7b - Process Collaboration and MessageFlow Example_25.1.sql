@@ -698,7 +698,7 @@ begin
       ,q'[]'
   ));
   flow_diagram.upload_and_parse(
-    pi_dgrm_name => 'Tutorial 7b - Process Collaboration and MessageFlow Example (EE)',
+    pi_dgrm_name => 'Tutorial 7b - Process Collaboration and MessageFlow Example',
     pi_dgrm_short_description => 'Flows for APEX BPMN Tutorial - Part 7b - provides a working model of process collaboration and message flow between 3 collaborating processes.',
     pi_dgrm_description => 'The provided BPMN model outlines a comprehensive business process that coordinates interactions between three primary participants: Customer, Supplier, and Shipper. This model is designed to facilitate the seamless handling of orders and deliveries within a supply chain network, utilizing message flows to ensure efficient communication and status updates across all parties involved.
 

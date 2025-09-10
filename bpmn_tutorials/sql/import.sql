@@ -11,6 +11,7 @@ spool tutorials.log
 @"Tutorial 4a - Tasks Get Your Work Done!_25.1.sql";
 @"Tutorial 4b - Reminders and Timeouts_25.1.sql";
 @"Tutorial 4c - Task Priority and Due Dates_25.1.sql";
+@"Tutorial 4d - Using an AI Service Task_25.1.sql";
 @"Tutorial 5a - Structure your Process with Sub Processes and Calls_25.1.sql";
 @"Tutorial 5b - Introducing Sub Processes_25.1.sql";
 @"Tutorial 5c - Handling Sub Process Error and Escalation Events_25.1.sql";
@@ -42,6 +43,7 @@ begin
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 4a - Tasks Get Your Work Done!', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 4b - Reminders and Timeouts', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 4c - Task Priority and Due Dates', pi_dgrm_version => '25.1');
+  flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 4d - Using an AI Service Task', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 5a - Structure your Process with Sub Processes and Calls', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 5b - Introducing Sub Processes', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 5c - Handling Sub Process Error and Escalation Events', pi_dgrm_version => '25.1');
@@ -57,7 +59,7 @@ begin
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 7f - Iterations and Looped Sub Processes', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 7g - Iterations and Looped Nested Sub Processes', pi_dgrm_version => '25.1');
   flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 8a - The Full Monty (the top half!)', pi_dgrm_version => '25.1');
-  flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 8c - Background Session Configuration', pi_dgrm_version => '24.1');
+  flow_admin_api.release_diagram (pi_dgrm_name =>'Tutorial 8c - Background Session Configuration', pi_dgrm_version => '25.1');
 end;
 /
 

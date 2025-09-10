@@ -10,19 +10,20 @@
 --
 */
 create or replace view flow_p0020_instance_timeline_vw as
-select prcs_id
-     , to_char(performed_on, 'YYYY-MM-DD HH24:MI:SSXFF TZR') event_date
+  select prcs_id
+     , subflow
+     , step_key
+     , process_level
+     , objt
+     , object_type
+     , object_sub_type
+     , bpmn_icon
+     , bpmn_super_type
+     , performed_on
      , lower(performed_by) user_name
-     , case operation
-        when 'variable set' then 'Variable "'||proc_var||'" set to "'||value||'".'
-        when 'current step' then 'Step '||objt||' became Current'
-        when 'step started' then 'Step '||objt||' started work'
-        when 'step completed' then 'Step '||objt||' completed'
-        when 'created' then 'Process Instance Created'
-        when 'started' then 'Process Instance Started'
-        else description
-       end as event_title
+     , severity
      , operation as event_type
+     , event_comment
      , case operation
         when 'current step' then 'is-new'
         when 'step started' then 'is-updated'
@@ -38,24 +39,9 @@ select prcs_id
         when 'finish called model' then 'is-new'
        end as event_status
      , case operation
-        when 'current step' then 'subflow '||subflow|| ' • process level '||process_level||nvl2(value,' • previous step  '||value,'')
-        when 'step started' then 'subflow '||subflow|| nvl2(value,' • reserved by '||value,' • not reserved')
-        when 'step completed' then null
-        when 'created' then 'process '||prcs_id||nvl2(value,' • name '||value,'')
-        when 'started' then 'process '||prcs_id||nvl2(value,' • name '||value,'')    
-        when 'variable set' then 
-                  nvl2(objt,'step '||objt||' ','')
-                ||nvl2(subflow,'• subflow '||subflow||' ','')
-                ||nvl2(event_comment,'• expression set '||event_comment,'')
-        when 'Gateway Processed' then 'subflow '||subflow||' • forward paths - '||event_comment
-        when 'start called model' then event_comment
-        when 'finish called model' then event_comment
-        else 'other operation on Object '||objt||'  subflow ' ||subflow     
-       end as event_desc
-     , 'u-color-44 fa fa-clock-o' as USER_COLOR
-     , case operation
         when 'current step' then 'fa fa-circle-o'
         when 'step started' then 'fa fa-play-circle-o'
+        when 'step interrupted' then 'fa fa-pause-circle-o'
         when 'step completed' then 'fa fa-check-circle-o'
         when 'completed' then 'fa fa-dot-circle-o'
         when 'started' then 'fa fa-circle-o'
@@ -67,14 +53,4 @@ select prcs_id
         when 'start called model' then 'fa fa-box-arrow-in-south'
         when 'finish called model' then 'fa fa-box-arrow-out-north'
        end as event_icon
-     , operation
-     , objt
-     , object_type
-     , object_sub_type
-     , bpmn_icon
-     , bpmn_super_type
-     , subflow
-     , step_key
-     , process_level
-     , severity
 from flow_instance_events_vw;
