@@ -33,9 +33,9 @@ begin
   begin
     select count(*)
       into l_remote_server_count
-      from apex_workspace_remote_servers
-     where static_id = 'F4A_AI_SERVICE'
-       and workspace_name = upper('^ws_name.');
+      from apex_workspace_ai_services
+     where remote_server_static_id = 'F4A_AI_SERVICE'
+       and workspace = upper('^ws_name.');
   exception
     when others then
       l_remote_server_count := 0;
@@ -45,17 +45,10 @@ begin
   if l_remote_server_count = 0 then
     apex_application_install.set_remote_server(
       p_static_id => 'F4A_AI_SERVICE',
-      p_name => 'Flows4APEX AI Service (Placeholder)',
-      p_base_url => 'https://example.com',
-      p_https_host_verification => 'Y'
+      p_base_url => 'https://example.com'
     );
     dbms_output.put_line('>> Created placeholder F4A_AI_SERVICE remote server');
   else
-    -- Remote server exists, just reference it
-    apex_application_install.set_remote_server(
-      p_static_id => 'F4A_AI_SERVICE',
-      p_remote_server_static_id => 'F4A_AI_SERVICE'
-    );
     dbms_output.put_line('>> Using existing F4A_AI_SERVICE remote server');
   end if;
   
