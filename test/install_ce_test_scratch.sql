@@ -43,7 +43,7 @@ END;
 
 PROMPT >> Install App required for tests
 
-@apps/A24_approval_comp_integration_apex22_2.sql
+@apps/A24_approval_comp_integration_apex24_1.sql
 
 PROMPT >> Create FLOWTESTER1 and FLOWTESTER2 in Workspace
 PROMPT >> Update test_constants.pkg with new App ID for App A24. and recompile
