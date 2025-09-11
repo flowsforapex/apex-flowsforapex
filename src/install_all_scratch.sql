@@ -89,7 +89,7 @@ begin
   -- If remote server doesn't exist, set it to example.com
   if l_remote_server_count = 0 then
     apex_application_install.set_remote_server(
-      p_static_id => 'F4A_AI_SERVICE'
+      p_static_id => 'F4A_AI_SERVICE',
       p_base_url => 'https://example.com'
     );
     dbms_output.put_line('>> Created placeholder F4A_AI_SERVICE remote server');
