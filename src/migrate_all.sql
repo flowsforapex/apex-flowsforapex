@@ -47,9 +47,9 @@ begin
       p_static_id => 'F4A_AI_SERVICE',
       p_base_url => 'https://example.com'
     );
-    dbms_output.put_line('>> Created placeholder F4A_AI_SERVICE remote server');
+    sys.dbms_output.put_line('>> Created placeholder F4A_AI_SERVICE remote server');
   else
-    dbms_output.put_line('>> Using existing F4A_AI_SERVICE remote server');
+    sys.dbms_output.put_line('>> Using existing F4A_AI_SERVICE remote server');
   end if;
   
   -- Continue with existing application setup...

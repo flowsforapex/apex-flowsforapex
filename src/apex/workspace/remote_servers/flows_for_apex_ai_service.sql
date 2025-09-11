@@ -1,7 +1,7 @@
-prompt --workspace/remote_servers/openai_chatgpt_4o
+prompt --workspace/remote_servers/flows_for_apex_ai_service
 begin
 --   Manifest
---     REMOTE SERVER: OpenAI ChatGPT 4o
+--     REMOTE SERVER: Flows for APEX - AI Service
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
@@ -13,7 +13,7 @@ wwv_flow_imp.component_begin (
 );
 wwv_imp_workspace.create_remote_server(
  p_id=>wwv_flow_imp.id(1446946413060929)
-,p_name=>'OpenAI ChatGPT 4o'
+,p_name=>'Flows for APEX - AI Service'
 ,p_static_id=>'F4A_AI_SERVICE'
 ,p_base_url=>nvl(wwv_flow_application_install.get_remote_server_base_url('F4A_AI_SERVICE'),'https://api.openai.com/v1')
 ,p_https_host=>nvl(wwv_flow_application_install.get_remote_server_https_host('F4A_AI_SERVICE'),'')
