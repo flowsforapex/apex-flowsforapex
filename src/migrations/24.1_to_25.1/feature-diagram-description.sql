@@ -20,4 +20,5 @@ PROMPT >> Add dgrm_icon
 
   alter table flow_diagrams add dgrm_icon varchar2(50 char);
   comment on column flow_diagrams.dgrm_icon is 'icon for this diagram';
-/
+
+PROMPT >> Finished adding new diagram table columns

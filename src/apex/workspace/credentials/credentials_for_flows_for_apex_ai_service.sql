@@ -1,7 +1,7 @@
-prompt --workspace/credentials/credentials_for_flows_for_apex_ai_service2
+prompt --workspace/credentials/credentials_for_flows_for_apex_ai_service
 begin
 --   Manifest
---     CREDENTIAL: Credentials for flows for apex ai service2
+--     CREDENTIAL: Credentials for Flows for APEX - AI Service
 --   Manifest End
 wwv_flow_imp.component_begin (
  p_version_yyyy_mm_dd=>'2024.05.31'
@@ -13,8 +13,8 @@ wwv_flow_imp.component_begin (
 );
 wwv_imp_workspace.create_credential(
  p_id=>wwv_flow_imp.id(4444843643055631)
-,p_name=>'Credentials for flows for apex ai service2'
-,p_static_id=>'credentials_for_flows_for_apex_ai_service2'
+,p_name=>'Credentials for Flows for APEX - AI Service'
+,p_static_id=>'credentials_for_flows_for_apex_ai_service'
 ,p_authentication_type=>'HTTP_HEADER'
 ,p_valid_for_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'https://api.openai.com/v1',

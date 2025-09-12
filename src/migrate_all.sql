@@ -1,6 +1,8 @@
 set define '^'
 set concat '.'
 
+spool migrate_all_scratch.log
+
 PROMPT >> Flows4APEX Installation
 PROMPT >> =======================
 
@@ -19,23 +21,48 @@ ACCEPT to_version char PROMPT 'Enter next release to upgrade to (e.g., 22.1):'
 PROMPT >> Application Installation
 PROMPT >> ========================
 
-PROMPT >> Set up environment
+PROMPT >> Configure Remote Servers for Application
 declare
   l_app_id number;
+  l_remote_server_count number := 0;
 begin
+  -- Set workspace context
+  apex_application_install.set_workspace( p_workspace => '^ws_name.' );
+  
+  -- Check if F4A_AI_SERVICE remote server already exists
+  begin
+    select count(*)
+      into l_remote_server_count
+      from apex_workspace_ai_services
+     where remote_server_static_id = 'F4A_AI_SERVICE'
+       and workspace = upper('^ws_name.');
+  exception
+    when others then
+      l_remote_server_count := 0;
+  end;
+  
+  -- If remote server doesn't exist, set it to example.com
+  if l_remote_server_count = 0 then
+    apex_application_install.set_remote_server(
+      p_static_id => 'F4A_AI_SERVICE',
+      p_base_url => 'https://example.com'
+    );
+    sys.dbms_output.put_line('>> Created placeholder F4A_AI_SERVICE remote server');
+  else
+    sys.dbms_output.put_line('>> Using existing F4A_AI_SERVICE remote server');
+  end if;
+  
+  -- Continue with existing application setup...
   begin
     select application_id
       into l_app_id
       from apex_applications
      where alias = upper('^app_alias.')
-     and workspace = upper('^ws_name')
-    ;
+       and workspace = upper('^ws_name.');
   exception
     when no_data_found then
       l_app_id := null;
   end;
-
-  apex_application_install.set_workspace( p_workspace => '^ws_name.' );
 
   if l_app_id is null then
     apex_application_install.generate_application_id;
@@ -77,3 +104,5 @@ end;
 
 PROMPT >> Finished Installation of Flows4APEX
 PROMPT >> ====================================
+
+spool off

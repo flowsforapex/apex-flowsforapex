@@ -16,7 +16,7 @@ PROMPT >> ------------------------------------------------------
 PROMPT >> Running Schema Upgrade from 24.1 to 25.1
 PROMPT >> -------------------------------------------
 
-
+@@feature-diagram-description.sql
 @@feature-rewind.sql
 @@feature-apex-human-task-enhs.sql
 @@feature-AIPrompts.sql

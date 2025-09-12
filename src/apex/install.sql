@@ -3,8 +3,8 @@ prompt --install
 @@application/delete_application.sql
 @@application/create_application.sql
 @@application/user_interfaces.sql
-@@workspace/credentials/credentials_for_flows_for_apex_ai_service2.sql
-@@workspace/remote_servers/openai_chatgpt_4o.sql
+@@workspace/credentials/credentials_for_flows_for_apex_ai_service.sql
+@@workspace/remote_servers/flows_for_apex_ai_service.sql
 @@application/shared_components/navigation/lists/p8_subflow_row_action_menu.sql
 @@application/shared_components/navigation/lists/p10_instance_header_action_menu.sql
 @@application/shared_components/navigation/lists/p9_configuration_pages.sql

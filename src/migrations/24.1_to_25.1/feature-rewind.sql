@@ -9,7 +9,7 @@
 */
 PROMPT >> Schema Changes for Rewind and Event Logging Feature
 PROMPT >> ---------------------------------------------------
-
+PROMPT >> > Adding columns to Table FLOW_INSTANCE_EVENT_LOG
 declare
   v_column_exists          number := 0; 
 begin
@@ -25,45 +25,6 @@ begin
                               , lgpr_step_key   VARCHAR2(50)
                               , lgpr_apex_task_id NUMBER
                               , lgpr_severity    NUMBER
-                              )';
-      execute immediate 'alter table flow_instance_event_log 
-                         modify lgpr_prcs_name null ';
-  end if;
-end;
-/
-
-declare
-  v_column_exists          number := 0; 
-begin
-  select count(*) 
-    into v_column_exists
-    from user_tab_cols
-   where upper(column_name) = 'SFLG_MATCHING_OBJECT'
-     and upper(table_name)  = 'FLOW_SUBFLOW_LOG';
-
-  if (v_column_exists = 0) then
-      execute immediate 'alter table flow_subflow_log 
-                          add ( sflg_matching_object VARCHAR2(50)
-                              )';
-  end if;
-end;
-/
-
-declare
-  v_column_exists          number := 0; 
-begin
-  select count(*) 
-    into v_column_exists
-    from user_tab_cols
-   where upper(column_name) = 'LGPR_SBFL_ID'
-     and upper(table_name)  = 'FLOW_INSTANCE_EVENT_LOG';
-
-  if (v_column_exists = 0) then
-      execute immediate 'alter table flow_instance_event_log 
-                          add ( lgpr_sbfl_id       NUMBER
-                              , lgpr_step_key      VARCHAR2(50)
-                              , lgpr_apex_task_id  NUMBER
-                              , lgpr_severity      NUMBER
                               , lgpr_process_level NUMBER
                               )';
       execute immediate 'alter table flow_instance_event_log 
@@ -72,6 +33,7 @@ begin
 end;
 /
 
+PROMPT >> > Adding columns to Table FLOW_SUBFLOW_LOG
 declare
   v_column_exists          number := 0; 
 begin
@@ -89,6 +51,27 @@ begin
 end;
 /
 
+
+PROMPT >> > Adding columns to Table FLOW_SUBFLOW_LOG
+
+declare
+  v_column_exists          number := 0; 
+begin
+  select count(*) 
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SFLG_MATCHING_OBJECT'
+     and upper(table_name)  = 'FLOW_SUBFLOW_LOG';
+
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflow_log 
+                          add ( sflg_matching_object VARCHAR2(50)
+                              )';
+  end if;
+end;
+/
+
+PROMPT >> > Adding columns to Table FLOW_PROCESSES
 declare
   v_column_exists          number := 0; 
   l_existing_logging_level flow_configuration.cfig_value%type;
@@ -109,11 +92,9 @@ begin
                               )';
 
   end if;
-
 end;
 /
 
-PROMPT >>> Table flow_processes altered 
 
 PROMPT >>> adding Table FLOW_BPMN_TYPES
 
@@ -130,7 +111,7 @@ PROMPT >>> adding Table FLOW_BPMN_TYPES
                 using index  enable
    ) ;
 
-
+PROMPT >> > Adding columns to Table FLOW_STEP_EVENT_LOG
 
 declare
   v_column_exists          number := 0; 
@@ -151,6 +132,8 @@ begin
 
 end;
 /
+
+PROMPT >> > Adding columns to Table FLOW_VARIABLE_EVENT_LOG
 
 declare
   v_column_exists          number := 0; 
@@ -175,7 +158,7 @@ end;
 PROMPT >>> Migrate logging configuration for flow_processes and flow_configuration
 
 begin
-  update flow_processes
+  update /*+ NOPARALLEL */ flow_processes 
     set prcs_logging_level = ( select case nvl(cfig_value, 'none')
                                         when 'none'     then '0'
                                         when 'standard' then '6'
@@ -188,7 +171,7 @@ begin
   where prcs_status in ('created', 'running', 'suspended', 'error')
     and prcs_logging_level is null;
 
-  insert into flow_configuration (cfig_key, cfig_value)
+  insert /*+ NOPARALLEL */ into flow_configuration (cfig_key, cfig_value) 
   select 'logging_default_level',  -- new key
         case nvl(cfig_value, 'none')
           when 'none'     then '0'
@@ -200,7 +183,7 @@ begin
     from flow_configuration
   where cfig_key = 'logging_level';
 
-  insert into flow_configuration (cfig_key, cfig_value)
+  insert /*+ NOPARALLEL */into flow_configuration (cfig_key, cfig_value)  
   select 'logging_bpmn_enabled',  -- new key
         case nvl(cfig_value, 'none')
           when 'none'     then 'false'
@@ -212,7 +195,7 @@ begin
     from flow_configuration
   where cfig_key = 'logging_level';
 
-  insert into flow_configuration (cfig_key, cfig_value) values ('logging_bpmn_retain_days', '365');
+  insert /*+ NOPARALLEL */ into flow_configuration (cfig_key, cfig_value) values ('logging_bpmn_retain_days', '365');
 
   commit;
 end;

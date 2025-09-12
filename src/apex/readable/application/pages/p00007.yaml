@@ -3725,7 +3725,7 @@ dynamic-actions:
       action: Open AI Assistant
 
     generative-ai: 
-      service: OpenAI ChatGPT 4o # 1446946413060929
+      service: Flows for APEX - AI Service # 1446946413060929
       system-prompt: '&P7_SYSTEM_PROMPT.'
       welcome-message: '&P7_AI_WELCOME.'
 
