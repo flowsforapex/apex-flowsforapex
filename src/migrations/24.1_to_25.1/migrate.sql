@@ -16,12 +16,16 @@ PROMPT >> ------------------------------------------------------
 PROMPT >> Running Schema Upgrade from 24.1 to 25.1
 PROMPT >> -------------------------------------------
 
-
+@@feature-diagram-description.sql
 @@feature-rewind.sql
 @@feature-apex-human-task-enhs.sql
 @@feature-AIPrompts.sql
 @@feature-AQMessageFlow.sql
 @@feature-rest-enhancements.sql
+
+-- drop views no longer used by engine app
+drop view flow_p0008_vw;
+drop view flow_p0010_vw;
 
 @@set_flows_version.sql
 

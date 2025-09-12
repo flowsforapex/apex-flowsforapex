@@ -1,8 +1,8 @@
 ---
-- # ====== Generative AI Service: OpenAI ChatGPT 4o ============
+- # ====== Generative AI Service: Flows for APEX - AI Service ==
   id: 1446946413060929
   identification: 
-    name: OpenAI ChatGPT 4o
+    name: Flows for APEX - AI Service
 
   endpoint-url: 
     url: 'https://api.openai.com/v1'
