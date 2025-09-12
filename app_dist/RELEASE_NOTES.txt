@@ -1,6 +1,7 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v24.1                 *
+*            Flows for APEX v25.1                 *
+*             Community Edition                   *
 *          Installation instructions              *
 *              flowsforapex.org                   *
 *                                                 *
@@ -8,22 +9,30 @@
 
 PREREQUISITES
 - Oracle Database 19c or higher (all editions supported)
-- Oracle Application Express 22.1 or higher
+- Oracle Application Express 24.1 or higher
 - APEX workspace with at least 50 MB space
 - Google Chrome 85+ / Firefox 77+ / Edge 85+ / Safari 13.1 - if possible, use the latest version
 
 INSTALLING THE APPLICATION
 - Logon to the APEX workspace
+- Check that you have system privileges that include create table, create view, create procedure, create sequence, create object and create job
 - In the Application Builder, click on "Import"
-- Import the application file "flowsforapex_apex221.sql" from "Applications" folder using Unicode UTF-8 as file character set
+- We have 2 versions of the Flows for APEX application. (NEW from 25.1)
+  - If you are installing on oracleapex.com, apex.oracle.com, or apex.oraclecorp.com or other throttled systems with import file size 
+    and/or import time-out restrictions, you should choose the "flowsforapex_apex241_en.sql" file which is English only.
+  - otherwise (including OCI Always Free environments) choose the full application file which installs with all 10 languages "flowsforapex_apex241_all_lang.sql"
+- Import the application file "flowsforapex_apex241_xxlangxx.sql" from "Applications" folder using Unicode UTF-8 as file character set
 - Let APEX choose an application ID for you (default)
 - When asked to install the supporting objects, select "Yes"
-- Refresh the theme when installing the app in APEX versions 22.2 or higher
+- Refresh the theme when installing the app in APEX versions 24.2 or higher
   Note: switching the theme style is not supported.
 - Optionally, you can now import the demo app in the same way by using file "flowsforapex_sample_app_apex221.sql"
 - Optionally, you can import the simple process starter app in the same way by using file "flowsforapex_simple_process_starter_apex221.sql"
-- Optionally, if you want to use timers, execute "grant create job" to your workspace schema as sys first and then execute the supplied script enable_timers.sql in your workspace schema
 - Optionally, you can enable REST access by enabling this through SQL Workshop>RESTful Services and executing the supplied script REST_v1.sql in your workspace schema
+- After installation, open the Flows for APEX application.  Select 'Configuration' from the top, right-hand menu.
+  - Engine Configuration.  Provide a default Application ID, Page ID, and Username from your workspace that can be used by background processes (timers, etc).
+  - Timer Configuration.  Timers should be enabled for use.
+
 
 INSTALLING ADDITIONAL LANGUAGES
 - By default, the Flows for APEX application is installed in the English language.
@@ -33,6 +42,18 @@ MIGRATING EXISTING INSTALLATIONS
 - Follow the instructions at https://flowsforapex.org/latest/migration/
 
 HISTORY
+* v25.1 Community Edition
+  - Adds GenAI Service Task.
+  - Adds Error Boundary Events on Script tasks
+  - Enhances logging to include events occurring during step processing.  Logging levels can be set at system, diagram, and instance level for maximum flexibility.
+  - Enhanced use of APEX Human Tasks as BPMN User Tasks, allowing the workflow to assign task ownership and admin roles, and to clean up cancelled tasks.
+  - New plugin for returning APEX Human Task task state and outcome to Flows for APEX.
+  - New Flow Viewer plugin built as a web-component and with simpler API and allowing badging.
+  - Adds an automation for purging completed process instances after a retention period. 
+  - Existing automations for archiving and statistics gathering are now exposed in the Flows for APEX application.
+  - Allows Instance naming to be (re)set declaratively using substitutions during the BPMN Start Event.
+  - Support for Flows for APEX Enterprise Edition 25.1 features process suspend and resume, and process rewind.
+  - Required APEX version increased to APEX v24.1
 
 * v24.1 Community Edition
   - Adds JSON-typed process variables.
