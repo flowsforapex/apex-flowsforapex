@@ -23,9 +23,7 @@ PROMPT >> -------------------------------------------
 @@feature-AQMessageFlow.sql
 @@feature-rest-enhancements.sql
 
--- drop views no longer used by engine app
-drop view flow_p0008_vw;
-drop view flow_p0010_vw;
+@@remove-unused-views.sql
 
 @@set_flows_version.sql
 
