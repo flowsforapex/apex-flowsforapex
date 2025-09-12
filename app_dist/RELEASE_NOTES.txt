@@ -34,7 +34,7 @@ INSTALLING THE APPLICATION
   - Timer Configuration.  Timers should be enabled for use.
 
 
-INSTALLING ADDITIONAL LANGUAGES
+INSTALLING ADDITIONAL LANGUAGES AFTER IMPORTING USING flowsforapex_apex241_all_lang.sql
 - By default, the Flows for APEX application is installed in the English language.
 - Additional languages can be made available by going to "Shared Components" > "Application Translations" > "Publish Translated Applications". Here you can select and publish the required languages.
 
