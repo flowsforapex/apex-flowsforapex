@@ -24,6 +24,7 @@
       , { "content_type": "plaintext", "path": "migrations/24.1_to_25.1/", "name": "feature-AIPrompts.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/24.1_to_25.1/", "name": "feature-AQMessageFlow.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/24.1_to_25.1/", "name": "feature-rest-enhancements.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "migrations/24.1_to_25.1/", "name": "remove-unused-views.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "migrations/24.1_to_25.1/", "name": "set_flows_version.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_apex_env.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_types_pkg.pks", "add_show_errors": false }

@@ -23,6 +23,8 @@ PROMPT >> -------------------------------------------
 @@feature-AQMessageFlow.sql
 @@feature-rest-enhancements.sql
 
+@@remove-unused-views.sql
+
 @@set_flows_version.sql
 
 
