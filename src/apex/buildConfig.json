@@ -28,6 +28,25 @@
     , "build_type": "concat"
     , "build_path": "apex/"
     , "script_path": "apex/supportingObjects"
+    , "script_name": "Comments_Scheduler"
+    , "script_extension": "sql"
+    , "log_extension": "log"
+    , "add_newline": true
+    , "version": "01.00.00"
+    , "schema_name": "FLOWS4APEX"
+    , "keepTempFiles": false
+    , "content":
+      [
+        { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_comments.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "ddl/", "name": "create_scheduler_objects.sql", "add_show_errors": false }
+      ]
+    }
+  , {
+      "base_path": "../"
+    , "search_path": "/"
+    , "build_type": "concat"
+    , "build_path": "apex/"
+    , "script_path": "apex/supportingObjects"
     , "script_name": "Packages_Spec"
     , "script_extension": "sql"
     , "log_extension": "log"
