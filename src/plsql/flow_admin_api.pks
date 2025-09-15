@@ -158,6 +158,11 @@ Available in Flows for APEX Enterprise Edition.
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 /**
+Procedure mark_subflow_for_deletion
+This procedure marks a suspended subflow for deletion, as part of the process rewind feature.
+The subflow is deleted when the parent process instance is next resumed.  
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure return_to_prior_gateway
   (
@@ -166,6 +171,12 @@ Available in Flows for APEX Enterprise Edition.
   , p_comment     in flow_instance_event_log.lgpr_comment%type default null
   );
 /**
+Procedure return_to_prior_gateway
+This procedure steps a suspended subflow backwards to the immediately previous gateway.
+This can be used to return a suspended subflow back to the immediately previous gateway.
+This can be performed multiple times to rewind back to the previous gateway, then rewind back to the next previous gateway.
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure return_to_prior_step
   (
@@ -176,6 +187,11 @@ Available in Flows for APEX Enterprise Edition.
   );
 
 /**
+Procedure return_to_prior_step
+This procedure rewinds a suspended subflow backwards to a specified prior step.
+This can be used to return a suspended subflow back to a specified prior step.  The specified prior step can be any earlier step, as long as this does not rewind through a gateway, intermediate event, or subprocess / call activity boundary.
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure return_to_last_step
   (
@@ -185,7 +201,7 @@ Available in Flows for APEX Enterprise Edition.
   );
 /**
 Procedure return_to_last_step
-This procedure steps a subflow backwards to the immediately previous step.
+This procedure rewinds a suspended subflow backwards to the immediately previous step.
 This is ONLY available for a subflow that is 'waiting at gateway'.  It can only be used one single step back.
 If the subflow is not at a gateway, or is at the start of the subflow, the procedure will raise an exception.
 
@@ -197,6 +213,11 @@ Available in Flows for APEX Enterprise Edition.
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 /**
+Procedure rewind_from_subprocess
+This procedure rewinds a suspended subflow that is at the top level inside a subprocess backwards to the subprocess object in its calling process.
+This can be performed multiple times to rewind back to the previous subprocess, then rewind back to the next previous subprocess.
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure rewind_from_call_activity
   ( p_process_id    in flow_processes.prcs_id%type
@@ -204,6 +225,11 @@ Available in Flows for APEX Enterprise Edition.
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 /**
+Procedure rewind_from_call_activity
+This procedure rewinds a suspended subflow that is at the top level inside a call activity backwards to the call activity object in its calling process.
+This can be performed multiple times to rewind back to the previous call activity, then rewind back to the next previous call activity.
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure rewind_to_matched_throwing_link_event
   ( p_process_id    in flow_processes.prcs_id%type
@@ -211,6 +237,10 @@ Available in Flows for APEX Enterprise Edition.
   , p_comment       in flow_instance_event_log.lgpr_comment%type default null
   );
 /**
+Procedure rewind_to_matched_throwing_link_event
+This procedure rewinds a suspended subflow that is at a catching link event backwards to the matching throwing link event in the same process.
+
+Available in Flows for APEX Enterprise Edition.
 **/
   procedure flow_force_next_step
   ( p_process_id                   in flow_processes.prcs_id%type
@@ -218,7 +248,14 @@ Available in Flows for APEX Enterprise Edition.
   , p_step_key                     in flow_subflows.sbfl_step_key%type
   , p_comment                      in flow_instance_event_log.lgpr_comment%type default null
   );
-   
+/**
+Procedure flow_force_next_step
+This procedure forces a  subflow in error state to step forward to the next step, ignoring the current errored step.CURSOR
+This can be used to 'skip' a step that is in error state, for example a script task that has a coding error or a failed reminder sendmail that you know is not important.
+The process instance does **not** need to be suspended to use this procedure.
+
+Available in Flows for APEX Enterprise Edition.
+**/
 
 end flow_admin_api;
 /

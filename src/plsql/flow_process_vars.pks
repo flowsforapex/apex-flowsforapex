@@ -174,7 +174,7 @@ procedure set_var
 /**
 SIGNATURE 3b - DATE - Using Subflow_id.
 
-This procedure is used to set a DATE value of a process variable usingthe current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
+This procedure is used to set a DATE value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
 EXAMPLE
 
@@ -227,7 +227,7 @@ procedure set_var
 /**
 SIGNATURE 4b - CLOB - Using Subflow_id.
 
-This procedure is used to set a CLOB value of a process variable usingthe current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
+This procedure is used to set a CLOB value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
 EXAMPLE
 
@@ -873,7 +873,7 @@ procedure set_business_ref
 , pi_scope      in flow_subflows.sbfl_scope%type default 0   -- Variable Scope, defaults to 0
 );
 /**
-SIGNATURE 1 - Usinfg Scope.
+SIGNATURE 1 - Using Scope.
 
 This function is used to set the value of the built-in BUSINESS_REF process variable in scope 0.
 

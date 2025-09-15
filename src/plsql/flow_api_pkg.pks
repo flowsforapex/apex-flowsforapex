@@ -463,7 +463,7 @@ This procedure is used to signal to other users that a user is going to handle t
 
 EXAMPLE
 
-This example will reserve the step in proces ID 1 and subflow ID 3 for the current user.
+This example will reserve the step in process ID 1 and subflow ID 3 for the current user.
 
 ```sql
 begin
@@ -489,7 +489,7 @@ This procedure is used to remove a reservation (see the documentation on reserva
 
 EXAMPLE
 
-This example will release the reservation for a step in proces ID 1 and subflow ID 3 for the current user.
+This example will release the reservation for a step in process ID 1 and subflow ID 3 for the current user.
 
 ```sql
 begin
@@ -514,7 +514,7 @@ This procedure is used to tell the flow engine that the current step is complete
 
 EXAMPLE
 
-This example will complete a step in proces ID 1 and subflow ID 3 for the current user.
+This example will complete a step in process ID 1 and subflow ID 3 for the current user.
 
 ```sql
 begin
@@ -537,12 +537,12 @@ end;
    );
  /** Procedure flow_restart_step
 This procedure is designed to be called by an administrator to restart, for example, a scriptTask or serviceTask that has failed due to an error. 
-The intended usage is that the adminstrator can fix the script or edit the process data that caused the task to fail, and then restart the task using this call.
+The intended usage is that the administrator can fix the script or edit the process data that caused the task to fail, and then restart the task using this call.
 A comment can optionally be provided, which will be added to the task event log entry. It should only be used on a subflow having a status of ‘error’
 
 EXAMPLE
 
-This example will restart a step in proces ID 1 and subflow ID 3.
+This example will restart a step in process ID 1 and subflow ID 3.
 
 ```sql
 begin
@@ -574,7 +574,7 @@ It can change the currently scheduled time to a future time, or can instruct the
 If the Timer event is a single event timer (timer types Date or Duration), it will change the time at which the event is scheduled to occur to the new time. 
 If the timer is a Cycle Timer, this changes the time that the next firing is scheduled to occur.  If later cycles exist, the following cycle will be scheduled at the new firing time + the repeat interval. 
 To fire the timer immediately, set p_is_immediate = true. It should then run on the next timer cycle, usually within a few seconds.
-To change the firing time to another future time, supply a new timestamp with time zone contaiing the new time. 
+To change the firing time to another future time, supply a new timestamp with time zone containing the new time. 
 A comment can be provided, which is passed to the log file for explanation of any rescheduling.
 
 EXAMPLE
@@ -592,7 +592,7 @@ begin
 end;
 ```
 
-This example causes a waiting step in proces ID 1 and subflow ID 3 to be rescheduled for a future time (+2 days).
+This example causes a waiting step in process ID 1 and subflow ID 3 to be rescheduled for a future time (+2 days).
 
 ```sql
 begin
@@ -695,7 +695,7 @@ end;
    );
  /**
 return_approval_result Procedure (DEPRACATED - Use procedure return_task_state_outcome
-A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed or otherwise changd state.
+A convenience procedure for returning an APEX Approval result into a Flows for APEX process when the task has ben completed or otherwise changed state.
 This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
 then performs a flow_complete_step to move to the next step.
 
@@ -730,7 +730,7 @@ return_task_state_outcome Procedure
 
 From Flows for APEX 25.1.   Use this in preference to return_approval_result, which is now deprecated.
 
-A convenience procedure for returning an APEX Human Task (Approval or Action Task) result and state into a Flows for APEX process when the task has ben completed or otherwise changd state.
+A convenience procedure for returning an APEX Human Task (Approval or Action Task) result and state into a Flows for APEX process when the task has ben completed or otherwise changed state.
 This procedure checks the Task ID is valid, stores p_result into the return variable (as defined in the process diagram),
 then performs a flow_complete_step to move to the next step.
 
@@ -814,23 +814,65 @@ flow_api_pkg.task_business_admins      ( p_process_id => :PROCESS_ID,
   , p_key_value     flow_message_subscriptions.msub_key_value%type
   , p_payload       clob default null
   );
+/**
+receive_message Procedure
+This procedure is used to deliver a message to a waiting message event in a process instance.  
 
+For more information on message events, see the documentation.
 
-
-
+EXAMPLE
+```sql
+flow_api_pkg.receive_message ( p_message_name  => 'CustomerPOReceived',
+                                p_key_name      => 'PONumber',
+                                p_key_value     => 'PO12345',
+                                p_payload       => '{"PONumber" : "PO12345", 
+                                                     "Amount": 1234.56, 
+                                                     "Currency": "USD",
+                                                     "CustomerID": "CUST001"}' );
+```
+**/
   function intervalDStoSec (
     p_intervalDS  interval day to second
   ) return number;
+/**
+intervalDStoSec Function
+This function returns the number of seconds in an interval day to second value.
+
+EXAMPLE
+```sql
+SELECT flow_api_pkg.intervalDStoSec ( INTERVAL '1 12:30:00' DAY TO SECOND ) FROM dual;
+```
+returns 131,400 seconds (1 day, 12 hours, 30 minutes)
+
+**/
 
     function intervalDStoHours (
     p_intervalDS  interval day to second
   ) return number;
+/**
+intervalDStoHours Function
+This function returns the number of hours in an interval day to second value.
 
+EXAMPLE
+```sql
+SELECT flow_api_pkg.intervalDStoHours ( INTERVAL '1 12:30:00' DAY TO SECOND ) FROM dual;
+```
+returns 36 hours (1 day, 12 hours, 30 minutes)
+
+**/
 
 -- Manually Step Timers forward
 
   procedure step_timers;
+/**
+step_timers Procedure
+This procedure is used to manually step timers forward in a process instance when debugging, testing or demoing a process  .
 
+EXAMPLE
+```sql
+flow_api_pkg.step_timers;
+```
+**/
 
 end flow_api_pkg;
 /

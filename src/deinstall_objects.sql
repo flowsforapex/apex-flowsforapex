@@ -9,6 +9,24 @@ begin
 end;
 /
 
+PROMPT >> Remove Enterprise Edition Objects if installed
+begin
+  if flow_apex_env.ee then
+
+    begin
+      sys.dbms_aqadm.stop_queue (queue_name => 'FLOW_CORRELATED_MESSAGES_Q',
+                                enqueue    => true);                      
+      sys.dbms_aqadm.drop_queue (queue_name => 'FLOW_CORRELATED_MESSAGES_Q');
+      sys.dbms_aqadm.drop_queue_table (queue_table => 'FLOW_CORRELATED_MESSAGES_QT');
+    end;   
+
+    execute immediate 'drop view flow_optimised_diagrams_vw_EE';
+
+  end if;
+end;
+/
+
+
 PROMPT >> Packages
 drop package flow_logging;
 drop package flow_plsql_runner_pkg;
