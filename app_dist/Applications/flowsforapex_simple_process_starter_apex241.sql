@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   06:08 Tuesday September 16, 2025
+--   Date and Time:   07:01 Tuesday September 16, 2025
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -31739,8 +31739,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_read_only_when_type=>'ALWAYS'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'attribute_01', '250',
-  'attribute_02', '1',
-  'attribute_03', '&P11_FDTA_TEMPLATE_CONTENT.',
+  'attribute_02', '3',
   'attribute_05', '3',
   'attribute_06', 'N',
   'attribute_07', 'Y',
@@ -31748,7 +31747,8 @@ wwv_flow_imp_page.create_page_plug(
   'attribute_09', 'Y',
   'attribute_10', 'P11_FDTA_CONTENT',
   'attribute_11', 'floating',
-  'attribute_13', 'N')).to_clob
+  'attribute_13', 'N',
+  'attribute_15', 'P11_FDTA_TEMPLATE_CONTENT')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(39245598301558202)
