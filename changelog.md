@@ -15,7 +15,8 @@
   - Added flow_api_pkg.get_task_potential_owners and get_task_business_admins so that an APEX Human Task can pull potential owners and business admin information from the workflow.
   - Added new Task Action plugin return-task-state-outcome to return task state and task outcome from APEX Human Tasks.  Can be used on task completion, cancellation and task expiry.
   - Added new cleanup routines to cancel any APEX Human Tasks left after a process instance is reset, terminated, deleted or the process flow cancels an active task.
-- Adds a new Flow Monitor plugin built as a web component.  Plugin supports badging.  New plugin has an improved API.
+- Adds a new Flow Viewer plugin built as a web component.  Plugin supports badging.  New plugin has an improved API.
+- Flow Monitor now includes a report showing how many running instances of a model are currently on each step, using the new Flow Viewer badging.
 - Adds an automation to automatically delete completed process instances n days after process completion.
 - Step Key is now available for substitution or binding in most places, including variable expression.
 - Fixed a bug where Scope previously couldn't be substituted.

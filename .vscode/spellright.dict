@@ -38,3 +38,13 @@ bpmnlint
 GenAI
 oracleapex.com
 _xxlangxx
+_usertask
+intervalDStoSec
+intervalDStoHours
+markdownlint
+pks
+get_current_usertask_url
+markdownlint-disable
+_tstz
+flow_process_vars.pks
+tstz

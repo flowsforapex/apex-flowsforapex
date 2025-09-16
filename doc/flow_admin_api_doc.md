@@ -14,6 +14,16 @@ FLOWS FOR APEX ADMIN API
   - [Procedure set\_config\_value](#procedure-set_config_value)
   - [Function get\_config\_value](#function-get_config_value)
   - [Procedure release\_diagram](#procedure-release_diagram)
+  - [Procedure suspend\_process](#procedure-suspend_process)
+  - [Procedure resume\_process](#procedure-resume_process)
+  - [Procedure mark\_subflow\_for\_deletion](#procedure-mark_subflow_for_deletion)
+  - [Procedure return\_to\_prior\_gateway](#procedure-return_to_prior_gateway)
+  - [Procedure return\_to\_prior\_step](#procedure-return_to_prior_step)
+  - [Procedure return\_to\_last\_step](#procedure-return_to_last_step)
+  - [Procedure rewind\_from\_subprocess](#procedure-rewind_from_subprocess)
+  - [Procedure rewind\_from\_call\_activity](#procedure-rewind_from_call_activity)
+  - [Procedure rewind\_to\_matched\_throwing\_link\_event](#procedure-rewind_to_matched_throwing_link_event)
+  - [Procedure flow\_force\_next\_step](#procedure-flow_force_next_step)
 
 ## Package flow_admin_api
 
@@ -25,9 +35,16 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
 
 ## Function instance_summary
 
-Function instance_summary
+```sql
+function instance_summary
+( p_process_id in flow_processes.prcs_id%type
+) return clob;
+```
+
 This function returns a JSON summary of the process instance execution, including all the steps, gateways, and subflows that have been executed.
+
 Contents of the instance summary depend on the level of logging enabled for the process instance.
+
 Contents can include:
 - Process instance details
 - Details of process models and versions used, including for any Call Activity calls
@@ -38,46 +55,60 @@ Contents can include:
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-SIGNATURE
+**EXAMPLE**
 
 ```sql
-function instance_summary
-( p_process_id in flow_processes.prcs_id%type
-) return clob;
+declare
+   l_summary clob;
+begin
+   l_summary := flow_admin_api.instance_summary(
+        p_process_id => 123
+   );
+   dbms_output.put_line(l_summary);
+end;
 ```
 
 ## Procedure archive_completed_instances
 
-Procedure archive_completed_instances This procedure archives all completed process instances that were completed before the specified date. The procedure moves the process instance data from the live tables to the archive location specified in the configuration data.
-Archive location can be a database table or to OCI Object Storage.  See documentation on configuring the archive location.
-
-Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
-
-EXAMPLE
-
-This example will archive all completed process instances before the current date.
-```sql
-begin
-   flow_admin_api.archive_completed_instances(
-        p_completed_before => trunc(sysdate)
-   );
-end;
-;
-```
-SIGNATURE
 ```sql
 procedure archive_completed_instances
 ( p_completed_before in date default trunc(sysdate)
 );
 ```
 
-## Procedure purge_instance_logs
+This procedure archives all completed process instances that were completed before the specified date.
 
-This procedure purges the process instance log records for instances which completed  before the the specified retention period.
+The procedure moves the process instance data from the live tables to the archive location specified in the configuration data.
+
+Archive location can be a database table or to OCI Object Storage. See documentation on configuring the archive location.
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-EXAMPLE
+**EXAMPLE**
+
+This example will archive all completed process instances before the current date.
+
+```sql
+begin
+   flow_admin_api.archive_completed_instances(
+        p_completed_before => trunc(sysdate)
+   );
+end;
+```
+
+## Procedure purge_instance_logs
+
+```sql
+procedure purge_instance_logs
+( p_retention_period_days in number default null
+);
+```
+
+This procedure purges the process instance log records for instances which completed before the specified retention period.
+
+Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
 
 This example will purge instance logs older than 30 days.
 
@@ -89,104 +120,429 @@ begin
 end;
 ```
 
-SIGNATURE
-```sql
-procedure purge_instance_logs
-( p_retention_period_days in number default null
-);
-```
-
 ## Procedure run_daily_stats
 
-This procedure runs the daily statistics summarization process.  It is typically run as a scheduled job.
+```sql
+procedure run_daily_stats;
+```
+
+This procedure runs the daily statistics summarization process. It is typically run as a scheduled job.
+
 Running the daily statistics summarization process creates daily summary records for all process instances that completed the previous day. 
+
 If the daily statistics summarization process was not run for several days, running it will create daily summaries for each day since it was last run.
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will run the daily statistics.
+
 ```sql
 begin
    flow_admin_api.run_daily_stats;
 end;
 ```
 
-SIGNATURE
-```sql
-procedure run_daily_stats;
-```
-
 ## Procedure purge_statistics
 
+```sql
+procedure purge_statistics;
+```
+
 This procedure purges the performance statistics summary records that are older than the configured retention period.
+
 Statistics summary records are created by the daily statistics summarization process.
+
 Statistics retention periods are configured in the configuration data.
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-EXAMPLE
+**EXAMPLE**
 
-This example will run the daily statistics.
+This example will purge old statistics.
+
 ```sql
 begin
    flow_admin_api.purge_statistics;
 end;
 ```
 
-SIGNATURE
-```sql
-procedure purge_statistics;
-```
-
 ## Procedure set_config_value
 
+```sql
+procedure set_config_value
+( p_config_key        in flow_configuration.cfig_key%type,
+  p_value             in flow_configuration.cfig_value%type,
+  p_update_if_set     in boolean default true
+);
+```
+
 This procedure sets a configuration parameter value in the Flows for APEX configuration data.
+
 If the configuration parameter does not exist, it is created.
+
 If the configuration parameter exists and the p_update_if_set parameter is true, the value is updated.
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-SIGNATURE
+**EXAMPLE**
+
 ```sql
-  procedure set_config_value
-  ( p_config_key        in flow_configuration.cfig_key%type,
-    p_value             in flow_configuration.cfig_value%type,
-    p_update_if_set     in boolean default true
-  );
+begin
+   flow_admin_api.set_config_value(
+        p_config_key    => 'logging_retain_days'
+      , p_value         => '90'
+      , p_update_if_set => true
+   );
+end;
 ```
 
 ## Function get_config_value
 
+```sql
+function get_config_value
+( p_config_key        in flow_configuration.cfig_key%type
+, p_default_value     in flow_configuration.cfig_value%type
+) return flow_configuration.cfig_value%type;
+```
+
 This function returns the value of a configuration parameter from the Flows for APEX configuration data.
-If the configuration parameter does not exist, the  value in p_default_value is returned.
+
+If the configuration parameter does not exist, the value in p_default_value is returned.
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-SIGNATURE
+**EXAMPLE**
+
 ```sql
-  function get_config_value
-  ( p_config_key        in flow_configuration.cfig_key%type
-  , p_default_value     in flow_configuration.cfig_value%type
-  ) return flow_configuration.cfig_value%type;
+declare
+   l_retain_days varchar2(10);
+begin
+   l_retain_days := flow_admin_api.get_config_value(
+        p_config_key    => 'logging_retain_days'
+      , p_default_value => '30'
+   );
+end;
 ```
 
 ## Procedure release_diagram
 
+```sql
+procedure release_diagram
+( pi_dgrm_name    in flow_diagrams.dgrm_name%type,
+  pi_dgrm_version in flow_diagrams.dgrm_version%type default '0'
+);
+```
+
 This procedure releases a diagram, making it available for use in new process instances.
+
 The procedure sets the diagram status to 'released'.
+
 If a version of this diagram already exists in 'released' status, the previous version is set to 'deprecated'.
 
-This procedure is useful for deploying new diagrams into a production environment in a scripted manner.  You can install the 
-new diagram into the production environment having exported it in SQL format, then release it when you are ready to start using it.
+This procedure is useful for deploying new diagrams into a production environment in a scripted manner. You can install the new diagram into the production environment having exported it in SQL format, then release it when you are ready to start using it.
 
 Available in Flows for APEX Community Edition and Flows for APEX Enterprise Edition.
 
-SIGNATURE
+**EXAMPLE**
+
 ```sql
-  procedure release_diagram
-  ( pi_dgrm_name    in flow_diagrams.dgrm_name%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type default '0'
-  );
+begin
+   flow_admin_api.release_diagram(
+        pi_dgrm_name    => 'My Process Model'
+      , pi_dgrm_version => '1.0'
+   );
+end;
+```
+
+## Procedure suspend_process
+
+```sql
+procedure suspend_process
+( p_process_id    in flow_processes.prcs_id%type
+, p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure suspends a process instance.
+
+The process instance is paused and no further steps are executed until the process instance is resumed.
+
+The process instance can be resumed using the `resume_process` procedure.
+
+While suspended, an administrator can 'fix' a process instance that has encountered an error, or make changes to the process instance data.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.suspend_process(
+        p_process_id => 123
+      , p_comment    => 'Suspended for debugging'
+   );
+end;
+```
+
+## Procedure resume_process
+
+```sql
+procedure resume_process
+( p_process_id    in flow_processes.prcs_id%type
+, p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure resumes a process instance that has been suspended.
+
+On resuming the process, any changes that were made to the process instance execution are applied before the process instance continues to execute.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.resume_process(
+        p_process_id => 123
+      , p_comment    => 'Resumed after fixing data issue'
+   );
+end;
+```
+
+## Procedure mark_subflow_for_deletion
+
+```sql
+procedure mark_subflow_for_deletion
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure marks a suspended subflow for deletion, as part of the process rewind feature.
+
+The subflow is deleted when the parent process instance is next resumed.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.mark_subflow_for_deletion(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_comment    => 'Marking subflow for deletion as part of rewind'
+   );
+end;
+```
+
+## Procedure return_to_prior_gateway
+
+```sql
+procedure return_to_prior_gateway
+(
+  p_process_id  in flow_processes.prcs_id%type
+, p_subflow_id  in flow_subflows.sbfl_id%type
+, p_comment     in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure steps a suspended subflow backwards to the immediately previous gateway.
+
+This can be used to return a suspended subflow back to the immediately previous gateway.
+
+This can be performed multiple times to rewind back to the previous gateway, then rewind back to the next previous gateway.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.return_to_prior_gateway(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_comment    => 'Rewinding to previous gateway'
+   );
+end;
+```
+
+## Procedure return_to_prior_step
+
+```sql
+procedure return_to_prior_step
+(
+  p_process_id  in flow_processes.prcs_id%type
+, p_subflow_id  in flow_subflows.sbfl_id%type
+, p_new_step    in flow_objects.objt_bpmn_id%type
+, p_comment     in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure rewinds a suspended subflow backwards to a specified prior step.
+
+This can be used to return a suspended subflow back to a specified prior step. The specified prior step can be any earlier step, as long as this does not rewind through a gateway, intermediate event, or subprocess / call activity boundary.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.return_to_prior_step(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_new_step   => 'Activity_0abc123'
+      , p_comment    => 'Rewinding to specific prior step'
+   );
+end;
+```
+
+## Procedure return_to_last_step
+
+```sql
+procedure return_to_last_step
+(
+  p_process_id  in flow_processes.prcs_id%type
+, p_subflow_id  in flow_subflows.sbfl_id%type
+, p_comment     in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure rewinds a suspended subflow backwards to the immediately previous step.
+
+This is ONLY available for a subflow that is 'waiting at gateway'. It can only be used one single step back.
+
+If the subflow is not at a gateway, or is at the start of the subflow, the procedure will raise an exception.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.return_to_last_step(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_comment    => 'Rewinding one step back from gateway'
+   );
+end;
+```
+
+## Procedure rewind_from_subprocess
+
+```sql
+procedure rewind_from_subprocess
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure rewinds a suspended subflow that is at the top level inside a subprocess backwards to the subprocess object in its calling process.
+
+This can be performed multiple times to rewind back to the previous subprocess, then rewind back to the next previous subprocess.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.rewind_from_subprocess(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_comment    => 'Rewinding from subprocess to calling process'
+   );
+end;
+```
+
+## Procedure rewind_from_call_activity
+
+```sql
+procedure rewind_from_call_activity
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure rewinds a suspended subflow that is at the top level inside a call activity backwards to the call activity object in its calling process.
+
+This can be performed multiple times to rewind back to the previous call activity, then rewind back to the next previous call activity.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.rewind_from_call_activity(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_comment    => 'Rewinding from call activity to calling process'
+   );
+end;
+```
+
+## Procedure rewind_to_matched_throwing_link_event
+
+```sql
+procedure rewind_to_matched_throwing_link_event
+( p_process_id    in flow_processes.prcs_id%type
+, p_subflow_id    in flow_subflows.sbfl_id%type
+, p_comment       in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure rewinds a suspended subflow that is at a catching link event backwards to the matching throwing link event in the same process.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.rewind_to_matched_throwing_link_event(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_comment    => 'Rewinding from link catch to link throw event'
+   );
+end;
+```
+
+## Procedure flow_force_next_step
+
+```sql
+procedure flow_force_next_step
+( p_process_id                   in flow_processes.prcs_id%type
+, p_subflow_id                   in flow_subflows.sbfl_id%type
+, p_step_key                     in flow_subflows.sbfl_step_key%type
+, p_comment                      in flow_instance_event_log.lgpr_comment%type default null
+);
+```
+
+This procedure forces a subflow in error state to step forward to the next step, ignoring the current errored step.
+
+This can be used to 'skip' a step that is in error state, for example a script task that has a coding error or a failed reminder sendmail that you know is not important.
+
+The process instance does **not** need to be suspended to use this procedure.
+
+Available in Flows for APEX Enterprise Edition.
+
+**EXAMPLE**
+
+```sql
+begin
+   flow_admin_api.flow_force_next_step(
+        p_process_id => 123
+      , p_subflow_id => 456
+      , p_step_key   => 'NqOiEHUbAF'
+      , p_comment    => 'Forcing next step to skip errored script task'
+   );
+end;
 ```

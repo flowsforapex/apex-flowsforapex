@@ -4,68 +4,63 @@
 PROCESS VARIABLE SYSTEM API
 ===========================
 
-- [Package flow_process_vars](#package-flow_process_vars)
-- [Procedure set_var](#procedure-set_var)
-- [Procedure set_var](#procedure-set_var-1)
-- [Procedure set_var](#procedure-set_var-2)
-- [Procedure set_var](#procedure-set_var-3)
-- [Procedure set_var](#procedure-set_var-4)
-- [Procedure set_var](#procedure-set_var-5)
-- [Procedure set_var](#procedure-set_var-6)
-- [Procedure set_var](#procedure-set_var-7)
-- [Function get_var_vc2](#function-get_var_vc2)
-- [Function get_var_vc2](#function-get_var_vc2-1)
-- [Function get_var_num](#function-get_var_num)
-- [Function get_var_num](#function-get_var_num-1)
-- [Function get_var_date](#function-get_var_date)
-- [Function get_var_date](#function-get_var_date-1)
-- [Function get_var_clob](#function-get_var_clob)
-- [Function get_var_clob](#function-get_var_clob-1)
-- [Function get_var_type](#function-get_var_type)
-- [Function get_var_type](#function-get_var_type-1)
-- [Procedure delete_var](#procedure-delete_var)
-- [Procedure delete_var](#procedure-delete_var-1)
-- [Procedure set_business_ref](#procedure-set_business_ref)
-- [Procedure set_business_ref](#procedure-set_business_ref-1)
-- [Function get_business_ref](#function-get_business_ref)
-- [Function get_business_ref](#function-get_business_ref-1)
-
+- [PROCESS VARIABLE SYSTEM API](#process-variable-system-api)
+  - [Package flow\_process\_vars](#package-flow_process_vars)
+  - [Procedure set\_var (VARCHAR2 - Using Scope)](#procedure-set_var-varchar2---using-scope)
+  - [Procedure set\_var (VARCHAR2 - Using Subflow ID)](#procedure-set_var-varchar2---using-subflow-id)
+  - [Procedure set\_var (NUMBER - Using Scope)](#procedure-set_var-number---using-scope)
+  - [Procedure set\_var (NUMBER - Using Subflow ID)](#procedure-set_var-number---using-subflow-id)
+  - [Procedure set\_var (DATE - Using Scope)](#procedure-set_var-date---using-scope)
+  - [Procedure set\_var (DATE - Using Subflow ID)](#procedure-set_var-date---using-subflow-id)
+  - [Procedure set\_var (CLOB - Using Scope)](#procedure-set_var-clob---using-scope)
+  - [Procedure set\_var (CLOB - Using Subflow ID)](#procedure-set_var-clob---using-subflow-id)
+  - [Procedure set\_var (TIMESTAMP WITH TIME ZONE - Using Scope)](#procedure-set_var-timestamp-with-time-zone---using-scope)
+  - [Procedure set\_var (TIMESTAMP WITH TIME ZONE - Using Subflow ID)](#procedure-set_var-timestamp-with-time-zone---using-subflow-id)
+  - [Procedure set\_var (JSON - Using Scope)](#procedure-set_var-json---using-scope)
+  - [Procedure set\_var (JSON - Using Subflow ID)](#procedure-set_var-json---using-subflow-id)
+  - [Function get\_var\_vc2 (Using Scope)](#function-get_var_vc2-using-scope)
+  - [Function get\_var\_vc2 (Using Subflow ID)](#function-get_var_vc2-using-subflow-id)
+  - [Function get\_var\_num (Using Scope)](#function-get_var_num-using-scope)
+  - [Function get\_var\_num (Using Subflow ID)](#function-get_var_num-using-subflow-id)
+  - [Function get\_var\_date (Using Scope)](#function-get_var_date-using-scope)
+  - [Function get\_var\_date (Using Subflow ID)](#function-get_var_date-using-subflow-id)
+  - [Function get\_var\_clob (Using Scope)](#function-get_var_clob-using-scope)
+  - [Function get\_var\_clob (Using Subflow ID)](#function-get_var_clob-using-subflow-id)
+  - [Function get\_var\_json (Using Scope)](#function-get_var_json-using-scope)
+  - [Function get\_var\_json (Using Subflow ID)](#function-get_var_json-using-subflow-id)
+  - [Function get\_var\_json\_element (Using Scope)](#function-get_var_json_element-using-scope)
+  - [Function get\_var\_json\_element (Using Subflow ID)](#function-get_var_json_element-using-subflow-id)
+  - [Function get\_var\_tstz (Using Scope)](#function-get_var_tstz-using-scope)
+  - [Function get\_var\_tstz (Using Subflow ID)](#function-get_var_tstz-using-subflow-id)
+  - [Function get\_var\_type (Using Scope)](#function-get_var_type-using-scope)
+  - [Function get\_var\_type (Using Subflow ID)](#function-get_var_type-using-subflow-id)
+  - [Procedure delete\_var (Using Scope)](#procedure-delete_var-using-scope)
+  - [Procedure delete\_var (Using Subflow ID)](#procedure-delete_var-using-subflow-id)
+  - [Procedure set\_business\_ref (Using Scope)](#procedure-set_business_ref-using-scope)
+  - [Procedure set\_business\_ref (Using Subflow ID)](#procedure-set_business_ref-using-subflow-id)
+  - [Function get\_business\_ref (Using Scope)](#function-get_business_ref-using-scope)
+  - [Function get\_business\_ref (Using Subflow ID)](#function-get_business_ref-using-subflow-id)
 
 ## Package flow_process_vars
 
-The `flow_process_vars` package give you access to be able to set and get Process Variables making up the Flows for APEX Process Variable System.help
+The `flow_process_vars` package give you access to be able to set and get Process Variables making up the Flows for APEX Process Variable System.
 
-SIGNATURE
+## Procedure set_var (VARCHAR2 - Using Scope)
 
 ```sql
-package flow_process_vars
-  authid definer
-as /* 
--- Flows for APEX - flow_process_vars.pkb
--- 
--- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
--- (c) Copyright MT AG, 2020-2022.
---
--- Created 22-SEP-2020  Richard Allen (Flowquest) 
--- Edited  13-APR-2022 - Richard Allen (Oracle)
---
-*/
-/*
-**
-**        PROCESS VARIABLE SYSTEM (get / set / etc)
-**        Process Variable System API for Application Developers
-**
-*/
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
+, pi_vc2_value  in flow_process_variables.prov_var_vc2%type         -- Value of variable (VARCHAR2)
+, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0 
+);
 ```
 
-
-## Procedure set_var
-
-SIGNATURE 1a - VARCHAR2 - Using Scope.
+**SIGNATURE 1a - VARCHAR2 - Using Scope.**
 
 This procedure is used to set a VARCHAR2 value of a process variable using a supplied scope (defaulting to 0, the top level scope) 
 
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_VAR" to "MY_VAR_VALUE" in the process instance ID 1 in scope 0.
 
@@ -80,25 +75,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (VARCHAR2 - Using Subflow ID)
 
 ```sql
 procedure set_var
-( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
-, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
-, pi_vc2_value  in flow_process_variables.prov_var_vc2%type         -- Value of variable (VARCHAR2)
-, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0 
+( pi_prcs_id    in flow_processes.prcs_id%type                -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type  -- Name of the process variable
+, pi_vc2_value  in flow_process_variables.prov_var_vc2%type   -- Value of variable (VARCHAR2)
+, pi_sbfl_id    in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
 );
 ```
 
-
-## Procedure set_var
-
-SIGNATURE 1b - VARCHAR2 - Using Subflow_id.
+**SIGNATURE 1b - VARCHAR2 - Using Subflow_id.**
 
 This procedure is used to set a VARCHAR2 value of a process variable, using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_VAR" to "MY_VAR_VALUE" in the process instance ID 1, with a scope used in subflow 12.
 
@@ -113,25 +105,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (NUMBER - Using Scope)
 
 ```sql
 procedure set_var
-( pi_prcs_id    in flow_processes.prcs_id%type                -- Process ID
-, pi_var_name   in flow_process_variables.prov_var_name%type  -- Name of the process variable
-, pi_vc2_value  in flow_process_variables.prov_var_vc2%type   -- Value of variable (VARCHAR2)
-, pi_sbfl_id    in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
+( pi_prcs_id    in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_num_value  in flow_process_variables.prov_var_num%type          -- Value of variable (NUMBER)
+, pi_scope      in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
 );
 ```
 
-
-## Procedure set_var
-
-SIGNATURE 2a - NUMBER - Using Scope.
+**SIGNATURE 2a - NUMBER - Using Scope.**
 
 This procedure is used to set a NUMBER value of a process variable using a supplied scope (defaulting to 0, the top level scope) 
 
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_VAR" to 1234 in the process instance ID 1 in scope 0.
 
@@ -146,25 +135,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (NUMBER - Using Subflow ID)
 
 ```sql
 procedure set_var
-( pi_prcs_id    in flow_processes.prcs_id%type                       -- Process ID
-, pi_var_name   in flow_process_variables.prov_var_name%type         -- Name of the process variable
-, pi_num_value  in flow_process_variables.prov_var_num%type          -- Value of variable (NUMBER)
-, pi_scope      in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+( pi_prcs_id   in flow_processes.prcs_id%type               -- Process ID
+, pi_var_name  in flow_process_variables.prov_var_name%type -- Name of the process variable
+, pi_num_value in flow_process_variables.prov_var_num%type  -- Value of the variable (NUMBER)
+, pi_sbfl_id   in flow_subflows.sbfl_id%type                -- Subflow ID, used to set scope
 );
 ```
 
-
-## Procedure set_var
-
-SIGNATURE 2b - NUMBER - Using Subflow_id.
+**SIGNATURE 2b - NUMBER - Using Subflow_id.**
 
 This procedure is used to set a NUMBER value of a process variable using a supplied using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_VAR" to 1234 in the process instance ID 1, with a scope used in subflow 12.
 
@@ -179,25 +165,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (DATE - Using Scope)
 
 ```sql
 procedure set_var
-( pi_prcs_id   in flow_processes.prcs_id%type               -- Process ID
-, pi_var_name  in flow_process_variables.prov_var_name%type -- Name of the process variable
-, pi_num_value in flow_process_variables.prov_var_num%type  -- Value of the variable (NUMBER)
-, pi_sbfl_id   in flow_subflows.sbfl_id%type                -- Subflow ID, used to set scope
+( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
+, pi_date_value in flow_process_variables.prov_var_date%type        -- Value of the variable (DATE)
+, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
 );
 ```
 
-
-## Procedure set_var
-
-SIGNATURE 3a - DATE - Using Scope.
+**SIGNATURE 3a - DATE - Using Scope.**
 
 This procedure is used to set a DATE value of a process variable using a supplied scope (defaulting to 0, the top level scope) 
 
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_DATE" to the current date, sysdate, in the process instance ID 1 in scope 0.
 
@@ -212,39 +195,7 @@ begin
 end;
 ```
 
-SIGNATURE
-
-```sql
-procedure set_var
-( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
-, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
-, pi_date_value in flow_process_variables.prov_var_date%type        -- Value of the variable (DATE)
-, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
-);
-```
-
-
-## Procedure set_var
-
-SIGNATURE 3b - DATE - Using Subflow_id.
-
-This procedure is used to set a DATE value of a process variable usingthe current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
-
-EXAMPLE
-
-This example will set the value of the process variable "MY_DATE" to the current date, sysdate, in the process instance ID 1, with a scope used in subflow 12.
-```sql
-begin
-   flow_process_vars.set_var(
-        pi_prcs_id    => 1
-      , pi_var_name   => 'MY_DATE'
-      , pi_sbfl_id    => 1
-      , pi_date_value => sysdate
-   );
-end;
-```
-
-SIGNATURE
+## Procedure set_var (DATE - Using Subflow ID)
 
 ```sql
 procedure set_var
@@ -255,14 +206,41 @@ procedure set_var
 );
 ```
 
+**SIGNATURE 3b - DATE - Using Subflow_id.**
 
-## Procedure set_var
+This procedure is used to set a DATE value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
-SIGNATURE 4a - CLOB - Using Scope.
+**EXAMPLE**
+
+This example will set the value of the process variable "MY_DATE" to the current date, sysdate, in the process instance ID 1, with a scope used in subflow 12.
+
+```sql
+begin
+   flow_process_vars.set_var(
+        pi_prcs_id    => 1
+      , pi_var_name   => 'MY_DATE'
+      , pi_sbfl_id    => 12
+      , pi_date_value => sysdate
+   );
+end;
+```
+
+## Procedure set_var (CLOB - Using Scope)
+
+```sql
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
+, pi_clob_value in flow_process_variables.prov_var_clob%type        -- Value of the variable (CLOB)
+, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
+);
+```
+
+**SIGNATURE 4a - CLOB - Using Scope.**
 
 This procedure is used to set a CLOB value of a process variable using a supplied scope (defaulting to 0, the top level scope) 
 
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_CLOB" to the CLOB provided for the process instance ID 1 in scope 0.
 
@@ -277,27 +255,25 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (CLOB - Using Subflow ID)
 
 ```sql
 procedure set_var
-( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
-, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
-, pi_clob_value in flow_process_variables.prov_var_clob%type        -- Value of the variable (CLOB)
-, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
+( pi_prcs_id    in flow_processes.prcs_id%type                -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type  -- Name of the process variable
+, pi_clob_value in flow_process_variables.prov_var_clob%type  -- Value of the variable (CLOB)
+, pi_sbfl_id    in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
 );
 ```
 
+**SIGNATURE 4b - CLOB - Using Subflow_id.**
 
-## Procedure set_var
+This procedure is used to set a CLOB value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
-SIGNATURE 4b - CLOB - Using Subflow_id.
-
-This procedure is used to set a CLOB value of a process variable usingthe current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
-
-EXAMPLE
+**EXAMPLE**
 
 This example will set the value of the process variable "MY_CLOB" to the CLOB provided in the process instance ID 1, with a scope used in subflow 12.
+
 ```sql
 begin
    flow_process_vars.set_var(
@@ -309,41 +285,127 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (TIMESTAMP WITH TIME ZONE - Using Scope)
+
+```sql
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type        -- Value of the variable (TIMESTAMP WITH TIME ZONE)
+, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
+);
+```
+
+**SIGNATURE 5a - TIMESTAMP WITH TIMEZONE - Using Scope.**
+
+This procedure is used to set a TIMESTAMP WITH TIME ZONE value of a process variable using a supplied scope (defaulting to 0, the top level scope) 
+
+**EXAMPLE**
+
+This example will set the value of the process variable "MY_TSTZ" to the current date, systimestamp, in the process instance ID 1 in scope 0.
+
+```sql
+begin
+   flow_process_vars.set_var(
+        pi_prcs_id    => 1
+      , pi_var_name   => 'MY_TSTZ'
+      , pi_scope      => 0
+      , pi_tstz_value => systimestamp
+   );
+end;
+```
+
+## Procedure set_var (TIMESTAMP WITH TIME ZONE - Using Subflow ID)
 
 ```sql
 procedure set_var
 ( pi_prcs_id    in flow_processes.prcs_id%type                -- Process ID
 , pi_var_name   in flow_process_variables.prov_var_name%type  -- Name of the process variable
-, pi_clob_value in flow_process_variables.prov_var_clob%type  -- Value of the variable (CLOB)
+, pi_tstz_value in flow_process_variables.prov_var_tstz%type  -- Value of the variable (TIMESTAMP WITH TIME ZONE)
 , pi_sbfl_id    in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
 );
 ```
 
+**SIGNATURE 5b - TIMESTAMP WITH TIMEZONE - Using Subflow_id.**
 
-## Function get_var_vc2
+This procedure is used to set a TIMESTAMP WITH TIME ZONE value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
 
-SIGNATURE 1 - Using Scope.
+**EXAMPLE**
 
-This function is used to get the value of a VARCHAR2 process variable.
-
-EXAMPLE
-
-This example will get the value of the process variable "MY_VAR" in the main diagram scope.
+This example will set the value of the process variable "MY_TSTZ" to the current date, systimestamp, in the process instance ID 1, with a scope used in subflow 12.
 
 ```sql
-declare
-   l_value flow_process_variables.prov_var_vc2%type;
 begin
-   l_value := flow_process_vars.get_var_vc2(
-                   pi_prcs_id   => 1
-                 , pi_scope     => 0
-                 , pi_var_name  => 'MY_VAR'
-              );
+   flow_process_vars.set_var(
+        pi_prcs_id    => 1
+      , pi_var_name   => 'MY_TSTZ'
+      , pi_sbfl_id    => 12
+      , pi_tstz_value => systimestamp
+   );
 end;
 ```
 
-SIGNATURE
+## Procedure set_var (JSON - Using Scope)
+
+```sql
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type                      -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type        -- Name of the process variable
+, pi_json_value in flow_process_variables.prov_var_json%type        -- Value of the variable (JSON)
+, pi_scope      in flow_process_variables.prov_scope%type default 0 -- Variable Scope, defaults to 0
+);
+```
+
+**SIGNATURE 6a - JSON - Using Scope.**
+
+This procedure is used to set a JSON value of a process variable using a supplied scope (defaulting to 0, the top level scope) 
+
+**EXAMPLE**
+
+This example will set the value of the process variable "MY_JSON" to the JSON provided for the process instance ID 1 in scope 0.
+
+```sql
+begin
+   flow_process_vars.set_var(
+        pi_prcs_id    => 1
+      , pi_var_name   => 'MY_JSON'
+      , pi_scope      => 0
+      , pi_json_value => '{"myAttribute":"myValue"}'
+   );
+end;
+```
+
+## Procedure set_var (JSON - Using Subflow ID)
+
+```sql
+procedure set_var
+( pi_prcs_id    in flow_processes.prcs_id%type                -- Process ID
+, pi_var_name   in flow_process_variables.prov_var_name%type  -- Name of the process variable
+, pi_json_value in flow_process_variables.prov_var_json%type  -- Value of the variable (JSON)
+, pi_sbfl_id    in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
+);
+```
+
+**SIGNATURE 6b - JSON - Using Subflow_id.**
+
+This procedure is used to set a JSON value of a process variable using the current `subflow_id` to set the correct scope.   This will look up the current scope for this subflow, before setting the process variable.
+
+**EXAMPLE**
+
+This example will set the value of the process variable "MY_JSON" to the JSON provided in the process instance ID 1, with a scope used in subflow 12.
+
+```sql
+begin
+   flow_process_vars.set_var(
+        pi_prcs_id    => 1
+      , pi_var_name   => 'MY_JSON'
+      , pi_sbfl_id    => 12
+      , pi_json_value => '{"myAttribute":"myValue"}'
+   );
+end;
+```
+
+## Function get_var_vc2 (Using Scope)
 
 ```sql
 function get_var_vc2
@@ -354,14 +416,42 @@ function get_var_vc2
 ) return flow_process_variables.prov_var_vc2%type;
 ```
 
-
-## Function get_var_vc2
-
-SIGNATURE 2 - Using Subflow_id
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to get the value of a VARCHAR2 process variable.
 
-EXAMPLE
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_VAR" in the main diagram scope.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_vc2%type;
+begin
+   l_value := flow_process_vars.get_var_vc2(
+                   pi_prcs_id   => 1
+                 , pi_scope     => 0
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+
+## Function get_var_vc2 (Using Subflow ID)
+
+```sql
+function get_var_vc2
+( pi_prcs_id           in flow_processes.prcs_id%type                -- Process ID 
+, pi_var_name          in flow_process_variables.prov_var_name%type  -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                      -- If true, return an exception if null
+) return flow_process_variables.prov_var_vc2%type;
+```
+
+**SIGNATURE 2 - Using Subflow_id**
+
+This function is used to get the value of a VARCHAR2 process variable.
+
+**EXAMPLE**
 
 This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
 
@@ -377,25 +467,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Function get_var_num (Using Scope)
 
 ```sql
-function get_var_vc2
-( pi_prcs_id           in flow_processes.prcs_id%type                -- Process ID 
-, pi_var_name          in flow_process_variables.prov_var_name%type  -- Name of the process variable
-, pi_sbfl_id           in flow_subflows.sbfl_id%type                 -- Subflow ID, used to set scope
-, pi_exception_on_null in boolean default false                      -- If true, return an exception if null
-) return flow_process_variables.prov_var_vc2%type;
+function get_var_num
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_num%type;
 ```
 
-
-## Function get_var_num
-
-SIGNATURE 1 - Using Scope.
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to get the value of a NUMBER process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will get the value of the process variable "MY_VAR" in the main diagram scope.
 
@@ -411,41 +498,7 @@ begin
 end;
 ```
 
-SIGNATURE
-
-```sql
-function get_var_num
-( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
-, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
-, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
-, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
-) return flow_process_variables.prov_var_num%type;
-```
-
-
-## Function get_var_num
-
-SIGNATURE 2 - Using Subflow_id.
-
-This function is used to get the value of a NUMBER process variable.
-
-EXAMPLE
-
-This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
-
-```sql
-declare
-   l_value flow_process_variables.prov_var_num%type;
-begin
-   l_value := flow_process_vars.get_var_num(
-                   pi_prcs_id   => 1
-                 , pi_sbfl_id   => 12
-                 , pi_var_name  => 'MY_VAR'
-              );
-end;
-```
-
-SIGNATURE
+## Function get_var_num (Using Subflow ID)
 
 ```sql
 function get_var_num
@@ -456,14 +509,42 @@ function get_var_num
 ) return flow_process_variables.prov_var_num%type;
 ```
 
+**SIGNATURE 2 - Using Subflow_id.**
 
-## Function get_var_date
+This function is used to get the value of a NUMBER process variable.
 
-SIGNATURE 1 - Using Scope.
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_num%type;
+begin
+   l_value := flow_process_vars.get_var_num(
+                   pi_prcs_id   => 1
+                 , pi_sbfl_id   => 12
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+
+## Function get_var_date (Using Scope)
+
+```sql
+function get_var_date
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_date%type;
+```
+
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to get the value of a DATE process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will get the value of the process variable "MY_VAR" in the main diagram scope.
 
@@ -479,28 +560,24 @@ begin
 end;
 ```
 
-SIGNATURE
+## Function get_var_date (Using Subflow ID)
 
 ```sql
 function get_var_date
-( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
-, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
-, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
-, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
 ) return flow_process_variables.prov_var_date%type;
 ```
 
-
-## Function get_var_date
-
-SIGNATURE 2 - Using Subflow_id.
+**SIGNATURE 2 - Using Subflow_id.**
 
 This function is used to get the value of a DATE process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
-
 
 ```sql
 declare
@@ -514,25 +591,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Function get_var_clob (Using Scope)
 
 ```sql
-function get_var_date
-( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
-, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
-, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
-, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
-) return flow_process_variables.prov_var_date%type;
+function get_var_clob
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_clob%type;
 ```
 
-
-## Function get_var_clob
-
-SIGNATURE 1 - Using Scope.
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to get the value of a CLOB process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will get the value of the process variable "MY_VAR" in the main diagram scope.
 
@@ -548,25 +622,22 @@ begin
 end;
 ```
 
-SIGNATURE
+## Function get_var_clob (Using Subflow ID)
 
 ```sql
 function get_var_clob
-( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
-, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
-, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
-, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
 ) return flow_process_variables.prov_var_clob%type;
 ```
 
-
-## Function get_var_clob
-
-SIGNATURE 2 - Using Subflow_id.
+**SIGNATURE 2 - Using Subflow_id.**
 
 This function is used to get the value of a CLOB process variable.
 
-EXAMPLE
+**EXAMPLE**
 
 This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
 
@@ -582,27 +653,215 @@ begin
 end;
 ```
 
-SIGNATURE
+## Function get_var_json (Using Scope)
 
 ```sql
-function get_var_clob
+function get_var_json
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_json%type;
+```
+
+**SIGNATURE 1 - Using Scope.**
+
+This function is used to get the value of a JSON process variable in string format (CLOB).  To get as a JSON object (json_element_t) see 
+get_var_json_element.
+
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_VAR" in the main diagram scope.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_json%type;
+begin
+   l_value := flow_process_vars.get_var_json(
+                   pi_prcs_id   => 1
+                 , pi_scope     => 0
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+
+## Function get_var_json (Using Subflow ID)
+
+```sql
+function get_var_json
 ( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
 , pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
 , pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
 , pi_exception_on_null in boolean default false                       -- If true, return an exception if null
-) return flow_process_variables.prov_var_clob%type;
+) return flow_process_variables.prov_var_json%type;
 ```
 
+**SIGNATURE 2 - Using Subflow_id.**
 
-## Function get_var_type
+This function is used to get the value of a JSON process variable in string format (CLOB).  To get as a JSON object (json_element_t) see 
+get_var_json_element.
 
-SIGNATURE 1 - Using Scope.
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_VAR", in the scope used in subflow 12.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_json%type;
+begin
+   l_value := flow_process_vars.get_var_json(
+                   pi_prcs_id   => 1
+                 , pi_sbfl_id   => 12
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+
+## Function get_var_json_element (Using Scope)
+
+```sql
+function get_var_json_element
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return sys.json_element_t;
+```
+
+**SIGNATURE 1 - Using Scope.**
+
+This function is used to get the value of a JSON process variable as a JSON object (json_element_t).  To get in string format (CLOB) see 
+get_var_json.
+
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_VAR" in the main diagram scope.
+
+```sql
+declare
+   l_value sys.json_element_t;
+begin
+   l_value := flow_process_vars.get_var_json_element(
+                   pi_prcs_id   => 1
+                 , pi_scope     => 0
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+
+## Function get_var_json_element (Using Subflow ID)
+
+```sql
+function get_var_json_element
+( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
+) return sys.json_element_t;
+```
+
+**SIGNATURE 2 - Using Subflow_id.**
+
+This function is used to get the value of a JSON process variable as a JSON object (json_element_t).  To get as a string, see 
+get_var_json.
+
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_VAR" in the scope used in subflow 12.
+
+```sql
+declare
+   l_value sys.json_element_t;
+begin
+   l_value := flow_process_vars.get_var_json_element(
+                   pi_prcs_id   => 1
+                 , pi_sbfl_id   => 12
+                 , pi_var_name  => 'MY_VAR'
+              );
+end;
+```
+
+## Function get_var_tstz (Using Scope)
+
+```sql
+function get_var_tstz
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_tstz%type;
+```
+
+**SIGNATURE 1 - Using Scope.**
+
+This function is used to get the value of a TIMESTAMP WITH TIME ZONE process variable.
+
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_TSTZ" in the main diagram scope.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_tstz%type;
+begin
+   l_value := flow_process_vars.get_var_tstz(
+                   pi_prcs_id   => 1
+                 , pi_scope     => 0
+                 , pi_var_name  => 'MY_TSTZ'
+              );
+end;
+```
+
+## Function get_var_tstz (Using Subflow ID)
+
+```sql
+function get_var_tstz
+( pi_prcs_id           in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id           in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+, pi_exception_on_null in boolean default false                       -- If true, return an exception if null
+) return flow_process_variables.prov_var_tstz%type;
+```
+
+**SIGNATURE 2 - Using Subflow_id.**
+
+This function is used to get the value of a TIMESTAMP WITH TIME ZONE process variable.
+
+**EXAMPLE**
+
+This example will get the value of the process variable "MY_TSTZ", in the scope used in subflow 12.
+
+```sql
+declare
+   l_value flow_process_variables.prov_var_tstz%type;
+begin
+   l_value := flow_process_vars.get_var_tstz(
+                   pi_prcs_id   => 1
+                 , pi_sbfl_id   => 12
+                 , pi_var_name  => 'MY_TSTZ'
+              );
+end;
+```
+
+## Function get_var_type (Using Scope)
+
+```sql
+function get_var_type
+( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
+, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
+, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
+, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
+) return flow_process_variables.prov_var_type%type;
+```
+
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to get the type of the given process variable, using scope to explicitly identify the variable. If not supplied, the scope defaults to scope 0, the top level for this process instance.
 
-EXAMPLE 
+**EXAMPLE**
 
 This example will get the type of the process variable "MY_VARIABLE" in process instance ID 1.
+
 ```sql
 declare
    l_prov_var_type flow_process_variables.prov_var_type%type;
@@ -615,40 +874,7 @@ begin
 end;
 ```
 
-SIGNATURE
-
-```sql
-function get_var_type
-( pi_prcs_id           in flow_processes.prcs_id%type                       -- Process ID
-, pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable
-, pi_scope             in flow_process_variables.prov_scope%type default 0  -- Variable Scope, defaults to 0
-, pi_exception_on_null in boolean default false                             -- If true, return an exception if null
-) return flow_process_variables.prov_var_type%type;
-```
-
-
-## Function get_var_type
-
-SIGNATURE 2 - Using Subflow_id.
-
-This function is used to get the type of the given process variable, using a `subflow ID` to identify the variable's scope. 
-
-EXAMPLE 
-
-This example will get the type of the process variable "MY_VARIABLE" in process instance ID 1 in the same scope as subflow 12.
-```sql
-declare
-   l_prov_var_type flow_process_variables.prov_var_type%type;
-begin
-   l_prov_var_type := flow_process_vars.get_var_type( 
-        pi_prcs_id   => 1 
-      , pi_sbfl_id   => 12
-      , pi_var_name => 'MY_VARIABLE'
-   );
-end;
-```
-
-SIGNATURE
+## Function get_var_type (Using Subflow ID)
 
 ```sql
 function get_var_type
@@ -659,27 +885,27 @@ function get_var_type
 ) return flow_process_variables.prov_var_type%type;
 ```
 
+**SIGNATURE 2 - Using Subflow_id.**
 
-## Procedure delete_var
+This function is used to get the type of the given process variable, using a `subflow ID` to identify the variable's scope. 
 
-SIGNATURE 1 - Using Scope
+**EXAMPLE**
 
-This procedure is used to delete a process variable, using scope to explicitly identify the variable. If not supplied, the scope defaults to scope 0, the top level for this process instance.
+This example will get the type of the process variable "MY_VARIABLE" in process instance ID 1 in the same scope as subflow 12.
 
-EXAMPLE 
-
-This example will delete the process variable "MY_VAR" in process instance ID 1.
 ```sql
+declare
+   l_prov_var_type flow_process_variables.prov_var_type%type;
 begin
-   flow_process_vars.delete_var(
-        pi_prcs_id   => 1
-      , pi_scope     => 0
-      , pi_var_name  => 'MY_VAR'
+   l_prov_var_type := flow_process_vars.get_var_type( 
+        pi_prcs_id   => 1 
+      , pi_sbfl_id   => 12
+      , pi_var_name => 'MY_VARIABLE'
    );
 end;
 ```
 
-SIGNATURE
+## Procedure delete_var (Using Scope)
 
 ```sql
 procedure delete_var    
@@ -689,16 +915,42 @@ procedure delete_var
 );
 ```
 
+**SIGNATURE 1 - Using Scope**
 
-## Procedure delete_var
+This procedure is used to delete a process variable, using scope to explicitly identify the variable. If not supplied, the scope defaults to scope 0, the top level for this process instance.
 
-SIGNATURE 2 - Using Subflow_id.
+**EXAMPLE**
+
+This example will delete the process variable "MY_VAR" in process instance ID 1.
+
+```sql
+begin
+   flow_process_vars.delete_var(
+        pi_prcs_id   => 1
+      , pi_scope     => 0
+      , pi_var_name  => 'MY_VAR'
+   );
+end;
+```
+
+## Procedure delete_var (Using Subflow ID)
+
+```sql
+procedure delete_var
+( pi_prcs_id  in flow_processes.prcs_id%type                 -- Process ID
+, pi_var_name in flow_process_variables.prov_var_name%type   -- Name of the process variable
+, pi_sbfl_id  in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+);
+```
+
+**SIGNATURE 2 - Using Subflow_id.**
 
 This procedure is used to delete a process variable, using a `subflow ID` to identify the variable's scope. 
 
-EXAMPLE 
+**EXAMPLE**
 
 This example will delete the process variable "MY_VAR" in process instance ID 1, in the scope used by subflow 12.
+
 ```sql
 begin
    flow_process_vars.delete_var(
@@ -709,26 +961,24 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_business_ref (Using Scope)
 
 ```sql
-procedure delete_var
-( pi_prcs_id  in flow_processes.prcs_id%type                 -- Process ID
-, pi_var_name in flow_process_variables.prov_var_name%type   -- Name of the process variable
-, pi_sbfl_id  in flow_subflows.sbfl_id%type                  -- Subflow ID, used to set scope
+procedure set_business_ref
+( pi_prcs_id    in flow_processes.prcs_id%type               -- Process ID
+, pi_vc2_value  in flow_process_variables.prov_var_vc2%type  -- Business Reference (underlying PK) (VARCHAR2)
+, pi_scope      in flow_subflows.sbfl_scope%type default 0   -- Variable Scope, defaults to 0
 );
 ```
 
-
-## Procedure set_business_ref
-
-SIGNATURE 1 - Usinfg Scope.
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to set the value of the built-in BUSINESS_REF process variable in scope 0.
 
-EXAMPLE 
+**EXAMPLE**
 
 This example will set the value of the process variable "BUSINESS_REFERENCE" in process instance ID 1.
+
 ```sql
 begin
    flow_process_vars.set_business_ref( 
@@ -739,26 +989,24 @@ begin
 end;
 ```
 
-SIGNATURE
+## Procedure set_business_ref (Using Subflow ID)
 
 ```sql
 procedure set_business_ref
 ( pi_prcs_id    in flow_processes.prcs_id%type               -- Process ID
 , pi_vc2_value  in flow_process_variables.prov_var_vc2%type  -- Business Reference (underlying PK) (VARCHAR2)
-, pi_scope      in flow_subflows.sbfl_scope%type default 0   -- Variable Scope, defaults to 0
+, pi_sbfl_id    in flow_subflows.sbfl_id%type                -- Subflow ID, used to set scope
 );
 ```
 
-
-## Procedure set_business_ref
-
-SIGNATURE 2 - Using Subflow_id.
+**SIGNATURE 2 - Using Subflow_id.**
 
 This function is used to set the value of the built-in BUSINESS_REF process variable in scope used by the given `subflow_id`.
 
-EXAMPLE 
+**EXAMPLE**
 
 This example will set the value of the process variable "BUSINESS_REFERENCE" in process instance ID 1.
+
 ```sql
 begin
    flow_process_vars.set_business_ref( 
@@ -769,35 +1017,7 @@ begin
 end;
 ```
 
-SIGNATURE
-
-```sql
-procedure set_business_ref
-( pi_prcs_id    in flow_processes.prcs_id%type               -- Process ID
-, pi_vc2_value  in flow_process_variables.prov_var_vc2%type  -- Business Reference (underlying PK) (VARCHAR2)
-, pi_sbfl_id    in flow_subflows.sbfl_id%type                -- Subflow ID, used to set scope
-);
-```
-
-
-## Function get_business_ref
-
-SIGNATURE 1 - Using Scope.
-
-This function is used to get the value of the built-in BUSINESS_REF process variable.
-
-EXAMPLE 
-
-This example will get the value of the process variable "BUSINESS_REFERENCE" in process instance ID 1 in scope 0.
-```sql
-declare
-   l_business_ref flow_process_variables.prov_var_vc2%type;
-begin
-   l_business_ref := flow_process_vars.get_business_ref( pi_prcs_id => 1, pi_scope => 0);
-end;
-```
-
-SIGNATURE
+## Function get_business_ref (Using Scope)
 
 ```sql
 function get_business_ref
@@ -807,25 +1027,23 @@ function get_business_ref
 return flow_process_variables.prov_var_vc2%type;
 ```
 
-
-## Function get_business_ref
-
-SIGNATURE 2 - Using Subflow_ID.
+**SIGNATURE 1 - Using Scope.**
 
 This function is used to get the value of the built-in BUSINESS_REF process variable.
 
-EXAMPLE 
+**EXAMPLE**
 
 This example will get the value of the process variable "BUSINESS_REFERENCE" in process instance ID 1 in scope 0.
+
 ```sql
 declare
    l_business_ref flow_process_variables.prov_var_vc2%type;
 begin
-   l_business_ref := flow_process_vars.get_business_ref( pi_prcs_id => 1, pi_sbfl_id => 12);
+   l_business_ref := flow_process_vars.get_business_ref( pi_prcs_id => 1, pi_scope => 0);
 end;
 ```
 
-SIGNATURE
+## Function get_business_ref (Using Subflow ID)
 
 ```sql
 function get_business_ref
@@ -833,6 +1051,22 @@ function get_business_ref
 , pi_sbfl_id    in flow_subflows.sbfl_id%type   -- Subflow ID, used to set scope
 )
 return flow_process_variables.prov_var_vc2%type;
+```
+
+**SIGNATURE 2 - Using Subflow_ID.**
+
+This function is used to get the value of the built-in BUSINESS_REF process variable.
+
+**EXAMPLE**
+
+This example will get the value of the process variable "BUSINESS_REFERENCE" in process instance ID 1 in scope 0.
+
+```sql
+declare
+   l_business_ref flow_process_variables.prov_var_vc2%type;
+begin
+   l_business_ref := flow_process_vars.get_business_ref( pi_prcs_id => 1, pi_sbfl_id => 12);
+end;
 ```
 
 
