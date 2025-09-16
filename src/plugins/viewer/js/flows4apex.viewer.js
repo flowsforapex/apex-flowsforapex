@@ -1101,7 +1101,28 @@ class UserTaskModule {
     const button = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<button class="bjs-drilldown fa fa-external-link"></button>');
 
     button.addEventListener('click', function () {
-      window.open(url, '_self');
+      if (url.startsWith('#action$a-dialog-open')) {
+        const params = new URLSearchParams(url.split('?')[1]);
+        const dialogUrl = decodeURIComponent(params.get('url'));
+        const title = params.get('title');
+        const height = params.get('h');
+        const width = params.get('w');
+        const maxWidth = params.get('mxw');
+        const triggeringElement = params.get('trgEl');
+
+        apex.navigation.dialog(dialogUrl, {
+            title: title,
+            height: height,
+            width: width,
+            maxWidth: maxWidth,
+            modal: true
+          },
+          't-Dialog-page--standard',
+          triggeringElement
+        );
+      } else {
+        window.open(url, '_self');
+      }
     });
 
     // add overlay
