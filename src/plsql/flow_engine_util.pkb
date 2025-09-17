@@ -449,8 +449,8 @@ end get_object_tag;
       begin
         select lane_objt.objt_bpmn_id
              , lane_objt.objt_name
-             , lane_objt.objt_attributes."apex"."isRole"
-             , lane_objt.objt_attributes."apex"."role"
+             , lane_objt.objt_attributes."apex"."isRole" isrole
+             , lane_objt.objt_attributes."apex"."role"   role
           into l_lane
              , l_lane_name
              , l_lane_isRole
