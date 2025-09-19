@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   07:01 Tuesday September 16, 2025
+--   Date and Time:   13:36 Friday September 19, 2025
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -19050,7 +19050,7 @@ end;
 prompt --application/shared_components/plugins/region_type/com_flows4apex_viewer_region_251
 begin
 wwv_flow_imp_shared.create_plugin(
- p_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24362786687099811)
 ,p_plugin_type=>'REGION TYPE'
 ,p_name=>'COM.FLOWS4APEX.VIEWER.REGION.251'
 ,p_display_name=>'Flows for APEX - Viewer'
@@ -19064,15 +19064,15 @@ wwv_flow_imp_shared.create_plugin(
 ,p_ajax_function=>'flow_viewer.ajax'
 ,p_standard_attributes=>'SOURCE_LOCATION:AJAX_ITEMS_TO_SUBMIT:ORDER_BY:NO_DATA_FOUND_MESSAGE:INIT_JAVASCRIPT_CODE'
 ,p_substitute_attributes=>false
-,p_version_scn=>4074136980
+,p_version_scn=>4107281418
 ,p_subscribe_plugin_settings=>true
 ,p_version_identifier=>'25.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
-,p_files_version=>1170
+,p_files_version=>1171
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24002556402749424)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24363021444099816)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -19088,8 +19088,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'You can choose from any CLOB column of the region source.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24003325789749425)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24363790831099817)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -19103,8 +19103,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_help_text=>'Choose the column containing the diagram identifier of the currently displayed diagram (normally the prdg_id for running instances and the dgrm_id for displaying plain models).'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24008132258749427)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24368597300099819)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -19120,8 +19120,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'As this can lead to unexpected results, we strongly recommend to only use one option at once.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24022090534764281)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24382555576114673)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40
@@ -19145,8 +19145,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '</pre>'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24026962234781972)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24387427276132364)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>50
@@ -19171,8 +19171,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '</pre>'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24008536054749427)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24369001096099819)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>60
@@ -19217,8 +19217,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '</pre>'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24008907958749428)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24369373000099820)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>7
 ,p_display_sequence=>70
@@ -19242,8 +19242,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '</pre>'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24028942068788188)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24389407110138580)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>8
 ,p_display_sequence=>80
@@ -19275,8 +19275,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Typically the label would be calculated dynamically within the currently shown instance.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24005329026749427)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24365794068099819)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>10
 ,p_display_sequence=>100
@@ -19293,8 +19293,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Remember to add your driving page items to "Page Items to Submit" for this to work properly.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24006081022749427)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24366546064099819)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>11
 ,p_display_sequence=>110
@@ -19311,8 +19311,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Can be further configured by using the JavaScript Initialization Code in the region attributes.'))
 );
 wwv_flow_imp_shared.create_plugin_attribute(
- p_id=>wwv_flow_imp.id(24007701896749427)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24368166938099819)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>12
 ,p_display_sequence=>120
@@ -19327,8 +19327,8 @@ wwv_flow_imp_shared.create_plugin_attribute(
 'Makes most sense if you''re putting the viewer full screen on a separate page, otherwise this might interfere with normal web page navigation.'))
 );
 wwv_flow_imp_shared.create_plugin_std_attribute(
- p_id=>wwv_flow_imp.id(24012626738749436)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24373091780099828)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'INIT_JAVASCRIPT_CODE'
 ,p_is_required=>false
 ,p_depending_on_has_to_exist=>true
@@ -19365,49 +19365,49 @@ wwv_flow_imp_shared.create_plugin_std_attribute(
 '</ul>'))
 );
 wwv_flow_imp_shared.create_plugin_std_attribute(
- p_id=>wwv_flow_imp.id(24013009284749436)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24373474326099828)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'SOURCE_LOCATION'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24013374999749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24373840041099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_diagram_loaded'
 ,p_display_name=>'Diagram Loaded'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24013799640749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24374264682099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_element_click'
 ,p_display_name=>'Click on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24014181963749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24374647005099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_element_dblclick'
 ,p_display_name=>'Doubleclick on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24014637912749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24375102954099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_element_hover'
 ,p_display_name=>'Hover on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24014980344749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24375445386099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_element_mousedown'
 ,p_display_name=>'Mousedown on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24015410426749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24375875468099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_element_mouseup'
 ,p_display_name=>'Mouseup on Element'
 );
 wwv_flow_imp_shared.create_plugin_event(
- p_id=>wwv_flow_imp.id(24015750277749438)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24376215319099830)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_name=>'mtbv_element_out'
 ,p_display_name=>'Leave Element'
 );
@@ -19423,8 +19423,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(24016198727749439)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24376663769099831)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_file_name=>'css/flows4apex.viewer.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -19491,8 +19491,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(24016573559749439)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24377038601099831)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_file_name=>'js/flows4apex.apex.viewer.js'
 ,p_mime_type=>'text/javascript'
 ,p_file_charset=>'utf-8'
@@ -22895,8 +22895,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(24017422779749441)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(24377887821099833)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_file_name=>'js/flows4apex.viewer.min.js'
 ,p_mime_type=>'text/javascript'
 ,p_file_charset=>'utf-8'
@@ -22936,8 +22936,8 @@ end;
 /
 begin
 wwv_flow_imp_shared.create_plugin_file(
- p_id=>wwv_flow_imp.id(31861627263260468)
-,p_plugin_id=>wwv_flow_imp.id(24002321645749419)
+ p_id=>wwv_flow_imp.id(32222092304610860)
+,p_plugin_id=>wwv_flow_imp.id(24362786687099811)
 ,p_file_name=>'js/flows4apex.apex.viewer.min.js'
 ,p_mime_type=>'text/javascript'
 ,p_file_charset=>'utf-8'

@@ -33,7 +33,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   06:00 Tuesday September 16, 2025
+--   Date and Time:   13:22 Friday September 19, 2025
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Component Export
@@ -65,11 +65,11 @@ wwv_flow_imp_shared.create_plugin(
 ,p_ajax_function=>'flow_viewer.ajax'
 ,p_standard_attributes=>'SOURCE_LOCATION:AJAX_ITEMS_TO_SUBMIT:ORDER_BY:NO_DATA_FOUND_MESSAGE:INIT_JAVASCRIPT_CODE'
 ,p_substitute_attributes=>false
-,p_version_scn=>4074136980
+,p_version_scn=>4107281418
 ,p_subscribe_plugin_settings=>true
 ,p_version_identifier=>'25.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
-,p_files_version=>1170
+,p_files_version=>1171
 );
 wwv_flow_imp_shared.create_plugin_attribute(
  p_id=>wwv_flow_imp.id(7028280487394050)
