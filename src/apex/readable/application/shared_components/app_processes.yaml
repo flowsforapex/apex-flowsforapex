@@ -1,0 +1,187 @@
+---
+- # ====== Application Process: SWITCH_THEME_MODE ==============
+  id: 5593447532877397
+  identification: 
+    name: SWITCH_THEME_MODE
+    type: NATIVE_PLSQL
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: 'flow_theme_api.switch_theme_mode(:REQUEST);'
+
+  execution: 
+    sequence: 1
+    point: Processing
+
+  error: 
+    display-location: On Error Page
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: LIGHT_MODE DARK_MODE
+
+  subscription: 
+    version-number: 1760504900
+
+- # ====== Application Process: RESET_THEME_MODE ===============
+  id: 6213103405434761
+  identification: 
+    name: RESET_THEME_MODE
+    type: NATIVE_PLSQL
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: 'flow_theme_api.reset_theme_mode(:REQUEST);'
+
+  execution: 
+    sequence: 1
+    point: Processing
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":request in ('RESET_DARK', 'RESET_LIGHT')"
+
+  subscription: 
+    version-number: 1760504900
+
+- # ====== Application Process: AJAX_HANDLER ===================
+  id: 7625964662736152
+  identification: 
+    name: AJAX_HANDLER
+    type: NATIVE_PLSQL
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: flow_engine_app_api.handle_ajax;
+
+  execution: 
+    sequence: 1
+    point: Ajax Callback
+
+  security: 
+    authorization-scheme: Must Not Be Public User
+
+  subscription: 
+    version-number: 1760504921
+
+- # ====== Application Process: CSS_TRICKS =====================
+  id: 8120377472916762
+  identification: 
+    name: CSS_TRICKS
+    type: NATIVE_PLSQL
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_version varchar2(4);
+          l_user_style_id number := apex_theme.get_user_style(:APP_ID, :APP_USER, 42);
+          l_user_style varchar2(100);
+          l_debug boolean := apex_application.g_debug;
+          l_file_exists number;
+          l_directory varchar2(100);
+          l_filename varchar2(100);
+      begin
+          /* retrieve user theme setting */
+          
+          if (l_user_style_id is not null ) then
+              begin
+                  select name
+                  into l_user_style
+                  from apex_application_theme_styles
+                  where theme_style_id = l_user_style_id;
+              exception
+                  when no_data_found
+                  then l_user_style := case :THEME_PLUGIN_CLASS when 'FLOWS' then 'Vita' else 'Vita - Dark' end;
+              end;
+               
+          else
+              l_user_style := case :THEME_PLUGIN_CLASS when 'FLOWS' then 'Vita' else 'Vita - Dark' end;
+          end if;
+      
+          /* load theme specific file */
+          
+          l_directory := 'css/';
+          l_filename := 'flows4apex.'||case l_user_style when 'Vita' then 'light' else 'dark' end ||'.css';
+      
+          select count(*)
+          into l_file_exists
+          from apex_application_static_files
+          where file_name = l_directory || l_filename
+          and application_id = :app_id;
+      
+          if (l_file_exists > 0) then
+          l_filename := 'flows4apex.'||case l_user_style when 'Vita' then 'light' else 'dark' end ||'#MIN#';
+              
+              APEX_CSS.ADD_FILE(
+                  p_name => l_filename
+                  , p_directory => '#APP_IMAGES#'||l_directory
+              );
+          end if;
+          
+          /* load version specific file */
+      
+          select substr(version_no, 1, 4)
+          into l_version
+          from apex_release;
+          
+          l_directory := 'css/' || l_version || '/';
+          l_filename := 'flows4apex.'||case l_user_style when 'Vita' then 'light' else 'dark' end ||'.css';
+      
+          select count(*)
+          into l_file_exists
+          from apex_application_static_files
+          where file_name = l_directory || l_filename
+          and application_id = :app_id;
+      
+          if (l_file_exists > 0) then
+          l_filename := 'flows4apex.'||case l_user_style when 'Vita' then 'light' else 'dark' end ||'#MIN#';
+              
+              APEX_CSS.ADD_FILE(
+                  p_name => l_filename
+                  , p_directory => '#APP_IMAGES#'||l_directory
+              );
+          end if;
+          
+          /* load prisma file */
+          
+           APEX_CSS.ADD_FILE(
+                  p_name => 'prism' || case l_user_style when 'Vita - Dark' then '.dark' end ||'#MIN#'
+                  , p_directory => '#APP_IMAGES#lib/prismjs/css/'
+              ); 
+      
+      end;
+
+  execution: 
+    sequence: 1
+    point: Before Header
+
+  subscription: 
+    version-number: 1760504900
+
+- # ====== Application Process: SET_INIT_THEME_MODE ============
+  id: 29402085585388580
+  identification: 
+    name: SET_INIT_THEME_MODE
+    type: NATIVE_PLSQL
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: flow_theme_api.set_init_theme_mode;
+
+  execution: 
+    sequence: 1
+    point: After Authentication
+
+  subscription: 
+    version-number: 1760504900
+

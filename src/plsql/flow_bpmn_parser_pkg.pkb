@@ -1930,9 +1930,12 @@ as
                       , proc.proc_type
                       , proc.proc_callable
                       , proc.proc_startable
+                      , proc.proc_min_logging_level
+                      , proc.proc_instance_name
                       , proc.proc_application_id
                       , proc.proc_page_id
                       , proc.proc_username
+                      , proc.proc_business_admin
                       , proc.proc_steps
                       , proc.proc_sub_procs
                       , proc.proc_name
@@ -1944,18 +1947,21 @@ as
                                       , 'https://flowsforapex.org' as "apex")
                       , '/bpmn:definitions/bpmn:process' passing pi_xml
                         columns
-                          proc_id             varchar2( 50 char) path '@id'
-                        , proc_type           varchar2( 50 char) path 'name()'
-                        , proc_name           varchar2(200 char) path '@name'
-                        , proc_callable       varchar2( 50 char) path '@apex:isCallable'
-                        , proc_startable      varchar2( 50 char) path '@apex:isStartable'
-                        , proc_application_id varchar2( 50 char) path '@apex:applicationId'
-                        , proc_page_id        varchar2( 50 char) path '@apex:pageId'
-                        , proc_username       varchar2( 50 char) path '@apex:username'
-                        , proc_steps          sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:laneSet'
-                        , proc_sub_procs      sys.xmltype        path 'bpmn:subProcess'
-                        , proc_laneset        sys.xmltype        path 'bpmn:laneSet'
-                        , proc_extensions     sys.xmltype        path 'bpmn:extensionElements'
+                          proc_id                 varchar2( 50 char) path '@id'
+                        , proc_type               varchar2( 50 char) path 'name()'
+                        , proc_name               varchar2(200 char) path '@name'
+                        , proc_callable           varchar2( 50 char) path '@apex:isCallable'
+                        , proc_startable          varchar2( 50 char) path '@apex:isStartable'
+                        , proc_min_logging_level  varchar2( 50 char) path '@apex:minLoggingLevel'   
+                        , proc_instance_name      varchar2(200 char) path '@apex:instanceName'
+                        , proc_application_id     varchar2( 50 char) path '@apex:applicationId'
+                        , proc_page_id            varchar2( 50 char) path '@apex:pageId'
+                        , proc_username           varchar2( 50 char) path '@apex:username'
+                        , proc_business_admin     varchar2( 50 char) path '@apex:businessAdmin'
+                        , proc_steps              sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:laneSet'
+                        , proc_sub_procs          sys.xmltype        path 'bpmn:subProcess'
+                        , proc_laneset            sys.xmltype        path 'bpmn:laneSet'
+                        , proc_extensions         sys.xmltype        path 'bpmn:extensionElements'
                       ) proc
                  )
       loop
@@ -1996,6 +2002,15 @@ as
           );
         end if;
 
+        if rec.proc_business_admin is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_business_admin
+          , pi_value          => rec.proc_business_admin
+          );
+        end if;
+
         if rec.proc_callable is not null then
           register_object_attribute
           (
@@ -2011,6 +2026,24 @@ as
             pi_objt_bpmn_id   => rec.proc_id
           , pi_attribute_name => flow_constants_pkg.gc_apex_process_startable
           , pi_value          => rec.proc_startable
+          );
+        end if;
+
+        if rec.proc_min_logging_level is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_min_logging_level
+          , pi_value          => rec.proc_min_logging_level
+          );
+        end if;
+
+        if rec.proc_instance_name is not null then
+          register_object_attribute
+          (
+            pi_objt_bpmn_id   => rec.proc_id
+          , pi_attribute_name => flow_constants_pkg.gc_apex_process_instance_name
+          , pi_value          => rec.proc_instance_name
           );
         end if;
 

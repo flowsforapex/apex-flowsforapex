@@ -4,8 +4,8 @@ begin
 --     PAGE: 00036
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>36
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Configuration - Timers'
 ,p_alias=>'CONFIGURATION-TIMERS'
 ,p_step_title=>'Configuration - Timers'
@@ -24,8 +23,6 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_component_map=>'16'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(4548240290043011)
@@ -35,12 +32,12 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>50
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_source=>'To use the Timers feature of Flows for APEX, you must complete additional installation step that can be found <a href="https://flowsforapex.org/latest/installation/#post-installation-task-1-additional-step-to-use-timers" target="_blank">here</a>.'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_plug_display_condition_type=>'EXPRESSION'
 ,p_plug_display_when_condition=>'not flow_timers_pkg.timer_job_exists'
 ,p_plug_display_when_cond2=>'PLSQL'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(5273399411803742)
@@ -49,12 +46,12 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(12495582446800880234)
 ,p_plug_display_sequence=>40
 ,p_include_in_reg_disp_sel_yn=>'Y'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_plug_display_condition_type=>'EXPRESSION'
 ,p_plug_display_when_condition=>'flow_timers_pkg.timer_job_exists'
 ,p_plug_display_when_cond2=>'PLSQL'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(24203633870580280)
@@ -68,7 +65,6 @@ wwv_flow_imp_page.create_page_plug(
 ,p_menu_id=>wwv_flow_imp.id(12495636486941880396)
 ,p_plug_source_type=>'NATIVE_BREADCRUMB'
 ,p_menu_template_id=>wwv_flow_imp.id(12495520300515880126)
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(3311591865325268)
@@ -81,6 +77,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Apply Changes'
 ,p_button_position=>'NEXT'
+,p_button_alignment=>'RIGHT'
 ,p_button_condition=>'flow_timers_pkg.timer_job_exists'
 ,p_button_condition2=>'PLSQL'
 ,p_button_condition_type=>'EXPRESSION'
@@ -134,7 +131,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_quick_pick_value_03=>'FREQ=MINUTELY;INTERVAL=10'
 ,p_quick_pick_label_04=>'1 Min'
 ,p_quick_pick_value_04=>'FREQ=MINUTELY;INTERVAL=10'
-,p_quick_pick_label_05=>'10 Sec (Production Use - not for apex.oracle.com)'
+,p_quick_pick_label_05=>'10 Sec (Production Use - not for oracleapex.com)'
 ,p_quick_pick_value_05=>'FREQ=SECONDLY;INTERVAL=10'
 );
 wwv_flow_imp_page.create_page_item(
@@ -159,6 +156,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_inline_help_text=>'For cycle timers, this will defined the maximum number of execution.'
 ,p_encrypt_session_state_yn=>'N'
 ,p_attribute_03=>'left'
+,p_attribute_04=>'text'
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(3257766356234742)
@@ -175,6 +173,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_success_message=>'Changes saved.'
+,p_internal_uid=>3257766356234742
 );
 wwv_flow_imp.component_end;
 end;

@@ -1,0 +1,261 @@
+---
+- # ====== Static Application File: css/flows4apex.css =========
+  id: 4505418457856239
+  identification: 
+    file-name: css/flows4apex.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/flows4apex.js ===========
+  id: 4701136124111997
+  identification: 
+    file-name: js/flows4apex.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/flows4apex.js.map =======
+  id: 4704600929146008
+  identification: 
+    file-name: js/flows4apex.js.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.css.map =====
+  id: 6501813752493881
+  identification: 
+    file-name: css/flows4apex.css.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.dark.c
+  id: 12618555361993254
+  identification: 
+    file-name: lib/prismjs/css/prism.dark.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.css ==
+  id: 12618784715993271
+  identification: 
+    file-name: lib/prismjs/css/prism.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/js/prism.js ====
+  id: 12619103143994029
+  identification: 
+    file-name: lib/prismjs/js/prism.js
+
+  attributes: 
+    mime-type: application/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.min.cs
+  id: 12641794840336847
+  identification: 
+    file-name: lib/prismjs/css/prism.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.css.ma
+  id: 12642011694336848
+  identification: 
+    file-name: lib/prismjs/css/prism.css.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.dark.m
+  id: 12643522207338745
+  identification: 
+    file-name: lib/prismjs/css/prism.dark.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.dark.c
+  id: 12643889679338746
+  identification: 
+    file-name: lib/prismjs/css/prism.dark.css.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: bpmn-io/bpmn-font/css/bpmn-e
+  id: 14357665744109308
+  identification: 
+    file-name: bpmn-io/bpmn-font/css/bpmn-embedded.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: bpmn-io/bpmn-font/css/bpmn-e
+  id: 14372062501975164
+  identification: 
+    file-name: bpmn-io/bpmn-font/css/bpmn-embedded.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.min.css =====
+  id: 14831848939650172
+  identification: 
+    file-name: css/flows4apex.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/flows4apex.min.js =======
+  id: 16651828815466797
+  identification: 
+    file-name: js/flows4apex.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: app-100-logo.png ===========
+  id: 16924045360692548
+  identification: 
+    file-name: app-100-logo.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: favicon.png ================
+  id: 16925863151714032
+  identification: 
+    file-name: favicon.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.dark.css ====
+  id: 17904413161090630
+  identification: 
+    file-name: css/flows4apex.dark.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.dark.min.css 
+  id: 17905049977092217
+  identification: 
+    file-name: css/flows4apex.dark.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.dark.css.map 
+  id: 17905378289092218
+  identification: 
+    file-name: css/flows4apex.dark.css.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.light.css ===
+  id: 17905784119093999
+  identification: 
+    file-name: css/flows4apex.light.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.light.min.css
+  id: 17906322031094625
+  identification: 
+    file-name: css/flows4apex.light.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.light.css.map
+  id: 17906637125094626
+  identification: 
+    file-name: css/flows4apex.light.css.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: workflow_black.svg =========
+  id: 26991323914877414
+  identification: 
+    file-name: workflow_black.svg
+
+  attributes: 
+    mime-type: image/svg+xml
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: app-100-logo.svg ===========
+  id: 26994221198953312
+  identification: 
+    file-name: app-100-logo.svg
+
+  attributes: 
+    mime-type: image/svg+xml
+
+- # ====== Static Application File: workflow_white.svg =========
+  id: 26999326863976501
+  identification: 
+    file-name: workflow_white.svg
+
+  attributes: 
+    mime-type: image/svg+xml
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: flows-apex.svg =============
+  id: 57100485715285864
+  identification: 
+    file-name: flows-apex.svg
+
+  attributes: 
+    mime-type: image/svg+xml
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/js/prism.min.js 
+  id: 57432074669854671
+  identification: 
+    file-name: lib/prismjs/js/prism.min.js
+
+  attributes: 
+    mime-type: application/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/js/prism.js.map 
+  id: 57432329230854672
+  identification: 
+    file-name: lib/prismjs/js/prism.js.map
+
+  attributes: 
+    mime-type: application/json
+    file-character-set: Unicode UTF-8
+

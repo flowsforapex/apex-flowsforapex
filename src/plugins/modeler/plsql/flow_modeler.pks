@@ -1,20 +1,21 @@
 create or replace package flow_modeler
 as
 
-  function render
+  procedure render
   (
-    p_region              in  apex_plugin.t_region
-  , p_plugin              in  apex_plugin.t_plugin
-  , p_is_printer_friendly in  boolean
-  )
-    return apex_plugin.t_region_render_result;
+    p_plugin in            apex_plugin.t_plugin
+  , p_region in            apex_plugin.t_region
+  , p_param  in            apex_plugin.t_region_render_param
+  , p_result in out nocopy apex_plugin.t_region_render_result
+  );
 
-  function ajax
+  procedure ajax
   (
-    p_region              in  apex_plugin.t_region
-  , p_plugin              in  apex_plugin.t_plugin
-  )
-    return apex_plugin.t_region_ajax_result;
+    p_plugin in            apex_plugin.t_plugin
+  , p_region in            apex_plugin.t_region
+  , p_param  in            apex_plugin.t_region_ajax_param
+  , p_result in out nocopy apex_plugin.t_region_ajax_result
+  );
 
 end flow_modeler;
 /

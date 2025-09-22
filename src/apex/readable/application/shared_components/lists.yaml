@@ -1,0 +1,2372 @@
+---
+- # ====== List: P8_SUBFLOW_ROW_ACTION_MENU ====================
+  id: 2407587958394790
+  identification: 
+    name: P8_SUBFLOW_ROW_ACTION_MENU
+
+  subscription: 
+    version-number: 3106868787
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: - ============================================
+    id: 6516742938690
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 15
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Force Next Step ==============================
+    id: 6837593932517
+    label: 
+      label: Force Next Step
+
+    icon: 
+      image/icon-css-classes: fa-circle-arrow-out-east fam-pause fam-is-danger
+
+    layout: 
+      sequence: 25
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: force-next-step
+
+  - # ====== Entry: - ============================================
+    id: 7153715926375
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 80
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Delete Subflow ===============================
+    id: 7668582916460
+    label: 
+      label: Delete Subflow
+
+    icon: 
+      image/icon-css-classes: fa-trash fam-pause fam-is-danger
+
+    layout: 
+      sequence: 90
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: delete-on-resume
+
+  - # ====== Entry: Rewind to Previous Gateway ===================
+    id: 7955792911684
+    label: 
+      label: Rewind to Previous Gateway
+
+    icon: 
+      image/icon-css-classes: fa-fast-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 100
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: return-prev-gw-resume
+
+  - # ====== Entry: Rewind to Last Step ==========================
+    id: 8210725906916
+    label: 
+      label: Rewind to Last Step
+
+    icon: 
+      image/icon-css-classes: fa-step-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 110
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-last-step
+
+  - # ====== Entry: Rewind to Earlier Step =======================
+    id: 8558461902787
+    label: 
+      label: Rewind to Earlier Step
+
+    icon: 
+      image/icon-css-classes: fa-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 120
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: reposition-subflow
+
+  - # ====== Entry: Rewind from Sub Process ======================
+    id: 8866680897439
+    label: 
+      label: Rewind from Sub Process
+
+    icon: 
+      image/icon-css-classes: fa-fast-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 130
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-subprocess-on-resume
+
+  - # ====== Entry: Rewind from Call Activity ====================
+    id: 9154014893229
+    label: 
+      label: Rewind from Call Activity
+
+    icon: 
+      image/icon-css-classes: fa-fast-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 140
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-call-activity-on-resume
+
+  - # ====== Entry: Rewind to Matching Link Event ================
+    id: 40847519512288
+    label: 
+      label: Rewind to Matching Link Event
+
+    icon: 
+      image/icon-css-classes: fa-step-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 150
+      parent-entry: Rewind Actions # 13523166993737391
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-link-event-on-resume
+
+  - # ====== Entry: Complete =====================================
+    id: 2407770381394791
+    label: 
+      label: Complete
+
+    icon: 
+      image/icon-css-classes: fa-sign-out
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: complete-step
+
+  - # ====== Entry: Re-start =====================================
+    id: 2408186437394796
+    label: 
+      label: Re-start
+
+    icon: 
+      image/icon-css-classes: fa-redo-arrow
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: restart-step
+
+  - # ====== Entry: - ============================================
+    id: 2408507152394796
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Reserve ======================================
+    id: 2408929523394796
+    label: 
+      label: Reserve
+
+    icon: 
+      image/icon-css-classes: fa-lock
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: reserve-step
+
+  - # ====== Entry: Release ======================================
+    id: 2409356015394796
+    label: 
+      label: Release
+
+    icon: 
+      image/icon-css-classes: fa-unlock
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: release-step
+
+  - # ====== Entry: Rewind Actions ===============================
+    id: 13523166993737391
+    label: 
+      label: Rewind Actions
+
+    icon: 
+      image/icon-css-classes: fa-fast-backward fam-pause fam-is-danger
+
+    layout: 
+      sequence: 85
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: rewind-sub-menu
+
+  - # ====== Entry: - ============================================
+    id: 73474529421861842
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Reschedule ===================================
+    id: 73474805704863264
+    label: 
+      label: Reschedule
+
+    icon: 
+      image/icon-css-classes: fa-clock-o
+
+    layout: 
+      sequence: 70
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: reschedule-timer
+
+- # ====== List: P10_INSTANCE_HEADER_ACTION_MENU ===============
+  id: 2431522092873048
+  identification: 
+    name: P10_INSTANCE_HEADER_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504774
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Start ========================================
+    id: 2432103661873123
+    label: 
+      label: Start
+
+    icon: 
+      image/icon-css-classes: fa-play
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-start-flow-instance
+
+  - # ====== Entry: Reset ========================================
+    id: 2432511726873124
+    label: 
+      label: Reset
+
+    icon: 
+      image/icon-css-classes: fa-undo
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-reset-flow-instance
+
+  - # ====== Entry: Terminate ====================================
+    id: 2432979512873125
+    label: 
+      label: Terminate
+
+    icon: 
+      image/icon-css-classes: fa-stop
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-terminate-flow-instance
+
+  - # ====== Entry: Delete =======================================
+    id: 2433306262873126
+    label: 
+      label: Delete
+
+    icon: 
+      image/icon-css-classes: fa-trash-o
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-delete-flow-instance
+
+- # ====== List: P9_CONFIGURATION_PAGES ========================
+  id: 3291351989268379
+  identification: 
+    name: P9_CONFIGURATION_PAGES
+
+  subscription: 
+    version-number: 3770182256
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Logging ======================================
+    id: 3291576005268381
+    label: 
+      label: Logging
+
+    icon: 
+      image/icon-css-classes: fa-indent
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:32:&SESSION.::&DEBUG.::::'
+        page: 32 # Configuration - Logging
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Language, level, user information, retention time, bpmn location, message flows
+
+  - # ====== Entry: Completed Instance Archiving and Purging =====
+    id: 3291958597268382
+    label: 
+      label: Completed Instance Archiving and Purging
+
+    icon: 
+      image/icon-css-classes: fa-archive
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:33:&SESSION.::&DEBUG.::::'
+        page: 33 # Configuration - Instance Archiving and Purging
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Configure process instance archiving and purging
+
+  - # ====== Entry: Engine App ===================================
+    id: 3292372844268382
+    label: 
+      label: Engine App
+
+    icon: 
+      image/icon-css-classes: fa-window
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.::::'
+        page: 34 # Configuration - Engine App
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: App Mode
+
+  - # ====== Entry: Engine =======================================
+    id: 3292700268268382
+    label: 
+      label: Engine
+
+    icon: 
+      image/icon-css-classes: fa-hardware
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:35:&SESSION.::&DEBUG.::::'
+        page: 35 # Configuration - Engine
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Step key usage, default values
+
+  - # ====== Entry: Timers =======================================
+    id: 3293122238268383
+    label: 
+      label: Timers
+
+    icon: 
+      image/icon-css-classes: fa-clock-o
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:36:&SESSION.::&DEBUG.::::'
+        page: 36 # Configuration - Timers
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Enable timers, scheduler, max cycles
+
+  - # ====== Entry: REST =========================================
+    id: 3293918632269809
+    label: 
+      label: REST
+
+    icon: 
+      image/icon-css-classes: fa-gear
+
+    layout: 
+      sequence: 70
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:30:&SESSION.::&DEBUG.::::'
+        page: 30 # Configuration - REST
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: REST clients
+
+  - # ====== Entry: Statistics ===================================
+    id: 3343699244810836
+    label: 
+      label: Statistics
+
+    icon: 
+      image/icon-css-classes: fa-bar-chart
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:37:&SESSION.::&DEBUG.:37:::'
+        page: 37 # Configuration - Statistics
+        clear-cache: 37
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Summaries retention time
+
+  - # ====== Entry: Automations ==================================
+    id: 4807112393506933
+    label: 
+      label: Automations
+
+    icon: 
+      image/icon-css-classes: fa-calendar-clock
+
+    layout: 
+      sequence: 90
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:43,CIR,RIR:::'
+        page: 43 # Configuration - Automations
+        clear-cache: 43,CIR,RIR
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Manage and monitor automations
+
+  - # ====== Entry: License ======================================
+    id: 11497553424163179
+    label: 
+      label: License
+
+    icon: 
+      image/icon-css-classes: fa-file-signature
+
+    layout: 
+      sequence: 80
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:39:&SESSION.::&DEBUG.::::'
+        page: 39 # Configuration - License
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: true
+      1.: Edition, license information
+
+  - # ====== Entry: AI Prompts ===================================
+    id: 12583258855978108
+    label: 
+      label: AI Prompts
+
+    icon: 
+      image/icon-css-classes: fa-ai
+
+    layout: 
+      sequence: 100
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:44:&SESSION.::&DEBUG.:RP:::'
+        page: 44 # Configuration - AI Prompts
+        clear-cache: RP
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: AI Prompts and Quick Actions
+
+- # ====== List: P8_SUBFLOW_HEADER_ACTION_MENU =================
+  id: 4409050172512221
+  identification: 
+    name: P8_SUBFLOW_HEADER_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504778
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Complete =====================================
+    id: 4409268569512242
+    label: 
+      label: Complete
+
+    icon: 
+      image/icon-css-classes: fa-sign-out
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-complete-step
+
+  - # ====== Entry: Re-start =====================================
+    id: 4409653667512250
+    label: 
+      label: Re-start
+
+    icon: 
+      image/icon-css-classes: fa-redo-arrow
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-restart-step
+
+  - # ====== Entry: - ============================================
+    id: 4410048087512250
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Reserve ======================================
+    id: 4410440520512250
+    label: 
+      label: Reserve
+
+    icon: 
+      image/icon-css-classes: fa-lock
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-reserve-step
+
+  - # ====== Entry: Release ======================================
+    id: 4410861620512250
+    label: 
+      label: Release
+
+    icon: 
+      image/icon-css-classes: fa-unlock
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-release-step
+
+  - # ====== Entry: - ============================================
+    id: 73510569356145167
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Reschedule ===================================
+    id: 73510888958146465
+    label: 
+      label: Reschedule
+
+    icon: 
+      image/icon-css-classes: fa-clock-o
+
+    layout: 
+      sequence: 70
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-reschedule-timer
+
+- # ====== List: P8_ACTION_MENU ================================
+  id: 6338940478461643
+  identification: 
+    name: P8_ACTION_MENU
+
+  subscription: 
+    version-number: 1842508720
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: - ============================================
+    id: 5672005974958
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 42
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Suspend ======================================
+    id: 5976843961321
+    label: 
+      label: Suspend
+
+    icon: 
+      image/icon-css-classes: fa-user-md
+
+    layout: 
+      sequence: 43
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: suspend-flow-instance
+
+  - # ====== Entry: Resume =======================================
+    id: 6230768955087
+    label: 
+      label: Resume
+
+    icon: 
+      image/icon-css-classes: fa-emoji-worry
+
+    layout: 
+      sequence: 48
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: resume-flow-instance
+
+  - # ====== Entry: Show Instance Timeline =======================
+    id: 2128118443982532
+    label: 
+      label: Show Instance Timeline
+
+    icon: 
+      image/icon-css-classes: fa-sequence
+
+    layout: 
+      sequence: 65
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:20:&SESSION.::&DEBUG.::P20_PRCS_ID,P20_PRCS_NAME:&P10_PRCS_ID.,&P10_PRCS_NAME.:'
+        page: 20 # Instance Timeline - &P20_PRCS_NAME.
+        values: 
+          p20_prcs_id: '&P10_PRCS_ID.'
+          p20_prcs_name: '&P10_PRCS_NAME.'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Instance Summary =============================
+    id: 3528025546791202
+    label: 
+      label: Instance Summary
+
+    icon: 
+      image/icon-css-classes: fa-download
+
+    layout: 
+      sequence: 67
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.page.submit('INSTANCE_SUMMARY');"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Step Timers ==================================
+    id: 3597012048710221
+    label: 
+      label: Step Timers
+
+    icon: 
+      image/icon-css-classes: fa-clock-o
+
+    layout: 
+      sequence: 115
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.page.submit('STEP_TIMERS');"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: - ============================================
+    id: 6351240010504867
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 100
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Download (SVG) ===============================
+    id: 12015017232750300
+    label: 
+      label: Download (SVG)
+
+    icon: 
+      image/icon-css-classes: fa-image
+
+    layout: 
+      sequence: 70
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: download-as-svg
+
+  - # ====== Entry: Show History =================================
+    id: 12016899984810068
+    label: 
+      label: Show History
+
+    icon: 
+      image/icon-css-classes: fa-info-circle-o
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: flow-instance-audit
+
+  - # ====== Entry: Show Model Details ===========================
+    id: 12017214847815037
+    label: 
+      label: Show Model Details
+
+    icon: 
+      image/icon-css-classes: fa-search
+
+    layout: 
+      sequence: 90
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: edit-flow-diagram
+
+  - # ====== Entry: - ============================================
+    id: 12017441161816637
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: - ============================================
+    id: 12668784852437164
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 80
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: - ============================================
+    id: 12694916872990920
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 120
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Refresh ======================================
+    id: 14295838249027758
+    label: 
+      label: Refresh
+
+    icon: 
+      image/icon-css-classes: fa-refresh
+
+    layout: 
+      sequence: 110
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.region('subflows').refresh();apex.region('flow-monitor').refresh();apex.region('flow-instance-detail').refresh();apex.region('process-variables').refresh();apex.region('message-subscriptions').refresh();apex.region('task-list').refresh();"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Display Setting ==============================
+    id: 46154425883410953
+    label: 
+      label: Display Setting
+
+    icon: 
+      image/icon-css-classes: fa-gear
+
+    layout: 
+      sequence: 130
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: below report|side-by-side|new window =========
+    id: 46154708390415036
+    label: 
+      label: below report|side-by-side|new window
+
+    layout: 
+      sequence: 140
+      parent-entry: Display Setting # 46154425883410953
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: choose-setting
+
+  - # ====== Entry: Start ========================================
+    id: 46777067725540092
+    label: 
+      label: Start
+
+    icon: 
+      image/icon-css-classes: fa-play
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: start-flow-instance
+
+  - # ====== Entry: Reset ========================================
+    id: 46778310373540093
+    label: 
+      label: Reset
+
+    icon: 
+      image/icon-css-classes: fa-undo
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: reset-flow-instance
+
+  - # ====== Entry: Terminate ====================================
+    id: 46779088416540093
+    label: 
+      label: Terminate
+
+    icon: 
+      image/icon-css-classes: fa-stop
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: terminate-flow-instance
+
+  - # ====== Entry: Delete =======================================
+    id: 46779754471540095
+    label: 
+      label: Delete
+
+    icon: 
+      image/icon-css-classes: fa-trash-o
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: delete-flow-instance
+
+- # ====== List: P8_VARIABLE_ROW_ACTION_MENU ===================
+  id: 7074608790273038
+  identification: 
+    name: P8_VARIABLE_ROW_ACTION_MENU
+
+  subscription: 
+    version-number: 3839474193
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Edit =========================================
+    id: 7074803452273042
+    label: 
+      label: Edit
+
+    icon: 
+      image/icon-css-classes: fa-pencil
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: update-process-variable
+
+  - # ====== Entry: Delete =======================================
+    id: 7075252422273053
+    label: 
+      label: Delete
+
+    icon: 
+      image/icon-css-classes: fa-trash-o
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: delete-process-variable
+
+  - # ====== Entry: History ======================================
+    id: 14924955272586233
+    label: 
+      label: History
+
+    icon: 
+      image/icon-css-classes: fa-info-circle-o
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: process-variable-history
+
+- # ====== List: P8_VARIABLE_HEADER_ACTION_MENU ================
+  id: 7390393853616382
+  identification: 
+    name: P8_VARIABLE_HEADER_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504778
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Delete =======================================
+    id: 7390805893616409
+    label: 
+      label: Delete
+
+    icon: 
+      image/icon-css-classes: fa-trash-o
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-delete-process-variable
+
+- # ====== List: P2_ACTION_MENU ================================
+  id: 7927640106409064
+  identification: 
+    name: P2_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504778
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Import =======================================
+    id: 7928205045409069
+    label: 
+      label: Import
+
+    icon: 
+      image/icon-css-classes: fa-upload
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:6:&SESSION.:IMPORT_FLOW:&DEBUG.:6:P6_FORCE_OVERWRITE:N:'
+        page: 6 # Import
+        request: IMPORT_FLOW
+        clear-cache: 6
+        values: 
+          p6_force_overwrite: N
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Refresh ======================================
+    id: 7928603491409069
+    label: 
+      label: Refresh
+
+    icon: 
+      image/icon-css-classes: fa-refresh
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.region('parsed_drgm').refresh();"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+- # ====== List: P7_ACTION_MENU ================================
+  id: 7935522414465879
+  identification: 
+    name: P7_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504784
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Export =======================================
+    id: 7935795315465880
+    label: 
+      label: Export
+
+    icon: 
+      image/icon-css-classes: fa-download
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:5:&SESSION.::&DEBUG.:5:P5_DGRM_ID,P5_MULTI:&P7_DGRM_ID.,N:'
+        page: 5 # Export
+        clear-cache: 5
+        values: 
+          p5_dgrm_id: '&P7_DGRM_ID.'
+          p5_multi: N
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Delete =======================================
+    id: 7936149892465882
+    label: 
+      label: Delete
+
+    icon: 
+      image/icon-css-classes: fa-trash-o
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: delete-flow-diagram
+
+- # ====== List: P10_ACTION_MENU ===============================
+  id: 7946860874526805
+  identification: 
+    name: P10_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504785
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: - ============================================
+    id: 6346082030489968
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Refresh ======================================
+    id: 7947003406526806
+    label: 
+      label: Refresh
+
+    icon: 
+      image/icon-css-classes: fa-refresh
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.region('flow-instances').refresh();apex.region('flow-monitor').refresh();"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Display Setting ==============================
+    id: 39805591040910001
+    label: 
+      label: Display Setting
+
+    icon: 
+      image/icon-css-classes: fa-gear
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: below report|side-by-side|new window =========
+    id: 39805873547914084
+    label: 
+      label: below report|side-by-side|new window
+
+    layout: 
+      sequence: 40
+      parent-entry: Display Setting # 39805591040910001
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: choose-setting
+
+- # ====== List: P4_ACTION_MENU ================================
+  id: 7959288629726086
+  identification: 
+    name: P4_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504785
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: View Source ==================================
+    id: 7959427446726087
+    label: 
+      label: View Source
+
+    icon: 
+      image/icon-css-classes: fa-cloud-download
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.region( 'modeler' ).getDiagram().then( ( xml ) => { apex.item( 'P4_DIAGRAM_XML' ).setValue( xml );apex.theme.openRegion('diagram_xml_region'); } );"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Download (SVG) ===============================
+    id: 7959824792726090
+    label: 
+      label: Download (SVG)
+
+    icon: 
+      image/icon-css-classes: fa-image
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: |
+        javascript:apex.region( 'modeler' ).getSVG().then( ( svg ) => {
+             var svgBlob = new Blob([svg], {
+                type: 'image/svg+xml'
+            });
+            var fileName = $v('P4_REGION_TITLE');
+        
+            var downloadLink = document.createElement('a');
+            downloadLink.download = fileName;
+            downloadLink.href = window.URL.createObjectURL(svgBlob);
+            downloadLink.click();
+        } );
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+- # ====== List: P2_ROW_ACTION_MENU ============================
+  id: 39902352324857428
+  identification: 
+    name: P2_ROW_ACTION_MENU
+
+  subscription: 
+    version-number: 2491071935
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Show instance progress =======================
+    id: 5827453000687575
+    label: 
+      label: Show instance progress
+
+    icon: 
+      image/icon-css-classes: fa-traffic-light
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: instances-per-step
+
+  - # ====== Entry: Show Details =================================
+    id: 39902501487857435
+    label: 
+      label: Show Details
+
+    icon: 
+      image/icon-css-classes: fa-search
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: true
+      1.: edit-flow-diagram
+
+  - # ====== Entry: Add New Version ==============================
+    id: 39902920078857437
+    label: 
+      label: Add New Version
+
+    icon: 
+      image/icon-css-classes: fa-plus
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: true
+      1.: new-flow-version
+
+  - # ====== Entry: Copy =========================================
+    id: 39903360633857437
+    label: 
+      label: Copy
+
+    icon: 
+      image/icon-css-classes: fa-clone
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: true
+      1.: copy-flow
+
+- # ====== List: P2_HEADER_ACTION_MENU =========================
+  id: 40402255178815218
+  identification: 
+    name: P2_HEADER_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504785
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Add New Version ==============================
+    id: 40402870460815221
+    label: 
+      label: Add New Version
+
+    icon: 
+      image/icon-css-classes: fa-plus
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-new-flow-version
+
+  - # ====== Entry: Copy =========================================
+    id: 40403252293815221
+    label: 
+      label: Copy
+
+    icon: 
+      image/icon-css-classes: fa-clone
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: bulk-copy-flow
+
+  - # ====== Entry: Export =======================================
+    id: 40410074688263331
+    label: 
+      label: Export
+
+    icon: 
+      image/icon-css-classes: fa-download
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.submit('EXPORT_FLOW');"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: export-flow
+
+  - # ====== Entry: - ============================================
+    id: 40416697084414268
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+- # ====== List: P10_INSTANCE_ROW_ACTION_MENU ==================
+  id: 40423692118997018
+  identification: 
+    name: P10_INSTANCE_ROW_ACTION_MENU
+
+  subscription: 
+    version-number: 1760504785
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Download (SVG) ===============================
+    id: 5662379313207242
+    label: 
+      label: Download (SVG)
+
+    icon: 
+      image/icon-css-classes: fa-image
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: download-as-svg
+
+  - # ====== Entry: Show History =================================
+    id: 5664262065267010
+    label: 
+      label: Show History
+
+    icon: 
+      image/icon-css-classes: fa-info-circle-o
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: flow-instance-audit
+
+  - # ====== Entry: Show Model Details ===========================
+    id: 5664576928271979
+    label: 
+      label: Show Model Details
+
+    icon: 
+      image/icon-css-classes: fa-search
+
+    layout: 
+      sequence: 110
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: edit-flow-diagram
+
+  - # ====== Entry: - ============================================
+    id: 5664803242273579
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 100
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Show Details =================================
+    id: 6315881052890668
+    label: 
+      label: Show Details
+
+    icon: 
+      image/icon-css-classes: fa-search
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: open-flow-instance-details
+
+  - # ====== Entry: - ============================================
+    id: 6316146932894106
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: View =========================================
+    id: 40423835706997032
+    label: 
+      label: View
+
+    icon: 
+      image/icon-css-classes: fa-eye
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: view-flow-instance
+
+    server-side-condition: 
+      type: Never
+
+  - # ====== Entry: Start ========================================
+    id: 40424429805997034
+    label: 
+      label: Start
+
+    icon: 
+      image/icon-css-classes: fa-play
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: start-flow-instance
+
+  - # ====== Entry: Reset ========================================
+    id: 40425672453997035
+    label: 
+      label: Reset
+
+    icon: 
+      image/icon-css-classes: fa-undo
+
+    layout: 
+      sequence: 70
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: reset-flow-instance
+
+  - # ====== Entry: Terminate ====================================
+    id: 40426450496997035
+    label: 
+      label: Terminate
+
+    icon: 
+      image/icon-css-classes: fa-stop
+
+    layout: 
+      sequence: 80
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: terminate-flow-instance
+
+  - # ====== Entry: Delete =======================================
+    id: 40427116551997037
+    label: 
+      label: Delete
+
+    icon: 
+      image/icon-css-classes: fa-trash-o
+
+    layout: 
+      sequence: 90
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: delete-flow-instance
+
+- # ====== List: Desktop Navigation Bar ========================
+  id: 12495499558192880054
+  identification: 
+    name: Desktop Navigation Bar
+
+  subscription: 
+    version-number: 1760504789
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Theme ========================================
+    id: 5589254850825963
+    label: 
+      label: Theme
+
+    icon: 
+      image/icon-css-classes: fa-paint-brush
+
+    layout: 
+      sequence: 7
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Light Mode ===================================
+    id: 5591024903839479
+    label: 
+      label: Light Mode
+
+    icon: 
+      image/icon-css-classes: fa-sun-o
+
+    layout: 
+      sequence: 50
+      parent-entry: Theme # 5589254850825963
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.submit('LIGHT_MODE');"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Dark Mode ====================================
+    id: 5591767688841799
+    label: 
+      label: Dark Mode
+
+    icon: 
+      image/icon-css-classes: fa-moon-o
+
+    layout: 
+      sequence: 60
+      parent-entry: Theme # 5589254850825963
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.submit('DARK_MODE');"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Automatic ====================================
+    id: 6211519620415215
+    label: 
+      label: Automatic
+
+    icon: 
+      image/icon-css-classes: fa-adjust
+
+    layout: 
+      sequence: 40
+      parent-entry: Theme # 5589254850825963
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.submit((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'RESET_DARK' : 'RESET_LIGHT');"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Configuration ================================
+    id: 11904067894914484
+    label: 
+      label: Configuration
+
+    icon: 
+      image/icon-css-classes: fa-gear
+
+    layout: 
+      sequence: 6
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:9:&SESSION.::&DEBUG.:9:::'
+        page: 9 # Configuration
+        clear-cache: 9
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Getting started ==============================
+    id: 34597614443542059
+    label: 
+      label: Getting started
+
+    icon: 
+      image/icon-css-classes: fa-info-square-o
+
+    layout: 
+      sequence: 5
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:1:&SESSION.::&DEBUG.::::'
+        page: 1 # Getting Started
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Sign Out =====================================
+    id: 12495487001695879840
+    label: 
+      label: Sign Out
+
+    icon: 
+      image/icon-css-classes: fa-sign-out
+
+    layout: 
+      sequence: 30
+      parent-entry: '&APP_USER.' # 12495487956468879842
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: '&LOGOUT_URL.'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: --- ==========================================
+    id: 12495487403732879842
+    label: 
+      label: '---'
+
+    layout: 
+      sequence: 20
+      parent-entry: '&APP_USER.' # 12495487956468879842
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: &APP_USER. ===================================
+    id: 12495487956468879842
+    label: 
+      label: '&APP_USER.'
+
+    icon: 
+      image/icon-css-classes: fa-user
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: '#'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      2.: has-username
+
+- # ====== List: Desktop Navigation Menu =======================
+  id: 12495635966008880385
+  identification: 
+    name: Desktop Navigation Menu
+
+  subscription: 
+    version-number: 2163469949
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Simple Form Templates ========================
+    id: 5597875143964021
+    label: 
+      label: Simple Form Templates
+
+    icon: 
+      image/icon-css-classes: fa-forms
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 50
+      - 51
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:50:&SESSION.::&DEBUG.::::'
+        page: 50 # Simple Form Templates
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Flow Management ==============================
+    id: 9900462312126995
+    label: 
+      label: Flow Management
+
+    icon: 
+      image/icon-css-classes: fa-sitemap-horizontal
+
+    layout: 
+      sequence: 15
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 2
+      - 4
+      - 7
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.::::'
+        page: 2 # Flow Management
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Dashboard ====================================
+    id: 34586567175532090
+    label: 
+      label: Dashboard
+
+    icon: 
+      image/icon-css-classes: fa-pie-chart
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 3
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:3:&SESSION.::&DEBUG.::::'
+        page: 3 # Dashboard
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Flow Monitor =================================
+    id: 12493524976121117621
+    label: 
+      label: Flow Monitor
+
+    icon: 
+      image/icon-css-classes: fa-sequence
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 10
+      - 8
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:RP,RIR:::'
+        page: 10 # Flow Monitor
+        clear-cache: RP,RIR
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+

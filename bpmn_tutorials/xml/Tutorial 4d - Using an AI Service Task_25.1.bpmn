@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">
+  <bpmn:process id="Process_14di6413" name="Tutorial 4d - Adding AI" isExecutable="true" apex:isStartable="true" apex:minLoggingLevel="4" apex:manualInput="false">
+    <bpmn:startEvent id="Event_0646sg2">
+      <bpmn:outgoing>Flow_1vn0dvm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_12au1m9" name="Set up Data">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>pv_prompt</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>You are part of a fraud detection workflow. Given the taxpayer's details, evaluate whether the declared income is suspicious.
+
+Respond with JSON using one or more of the following labels, separated by colons in field result:
+
+- ok (no suspicion)
+- email (request more information)
+- human (flag for human review)
+- fraud (confirmed fraud based on inconsistencies)
+
+And add an additional field called rationale into the JSON with the reason for the labels. Only return the plain JSON object without any extra decoration.
+here is an example of the return:
+{ "result": "human:email", "rationale": "The expenses seem to outweigh the declared income." }
+Here is a taxpayer info:  
+{
+ "name" : "Fritz Mustermann", 
+  "age": 33,
+  "occupation": "Consultant",
+  "annual_salary": 90000,
+  "declared_income": 25000,
+  "major_purchases": ["Luxury SUV", "Vacation home"]
+}</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>pv_ai_service</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>F4A_AI_SERVICE</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>pv_temperature</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>1.0</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vn0dvm</bpmn:incoming>
+      <bpmn:outgoing>Flow_05qnht9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1vn0dvm" sourceRef="Event_0646sg2" targetRef="Activity_12au1m9" />
+    <bpmn:sequenceFlow id="Flow_05qnht9" sourceRef="Activity_12au1m9" targetRef="Activity_1yar0ho" />
+    <bpmn:sequenceFlow id="Flow_10phqxo" sourceRef="Activity_1yar0ho" targetRef="Gateway_1u610zw" />
+    <bpmn:inclusiveGateway id="Gateway_1u610zw">
+      <bpmn:incoming>Flow_10phqxo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bi081q</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0de1jz6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_076iph2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1lhxrq3</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0bi081q" name="EMAIL" sourceRef="Gateway_1u610zw" targetRef="Activity_0btyuds" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$OUTCOME like '%email%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0de1jz6" name="HUMAN" sourceRef="Gateway_1u610zw" targetRef="Activity_10cuv9y" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$OUTCOME like '%human%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_076iph2" name="OK" sourceRef="Gateway_1u610zw" targetRef="Event_0gy3lwh" apex:sequence="40">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$OUTCOME like '%ok%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1dmj7mo" sourceRef="Activity_0btyuds" targetRef="Activity_0dhdt0o" />
+    <bpmn:endEvent id="Event_1yaifr5">
+      <bpmn:incoming>Flow_0yvq80l</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0yvq80l" sourceRef="Activity_0dhdt0o" targetRef="Event_1yaifr5" />
+    <bpmn:endEvent id="Event_0gy3lwh" name="No Fraud Found">
+      <bpmn:incoming>Flow_076iph2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1lhxrq3" name="FRAUD" sourceRef="Gateway_1u610zw" targetRef="Event_01gdynj" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$OUTCOME like '%fraud%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_01gdynj" name="Fraud Found">
+      <bpmn:incoming>Flow_1lhxrq3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_10cuv9y" name="Human Review" apex:type="apexPage" apex:manualInput="false">
+      <bpmn:incoming>Flow_0de1jz6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ppfquf</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_09iid5a">
+      <bpmn:incoming>Flow_1ppfquf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ppfquf" sourceRef="Activity_10cuv9y" targetRef="Event_09iid5a" />
+    <bpmn:serviceTask id="Activity_1yar0ho" name="Assess Likelihood of Fraud&#10; (Gen AI)" apex:type="apexAIGeneration">
+      <bpmn:extensionElements>
+        <apex:aiService>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>pv_ai_service</apex:expression>
+        </apex:aiService>
+        <apex:aiTemperature>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>pv_temperature</apex:expression>
+        </apex:aiTemperature>
+        <apex:aiPrompt>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>pv_prompt</apex:expression>
+        </apex:aiPrompt>
+        <apex:resultVariable>OUTCOME</apex:resultVariable>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05qnht9</bpmn:incoming>
+      <bpmn:outgoing>Flow_10phqxo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0btyuds" name="Generate Request for More Info &#10;(Gen AI)" apex:type="apexAIGeneration">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>pv_email_prompt</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>You are part of a fraud detection workflow. Erlier we have you information about a taxpaper which was:
+
+Here is a taxpayer info:  
+{
+  "name" : "Fritz Mustermann", 
+   "age": 33,
+  "occupation": "Consultant",
+  "annual_salary": 90000,
+  "declared_income": 25000,
+  "major_purchases": ["Luxury SUV", "Vacation home"]
+}
+
+Your rationale for requiring more information is the rationale item in below data:
+&amp;F4A$OUTCOME.
+
+Please generate a detailed email to this taxpayer asking for clarification about his situation, asking for details of items that you think are suspicious.  Return the email text.  </apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+        <apex:aiService>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>PV_AI_SERVICE</apex:expression>
+        </apex:aiService>
+        <apex:aiTemperature>
+          <apex:expressionType>static</apex:expressionType>
+          <apex:expression>1</apex:expression>
+        </apex:aiTemperature>
+        <apex:aiPrompt>
+          <apex:expressionType>processVariable</apex:expressionType>
+          <apex:expression>PV_EMAIL_PROMPT</apex:expression>
+        </apex:aiPrompt>
+        <apex:resultVariable>EMAIL_OUTCOME</apex:resultVariable>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bi081q</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dmj7mo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0dhdt0o" name="Send Email" apex:type="sendMail">
+      <bpmn:extensionElements>
+        <apex:sendMail>
+          <apex:emailFrom>info@flowsforapex.com</apex:emailFrom>
+          <apex:emailTo>rallen2010@gmail.com</apex:emailTo>
+          <apex:useTemplate>false</apex:useTemplate>
+          <apex:subject>Your Tax Information</apex:subject>
+          <apex:bodyText>&amp;F4A$EMAIL_OUTCOME.</apex:bodyText>
+          <apex:immediately>true</apex:immediately>
+        </apex:sendMail>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1dmj7mo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yvq80l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="TextAnnotation_058w0s8">
+      <bpmn:text>Set Up Step.  This Step uses BEFORE TASK variable expressions to:
+- set the APEX AI Service to be used to 'F4A_AI_SERVICE'.  Change this before proceeding if you need to...
+- set the AI temperature to 0 to get a repeatable, accurate result
+- sets up the system prompt including data about a taxpayer with high salary, high spending, and low declared taxable income - clearly questionable tax evasion....</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0b3hkyw" associationDirection="None" sourceRef="Activity_12au1m9" targetRef="TextAnnotation_058w0s8" />
+    <bpmn:textAnnotation id="TextAnnotation_03mqdgn">
+      <bpmn:text>Our first AI Service Call.
+We ask the AI Service to look at the taxpayer information, and return (as a Colon separated list) one or more of 
+- EMAIL (for more info)
+- refer to a HUMAN
+- definitely FRAUD
+- or looks OK
+along with a rationale for that decision</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1f3ma9h" associationDirection="None" sourceRef="Activity_1yar0ho" targetRef="TextAnnotation_03mqdgn" />
+    <bpmn:textAnnotation id="TextAnnotation_05fynd6">
+      <bpmn:text>Our Second AI Service Call
+If we need to send an email to the taxpayer asking for more info, we pass the taxpayer info and the rationale back to GenAI, and request it generates an Email to the taxpayer</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0brcgjv" associationDirection="None" sourceRef="Activity_0btyuds" targetRef="TextAnnotation_05fynd6" />
+    <bpmn:textAnnotation id="TextAnnotation_12nn9q9">
+      <bpmn:text>AI Service Task in your process
+Use an AI service task to call a Generative AI service such as GPT, Lamma or Cohere using the APEX_AI api (more services coming)
+Use process variables to build your system prompt - you can query relevant data to do RAG, or add relevant data through vector searches - then pass your prompt to GenAI.
+
+In this example we call AI once to get process routing instructions - which paths should the process take.  Then call it again to generate documents.
+
+You can use techniques like this to build Agentic processes...</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0a8ohh8" associationDirection="None" sourceRef="Event_0646sg2" targetRef="TextAnnotation_12nn9q9" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_14di6413">
+      <bpmndi:BPMNShape id="Event_0646sg2_di" bpmnElement="Event_0646sg2">
+        <dc:Bounds x="-468" y="-58" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12au1m9_di" bpmnElement="Activity_12au1m9">
+        <dc:Bounds x="-380" y="-80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18lfd4h_di" bpmnElement="Gateway_1u610zw">
+        <dc:Bounds x="-55" y="-65" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yaifr5_di" bpmnElement="Event_1yaifr5">
+        <dc:Bounds x="362" y="-178" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gy3lwh_di" bpmnElement="Event_0gy3lwh">
+        <dc:Bounds x="252" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="230" y="205" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01gdynj_di" bpmnElement="Event_01gdynj">
+        <dc:Bounds x="252" y="52" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="95" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dkotdb_di" bpmnElement="Activity_10cuv9y">
+        <dc:Bounds x="70" y="-80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09iid5a_di" bpmnElement="Event_09iid5a">
+        <dc:Bounds x="252" y="-58" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09gmme9_di" bpmnElement="Activity_1yar0ho" bioc:stroke="#0d4372" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#0d4372">
+        <dc:Bounds x="-220" y="-80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07ywlpv_di" bpmnElement="Activity_0btyuds" bioc:stroke="#0d4372" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#0d4372">
+        <dc:Bounds x="70" y="-200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07j78d7_di" bpmnElement="Activity_0dhdt0o">
+        <dc:Bounds x="210" y="-200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0b3hkyw_di" bpmnElement="Association_0b3hkyw">
+        <di:waypoint x="-376" y="-2" />
+        <di:waypoint x="-512" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1f3ma9h_di" bpmnElement="Association_1f3ma9h">
+        <di:waypoint x="-177" y="-80" />
+        <di:waypoint x="-183" y="-112" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0brcgjv_di" bpmnElement="Association_0brcgjv">
+        <di:waypoint x="128" y="-200" />
+        <di:waypoint x="144" y="-284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0a8ohh8_di" bpmnElement="Association_0a8ohh8">
+        <di:waypoint x="-452" y="-58" />
+        <di:waypoint x="-510" y="-505" />
+        <di:waypoint x="-410" y="-505" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vn0dvm_di" bpmnElement="Flow_1vn0dvm">
+        <di:waypoint x="-432" y="-40" />
+        <di:waypoint x="-380" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05qnht9_di" bpmnElement="Flow_05qnht9">
+        <di:waypoint x="-280" y="-40" />
+        <di:waypoint x="-220" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10phqxo_di" bpmnElement="Flow_10phqxo">
+        <di:waypoint x="-120" y="-40" />
+        <di:waypoint x="-55" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bi081q_di" bpmnElement="Flow_0bi081q">
+        <di:waypoint x="-30" y="-65" />
+        <di:waypoint x="-30" y="-160" />
+        <di:waypoint x="70" y="-160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-9" y="-187" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0de1jz6_di" bpmnElement="Flow_0de1jz6">
+        <di:waypoint x="-5" y="-40" />
+        <di:waypoint x="70" y="-40" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="14" y="-58" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_076iph2_di" bpmnElement="Flow_076iph2">
+        <di:waypoint x="-30" y="-15" />
+        <di:waypoint x="-30" y="180" />
+        <di:waypoint x="252" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-8" y="153" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dmj7mo_di" bpmnElement="Flow_1dmj7mo">
+        <di:waypoint x="170" y="-160" />
+        <di:waypoint x="210" y="-160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yvq80l_di" bpmnElement="Flow_0yvq80l">
+        <di:waypoint x="310" y="-160" />
+        <di:waypoint x="362" y="-160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lhxrq3_di" bpmnElement="Flow_1lhxrq3">
+        <di:waypoint x="-30" y="-15" />
+        <di:waypoint x="-30" y="70" />
+        <di:waypoint x="252" y="70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-2" y="43" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ppfquf_di" bpmnElement="Flow_1ppfquf">
+        <di:waypoint x="170" y="-40" />
+        <di:waypoint x="252" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_058w0s8_di" bpmnElement="TextAnnotation_058w0s8">
+        <dc:Bounds x="-580" y="110" width="410" height="110" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_03mqdgn_di" bpmnElement="TextAnnotation_03mqdgn">
+        <dc:Bounds x="-350" y="-250" width="230" height="138" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_05fynd6_di" bpmnElement="TextAnnotation_05fynd6">
+        <dc:Bounds x="110" y="-380" width="230" height="96" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_12nn9q9_di" bpmnElement="TextAnnotation_12nn9q9">
+        <dc:Bounds x="-410" y="-520" width="500" height="170" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

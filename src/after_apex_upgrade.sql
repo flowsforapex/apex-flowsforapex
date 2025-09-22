@@ -35,6 +35,7 @@ begin
   add_line( 'create or replace package flow_apex_env authid definer is' );
   add_line( '  version     constant pls_integer := ' || v || ';' );
   add_line( '  release     constant pls_integer := ' || r || ';' );
+  add_line( '  ee          constant boolean := false;');
    
   for yr in 19..v+4 loop
     add_line('  ver_le_' || yr || '   constant boolean     := ' || add_bool(trunc(vr), yr    ) || ';');
@@ -59,6 +60,7 @@ alter package flow_parser_util compile specification;
 alter package flow_bpmn_parser_pkg compile specification;
 alter package flow_message_flow compile specification;
 alter package flow_message_util compile specification;
+alter package flow_message_util_ee compile specification;
 alter package flow_api_pkg compile specification;
 alter package flow_engine_util compile specification;
 alter package flow_gateways compile specification;
@@ -68,6 +70,7 @@ alter package flow_services compile specification;
 alter package flow_timers_pkg compile specification;
 alter package flow_instances compile specification;
 alter package flow_iteration compile specification;
+alter package flow_rewind compile specification;
 alter package flow_engine compile specification;
 alter package flow_settings compile specification;
 alter package flow_reservations compile specification;
@@ -87,6 +90,8 @@ alter package flow_diagram compile specification;
 alter package flow_log_admin compile specification;
 alter package flow_admin_api compile specification;
 alter package flow_statistics compile specification;
+alter package flow_ai_prompt_ee compile specification;
+alter package flow_instances_util_ee compile specification;
 
 PROMPT >>
 PROMPT >> Recompile REST API Support

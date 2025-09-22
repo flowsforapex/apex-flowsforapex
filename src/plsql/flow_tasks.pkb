@@ -4,10 +4,12 @@ create or replace package body flow_tasks as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2021-2025.
 --
 -- Created 13-May-2021  Richard Allen (Flowquest Consuting, for MT AG) 
 -- Edited  13-Apr-2022  Richard Allen (Oracle)
 -- Edited  23-May-2022  Moritz Klein (MT AG)
+-- Edited  02-Apr-2025  Richard Allen (Flowquest)
 --
 */
   function get_task_type
@@ -41,72 +43,6 @@ create or replace package body flow_tasks as
     return l_return;
   end get_task_type;
 
-  procedure handle_script_error -- largely duplicates flow_errors.handle_instance_error
-  ( p_process_id    in flow_processes.prcs_id%type
-  , p_subflow_id    in flow_subflows.sbfl_id%type
-  , p_script_object in flow_objects.objt_bpmn_id%type 
-  , p_error_type    in varchar2
-  , p_error_stack   in varchar2 default null
-  )
-  is 
-    l_prcs_id   flow_processes.prcs_id%type;
-    l_sbfl_id   flow_subflows.sbfl_id%type;
-  begin 
-        apex_debug.enter 
-      ( 'handle_script_error'
-      , 'p_script_object: ', p_script_object
-      , 'p_error_type ', p_error_type 
-      );
-       -- lock process and subflow
-      select prcs.prcs_id, sbfl.sbfl_id
-        into l_prcs_id, l_sbfl_id
-        from flow_processes prcs
-        join flow_subflows sbfl 
-          on prcs.prcs_id = sbfl.sbfl_prcs_id
-       where prcs.prcs_id = p_process_id
-         and sbfl.sbfl_id = p_subflow_id
-      for update wait 2;
-      -- set subflow to error status
-      update flow_subflows sbfl
-         set sbfl.sbfl_current        = p_script_object
-           , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_error
-           , sbfl.sbfl_last_update    = systimestamp 
-           , sbfl.sbfl_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  )         
-       where sbfl.sbfl_id = p_subflow_id
-         and sbfl.sbfl_prcs_id = p_process_id
-      ;
-      -- set instance to error status
-      update flow_processes prcs
-         set prcs.prcs_status         = flow_constants_pkg.gc_prcs_status_error
-           , prcs.prcs_last_update    = systimestamp
-           , prcs.prcs_last_update_by = coalesce  ( sys_context('apex$session','app_user') 
-                                                  , sys_context('userenv','os_user')
-                                                  , sys_context('userenv','session_user')
-                                                  )  
-       where prcs.prcs_id = p_process_id
-      ;
-      -- log error as instance event
-      flow_logging.log_instance_event
-      ( p_process_id  => p_process_id 
-      , p_objt_bpmn_id => p_script_object
-      , p_event       => flow_constants_pkg.gc_prcs_event_error
-      , p_comment     => case p_error_type
-                         when 'failed'      then 'ScriptTask failed on object '
-                         when 'stop_engine' then 'User Script Requested ScriptTask Stop on object '
-                         end 
-                         || p_script_object|| ' error data....'||p_error_stack
-      );
-
-      apex_debug.message 
-      ( p_message => 'Script failed in ScriptTask.  Object: %0.'
-      , p0        => p_script_object
-      , p_level   => 2
-      );
-  end handle_script_error;
-
   procedure process_task
     ( p_sbfl_info     in flow_subflows%rowtype
     , p_step_info     in flow_types_pkg.flow_step_info
@@ -136,9 +72,10 @@ create or replace package body flow_tasks as
     l_due_on_json         flow_types_pkg.t_bpmn_attribute_vc2;
     l_due_on              flow_subflows.sbfl_due_on%type;
   begin
-  -- current implementation is limited to two userTask types, which are:
+  -- current implementation is limited to 3 userTask types, which are:
   --   - to run a user defined APEX page via the Task Inbox View
-  --   - to call an APEX Approval Task (from APEX v22.1 onwards)
+  --   - to call an APEX Approval Task 
+  --   - to run a user defined APEX page via the Task Inbox View, but with a simple form (from Flows v24.1 onwards)
   -- future userTask types could include parameterised, standarised template pages , template scripts ??
     apex_debug.enter 
     ( 'process_userTask'
@@ -232,7 +169,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -245,6 +182,26 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: ScriptTask %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
+    when others then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after process script task failed (outside of plsql script runner)'
+      );
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id        => p_sbfl_info.sbfl_id
+      , pi_message_key    => 'plsql_script_failed'
+      , p0 => p_sbfl_info.sbfl_prcs_id
+      , p1 => p_step_info.target_objt_ref
+      );
+      -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: ScriptTask %1 failed due to PL/SQL error - see event log.'
+
   end process_scriptTask;
 
   procedure process_serviceTask 
@@ -252,14 +209,15 @@ create or replace package body flow_tasks as
   , p_step_info     in flow_types_pkg.flow_step_info
   )
   is 
+    l_custom_service_task flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     apex_debug.enter 
     ( 'process_serviceTask'
     , 'p_step_info.target_objt_tag', p_step_info.target_objt_tag 
     );
   
-    -- future serviceTask types could include text message, tweet, AOP document via email, etc.
-    -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process).
+    -- future serviceTask types could include text message, tweet, AOP document via email, AI, etc.
+    -- current implementation is limited to synchronous email send (i.e., email sent as part of Flows for APEX process) + AI Generation
     -- future implementations could include async serviceTask, where message generation is queued, or non-email services
 
     flow_engine.start_step 
@@ -269,20 +227,25 @@ create or replace package body flow_tasks as
     , p_called_internally => true
     );
 
-    case get_task_type( pi_objt_id => p_step_info.target_objt_id )
+    case get_task_type( pi_objt_id => p_step_info.target_objt_id )  
       when flow_constants_pkg.gc_apex_task_execute_plsql then
-        flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id  => p_sbfl_info.sbfl_id
-        , pi_objt_id  => p_step_info.target_objt_id
-        , pi_step_key => p_sbfl_info.sbfl_step_key
-        );
-      when flow_constants_pkg.gc_apex_servicetask_send_mail then
-        flow_services.send_email
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
-        , pi_objt_id => p_step_info.target_objt_id
-        );
+            flow_plsql_runner_pkg.run_task_script
+            ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+            , pi_sbfl_id  => p_sbfl_info.sbfl_id
+            , pi_objt_id  => p_step_info.target_objt_id
+            , pi_step_key => p_sbfl_info.sbfl_step_key
+            );
+      when flow_constants_pkg.gc_apex_servicetask_send_mail then 
+           flow_services.send_email
+           ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
+           , pi_sbfl_id => p_sbfl_info.sbfl_id
+           , pi_objt_id => p_step_info.target_objt_id
+           );
+      when flow_constants_pkg.gc_apex_servicetask_ai_generation then
+           flow_services.apex_AI_generation 
+           ( p_sbfl_info     => p_sbfl_info
+           , p_step_info     => p_step_info
+           );
       else
         null;
     end case;
@@ -305,6 +268,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'wrong-default-workspace' || 'Process %0: ServiceTask %1 failed: the default workspace defined in the configuration parameter is not valid.'
     when flow_services.e_workspace_not_found then
       rollback;
       apex_debug.info( p_message => 'Rollback initiated after workspace not found'
@@ -316,6 +280,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'workspace-not-found' || 'Process %0: ServiceTask %1 failed: unable to find the workspace associated with the application id defined in the diagram. Please check the model.'
     when flow_services.e_email_no_from then 
       rollback;
       apex_debug.info 
@@ -328,6 +293,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-no-from' || 'Process %0: ServiceTask %1 failed: attribute "From" and default email sender are not defined. Please check the model and or the configuration parameter.'
     when flow_services.e_email_no_to then 
       rollback;
       apex_debug.info 
@@ -340,6 +306,8 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-no-to' || 'Process %0: ServiceTask %1 failed: attribute "To" not defined. Please check the model.'
+
     when flow_services.e_email_no_template then
       rollback;
       apex_debug.info 
@@ -352,6 +320,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       ); 
+      -- F4A$MESSAGE 'email-no-template' || 'Process %0: ServiceTask %1 failed: attribute "Template" not defined. Please check the model.'
     when flow_services.e_email_no_body then
       rollback;
       apex_debug.info 
@@ -364,6 +333,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-no-body' || 'Process %0: ServiceTask %1 failed: attribute "Body" not defined. Please check the model.'
     when flow_services.e_json_not_valid then
       rollback;
       apex_debug.info 
@@ -376,6 +346,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-placeholder-json-invalid' || 'Process %0: ServiceTask %1 failed: placeholder JSON object is not valid. Please check the model.'
     when flow_services.e_email_failed then
       rollback;
       apex_debug.info 
@@ -388,6 +359,7 @@ create or replace package body flow_tasks as
       , p0 => p_sbfl_info.sbfl_prcs_id
       , p1 => p_step_info.target_objt_ref
       );
+      -- F4A$MESSAGE 'email-failed' || 'Process %0: ServiceTask %1 failed see error log and check the model.'
     when flow_plsql_runner_pkg.e_plsql_script_failed then
       rollback;
       apex_debug.info 
@@ -401,7 +373,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PLSQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -414,6 +386,12 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
 
   end process_serviceTask;
 
@@ -494,7 +472,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -507,6 +485,12 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
   end process_businessRuleTask;
 
   procedure process_sendTask
@@ -569,7 +553,7 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );
       -- $F4AMESSAGE 'plsql_script_failed' || 'Process %0: PL/SQL Script %1 failed due to PL/SQL error - see event log.'
-    when flow_plsql_runner_pkg.e_plsql_script_requested_stop then
+    when flow_globals.request_stop_engine then
       rollback;
       apex_debug.info 
       ( p_message => 'Rollback initiated after script requested stop_engine in plsql script runner'
@@ -582,6 +566,12 @@ create or replace package body flow_tasks as
       , p1 => p_step_info.target_objt_ref
       );  
       -- $F4AMESSAGE 'plsql_script_requested_stop' || 'Process %0: PL/SQL Script %1 requested processing stop - see event log.'
+    when flow_globals.throw_bpmn_error_event then
+      rollback;
+      apex_debug.info 
+      ( p_message => 'Rollback initiated after script throws BPMN error event in plsql script runner'
+      );
+      flow_boundary_events.handle_task_error_boundary_event ( pi_sbfl_info => p_sbfl_info);
   end process_sendTask;  
 
   procedure process_receiveTask

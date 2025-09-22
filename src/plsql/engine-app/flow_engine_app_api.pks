@@ -99,6 +99,14 @@ as
     p_app_id number default apex_application.g_flow_id
   ) return varchar2;
 
+  function flow_apex_automation_disabled(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean;
+
+  function flow_apex_automation_failure(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean;
+
   /* page 4 */
 
   function get_region_title(
@@ -144,13 +152,16 @@ as
   return varchar2;
 
   function upload_and_parse(
-      pi_import_from     in varchar2,
-      pi_dgrm_name       in flow_diagrams.dgrm_name%type,
-      pi_dgrm_category   in flow_diagrams.dgrm_category%type,
-      pi_dgrm_version    in flow_diagrams.dgrm_version%type,
-      pi_dgrm_content    in flow_diagrams.dgrm_content%type,
-      pi_file_name       in varchar2,
-      pi_force_overwrite in varchar2
+      pi_import_from            in varchar2,
+      pi_dgrm_name              in flow_diagrams.dgrm_name%type,
+      pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type,
+      pi_dgrm_description       in flow_diagrams.dgrm_description%type default null,
+      pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null,
+      pi_dgrm_category          in flow_diagrams.dgrm_category%type,
+      pi_dgrm_version           in flow_diagrams.dgrm_version%type,
+      pi_dgrm_content           in flow_diagrams.dgrm_content%type,
+      pi_file_name              in varchar2,
+      pi_force_overwrite        in varchar2
   )
   return flow_diagrams.dgrm_id%type;
   
@@ -169,13 +180,16 @@ as
     
   procedure process_page_p7
   (
-    pio_dgrm_id      in out nocopy flow_diagrams.dgrm_id%type
-  , pi_dgrm_name     in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category in flow_diagrams.dgrm_category%type
-  , pi_new_version   in flow_diagrams.dgrm_version%type
-  , pi_cascade       in varchar2
-  , pi_request       in varchar2
+    pio_dgrm_id               in out nocopy flow_diagrams.dgrm_id%type
+  , pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_new_version            in flow_diagrams.dgrm_version%type
+  , pi_cascade                in varchar2
+  , pi_request                in varchar2
   );
   
   function get_page_title(
@@ -228,9 +242,10 @@ as
   /* page 11 */
 
   function create_instance(
-    pi_dgrm_id      in flow_diagrams.dgrm_id%type
-  , pi_prcs_name    in flow_processes.prcs_name%type
-  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+    pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_prcs_name      in flow_processes.prcs_name%type default null
+  , pi_business_ref   in flow_process_variables.prov_var_vc2%type
+  , pi_logging_level  in flow_processes.prcs_logging_level%type
   )
   return flow_processes.prcs_id%type;
 
@@ -262,17 +277,29 @@ as
   /* configuration */
   procedure set_logging_settings(
     pi_logging_language          in flow_configuration.cfig_value%type
-  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_default_level     in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_enabled      in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_retain_days  in flow_configuration.cfig_value%type
   );
 
   procedure set_archiving_settings(
-    pi_archiving_enabled  in flow_configuration.cfig_value%type
+    pi_archiving_enabled             in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purging        in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purge_days     in flow_configuration.cfig_value%type
   );
 
+  procedure set_statistics_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  );
+
+-- set_statictis_settings was included in 23.1 and 24.1 and is retained here for upwards
+-- compatibility (but just calls set_statistics_settings)
   procedure set_statictis_settings(
     pi_stats_retain_daily in flow_configuration.cfig_value%type
   , pi_stats_retain_month in flow_configuration.cfig_value%type
@@ -290,6 +317,7 @@ as
   , pi_default_application       in flow_configuration.cfig_value%type
   , pi_default_pageid            in flow_configuration.cfig_value%type
   , pi_default_username          in flow_configuration.cfig_value%type
+  , pi_default_business_admin    in flow_configuration.cfig_value%type
   );
 
   procedure set_timers_settings(

@@ -1,0 +1,981 @@
+---
+- # ====== List of Values: LOGGING_LEVELS ======================
+  id: 11503678828527
+  identification: 
+    name: LOGGING_LEVELS
+
+  subscription: 
+    version-number: 3588742803
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: None =========================================
+    id: 11844748828527
+    entry: 
+      sequence: 1
+      display: None
+      return: 0
+
+  - # ====== Entry: Abnormal Events ==============================
+    id: 12266247828526
+    entry: 
+      sequence: 2
+      display: Abnormal Events
+      return: 1
+
+  - # ====== Entry: Major Events =================================
+    id: 12660029828526
+    entry: 
+      sequence: 3
+      display: Major Events
+      return: 2
+
+  - # ====== Entry: Routine ======================================
+    id: 12991310828526
+    entry: 
+      sequence: 5
+      display: Routine
+      return: 4
+
+  - # ====== Entry: Full / Debug =================================
+    id: 13844636828526
+    entry: 
+      sequence: 8
+      display: Full / Debug
+      return: 8
+
+- # ====== List of Values: P8_REPOSITIONABLE_STEPS =============
+  id: 14375603769799
+  identification: 
+    name: P8_REPOSITIONABLE_STEPS
+
+  subscription: 
+    version-number: 1842853054
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select prev_obj.objt_bpmn_id, prev_obj.objt_tag_name, coalesce( prev_obj.objt_name, prev_obj.objt_bpmn_id) d, level
+      from   flow_objects prev_obj
+      join   flow_connections conn
+        on   conn.conn_src_objt_id = prev_obj.objt_id
+       and   conn.conn_dgrm_id     = prev_obj.objt_dgrm_id
+      join   flow_objects curr_obj
+        on   conn.conn_tgt_objt_id = curr_obj.objt_id
+       and   conn.conn_dgrm_id     = curr_obj.objt_dgrm_id
+      where  curr_obj.objt_dgrm_id = ( select  sbfl.sbfl_dgrm_id 
+                                         from flow_subflows sbfl
+                                        where sbfl.sbfl_id = :P8_REWIND_SBFL_ID )
+       and   prev_obj.objt_tag_name not in ('bpmn:eventBasedGateway','bpmn:inclusiveGateway','bpmn:parallelGateway', 'bpmn:startEvent', 'bpmn:exclusiveGateway', 'bpmn:boundaryEvent')
+      start with curr_obj.objt_bpmn_id = ( select  sbfl.sbfl_current
+                                             from flow_subflows sbfl
+                                            where sbfl.sbfl_id = :P8_REWIND_SBFL_ID )
+      connect by curr_obj.objt_tag_name not in ('bpmn:eventBasedGateway','bpmn:inclusiveGateway','bpmn:parallelGateway', 'bpmn:startEvent', 'bpmn:exclusiveGateway', 'bpmn:boundaryEvent')
+       and curr_obj.objt_id = prior prev_obj.objt_id
+
+  column-mapping: 
+    return: OBJT_BPMN_ID
+    display: D
+    default-sort: LEVEL
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: DIAGRAMS_PARSED_LOV =================
+  id: 599957119101802
+  identification: 
+    name: DIAGRAMS_PARSED_LOV
+
+  subscription: 
+    version-number: 2848491218
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_DIAGRAMS_PARSED_LOV
+
+  column-mapping: 
+    return: DGRM_ID
+    display: DGRM_NAME
+    default-sort: DGRM_NAME
+    sort-direction: Ascending (Nulls Last)
+    group: DGRM_CATEGORY
+    group-sort-direction: Ascending (Nulls Last)
+    icon: DGRM_ICON
+
+  columns: 
+  - # ====== Column: DGRM_NAME ===================================
+    id: 9100877958535115
+    identification: 
+      column-name: DGRM_NAME
+      show: true
+
+    heading: 
+      heading: Name
+
+    layout: 
+      sequence: 30
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_CATEGORY ===============================
+    id: 9101106304535117
+    identification: 
+      column-name: DGRM_CATEGORY
+      show: true
+
+    heading: 
+      heading: Category
+
+    layout: 
+      sequence: 20
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_STATUS =================================
+    id: 9101564040535117
+    identification: 
+      column-name: DGRM_STATUS
+      show: true
+
+    heading: 
+      heading: Status
+
+    layout: 
+      sequence: 40
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_VERSION ================================
+    id: 9101910594535117
+    identification: 
+      column-name: DGRM_VERSION
+      show: true
+
+    heading: 
+      heading: Version
+
+    layout: 
+      sequence: 50
+
+    source: 
+      data-type: NUMBER
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_ID =====================================
+    id: 9604120679701834
+    identification: 
+      column-name: DGRM_ID
+      show: false
+
+    layout: 
+      sequence: 10
+
+    source: 
+      data-type: NUMBER
+
+    advanced: 
+      searchable: false
+
+  - # ====== Column: DGRM_ICON ===================================
+    id: 12520711332641192
+    identification: 
+      column-name: DGRM_ICON
+      show: false
+
+    heading: 
+      heading: Icon
+
+    layout: 
+      sequence: 60
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+- # ====== List of Values: FLOW_REST_ROLES =====================
+  id: 2384141954898413
+  identification: 
+    name: FLOW_REST_ROLES
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select role_name
+           , role_id
+        from table(flow_rest_auth.get_rest_roles)
+
+  column-mapping: 
+    return: ROLE_ID
+    display: ROLE_NAME
+    default-sort: Use Order By from Query
+
+- # ====== List of Values: P8_INSTANCE_GATEWAYS_LOV ============
+  id: 2800147004522946
+  identification: 
+    name: P8_INSTANCE_GATEWAYS_LOV
+
+  subscription: 
+    version-number: 1760504935
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_INSTANCE_GATEWAYS_LOV
+    where-clause: 'prdg_id = :P8_PRDG_ID'
+
+  column-mapping: 
+    return: OBJT_BPMN_ID
+    display: OBJT_NAME
+    default-sort: OBJT_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: P8_INSTANCE_CONNECTIONS_LOV =========
+  id: 3000126357622364
+  identification: 
+    name: P8_INSTANCE_CONNECTIONS_LOV
+
+  subscription: 
+    version-number: 1760504935
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_INSTANCE_CONNECTIONS_LOV
+    where-clause: |
+      src_objt_bpmn_id = :p8_gateway
+      and prdg_id = :p8_prdg_id
+
+  column-mapping: 
+    return: CONN_BPMN_ID
+    display: CONN_NAME
+    default-sort: CONN_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: FLOW_SIMPLE_FORM_TEMPLATES_LOV ======
+  id: 10362301203290988
+  identification: 
+    name: FLOW_SIMPLE_FORM_TEMPLATES_LOV
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_SIMPLE_FORM_TEMPLATES
+
+  column-mapping: 
+    return: SFTE_ID
+    display: SFTE_NAME
+    default-sort: SFTE_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: P6_IMPORT_FROM ======================
+  id: 11250367144948655
+  identification: 
+    name: P6_IMPORT_FROM
+
+  subscription: 
+    version-number: 1760504935
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: File =========================================
+    id: 11250625753948668
+    entry: 
+      sequence: 1
+      display: File
+      return: file
+
+  - # ====== Entry: Text =========================================
+    id: 11251072818948672
+    entry: 
+      sequence: 2
+      display: Text
+      return: text
+
+- # ====== List of Values: P5_DOWNLOAD_AS ======================
+  id: 11258952541008552
+  identification: 
+    name: P5_DOWNLOAD_AS
+
+  subscription: 
+    version-number: 1760504929
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: BPMN File ====================================
+    id: 11259254401008560
+    entry: 
+      sequence: 1
+      display: BPMN File
+      return: BPMN
+
+  - # ====== Entry: SQL Script ===================================
+    id: 11259507519008561
+    entry: 
+      sequence: 2
+      display: SQL Script
+      return: SQL
+
+- # ====== List of Values: APEX_ICONS_LOV ======================
+  id: 12461890405272053
+  identification: 
+    name: APEX_ICONS_LOV
+
+  subscription: 
+    version-number: 2843504695
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select icon_name as display_value
+           , icon_name as return_value
+           , icon_name as icon
+        from APEX_DG_BUILTIN_FONTAPEX;
+
+  column-mapping: 
+    return: RETURN_VALUE
+    display: DISPLAY_VALUE
+    default-sort: Use Order By from Query
+    icon: ICON
+
+- # ====== List of Values: P44_PROMPT_TYPES ====================
+  id: 12568179604221251
+  identification: 
+    name: P44_PROMPT_TYPES
+
+  subscription: 
+    version-number: 2850265115
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: System =======================================
+    id: 12568477235221250
+    entry: 
+      sequence: 1
+      display: System
+      return: system
+
+  - # ====== Entry: Welcome ======================================
+    id: 12568867645221249
+    entry: 
+      sequence: 2
+      display: Welcome
+      return: welcome
+
+  - # ====== Entry: Immediate Action =============================
+    id: 12569240949221249
+    entry: 
+      sequence: 3
+      display: Immediate Action
+      return: immediateaction
+
+  - # ====== Entry: Quick Action =================================
+    id: 12569649774221249
+    entry: 
+      sequence: 4
+      display: Quick Action
+      return: quickaction
+
+- # ====== List of Values: P6_MODE =============================
+  id: 13102745982982601
+  identification: 
+    name: P6_MODE
+
+  subscription: 
+    version-number: 1760504935
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: <span><span aria-hidden="true" class="fa fa-fi
+    id: 13103030553982630
+    entry: 
+      sequence: 1
+      display: '<span><span aria-hidden="true" class="fa fa-file-o fa-lg"></span><span style="display: block;">&APP_TEXT$APP_LOV_ONE_MODEL.</span></span>'
+      return: single
+
+  - # ====== Entry: <span><span aria-hidden="true" class="fa fa-fi
+    id: 13103422381982643
+    entry: 
+      sequence: 2
+      display: '<span><span aria-hidden="true" class="fa fa-files-o fa-lg"></span><span style="display: block;">&APP_TEXT$APP_LOV_MULTIPLE_MODELS.</span></span>'
+      return: multiple
+
+- # ====== List of Values: P13_VAR_EXP_TYP =====================
+  id: 15214828485777501
+  identification: 
+    name: P13_VAR_EXP_TYP
+
+  subscription: 
+    version-number: 1760504928
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: Static Value =================================
+    id: 15215132143777515
+    entry: 
+      sequence: 1
+      display: Static Value
+      return: static
+
+  - # ====== Entry: Process Variable =============================
+    id: 15216223137803713
+    entry: 
+      sequence: 2
+      display: Process Variable
+      return: processVariable
+
+  - # ====== Entry: Item =========================================
+    id: 15216699385803714
+    entry: 
+      sequence: 3
+      display: Item
+      return: item
+
+  - # ====== Entry: SQL Query (return single value) ==============
+    id: 15217004677803714
+    entry: 
+      sequence: 4
+      display: SQL Query (return single value)
+      return: sqlQuerySingle
+
+  - # ====== Entry: SQL Query (return colon separated value) =====
+    id: 15217473228803715
+    entry: 
+      sequence: 5
+      display: SQL Query (return colon separated value)
+      return: sqlQueryList
+
+  - # ====== Entry: PL/SQL Function Body =========================
+    id: 15217803205803716
+    entry: 
+      sequence: 6
+      display: PL/SQL Function Body
+      return: plsqlFunctionBody
+
+  - # ====== Entry: PL/SQL Expression ============================
+    id: 15218228624803716
+    entry: 
+      sequence: 7
+      display: PL/SQL Expression
+      return: plsqlExpression
+
+- # ====== List of Values: P13_OBJECT_ATTRIBUTES ===============
+  id: 15330862223656536
+  identification: 
+    name: P13_OBJECT_ATTRIBUTES
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: Clear Cache ==================================
+    id: 15331535176656556
+    entry: 
+      sequence: 2
+      display: Clear Cache
+      return: 'apex:cache'
+
+  - # ====== Entry: Item Values ==================================
+    id: 15331901949656556
+    entry: 
+      sequence: 3
+      display: Item Values
+      return: 'apex:itemValue'
+
+  - # ====== Entry: Request ======================================
+    id: 15332307999656557
+    entry: 
+      sequence: 4
+      display: Request
+      return: 'apex:request'
+
+  - # ====== Entry: Page Items ===================================
+    id: 15332751649656557
+    entry: 
+      sequence: 5
+      display: Page Items
+      return: 'apex:itemName'
+
+  - # ====== Entry: PL/SQL Code ==================================
+    id: 15333170482656557
+    entry: 
+      sequence: 6
+      display: PL/SQL Code
+      return: 'apex:plsqlCode'
+
+  - # ====== Entry: Bind Page Item Values ========================
+    id: 15333581483656557
+    entry: 
+      sequence: 7
+      display: Bind Page Item Values
+      return: 'apex:autoBinds'
+
+  - # ====== Entry: Engine =======================================
+    id: 15333933530656557
+    entry: 
+      sequence: 8
+      display: Engine
+      return: 'apex:engine'
+
+  - # ====== Entry: Page =========================================
+    id: 15334375925656558
+    entry: 
+      sequence: 9
+      display: Page
+      return: 'apex:pageId'
+
+  - # ====== Entry: Process status after termination =============
+    id: 15373450429468526
+    entry: 
+      sequence: 10
+      display: Process status after termination
+      return: processStatus
+
+  - # ====== Entry: Timer Definition Type ========================
+    id: 15373733235468542
+    entry: 
+      sequence: 11
+      display: Timer Definition Type
+      return: timerType
+
+  - # ====== Entry: Timer Definition =============================
+    id: 15374151920468542
+    entry: 
+      sequence: 12
+      display: Timer Definition
+      return: timerDefinition
+
+  - # ====== Entry: Task Type ====================================
+    id: 35700662160505107
+    entry: 
+      sequence: 13
+      display: Task Type
+      return: taskType
+
+  - # ====== Entry: From =========================================
+    id: 35700949683505137
+    entry: 
+      sequence: 14
+      display: From
+      return: 'apex:emailFrom'
+
+  - # ====== Entry: To ===========================================
+    id: 35701367611505137
+    entry: 
+      sequence: 15
+      display: To
+      return: 'apex:emailTo'
+
+  - # ====== Entry: CC ===========================================
+    id: 35701702285505137
+    entry: 
+      sequence: 16
+      display: CC
+      return: 'apex:emailCC'
+
+  - # ====== Entry: BCC ==========================================
+    id: 35702112103505146
+    entry: 
+      sequence: 17
+      display: BCC
+      return: 'apex:emailBCC'
+
+  - # ====== Entry: Reply To =====================================
+    id: 35702525554505146
+    entry: 
+      sequence: 18
+      display: Reply To
+      return: 'apex:emailReplyTo'
+
+  - # ====== Entry: Use Template =================================
+    id: 35702928038505146
+    entry: 
+      sequence: 19
+      display: Use Template
+      return: 'apex:useTemplate'
+
+  - # ====== Entry: Application ID ===============================
+    id: 35703352692505146
+    entry: 
+      sequence: 20
+      display: Application ID
+      return: 'apex:applicationId'
+
+  - # ====== Entry: Template ID ==================================
+    id: 35703713806505147
+    entry: 
+      sequence: 21
+      display: Template ID
+      return: 'apex:templateId'
+
+  - # ====== Entry: Placeholder ==================================
+    id: 35704108915505147
+    entry: 
+      sequence: 22
+      display: Placeholder
+      return: 'apex:placeholder'
+
+  - # ====== Entry: Subject ======================================
+    id: 35704517220505147
+    entry: 
+      sequence: 23
+      display: Subject
+      return: 'apex:subject'
+
+  - # ====== Entry: Body =========================================
+    id: 35704978438505147
+    entry: 
+      sequence: 24
+      display: Body
+      return: 'apex:bodyText'
+
+  - # ====== Entry: HTML Body ====================================
+    id: 35705311456505147
+    entry: 
+      sequence: 25
+      display: HTML Body
+      return: 'apex:bodyHTML'
+
+  - # ====== Entry: Attachment ===================================
+    id: 35705730321505148
+    entry: 
+      sequence: 26
+      display: Attachment
+      return: 'apex:attachment'
+
+  - # ====== Entry: Send Immediatly ==============================
+    id: 35706161989505149
+    entry: 
+      sequence: 27
+      display: Send Immediatly
+      return: 'apex:immediately'
+
+  - # ====== Entry: Date =========================================
+    id: 35707717059505149
+    entry: 
+      sequence: 31
+      display: Date
+      return: 'apex:date'
+
+  - # ====== Entry: Format Mask ==================================
+    id: 35708141249505150
+    entry: 
+      sequence: 32
+      display: Format Mask
+      return: 'apex:formatMask'
+
+  - # ====== Entry: Interval Year to Month =======================
+    id: 35708515702505150
+    entry: 
+      sequence: 33
+      display: Interval Year to Month
+      return: 'apex:intervalYM'
+
+  - # ====== Entry: Interval Day to Second =======================
+    id: 35708950682505150
+    entry: 
+      sequence: 34
+      display: Interval Day to Second
+      return: 'apex:intervalDS'
+
+  - # ====== Entry: Time until the timer fires first =============
+    id: 35709380114505150
+    entry: 
+      sequence: 35
+      display: Time until the timer fires first
+      return: 'apex:startIntervalDS'
+
+  - # ====== Entry: Time until the timer fires again =============
+    id: 35709717522505150
+    entry: 
+      sequence: 36
+      display: Time until the timer fires again
+      return: 'apex:repeatIntervalDS'
+
+  - # ====== Entry: Max Runs =====================================
+    id: 35710159164505151
+    entry: 
+      sequence: 37
+      display: Max Runs
+      return: 'apex:maxRuns'
+
+- # ====== List of Values: P13_VAR_EXP_SET_ON ==================
+  id: 15901843917364053
+  identification: 
+    name: P13_VAR_EXP_SET_ON
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: Before Task ==================================
+    id: 15902102975364060
+    entry: 
+      sequence: 1
+      display: Before Task
+      return: beforeTask
+
+  - # ====== Entry: After Task ===================================
+    id: 15902510563364061
+    entry: 
+      sequence: 2
+      display: After Task
+      return: afterTask
+
+  - # ====== Entry: Before Event =================================
+    id: 15902907108364061
+    entry: 
+      sequence: 3
+      display: Before Event
+      return: beforeEvent
+
+  - # ====== Entry: On Event =====================================
+    id: 15903304316364061
+    entry: 
+      sequence: 4
+      display: On Event
+      return: onEvent
+
+  - # ====== Entry: Before Split =================================
+    id: 15903750919364061
+    entry: 
+      sequence: 5
+      display: Before Split
+      return: beforeSplit
+
+  - # ====== Entry: After Merge ==================================
+    id: 15904152776364061
+    entry: 
+      sequence: 6
+      display: After Merge
+      return: afterMerge
+
+  - # ====== Entry: In Variables =================================
+    id: 62212194512228414
+    entry: 
+      sequence: 7
+      display: In Variables
+      return: inVariables
+
+  - # ====== Entry: Out Variables ================================
+    id: 62212467011228444
+    entry: 
+      sequence: 8
+      display: Out Variables
+      return: outVariables
+
+- # ====== List of Values: DIAGRAM_CATEGORIES_LOV ==============
+  id: 25503316579708357
+  identification: 
+    name: DIAGRAM_CATEGORIES_LOV
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_DIAGRAM_CATEGORIES_LOV
+
+  column-mapping: 
+    return: R
+    display: D
+    default-sort: D
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: FLOW_INSTANCE_DIAGRAMS_LOV ==========
+  id: 60714624308437115
+  identification: 
+    name: FLOW_INSTANCE_DIAGRAMS_LOV
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_INSTANCE_DIAGRAMS_LOV
+    where-clause: 'prdg_prcs_id = :P8_PRCS_ID'
+
+  column-mapping: 
+    return: PRDG_ID
+    display: CALLING_DIAGRAM
+    default-sort: CALLING_DIAGRAM
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: DIAGRAMS_INSTANCIATED_LOV ===========
+  id: 66615520889086574
+  identification: 
+    name: DIAGRAMS_INSTANCIATED_LOV
+
+  subscription: 
+    version-number: 1760504921
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_DIAGRAMS_INSTANCIATED_LOV
+
+  column-mapping: 
+    return: DGRM_ID
+    display: DGRM_NAME
+    default-sort: DGRM_NAME
+    sort-direction: Ascending (Nulls Last)
+    group: DGRM_CATEGORY
+    group-sort-direction: Ascending (Nulls Last)
+
+  columns: 
+  - # ====== Column: DGRM_ID =====================================
+    id: 66619493214096628
+    identification: 
+      column-name: DGRM_ID
+      show: false
+
+    layout: 
+      sequence: 10
+
+    source: 
+      data-type: NUMBER
+
+    advanced: 
+      searchable: false
+
+  - # ====== Column: DGRM_NAME ===================================
+    id: 66619733681096628
+    identification: 
+      column-name: DGRM_NAME
+      show: true
+
+    heading: 
+      heading: Name
+
+    layout: 
+      sequence: 20
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_CATEGORY ===============================
+    id: 66620198364096628
+    identification: 
+      column-name: DGRM_CATEGORY
+      show: true
+
+    heading: 
+      heading: Category
+
+    layout: 
+      sequence: 30
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_VERSION ================================
+    id: 66620549721096629
+    identification: 
+      column-name: DGRM_VERSION
+      show: true
+
+    heading: 
+      heading: Version
+
+    layout: 
+      sequence: 40
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: DGRM_STATUS =================================
+    id: 66620978691096630
+    identification: 
+      column-name: DGRM_STATUS
+      show: true
+
+    heading: 
+      heading: Status
+
+    layout: 
+      sequence: 50
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+- # ====== List of Values: LOGIN_REMEMBER_USERNAME =============
+  id: 12495494129921879909
+  identification: 
+    name: LOGIN_REMEMBER_USERNAME
+
+  subscription: 
+    version-number: 1760504927
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: Remember username ============================
+    id: 12495493775569879902
+    entry: 
+      sequence: 10
+      display: Remember username
+      return: Y
+

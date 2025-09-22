@@ -5,7 +5,7 @@ as
 -- Flows for APEX - flow_proc_vars_int.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
--- (c) Copyright Flowquest Consulting Limited. 2024
+-- (c) Copyright Flowquest Consulting Limited. 2024-25
 --
 -- Created    12-Apr-2022  Richard Allen (Oracle)
 -- Modified   11-Aug-2022  Moritz Klein (MT AG)
@@ -1101,6 +1101,8 @@ end lock_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_scope then
+            pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_scope );
           when flow_constants_pkg.gc_substitution_process_priority then
             pio_string := replace ( pio_string
                                   , get_replacement_pattern( l_f4a_substitutions(i) )
@@ -1173,6 +1175,8 @@ end lock_var;
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_sbfl_id );
           when flow_constants_pkg.gc_substitution_step_key then
             pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_step_key );
+          when flow_constants_pkg.gc_substitution_scope then
+            pio_string := replace( pio_string, get_replacement_pattern( l_f4a_substitutions(i) ), pi_scope );
           when flow_constants_pkg.gc_substitution_process_priority then
             pio_string := replace ( pio_string
                                   , get_replacement_pattern( l_f4a_substitutions(i) )
@@ -1194,55 +1198,6 @@ end lock_var;
       end loop;
     end if;
   end do_substitution;
-
-/*
-  procedure get_var_as_parameter
-  (
-    pi_prcs_id            in flow_process_variables.prov_prcs_id%type
-  , pi_var_name           in flow_process_variables.prov_var_name%type
-  , pi_scope              in flow_process_variables.prov_scope%type
-  , pi_exception_on_null  in boolean default true
-  , po_data_type         out apex_exec.t_data_type
-  , po_value             out apex_exec.t_value
-  )
-  as
-  begin
-    select case prov.prov_var_type
-             when flow_constants_pkg.gc_prov_var_type_varchar2 then 1
-             when flow_constants_pkg.gc_prov_var_type_number   then 2
-             when flow_constants_pkg.gc_prov_var_type_date     then 3
-             when flow_constants_pkg.gc_prov_var_type_clob     then 11
-             when flow_constants_pkg.gc_prov_var_type_tstz     then 5
-             else 1
-           end as data_type
-         , prov.prov_var_vc2
-         , prov.prov_var_num
-         , prov.prov_var_date
-         , prov.prov_var_clob
-      into po_data_type
-         , po_value.varchar2_value
-         , po_value.number_value
-         , po_value.date_value
-         , po_value.clob_value
-      from flow_process_variables prov
-     where prov.prov_prcs_id    = pi_prcs_id
-       and prov.prov_scope      = pi_scope
-       and upper(prov_var_name) = upper(pi_var_name)
-    ;
-  exception
-    when no_data_found then
-      if pi_exception_on_null then
-        flow_errors.handle_instance_error
-        ( 
-          pi_prcs_id     => pi_prcs_id
-        , pi_message_key => 'var-get-error'      
-        , p0             => pi_var_name
-        , p1             => pi_prcs_id
-        , p2             => pi_scope
-        );
-      end if;
-  end get_var_as_parameter;
-  */
 
   function get_var_as_parameter
   (
@@ -1317,6 +1272,8 @@ end lock_var;
              when flow_constants_pkg.gc_prov_var_type_number   then to_char(prov.prov_var_num)
              when flow_constants_pkg.gc_prov_var_type_date     then to_char(prov.prov_var_date, flow_constants_pkg.gc_prov_default_date_format)
              when flow_constants_pkg.gc_prov_var_type_tstz     then to_char(prov.prov_var_tstz, flow_constants_pkg.gc_prov_default_tstz_format)
+             when flow_constants_pkg.gc_prov_var_type_clob     then sys.dbms_lob.substr(prov.prov_var_clob, 4000, 1)
+             when flow_constants_pkg.gc_prov_var_type_json     then sys.dbms_lob.substr(prov.prov_var_json, 4000, 1)
              else null
            end as prov_var_value
       into l_return
@@ -1349,6 +1306,7 @@ end lock_var;
   , pi_prcs_id  in  flow_processes.prcs_id%type
   , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   , pi_scope    in  flow_subflows.sbfl_scope%type
+  , pi_step_key in  flow_subflows.sbfl_step_key%type default null
   ) return apex_plugin_util.t_bind_list
   is
     l_bind                  apex_plugin_util.t_bind;
@@ -1377,6 +1335,8 @@ end lock_var;
             l_bind.value := pi_sbfl_id;
           when flow_constants_pkg.gc_substitution_scope then
             l_bind.value := pi_scope;   
+          when flow_constants_pkg.gc_substitution_step_key then
+            l_bind.value := pi_step_key;
           when flow_constants_pkg.gc_substitution_process_priority then
             l_bind.value := flow_instances.priority (p_process_id => pi_prcs_id);   
           else  
@@ -1406,6 +1366,7 @@ end lock_var;
   , pi_prcs_id  in  flow_processes.prcs_id%type
   , pi_sbfl_id  in  flow_subflows.sbfl_id%type
   , pi_scope    in  flow_subflows.sbfl_scope%type
+  , pi_step_key in  flow_subflows.sbfl_step_key%type default null
   , pi_state_params   in  apex_exec.t_parameters default apex_exec.c_empty_parameters
   ) return apex_exec.t_parameters
   is
@@ -1457,7 +1418,10 @@ end lock_var;
             l_parameter.data_type           := apex_exec.c_data_type_number;
           when l_bind_name = flow_constants_pkg.gc_substitution_scope then
             l_parameter.value.number_value  := pi_scope;
-            l_parameter.data_type           := apex_exec.c_data_type_number;      
+            l_parameter.data_type           := apex_exec.c_data_type_number; 
+          when l_bind_name = flow_constants_pkg.gc_substitution_step_key then
+            l_parameter.value.varchar2_value:= pi_step_key;
+            l_parameter.data_type           := apex_exec.c_data_type_varchar2;               
           when l_bind_name = flow_constants_pkg.gc_substitution_process_priority then
             l_parameter.value.number_value  := flow_instances.priority (p_process_id => pi_prcs_id);
             l_parameter.data_type           := apex_exec.c_data_type_number;   
@@ -1483,7 +1447,7 @@ end lock_var;
           , p0 => l_parameter.name
           , p1 => to_char(l_parameter.value.number_value)
           , p2 => l_parameter.data_type
-          , p3 => to_char(l_parameter.value.date_value)
+          , p3 => to_char(l_parameter.value.date_value, flow_constants_pkg.gc_prov_default_date_format)
           , p4 => l_parameter.value.varchar2_value
           , p5 => pi_scope
           );                              

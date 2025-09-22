@@ -1,0 +1,4518 @@
+---
+# ====== Page: Flow ==========================================
+id: 7
+identification: 
+  name: Flow
+  alias: FLOW
+  title: Flow - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_IMAGES#lib/prismjs/js/prism.js'
+  function-and-global-variable-declaration: initPage7();
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Action Menu =================================
+  id: 7937843762499701
+  identification: 
+    name: Action Menu
+    type: List
+
+  source: 
+    list: P7_ACTION_MENU # 7935522414465879
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: actions
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+
+- # ====== Region: Additional Information ======================
+  id: 12332479321495717
+  identification: 
+    name: Additional Information
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Attributes # 26003019626877931
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-collapsed
+    - t-Region--scrollBody
+    - margin-top-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Attributes ==================================
+  id: 26003019626877931
+  identification: 
+    name: Attributes
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_DIAGRAMS
+    include-rowid-column: false
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: attributes
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      lost-update-type: Row Values
+
+- # ====== Region: Flow Viewer =================================
+  id: 28425138174759832
+  identification: 
+    name: Flow Viewer
+    type: Flows for APEX - Viewer
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0007_VW
+    include-rowid-column: false
+    where-clause: 'dgrm_id = :p7_dgrm_id'
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      diagram-xml: DGRM_CONTENT
+      diagram-identifier: DGRM_ID
+      use-bpmn-colors: true
+      refresh-on-load: true
+      show-toolbar: true
+      enable-mousewheel-zoom: false
+
+- # ====== Region: Breadcrumb ==================================
+  id: 34402779943171413
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Process instances per status ================
+  id: 36450747308745933
+  identification: 
+    name: Process instances per status
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select distinct
+          nvl(sum(case when i.prcs_status = 'created' then 1 else 0 end), 0)  as created_instances,
+          nvl(sum(case when i.prcs_status = 'running' then 1 else 0 end), 0)  as running_instances,
+          nvl(sum(case when i.prcs_status = 'suspended' then 1 else 0 end), 0)  as suspended_instances,
+          nvl(sum(case when i.prcs_status = 'completed' then 1 else 0 end), 0)  as completed_instances,
+          nvl(sum(case when i.prcs_status = 'terminated' then 1 else 0 end), 0)  as terminated_instances,
+          nvl(sum(case when i.prcs_status = 'error' then 1 else 0 end), 0)  as error_instances
+      from flow_instances_vw i
+      where i.prcs_id in (
+         select prdg.prdg_prcs_id
+         from flow_diagrams_vw d
+         left join flow_instance_diagrams prdg 
+         on (prdg.prdg_dgrm_id = d.dgrm_id or prdg.prdg_calling_dgrm = d.dgrm_id)
+         where d.dgrm_id = :P7_DGRM_ID
+      )
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: instances_counter
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - t-BadgeList--large
+      - t-BadgeList--circular
+      - t-BadgeList--cols t-BadgeList--3cols
+      - t-Report--hideNoPagination
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: SUSPENDED_INSTANCES =========================
+    id: 20939059623515
+    identification: 
+      column-name: SUSPENDED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Suspended
+      alignment: center
+
+    layout: 
+      sequence: 12
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <span data-status="suspended">#SUSPENDED_INSTANCES#</a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CREATED_INSTANCES ===========================
+    id: 26021760516277918
+    identification: 
+      column-name: CREATED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Created
+      alignment: center
+
+    layout: 
+      sequence: 1
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: |
+        <span data-status="created">#CREATED_INSTANCES#</a>
+        
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: RUNNING_INSTANCES ===========================
+    id: 26022166035277918
+    identification: 
+      column-name: RUNNING_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Running
+      alignment: center
+
+    layout: 
+      sequence: 2
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <span data-status="running">#RUNNING_INSTANCES#</a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: COMPLETED_INSTANCES =========================
+    id: 26022532889277920
+    identification: 
+      column-name: COMPLETED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Completed
+      alignment: center
+
+    layout: 
+      sequence: 22
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <span data-status="completed">#COMPLETED_INSTANCES#</a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TERMINATED_INSTANCES ========================
+    id: 34402829743171414
+    identification: 
+      column-name: TERMINATED_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Terminated
+      alignment: center
+
+    layout: 
+      sequence: 32
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <span data-status="terminated">#TERMINATED_INSTANCES#</a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ERROR_INSTANCES =============================
+    id: 34402963356171415
+    identification: 
+      column-name: ERROR_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Error
+      alignment: center
+
+    layout: 
+      sequence: 42
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: <span data-status="error">#ERROR_INSTANCES#</a>
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: New Version =================================
+  id: 45087523137560136
+  identification: 
+    name: New Version
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: new_version_reg
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Delete Model ================================
+  id: 45089270532561391
+  identification: 
+    name: Delete Model
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: delete_reg
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Associated process instances ================
+  id: 45089418627561392
+  identification: 
+    name: Associated process instances
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select apex_lang.message(p_name => 'APP_DIAGRAM_INSTANCES_NB', p0 => nb_instances) as nb_instances
+      from (
+          select count(*) as nb_instances
+          from flow_instances_vw ins
+          where ins.prcs_id in (
+              select prdg.prdg_prcs_id
+              from flow_instance_diagrams prdg
+              where prdg.prdg_dgrm_id = :P7_DGRM_ID
+          )
+      )   
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  layout: 
+    sequence: 10
+    parent-region: Delete Model # 45089270532561391
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Alert
+    template-options: 
+    - '#DEFAULT#'
+    - t-Alert--horizontal
+    - t-Alert--defaultIcons
+    - t-Alert--danger
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--stretch
+      - t-Report--staticRowColors
+      - t-Report--rowHighlightOff
+      - t-Report--noBorders
+      - t-Report--hideNoPagination
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: None
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: NB_INSTANCES ================================
+    id: 26069606115228470
+    identification: 
+      column-name: NB_INSTANCES
+      type: Plain Text
+
+    heading: 
+      heading: Nb Instances
+      alignment: center
+
+    layout: 
+      sequence: 1
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Form ========================================
+  id: 45090112965561399
+  identification: 
+    name: Form
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Delete Model # 45089270532561391
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Diagram Details =============================
+  id: 60862347292537221
+  identification: 
+    name: Diagram Details
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Attributes # 26003019626877931
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Collapsible
+    template-options: 
+    - '#DEFAULT#'
+    - is-collapsed
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Tab =========================================
+  id: 60862870630537226
+  identification: 
+    name: Tab
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Diagram Details # 60862347292537221
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Tabs Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-TabsRegion-mod--simple
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Called Diagrams =============================
+  id: 63513911250355404
+  identification: 
+    name: Called Diagrams
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0007_CALLED_DIAGRAMS_VW
+    include-rowid-column: false
+    where-clause: |
+      root_dgrm = :P7_DGRM_ID
+      and calling_dgrm is not null
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  layout: 
+    sequence: 90
+    parent-region: Tab # 60862870630537226
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 63514135027355406
+    link: 
+      link-column: Link to Custom Target
+      target: 
+        url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:#DGRM_ID#'
+        page: 7 # Flow
+        clear-cache: 7
+        values: 
+          p7_dgrm_id: '#DGRM_ID#'
+
+      link-icon: <span class="fa fa-edit" aria-hidden="true"></span>
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    messages: 
+      when-no-data-found: No Called Diagrams found.
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 64613740907593919
+      identification: 
+        name: Primary Report
+        alias: 646138
+
+    columns: 
+    - # ====== Column: DGRM_ID =====================================
+      id: 63514228675355407
+      identification: 
+        column-name: DGRM_ID
+        type: Plain Text
+
+      heading: 
+        heading: Id
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 10
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CALLING_DGRM ================================
+      id: 63514302661355408
+      identification: 
+        column-name: CALLING_DGRM
+        type: Hidden
+
+      heading: 
+        heading: Calling Dgrm
+
+      layout: 
+        sequence: 20
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CALLING_OBJT ================================
+      id: 63514438411355409
+      identification: 
+        column-name: CALLING_OBJT
+        type: Plain Text
+
+      heading: 
+        heading: Calling Object
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: ROOT_DGRM ===================================
+      id: 63514708342355412
+      identification: 
+        column-name: ROOT_DGRM
+        type: Hidden
+
+      heading: 
+        heading: Root Dgrm
+
+      layout: 
+        sequence: 60
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: DGRM_NAME ===================================
+      id: 63515879418355423
+      identification: 
+        column-name: DGRM_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Called Diagram
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_VERSION ================================
+      id: 63515990329355424
+      identification: 
+        column-name: DGRM_VERSION
+        type: Plain Text
+
+      heading: 
+        heading: Version
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: HAS_RECURSION ===============================
+      id: 63516512604355430
+      identification: 
+        column-name: HAS_RECURSION
+        type: Plain Text
+
+      heading: 
+        heading: Has Recursion
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 90
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <span class="#HAS_RECURSION_ICON#" aria-label="&APP_TEXT$APP_P7_HAS_RECURSION." title="&APP_TEXT$APP_P7_HAS_RECURSION."></span>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: HAS_RECURSION_ICON ==========================
+      id: 63516662153355431
+      identification: 
+        column-name: HAS_RECURSION_ICON
+        type: Hidden
+
+      heading: 
+        heading: Has Recursion Icon
+
+      layout: 
+        sequence: 100
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Called Models
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Calling Diagrams ============================
+  id: 63514877350355413
+  identification: 
+    name: Calling Diagrams
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0007_CALLING_DIAGRAMS_VW
+    include-rowid-column: false
+    where-clause: |
+      flow_engine_app_api.get_current_diagram(
+         pi_dgrm_name           => called_diagram,
+         pi_dgrm_calling_method => called_diagram_version_selection,
+         pi_dgrm_version        => called_diagram_version
+      ) = :P7_DGRM_ID
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  layout: 
+    sequence: 100
+    parent-region: Tab # 60862870630537226
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 63514930517355414
+    link: 
+      link-column: Link to Custom Target
+      target: 
+        url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7:P7_DGRM_ID:#DGRM_ID#'
+        page: 7 # Flow
+        clear-cache: 7
+        values: 
+          p7_dgrm_id: '#DGRM_ID#'
+
+      link-icon: <span class="fa fa-edit" aria-hidden="true"></span>
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    messages: 
+      when-no-data-found: No Calling Diagrams found.
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 64619529927716691
+      identification: 
+        name: Primary Report
+        alias: 646196
+
+    columns: 
+    - # ====== Column: DGRM_ID =====================================
+      id: 63515059362355415
+      identification: 
+        column-name: DGRM_ID
+        type: Plain Text
+
+      heading: 
+        heading: Id
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 10
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_NAME ===================================
+      id: 63515140710355416
+      identification: 
+        column-name: DGRM_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Calling Diagram
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_VERSION ================================
+      id: 63515215281355417
+      identification: 
+        column-name: DGRM_VERSION
+        type: Plain Text
+
+      heading: 
+        heading: Version
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: OBJT_NAME ===================================
+      id: 63515316439355418
+      identification: 
+        column-name: OBJT_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Calling Object
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CALLED_DIAGRAM ==============================
+      id: 63515571460355420
+      identification: 
+        column-name: CALLED_DIAGRAM
+        type: Hidden
+
+      heading: 
+        heading: Diagram
+
+      layout: 
+        sequence: 50
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CALLED_DIAGRAM_VERSION_SELECTION ============
+      id: 63515621004355421
+      identification: 
+        column-name: CALLED_DIAGRAM_VERSION_SELECTION
+        type: Hidden
+
+      heading: 
+        heading: Called Diagram Version Selection
+
+      layout: 
+        sequence: 60
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: CALLED_DIAGRAM_VERSION ======================
+      id: 63515771897355422
+      identification: 
+        column-name: CALLED_DIAGRAM_VERSION
+        type: Hidden
+
+      heading: 
+        heading: Called Diagram Version
+
+      layout: 
+        sequence: 70
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Calling Diagrams
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: In/Out Variables ============================
+  id: 73725012982147304
+  identification: 
+    name: In/Out Variables
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0007_DIAGRAMS_VAR_VW
+    include-rowid-column: false
+    where-clause: 'objt_dgrm_id = :P7_DGRM_ID'
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 80
+    parent-region: Tab # 60862870630537226
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: vars-cr
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--stretch
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    messages: 
+      when-no-data-found: No In/Out variables found.
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: OBJT_DGRM_ID ================================
+    id: 60864578114537243
+    identification: 
+      column-name: OBJT_DGRM_ID
+      type: Hidden
+
+    layout: 
+      sequence: 1
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VAR_DIRECTION ===============================
+    id: 60864662910537244
+    identification: 
+      column-name: VAR_DIRECTION
+      type: Plain Text
+
+    heading: 
+      heading: Direction
+      alignment: start
+
+    layout: 
+      sequence: 2
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      default-sequence: 1
+      direction: Ascending
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VAR_NAME ====================================
+    id: 60864798356537245
+    identification: 
+      column-name: VAR_NAME
+      type: Plain Text
+
+    heading: 
+      heading: Name
+      alignment: start
+
+    layout: 
+      sequence: 3
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VAR_TYPE ====================================
+    id: 60864809349537246
+    identification: 
+      column-name: VAR_TYPE
+      type: Plain Text
+
+    heading: 
+      heading: Data Type
+      alignment: start
+
+    layout: 
+      sequence: 4
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VAR_DESC ====================================
+    id: 60864944171537247
+    identification: 
+      column-name: VAR_DESC
+      type: Plain Text
+
+    heading: 
+      heading: Description
+      alignment: start
+
+    layout: 
+      sequence: 5
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Attributes ==================================
+  id: 117321296215490847
+  identification: 
+    name: Attributes
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0007_DIAGRAMS_ATTRIBUTES_VW
+    include-rowid-column: false
+    where-clause: 'objt_dgrm_id = :P7_DGRM_ID'
+    page-items-to-submit: 
+    - P7_DGRM_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 70
+    parent-region: Tab # 60862870630537226
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: attributes-cr
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Value Attribute Pairs - Column
+      template-options: 
+      - '#DEFAULT#'
+      - t-AVPList--leftAligned
+      - t-Report--hideNoPagination
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    messages: 
+      when-no-data-found: No attributes found.
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: OBJT_DGRM_ID ================================
+    id: 60863664430537234
+    identification: 
+      column-name: OBJT_DGRM_ID
+      type: Plain Text
+
+    heading: 
+      heading: Diagram Id
+      alignment: start
+
+    layout: 
+      sequence: 1
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: APPLICATION_ID ==============================
+    id: 60863751015537235
+    identification: 
+      column-name: APPLICATION_ID
+      type: Plain Text
+
+    heading: 
+      heading: Application Id
+      alignment: center
+
+    layout: 
+      sequence: 2
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PAGE_ID =====================================
+    id: 60863889314537236
+    identification: 
+      column-name: PAGE_ID
+      type: Plain Text
+
+    heading: 
+      heading: Page Id
+      alignment: center
+
+    layout: 
+      sequence: 3
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: USERNAME ====================================
+    id: 60863981218537237
+    identification: 
+      column-name: USERNAME
+      type: Plain Text
+
+    heading: 
+      heading: Username
+      alignment: center
+
+    layout: 
+      sequence: 4
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: IS_CALLABLE =================================
+    id: 60864072957537238
+    identification: 
+      column-name: IS_CALLABLE
+      type: Plain Text
+
+    heading: 
+      heading: Is Callable
+      alignment: center
+
+    layout: 
+      sequence: 5
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+page-items: 
+- # ====== Page Item: P7_DGRM_SHORT_DESCRIPTION ================
+  id: 6978801192365548
+  identification: 
+    name: P7_DGRM_SHORT_DESCRIPTION
+    type: Textarea
+
+  label: 
+    label: Short Description
+    alignment: Left
+
+  settings: 
+    resizable: false
+    auto-height: false
+    character-counter: true
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: Additional Information # 12332479321495717
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+    height: 5
+
+  validation: 
+    value-required: false
+    maximum-length: 300
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_SHORT_DESCRIPTION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_DESCRIPTION ======================
+  id: 6978916392365549
+  identification: 
+    name: P7_DGRM_DESCRIPTION
+    type: Rich Text Editor
+
+  label: 
+    label: Description
+    alignment: Left
+
+  settings: 
+    library: Oracle Rich Text Library
+    format: Markdown
+    minimum-height: 180
+    allow-custom-html: false
+
+  layout: 
+    sequence: 30
+    region: Additional Information # 12332479321495717
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_DESCRIPTION
+    data-type: CLOB
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_OBJT_LIST =============================
+  id: 7336178189307043
+  identification: 
+    name: P7_OBJT_LIST
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_OBJT_BPMN_ID ==========================
+  id: 7336335344307045
+  identification: 
+    name: P7_OBJT_BPMN_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_OBJT_NAME =============================
+  id: 7336470700307046
+  identification: 
+    name: P7_OBJT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_ENGINE_APP_MODE =======================
+  id: 8026927386825638
+  identification: 
+    name: P7_ENGINE_APP_MODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Action Menu # 7937843762499701
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_ICON =============================
+  id: 12332384979495716
+  identification: 
+    name: P7_DGRM_ICON
+    type: Popup LOV
+
+  label: 
+    label: Icon
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Additional Information # 12332479321495717
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: APEX_ICONS_LOV # 12461890405272053
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: No Icon
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_ICON
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_PROCESS_DEF ======================
+  id: 12584366831920402
+  identification: 
+    name: P7_DGRM_PROCESS_DEF
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: CLOB
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_QUICK_ACTIONS =========================
+  id: 12584473818920403
+  identification: 
+    name: P7_QUICK_ACTIONS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: CLOB
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_SYSTEM_PROMPT =========================
+  id: 12584576321920404
+  identification: 
+    name: P7_SYSTEM_PROMPT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_AI_WELCOME ============================
+  id: 12584604037920405
+  identification: 
+    name: P7_AI_WELCOME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_AI_IA_PROMPT ==========================
+  id: 12584796862920406
+  identification: 
+    name: P7_AI_IA_PROMPT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_LAST_UPDATE ======================
+  id: 24212748636956111
+  identification: 
+    name: P7_DGRM_LAST_UPDATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 140
+    region: Attributes # 26003019626877931
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_LAST_UPDATE
+    data-type: TIMESTAMP WITH TIME ZONE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_ID ===============================
+  id: 26003369119877940
+  identification: 
+    name: P7_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Attributes # 26003019626877931
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_NAME =============================
+  id: 26003724086877950
+  identification: 
+    name: P7_DGRM_NAME
+    type: Text Field
+
+  label: 
+    label: Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Attributes # 26003019626877931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+
+  validation: 
+    value-required: true
+    maximum-length: 150
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_VERSION ==========================
+  id: 26004107468877957
+  identification: 
+    name: P7_DGRM_VERSION
+    type: Text Field
+
+  label: 
+    label: Version
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Attributes # 26003019626877931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: true
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_VERSION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  read-only: 
+    type: Item != Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_STATUS ===========================
+  id: 26004547057877957
+  identification: 
+    name: P7_DGRM_STATUS
+    type: Display Only
+
+  label: 
+    label: Status
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 100
+    region: Attributes # 26003019626877931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_constants_pkg.gc_dgrm_status_draft
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_DGRM_CATEGORY =========================
+  id: 26004901378877959
+  identification: 
+    name: P7_DGRM_CATEGORY
+    type: Popup LOV
+
+  label: 
+    label: Category
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: true
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: Attributes # 26003019626877931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 60
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: DIAGRAM_CATEGORIES_LOV # 25503316579708357
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: No Category
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Attributes # 26003019626877931
+    column: DGRM_CATEGORY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_NEW_VERSION ===========================
+  id: 26068279548227242
+  identification: 
+    name: P7_NEW_VERSION
+    type: Text Field
+
+  label: 
+    label: New Version
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: New Version # 45087523137560136
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 10
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_CASCADE ===============================
+  id: 26070342430228478
+  identification: 
+    name: P7_CASCADE
+    type: Switch
+
+  label: 
+    label: Cascade
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: Form # 45090112965561399
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+  help: 
+    inline-help-text: Delete associated process instances
+
+- # ====== Page Item: P7_LOADED_DIAGRAM ========================
+  id: 44803477939176616
+  identification: 
+    name: P7_LOADED_DIAGRAM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Flow Viewer # 28425138174759832
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ACTION_MENU =================================
+  id: 5522981517864950
+  identification: 
+    button-name: ACTION_MENU
+    label: Action Menu
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 34402779943171413
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-menuButton
+    icon: fa-bars
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    custom-attributes: 
+    - data-menu="actions_menu"
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+- # ====== Button: AskFlo ======================================
+  id: 12584243948920401
+  identification: 
+    button-name: AskFlo
+    label: Ask Flo
+
+  layout: 
+    sequence: 10
+    region: Flow Viewer # 28425138174759832
+    slot: EDIT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-ai
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: NEW_VERSION =================================
+  id: 24215404585956138
+  identification: 
+    button-name: NEW_VERSION
+    label: New Version
+
+  layout: 
+    sequence: 90
+    region: Attributes # 26003019626877931
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--simple
+    - t-Button--iconLeft
+    - t-Button--stretch
+    - t-Button--padTop
+    icon: fa-plus
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: new_version_btn
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+- # ====== Button: RELEASE =====================================
+  id: 24215581832956139
+  identification: 
+    button-name: RELEASE
+    label: Release
+
+  layout: 
+    sequence: 120
+    region: Attributes # 26003019626877931
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--simple
+    - t-Button--iconLeft
+    - t-Button--stretch
+    - t-Button--padTop
+    icon: fa-check
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+    database-action: SQL UPDATE action
+
+  advanced: 
+    static-id: release_btn
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':P7_DGRM_ID is not null and :P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_draft'
+
+- # ====== Button: DEPRECATE ===================================
+  id: 24215607769956140
+  identification: 
+    button-name: DEPRECATE
+    label: Deprecate
+
+  layout: 
+    sequence: 110
+    region: Attributes # 26003019626877931
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--simple
+    - t-Button--iconLeft
+    - t-Button--stretch
+    - t-Button--padTop
+    icon: fa-ban
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+    database-action: SQL UPDATE action
+
+  advanced: 
+    static-id: deprecate_btn
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_released'
+
+- # ====== Button: ARCHIVE =====================================
+  id: 24215790121956141
+  identification: 
+    button-name: ARCHIVE
+    label: Archive
+
+  layout: 
+    sequence: 130
+    region: Attributes # 26003019626877931
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--simple
+    - t-Button--iconLeft
+    - t-Button--stretch
+    - t-Button--padTop
+    icon: fa-archive
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+    database-action: SQL UPDATE action
+
+  advanced: 
+    static-id: archive_btn
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':P7_DGRM_STATUS = flow_constants_pkg.gc_dgrm_status_deprecated'
+
+- # ====== Button: SAVE ========================================
+  id: 26009257493877978
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 10
+    region: Breadcrumb # 34402779943171413
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL UPDATE action
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P7_DGRM_ID
+
+- # ====== Button: CREATE ======================================
+  id: 26009611434877978
+  identification: 
+    button-name: CREATE
+    label: Create
+
+  layout: 
+    sequence: 50
+    region: Breadcrumb # 34402779943171413
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-plus
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL INSERT action
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P7_DGRM_ID
+
+- # ====== Button: ADD_VERSION =================================
+  id: 26067817325227237
+  identification: 
+    button-name: ADD_VERSION
+    label: Add Version
+
+  layout: 
+    sequence: 10
+    region: New Version # 45087523137560136
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-chevron-circle-up
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Page Default
+
+- # ====== Button: DELETE ======================================
+  id: 26068946058228467
+  identification: 
+    button-name: DELETE
+    label: Delete
+
+  layout: 
+    sequence: 20
+    region: Delete Model # 45089270532561391
+    slot: CREATE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--danger
+    - t-Button--iconLeft
+    icon: fa-trash-o
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: MODIFY_DIAGRAM ==============================
+  id: 26091600150304603
+  identification: 
+    button-name: MODIFY_DIAGRAM
+    label: Modify Diagram
+
+  layout: 
+    sequence: 20
+    region: Flow Viewer # 28425138174759832
+    slot: EDIT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    icon: fa-apex
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      flow_diagram.diagram_is_modifiable(
+        pi_dgrm_id => :P7_DGRM_ID
+      )
+
+- # ====== Button: CANCEL ======================================
+  id: 34404258251171428
+  identification: 
+    button-name: CANCEL
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Delete Model # 45089270532561391
+    slot: CLOSE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click on Archive ====================
+  id: 8024957923825618
+  identification: 
+    name: Click on Archive
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ARCHIVE # 24215790121956141
+
+  actions: 
+  - # ====== Action: Confirm =====================================
+    id: 8025177637825620
+    identification: 
+      action: Confirm
+
+    settings: 
+      message: '&APP_TEXT$APP_CONFIRM_ARCHIVE_MODEL.'
+      style: Default
+
+    execution: 
+      sequence: 10
+      event: Click on Archive # 8024957923825618
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Submit Page =================================
+    id: 8025291955825621
+    identification: 
+      action: Submit Page
+
+    settings: 
+      request-/-button-name: ARCHIVE
+      show-processing: true
+
+    execution: 
+      sequence: 20
+      event: Click on Archive # 8024957923825618
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Chatbot ========================
+  id: 12584832494920407
+  identification: 
+    name: Open Chatbot
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: AskFlo # 12584243948920401
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: (apex.items.P0_LICENSE_EDITION.value === "enterprise")
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 4862581901240143
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Enterprise Edition # 4862440282240142
+
+    execution: 
+      sequence: 10
+      event: Open Chatbot # 12584832494920407
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Get optimised diagram =======================
+    id: 12584979387920408
+    identification: 
+      name: Get optimised diagram
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        select dgrm_process_def
+        from   flow_optimised_diagrams_vw_EE
+        where  dgrm_id = :P7_DGRM_ID
+      items-to-submit: 
+      - P7_DGRM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_DGRM_PROCESS_DEF
+
+    execution: 
+      sequence: 10
+      event: Open Chatbot # 12584832494920407
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Launch Assistant ============================
+    id: 12585045083920409
+    identification: 
+      name: Launch Assistant
+      action: Open AI Assistant
+
+    generative-ai: 
+      service: Flows for APEX - AI Service # 1446946413060929
+      system-prompt: '&P7_SYSTEM_PROMPT.'
+      welcome-message: '&P7_AI_WELCOME.'
+
+    appearance: 
+      display-as: Dialog
+      title: Ask Flo - Flows for APEX AI Assistant
+
+    initial-prompt: 
+      type: Item
+      item: P7_DGRM_PROCESS_DEF
+      displayed-message: Using the diagram &P7_DGRM_NAME. (Version &P7_DGRM_VERSION.)
+      immediate-action-prompt: '&P7_AI_IA_PROMPT.'
+
+    use-response: 
+      type: NONE
+
+    execution: 
+      sequence: 20
+      event: Open Chatbot # 12584832494920407
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+        
+            const quickActions = JSON.parse( apex.items.P7_QUICK_ACTIONS.value );
+        
+            for (const element of quickActions) {
+                options.view.quickActions.push( element );
+            }
+        
+            apex.debug.log( "options", options);
+            return options;
+        }
+
+- # ====== Dynamic Action: Viewer Diagram Loaded ===============
+  id: 16955083547047750
+  identification: 
+    name: Viewer Diagram Loaded
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded
+    selection-type: Region
+    region: Flow Viewer # 28425138174759832
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 16955942968047775
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P7_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_list(p_dgrm_id => :P7_LOADED_DIAGRAM);
+        end if;
+      items-to-submit: 
+      - P7_LOADED_DIAGRAM
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_OBJT_LIST
+
+    execution: 
+      sequence: 20
+      event: Viewer Diagram Loaded # 16955083547047750
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16956960300047776
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: changeCursor($v('P7_OBJT_LIST'));
+
+    execution: 
+      sequence: 30
+      event: Viewer Diagram Loaded # 16955083547047750
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 44803522247176617
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.diagramIdentifier
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_LOADED_DIAGRAM
+
+    execution: 
+      sequence: 10
+      event: Viewer Diagram Loaded # 16955083547047750
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Element clicked =====================
+  id: 16957375066050250
+  identification: 
+    name: Element clicked
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click
+    selection-type: Region
+    region: Flow Viewer # 28425138174759832
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: clickCondition($v('P7_OBJT_LIST'), this.data);
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 16957799465050250
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.element.id
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_OBJT_BPMN_ID
+
+    execution: 
+      sequence: 10
+      event: Element clicked # 16957375066050250
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16958247692050251
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P7_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_name(
+            p_objt_bpmn_id => :P7_OBJT_BPMN_ID
+          , p_dgrm_id => :P7_LOADED_DIAGRAM
+        );
+        end if;
+      items-to-submit: 
+      - P7_OBJT_BPMN_ID
+      - P7_LOADED_DIAGRAM
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_OBJT_NAME
+
+    execution: 
+      sequence: 20
+      event: Element clicked # 16957375066050250
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16958768897050251
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: openObjectDialog($v('P7_OBJT_BPMN_ID'), $v('P7_OBJT_NAME'), 7);
+
+    execution: 
+      sequence: 30
+      event: Element clicked # 16957375066050250
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open new version ====================
+  id: 24216185870956145
+  identification: 
+    name: Open new version
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: NEW_VERSION # 24215404585956138
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 24216276371956146
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: New Version # 45087523137560136
+
+    execution: 
+      sequence: 20
+      event: Open new version # 24216185870956145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Clear =======================================
+    id: 26093383508304620
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P7_NEW_VERSION
+
+    execution: 
+      sequence: 10
+      event: Open new version # 24216185870956145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click on instances counter ==========
+  id: 26096043786304647
+  identification: 
+    name: Click on instances counter
+
+  execution: 
+    sequence: 40
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: jQuery Selector
+    jquery-selector: .instance-counter-link
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 26096178250304648
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let myElement = $( this.triggeringElement ).children().first();
+        let prcsStatus  = myElement.data( "status" );
+        let dgrmId = apex.item("P7_DGRM_ID").getValue();
+        apex.navigation.redirect( "f?p=" + $v( "pFlowId" ) + ":10:" + $v( "pInstance" ) + "::" + (apex.debug.getLevel() >= 4 ? "LEVEL" + apex.debug.getLevel() : "") + ":RIR,RP:P10_FILTER_DGRM_ID,IR_PRCS_STATUS:" + dgrmId + "," + prcsStatus);
+
+    execution: 
+      sequence: 10
+      event: Click on instances counter # 26096043786304647
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click on Modify Diagram =============
+  id: 34402165369171407
+  identification: 
+    name: Click on Modify Diagram
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: MODIFY_DIAGRAM # 26091600150304603
+
+  client-side-condition: 
+    type: Item = Value
+    item: P7_DGRM_STATUS
+    value: draft
+
+  actions: 
+  - # ====== Action: Submit Page =================================
+    id: 34402245490171408
+    identification: 
+      action: Submit Page
+
+    settings: 
+      request-/-button-name: MODIFY_DIAGRAM
+      show-processing: true
+
+    execution: 
+      sequence: 10
+      event: Click on Modify Diagram # 34402165369171407
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Submit Page =================================
+    id: 34402353637171409
+    identification: 
+      action: Submit Page
+
+    settings: 
+      request-/-button-name: MODIFY_DIAGRAM
+      show-processing: true
+
+    execution: 
+      sequence: 20
+      event: Click on Modify Diagram # 34402165369171407
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Confirm =====================================
+    id: 34402409828171410
+    identification: 
+      action: Confirm
+
+    settings: 
+      message: '&APP_TEXT$APP_CONFIRM_EDIT_RELEASE_DIAGRAM.'
+      style: Default
+
+    execution: 
+      sequence: 10
+      event: Click on Modify Diagram # 34402165369171407
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click on Cancel =====================
+  id: 34404369417171429
+  identification: 
+    name: Click on Cancel
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL # 34404258251171428
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 34404485254171430
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Delete Model # 45089270532561391
+
+    execution: 
+      sequence: 10
+      event: Click on Cancel # 34404369417171429
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click On Release ====================
+  id: 34630409664575806
+  identification: 
+    name: Click On Release
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: RELEASE # 24215581832956139
+
+  actions: 
+  - # ====== Action: Confirm =====================================
+    id: 34630565554575807
+    identification: 
+      action: Confirm
+
+    settings: 
+      message: '&APP_TEXT$APP_CONFIRM_RELEASE_MODEL.'
+      style: Default
+
+    execution: 
+      sequence: 10
+      event: Click On Release # 34630409664575806
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Submit Page =================================
+    id: 34630686363575808
+    identification: 
+      action: Submit Page
+
+    settings: 
+      request-/-button-name: RELEASE
+      show-processing: true
+
+    execution: 
+      sequence: 30
+      event: Click On Release # 34630409664575806
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click on Deprecate ==================
+  id: 34630711735575809
+  identification: 
+    name: Click on Deprecate
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: DEPRECATE # 24215607769956140
+
+  actions: 
+  - # ====== Action: Confirm =====================================
+    id: 34630828651575810
+    identification: 
+      action: Confirm
+
+    settings: 
+      message: '&APP_TEXT$APP_CONFIRM_DEPRECATE_MODEL.'
+      style: Default
+
+    execution: 
+      sequence: 10
+      event: Click on Deprecate # 34630711735575809
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Submit Page =================================
+    id: 34630931054575811
+    identification: 
+      action: Submit Page
+
+    settings: 
+      request-/-button-name: DEPRECATE
+      show-processing: true
+
+    execution: 
+      sequence: 20
+      event: Click on Deprecate # 34630711735575809
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Version =================================
+  id: 26093582071304622
+  identification: 
+    name: Version
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      return flow_engine_app_api.validate_new_version(
+        pi_dgrm_name => :P7_DGRM_NAME
+      , pi_dgrm_version => :P7_NEW_VERSION
+      );
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+    associated-item: P7_NEW_VERSION # 26068279548227242
+
+  server-side-condition: 
+    type: Request = Value
+    value: ADD_VERSION
+
+- # ====== Validation: Archive Model Validation ================
+  id: 63516446869355429
+  identification: 
+    name: Archive Model Validation
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      select 1 
+      from flow_instances_vw ins
+      where ins.prcs_id in (
+          select prdg.prdg_prcs_id
+          from flow_instance_diagrams prdg
+          where prdg.prdg_dgrm_id = :P7_DGRM_ID
+      )
+      and ins.prcs_status not in ('completed', 'terminated')
+    always-execute: false
+
+  error: 
+    error-message: You cannot archived a model which is associated with running instances.
+    display-location: Inline with Field and in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: ARCHIVE
+
+computations: 
+- # ====== Computation: P7_ENGINE_APP_MODE =====================
+  id: 8027046376825639
+  identification: 
+    item-name: P7_ENGINE_APP_MODE
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      return flow_engine_util.get_config_value(
+        p_config_key => 'engine_app_mode'
+      , p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode
+      );
+
+- # ====== Computation: P7_QUICK_ACTIONS =======================
+  id: 12585113764920410
+  identification: 
+    item-name: P7_QUICK_ACTIONS
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_quick_actions
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: P7_AI_WELCOME ==========================
+  id: 12585230149920411
+  identification: 
+    item-name: P7_AI_WELCOME
+
+  execution: 
+    sequence: 20
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_AI_message (p_prompt_key => 'welcome-msg')
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: P7_AI_IA_PROMPT ========================
+  id: 12585301451920412
+  identification: 
+    item-name: P7_AI_IA_PROMPT
+
+  execution: 
+    sequence: 30
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_AI_message (p_prompt_key => 'action-prompt')
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: P7_SYSTEM_PROMPT =======================
+  id: 14731199791171501
+  identification: 
+    item-name: P7_SYSTEM_PROMPT
+
+  execution: 
+    sequence: 40
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: flow_ai_prompt_ee.get_system_prompt
+
+  server-side-condition: 
+    type: Item = Value
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+- # ====== Computation: FLOW_PAGE_TITLE ========================
+  id: 34403109564171417
+  identification: 
+    item-name: FLOW_PAGE_TITLE
+
+  execution: 
+    sequence: 10
+    point: After Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      flow_engine_app_api.get_page_title(
+        pi_dgrm_id => :P7_DGRM_ID
+      , pi_dgrm_name => :P7_DGRM_NAME
+      , pi_dgrm_version => :P7_DGRM_VERSION
+      )
+
+processes: 
+- # ====== Process: GET_URL ====================================
+  id: 16966670195163768
+  identification: 
+    name: GET_URL
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.get_url_p13(
+        pi_dgrm_id => :P7_LOADED_DIAGRAM
+      , pi_objt_id => apex_application.g_x01
+      , pi_title => apex_application.g_x02
+      );
+
+  execution: 
+    sequence: 40
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: PROCESS_PAGE ===============================
+  id: 22799930478488038
+  identification: 
+    name: PROCESS_PAGE
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.process_page_p7
+      (
+        pio_dgrm_id               => :p7_dgrm_id
+      , pi_dgrm_name              => :p7_dgrm_name
+      , pi_dgrm_short_description => :p7_dgrm_short_description
+      , pi_dgrm_description       => :p7_dgrm_description
+      , pi_dgrm_icon              => :p7_dgrm_icon
+      , pi_dgrm_version           => :p7_dgrm_version
+      , pi_dgrm_category          => :p7_dgrm_category
+      , pi_new_version            => :p7_new_version
+      , pi_cascade                => :p7_cascade
+      , pi_request                => :request
+      );
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Action processed.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":request not in ( 'DARK_MODE', 'LIGHT_MODE', 'RESET_LIGHT', 'RESET_DARK')"
+
+- # ====== Process: Clear Session State on Delete ==============
+  id: 22800039236488039
+  identification: 
+    name: Clear Session State on Delete
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear all Items on the Current Page
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request = Value
+    value: DELETE
+
+- # ====== Process: Initialize form Edit Diagram ===============
+  id: 26010056924877981
+  identification: 
+    name: Initialize form Edit Diagram
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Attributes # 26003019626877931
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+branches: 
+- # ====== Branch: Go To Page 2 ================================
+  id: 24216692251956150
+  identification: 
+    name: Go To Page 2
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:2::&success_msg=#SUCCESS_MSG#'
+      page: 2 # Flow Management
+      clear-cache: 2
+
+  server-side-condition: 
+    type: Request = Value
+    value: DELETE
+
+- # ====== Branch: Go To Page 4 ================================
+  id: 34402504419171411
+  identification: 
+    name: Go To Page 4
+
+  execution: 
+    sequence: 10
+    point: After Submit
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4:P4_DGRM_ID:&P7_DGRM_ID.&success_msg=#SUCCESS_MSG#'
+      page: 4 # Flow Modeler
+      clear-cache: 4
+      values: 
+        p4_dgrm_id: '&P7_DGRM_ID.'
+
+  server-side-condition: 
+    type: Request = Value
+    value: MODIFY_DIAGRAM
+

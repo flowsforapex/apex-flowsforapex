@@ -17,6 +17,7 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type default null
   , pi_expr          flow_types_pkg.t_bpmn_attribute_vc2 default null
   , pi_scope         flow_subflows.sbfl_scope%type default 0
+  , pi_step_key      flow_subflows.sbfl_step_key%type default null
   ) return   flow_types_pkg.t_bpmn_attribute_vc2;
 
   function get_clob_expression
@@ -24,6 +25,7 @@ as
   , pi_sbfl_id       flow_subflows.sbfl_id%type  default null
   , pi_expr          clob
   , pi_scope         flow_subflows.sbfl_scope%type default 0
+  , pi_step_key      flow_subflows.sbfl_step_key%type default null
   ) return   clob;
 
   -- setting-specific getters - use if the setting is not standard...

@@ -1,3 +1,4 @@
+create or replace package body flow_globals
 /* 
 -- Flows for APEX - flow_globals.pkb
 -- 
@@ -8,10 +9,7 @@
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
 --
 */
-
-create or replace package body flow_globals
 as
-
 
   g_error_on_step  boolean := false;  
   -- g_error_on_step starts false when every step is processed but is set true if an error
@@ -36,6 +34,19 @@ as
     step_key      := pi_step_key;
     scope         := pi_scope;
     loop_counter  := pi_loop_counter;
+  end set_context;
+
+  procedure set_context
+  ( pi_sbfl_rec   in flow_subflows%rowtype
+  )
+  is
+  begin
+    set_context ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
+                , pi_sbfl_id      => pi_sbfl_rec.sbfl_id
+                , pi_step_key     => pi_sbfl_rec.sbfl_step_key
+                , pi_scope        => pi_sbfl_rec.sbfl_scope
+                , pi_loop_counter => pi_sbfl_rec.sbfl_loop_counter
+                );
   end set_context;
 
   procedure set_step_error

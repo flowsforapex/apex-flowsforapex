@@ -6,10 +6,17 @@ PROMPT >> =============================
 
 PROMPT >> Installing Tables
 @ddl/install_scratch.sql
+
+PROMPT >> Installing Schema Level Types
+@types/flow_t_correlated_message.sql
+
 PROMPT >> Common Objects
 @common_db.sql
 PROMPT >> Adding Comments
 @ddl/install_ddl_comments.sql
+
+PROMPT >> Installing Database Scheduler Objects
+@ddl/create_scheduler_objects.sql
 
 PROMPT >> Initial Engine Configuration
 PROMPT >> =============================

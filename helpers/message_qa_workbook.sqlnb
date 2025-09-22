@@ -1,0 +1,69 @@
+cells:
+  - kind: 1
+    value: >-
+      # Flows for APEX Engine Messages QA Workbook
+
+
+      Use this to check messages in the new release don't miss out any old
+      messages and to see which message texts have changed between releases.
+
+
+      This should be a QA check immediately before message translation for a new
+      release.  
+
+
+      ## Create table to contain previous release messages  
+    languageId: markdown
+  - kind: 2
+    value: |-
+      create table flow_message_copy as
+      select * from flow_messages
+      where fmsg_lang = 'en';
+    languageId: oracle-sql
+  - kind: 1
+    value: Run the new version error message creation script (en) - think you have
+      to do this outside the SQL Workbook...
+    languageId: markdown
+  - kind: 2
+    value: "@../src/data/install_engine_messages_en.sql"
+    languageId: oracle-sql
+  - kind: 1
+    value: |-
+      
+      ## Check any messages with new text
+    languageId: markdown
+  - kind: 2
+    value: >
+      select o.fmsg_message_key, o.fmsg_message_content old_msg,
+      n.fmsg_message_content new_msg
+
+      from flow_messages o
+
+      left join flow_message_copy n
+
+      on o.fmsg_message_key = n.fmsg_message_key
+
+      and n.fmsg_lang = 'en'
+
+      where o.fmsg_lang = 'en'
+
+      and o.fmsg_message_content != n.fmsg_message_content
+    languageId: oracle-sql
+  - kind: 1
+    value: "## Check for any messages deleted since last version..."
+    languageId: markdown
+  - kind: 2
+    value: |-
+      with deleted_msgs as (
+      select o.fmsg_message_key
+      from flow_message_copy o
+      minus
+      select n.fmsg_message_key
+      from flow_messages n
+      where n.fmsg_lang = 'en'
+      )
+      select d.fmsg_message_key deleted_msg, old.fmsg_message_content
+      from deleted_msgs d
+      join flow_message_copy old
+      on d.fmsg_message_key = old.fmsg_message_key
+    languageId: oracle-sql

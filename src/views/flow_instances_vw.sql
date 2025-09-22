@@ -4,11 +4,14 @@ as
        , prcs.prcs_name
        , dgrm.dgrm_id
        , dgrm.dgrm_name
+       , dgrm.dgrm_short_description
        , dgrm.dgrm_version
        , dgrm.dgrm_status
        , prcs.prcs_priority
        , dgrm.dgrm_category
        , prcs.prcs_status
+       , prcs.prcs_logging_level
+       , prcs.prcs_was_altered
        , prcs.prcs_init_ts
        , prcs.prcs_init_by
        , prcs.prcs_start_ts

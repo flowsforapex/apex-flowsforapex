@@ -2,15 +2,17 @@ create or replace package body flow_apex_session
 as
 
   type t_session_parameters    is record 
-  ( app_id   flow_types_pkg.t_bpmn_attribute_vc2
-  , page_id  flow_types_pkg.t_bpmn_attribute_vc2
-  , username flow_types_pkg.t_bpmn_attribute_vc2
+  ( app_id          flow_types_pkg.t_bpmn_attribute_vc2
+  , page_id         flow_types_pkg.t_bpmn_attribute_vc2
+  , username        flow_types_pkg.t_bpmn_attribute_vc2
+  , business_admin  flow_types_pkg.t_bpmn_attribute_vc2
   );
   e_apex_session_missing_param        exception;
   e_apex_session_multiple_processes   exception;
 
   function get_session_parameters 
   ( p_dgrm_id         flow_diagrams.dgrm_id%type default null
+  , p_process_bpmn_id flow_objects.objt_bpmn_id%type default null
   )
   return t_session_parameters
   as
@@ -20,19 +22,26 @@ as
     -- null dgrm_id case is for running archives - no process or diagram is running
     if p_dgrm_id is not null then
       begin
+        -- get the session parameters from the process diagram using process_bpmn_id
+        -- if process_bpmn_id is null (processes started with 24.1 or earlier), then get the session 
+        --    parameters from the first bpmn:process in the diagram
+        -- first the new (25.1) way...
         select jt.app_id
              , jt.page_id
              , jt.username
+             , jt.business_admin
           into l_session_parameters
           from flow_objects objt
              , json_table( objt.objt_attributes, '$.apex'
                  columns
-                   app_id   varchar2(4000) path '$.applicationId'
-                 , page_id  varchar2(4000) path '$.pageId'
-                 , username varchar2(4000) path '$.username'
+                   app_id         varchar2(4000) path '$.applicationId'
+                 , page_id        varchar2(4000) path '$.pageId'
+                 , username       varchar2(4000) path '$.username'
+                 , business_admin varchar2(4000) path '$.businessAdmin'
                ) jt
          where objt.objt_dgrm_id  = p_dgrm_id
            and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+           and objt.objt_bpmn_id  = p_process_bpmn_id
         ;
       exception
         when too_many_rows then
@@ -44,6 +53,28 @@ as
           */
         when no_data_found then
           apex_debug.info ( p_message => 'flow_apex_session - no session parameters found from diagram.');
+          begin
+            -- try the old way...
+            select jt.app_id
+                 , jt.page_id
+                 , jt.username
+                 , jt.business_admin
+              into l_session_parameters
+              from flow_objects objt
+                 , json_table( objt.objt_attributes, '$.apex'
+                     columns
+                       app_id         varchar2(4000) path '$.applicationId'
+                     , page_id        varchar2(4000) path '$.pageId'
+                     , username       varchar2(4000) path '$.username'
+                     , business_admin varchar2(4000) path '$.businessAdmin'
+                   ) jt
+             where objt.objt_dgrm_id  = p_dgrm_id
+               and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+            fetch first 1 row only;
+          exception
+            when no_data_found then
+              apex_debug.info ( p_message => 'flow_apex_session - no session parameters found from diagram.');
+          end;
       end;
     end if;
 
@@ -66,6 +97,15 @@ as
                         , p_default_value => null
                         );
     end if;
+
+    -- do this separately for apex_business_admin for upwards compatibility reasons...l_session_parameters
+    if l_session_parameters.business_admin is null then
+      l_session_parameters.business_admin := flow_engine_util.get_config_value 
+                        ( p_config_key    => flow_constants_pkg.gc_config_default_apex_business_admin
+                        , p_default_value => null
+                        );
+    end if;
+  
 
     if (  l_session_parameters.app_id is null
        or l_session_parameters.page_id is null 
@@ -146,7 +186,7 @@ as
           , pi_sbfl_id      => p_subflow_id
           , pi_message_key  => 'apex-task-multiple-process'
           );
-          -- F4A$MESSAGE 'apex-session-multiple-process' || 'Error creating APEX session.  BPMN diagram contains multiple Process objects.'
+          -- F4A$MESSAGE 'apex-task-multiple-process' || 'Error creating APEX session.  BPMN diagram contains multiple Process objects.'
       when e_apex_session_missing_param then
           flow_errors.handle_instance_error
           ( pi_prcs_id      => p_process_id
@@ -203,6 +243,7 @@ as
           , pi_message_key  => 'async-no-username'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-no-username' || 'Unable to create asyncronous connection for object %0.  Username needs to be specified in process variable, the process diagram, or system configuration.'
     end if;
     if l_app_id is null then
       flow_errors.handle_instance_error
@@ -211,6 +252,7 @@ as
           , pi_message_key  => 'async-no-appid'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-no-appid' || 'Unable to create asyncronous connection for object %0.  Application ID needs to be specified in process variable, the process diagram, or system configuration.'
     end if;
     if l_page_id is null then
       flow_errors.handle_instance_error
@@ -219,6 +261,7 @@ as
           , pi_message_key  => 'async-no-pageid'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-no-pageid' || 'Unable to create asyncronous connection for object %0.  Page ID needs to be specified in process variable, the process diagram, or system configuration.'
     end if;
     -- create apex session
     begin
@@ -235,21 +278,25 @@ as
           , pi_message_key  => 'async-invalid_params'
           , p0              => l_timer_name
           );
+          -- $F4AMESSAGE 'async-invalid_params' || 'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
           raise flow_constants_pkg.ge_invalid_session_params;
     end;
     return v('APP_SESSION');
   end create_async_session;
 
  function create_api_session
-  ( p_dgrm_id         in flow_diagrams.dgrm_id%type default null
-  , p_prcs_id         in flow_processes.prcs_id%type default null
+  ( p_dgrm_id            in flow_diagrams.dgrm_id%type default null
+  , p_prcs_id            in flow_processes.prcs_id%type default null
+  , p_process_bpmn_id    in flow_objects.objt_bpmn_id%type default null
   ) return number
   is 
     l_session_id             number;
     l_session_parameters     t_session_parameters;
+    l_username               flow_types_pkg.t_bpmn_attribute_vc2;
   begin
     -- get session parameters from process diagram or system config
-    l_session_parameters := get_session_parameters ( p_dgrm_id => p_dgrm_id);
+    l_session_parameters := get_session_parameters ( p_dgrm_id          => p_dgrm_id, 
+                                                     p_process_bpmn_id  => p_process_bpmn_id);
   
     -- create apex session
     begin
@@ -266,12 +313,14 @@ as
           , pi_message_key  => 'async-invalid_params'
           , p0              => 'API Call'
           );
+          -- $F4AMESSAGE 'async-invalid_params' || 'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
           raise flow_constants_pkg.ge_invalid_session_params;
         else
           flow_errors.handle_general_error
           ( pi_message_key  => 'async-invalid_params'
           , p0 => 'Default Parameters in Configurations'
           );
+          -- $F4AMESSAGE 'async-invalid_params' || 'Unable to create asyncronous connection for object %0.  Username not valid in specified Application'
           raise flow_constants_pkg.ge_invalid_session_params;
         end if;
     end;
@@ -282,31 +331,45 @@ as
   ( p_subflow_id         in flow_subflows.sbfl_id%type
   ) return number
   is 
-    l_dgrm_id      flow_diagrams.dgrm_id%type;
-    l_prcs_id      flow_processes.prcs_id%type;
+    l_dgrm_id         flow_diagrams.dgrm_id%type;
+    l_prcs_id         flow_processes.prcs_id%type;
+    l_process_bpmn_id flow_objects.objt_bpmn_id%type;
   begin
     select sbfl.sbfl_dgrm_id
          , sbfl.sbfl_prcs_id
+         , prcs.prcs_process_bpmn_id
       into l_dgrm_id
          , l_prcs_id
+         , l_process_bpmn_id
       from flow_subflows sbfl
+      join flow_processes prcs
+        on sbfl.sbfl_prcs_id = prcs.prcs_id
      where sbfl.sbfl_id = p_subflow_id
     ;
-    return create_api_session (p_dgrm_id => l_dgrm_id, p_prcs_id => l_prcs_id);
+    return create_api_session ( p_dgrm_id => l_dgrm_id
+                              , p_prcs_id => l_prcs_id
+                              , p_process_bpmn_id => l_process_bpmn_id
+                              );
   end create_api_session;
 
   function create_api_session
   ( p_process_id         in flow_processes.prcs_id%type
   ) return number
   is 
-    l_dgrm_id      flow_diagrams.dgrm_id%type;
+    l_dgrm_id         flow_diagrams.dgrm_id%type;
+    l_process_bpmn_id flow_objects.objt_bpmn_id%type;
   begin
     select prcs.prcs_dgrm_id
+         , prcs.prcs_process_bpmn_id
       into l_dgrm_id
+         , l_process_bpmn_id
       from flow_processes prcs
      where prcs.prcs_id = p_process_id
     ;
-    return create_api_session (p_dgrm_id => l_dgrm_id, p_prcs_id => p_process_id);
+    return create_api_session ( p_dgrm_id => l_dgrm_id
+                              , p_prcs_id => p_process_id
+                              , p_process_bpmn_id => l_process_bpmn_id
+                              );
   end create_api_session;
 
   function create_api_session
@@ -316,7 +379,7 @@ as
     l_dgrm_id      flow_diagrams.dgrm_id%type;
   begin
     if p_function = 'archive' then 
-      return create_api_session (p_prcs_id => null, p_dgrm_id => null);
+      return create_api_session (p_prcs_id => null, p_dgrm_id => null, p_process_bpmn_id => null);
     else
       return null;
     end if;

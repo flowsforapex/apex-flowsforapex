@@ -18,6 +18,7 @@ as
          end as lgpr_prcs_event_icon
        , lgpr.lgpr_timestamp at time zone sessiontimezone as lgpr_timestamp
        , lgpr.lgpr_user
+       , lgpr.lgpr_severity
        , lgpr.lgpr_comment
        , lgpr_error_info
        , case when lgpr_error_info is not null then '<pre><code class="language-log">' end as pretag

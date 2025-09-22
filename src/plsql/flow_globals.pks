@@ -1,15 +1,16 @@
+create or replace package flow_globals
 /* 
 -- Flows for APEX - flow_globals.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2021-2025.
 --
 -- Created    25-Aug-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
+-- Modified   19-May-2025  Richard Allen (Flowquest Limited)
 --
 */
-
-create or replace package flow_globals
   authid definer
 as
 
@@ -19,6 +20,11 @@ as
   scope         flow_subflows.sbfl_scope%type;
   rest_call     boolean;
   loop_counter  flow_subflows.sbfl_loop_counter%type;
+
+  throw_bpmn_error_event exception;
+  pragma EXCEPTION_INIT(throw_bpmn_error_event, -20101);
+  request_stop_engine exception;
+  pragma EXCEPTION_INIT(request_stop_engine, -20003);
 
   function business_ref
   (pi_scope       flow_subflows.sbfl_scope%type default 0)
@@ -34,6 +40,10 @@ as
   , pi_step_key     in flow_subflows.sbfl_step_key%type default null
   , pi_scope        in flow_subflows.sbfl_scope%type default null
   , pi_loop_counter in flow_subflows.sbfl_loop_counter%type default null
+  );
+
+  procedure set_context
+  ( pi_sbfl_rec     in flow_subflows%rowtype
   );
 
   procedure set_step_error

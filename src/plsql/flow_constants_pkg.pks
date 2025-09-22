@@ -3,18 +3,18 @@ create or replace package flow_constants_pkg
 -- Flows for APEX - flow_constants_pkg.pks
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022-23.
--- (c) Copyright Flowquest Consulting Limited. 2024.
+-- (c) Copyright Flowquest Limited and/or its affiliates. 2024-25.
 --
 -- Created 2020        Moritz Klein - MT AG  
 -- Edited  14-Mar-2022 R Allen, Oracle
 -- Edited  10-Mar-2023 Moritz Klein, MT GmbH
--- Edited  03-Jan-2024 R Allen, Flowquest Consulting
+-- Edited  03-Jan-2024 R Allen, Flowquest Limited
 --
 */
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '24.1';
+  gc_version constant varchar2(10 char) := '25.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -91,6 +91,7 @@ as
   gc_apex_process_application_id      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'applicationId';
   gc_apex_process_page_id             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
+  gc_apex_process_business_admin      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'businessAdmin';
   
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
@@ -133,6 +134,13 @@ as
   gc_apex_servicetask_attachment      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'attachment';
   gc_apex_servicetask_immediately     constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'immediately';
 
+  gc_apex_servicetask_ai_generation   constant flow_types_pkg.t_bpmn_id := 'apexAIGeneration';
+
+  gc_apex_servicetask_ai_model        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiModel';
+  gc_apex_servicetask_ai_prompt       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiPrompt';
+  gc_apex_servicetask_ai_temperature  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'aiTemperature';
+  gc_apex_servicetask_ai_result       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'resultVariable';
+
   --messageFlow messaging protocol
   gc_simple_message   constant flow_types_pkg.t_bpmn_id := 'simpleMessage';
    
@@ -162,6 +170,8 @@ as
   -- Process Tags
   gc_apex_process_callable            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isCallable';
   gc_apex_process_startable           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'isStartable';
+  gc_apex_process_min_logging_level   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'minLoggingLevel';
+  gc_apex_process_instance_name       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'instanceName';
 
   -- callActivity tags
   gc_apex_called_diagram                    constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'calledDiagram';
@@ -242,11 +252,16 @@ as
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
   gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
+  gc_sbfl_status_suspended            constant  varchar2(20 char) := 'suspended';
+  gc_sbfl_status_restart_on_resume    constant  varchar2(20 char) := 'restart on resume';
+  gc_sbfl_status_delete_on_resume     constant  varchar2(20 char) := 'delete on resume';
+  gc_sbfl_status_canceling_task       constant  varchar2(20 char) := 'canceling task';
   gc_sbfl_status_completed            constant  varchar2(20 char) := 'completed';  -- note sbfl deleted after completion
 
   -- Process Instance Status
   gc_prcs_status_created              constant  varchar2(20 char) := 'created';
   gc_prcs_status_running              constant  varchar2(20 char) := 'running';
+  gc_prcs_status_suspended            constant  varchar2(20 char) := 'suspended';
   gc_prcs_status_completed            constant  varchar2(20 char) := 'completed';
   gc_prcs_status_terminated           constant  varchar2(20 char) := 'terminated';
   gc_prcs_status_error                constant  varchar2(20 char) := 'error';
@@ -256,6 +271,8 @@ as
   gc_prcs_event_started               constant  varchar2(20 char) := 'started';
   gc_prcs_event_completed             constant  varchar2(20 char) := gc_prcs_status_completed;
   gc_prcs_event_terminated            constant  varchar2(20 char) := gc_prcs_status_terminated;
+  gc_prcs_event_suspended             constant  varchar2(20 char) := gc_prcs_status_suspended;
+  gc_prcs_event_resumed               constant  varchar2(20 char) := 'resumed';
   gc_prcs_event_reset                 constant  varchar2(20 char) := 'reset';
   gc_prcs_event_error                 constant  varchar2(20 char) := gc_prcs_status_error;
   gc_prcs_event_restart_step          constant  varchar2(20 char) := 'restart step';
@@ -266,6 +283,39 @@ as
   gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
   gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
   gc_prcs_event_warning               constant  varchar2(20 char) := 'warning';
+  gc_prcs_event_sbfl_marked_delete    constant  varchar2(20 char) := 'subflow mark delete';
+  gc_prcs_event_sbfl_deleted          constant  varchar2(20 char) := 'subflow deleted';
+  gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
+  gc_prcs_event_rewind_subprocess     constant  varchar2(20 char) := 'rewind subprocess';
+  gc_prcs_event_rewind_call_activity  constant  varchar2(20 char) := 'rewind call activity';
+
+  -- Subflow and Step Events
+  gc_step_event_became_current        constant  varchar2(20 char) := 'current step';
+  gc_step_event_work_started          constant  varchar2(20 char) := 'step started';
+  gc_step_event_work_paused           constant  varchar2(20 char) := 'step paused'; 
+  gc_step_event_completed             constant  varchar2(20 char) := 'step completed';
+  gc_step_event_reserved              constant  varchar2(20 char) := 'step reserved';
+  gc_step_event_released              constant  varchar2(20 char) := 'step released';
+  gc_step_event_error                 constant  varchar2(20 char) := 'step error'; 
+  gc_step_event_suspended             constant  varchar2(20 char) := 'step suspended';
+  gc_step_event_resumed               constant  varchar2(20 char) := 'step resumed';
+  gc_step_event_repositioned          constant  varchar2(20 char) := 'repositioned';
+  gc_step_event_error_restart         constant  varchar2(20 char) := 'step restart';
+  gc_step_event_error_forced          constant  varchar2(20 char) := 'step force next step';
+  gc_step_event_interrupted           constant  varchar2(20 char) := 'step interrupted';
+  gc_step_event_rescheduled           constant  varchar2(20 char) := 'step rescheduled';
+  gc_step_event_reprioritized         constant  varchar2(20 char) := 'step reprioritized';
+  gc_step_event_abandoned             constant  varchar2(20 char) := 'step abandoned'; 
+  gc_step_event_route_chosen          constant  varchar2(20 char) := 'route chosen';
+  gc_step_event_warning               constant  varchar2(20 char) := 'step warning';
+  gc_step_event_iteration_started     constant  varchar2(20 char) := 'iteration started';
+  gc_step_event_iteration_completed   constant  varchar2(20 char) := 'iteration completed';
+  gc_step_event_iteration_terminated  constant  varchar2(20 char) := 'iteration terminated';
+  gc_step_event_message_dequeued      constant  varchar2(20 char) := 'message dequeued';
+  gc_step_event_message_enqueued      constant  varchar2(20 char) := 'message enqueued';
+  gc_step_event_cancelled             constant  varchar2(20 char) := 'APEX task cancelled';
+  gc_step_event_expired               constant  varchar2(20 char) := 'APEX task expired';
+
 
   -- Process Variable Datatypes
 
@@ -335,9 +385,18 @@ as
   gc_async_parameter_applicationId     constant flow_types_pkg.t_expr_set := 'applicationId';
   gc_async_parameter_pageId            constant flow_types_pkg.t_expr_set := 'pageId';
 
+-- Runtime Logging Levels
+
+  gc_logging_level_none                constant number := 0;
+  gc_logging_level_abnormal_events     constant number := 1;
+  gc_logging_level_major_events        constant number := 2;
+  gc_logging_level_routine             constant number := 4;
+  gc_logging_level_full                constant number := 8;
+
 -- Config Parameter Keys
 
-  gc_config_logging_level               constant varchar2(50 char) := 'logging_level';
+  gc_config_logging_level               constant varchar2(50 char) := 'logging_level';    -- used pre 25.1
+  gc_config_logging_default_level       constant varchar2(50 char) := 'logging_default_level';  -- used from 25.1 
   gc_config_logging_hide_userid         constant varchar2(50 char) := 'logging_hide_userid';
   gc_config_logging_language            constant varchar2(50 char) := 'logging_language';
   gc_config_logging_retain_logs         constant varchar2(50 char) := 'logging_retain_logs_after_prcs_completion_days';
@@ -345,14 +404,19 @@ as
   gc_config_logging_archive_enabled     constant varchar2(50 char) := 'logging_archive_instance_summaries';
   gc_config_logging_message_flow_recd   constant varchar2(50 char) := 'logging_received_message_flow';
   gc_config_logging_retain_msg_flow     constant varchar2(50 char) := 'logging_retain_message_flow_days';
+  gc_config_logging_bpmn_enabled        constant varchar2(50 char) := 'logging_bpmn_enabled';
+  gc_config_logging_bpmn_retain_days    constant varchar2(50 char) := 'logging_bpmn_retain_days';  
   gc_config_logging_bpmn_location       constant varchar2(50 char) := 'logging_bpmn_location';
   gc_config_engine_app_mode             constant varchar2(50 char) := 'engine_app_mode';
   gc_config_dup_step_prevention         constant varchar2(50 char) := 'duplicate_step_prevention';
+  gc_config_completed_prcs_purging      constant varchar2(50 char) := 'completed_prcs_purging';
+  gc_config_completed_prcs_purge_days   constant varchar2(50 char) := 'completed_prcs_purge_after_completion_days';
   gc_config_timer_max_cycles            constant varchar2(50 char) := 'timer_max_cycles';
   gc_config_default_workspace           constant varchar2(50 char) := 'default_workspace';
   gc_config_default_application         constant varchar2(50 char) := 'default_application';
   gc_config_default_pageid              constant varchar2(50 char) := 'default_pageid';
   gc_config_default_username            constant varchar2(50 char) := 'default_username';
+  gc_config_default_apex_business_admin constant varchar2(50 char) := 'default_apex_business_admin';
   gc_config_default_email_sender        constant varchar2(50 char) := 'default_email_sender';
   gc_config_stats_retain_summary_daily  constant varchar2(50 char) := 'stats_retain_daily_summaries_days';
   gc_config_stats_retain_summary_month  constant varchar2(50 char) := 'stats_retain_monthly_summaries_months';
@@ -381,11 +445,12 @@ as
 
 -- Config Parameter Default Values
 
-  gc_config_default_logging_level               constant varchar2(2000 char) := gc_config_logging_level_standard;
+  gc_config_default_logging_level               constant varchar2(2000 char) := gc_logging_level_major_events;
   gc_config_default_logging_hide_userid         constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_logging_language            constant varchar2(2000 char) := 'en';
   gc_config_default_logging_archive_enabled     constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_logging_recd_msg            constant varchar2(2000 char) := gc_vcbool_false;
+  gc_config_default_logging_bpmn_enabled        constant varchar2(2000 char) := gc_vcbool_false;
   gc_config_default_engine_app_mode             constant varchar2(2000 char) := 'production';
   gc_config_default_dup_step_prevention         constant varchar2(2000 char) := 'legacy';
   gc_config_default_default_workspace           constant varchar2(2000 char) := 'FLOWS4APEX';
@@ -398,6 +463,7 @@ as
   gc_config_default_stats_retain_summary_daily  constant varchar2(2000 char) := '180';
   gc_config_default_stats_retain_summary_month  constant varchar2(2000 char) := '9';
   gc_config_default_stats_retain_summary_qtr    constant varchar2(2000 char) := '36';
+  gc_config_default_completed_prcs_purging      constant varchar2(2000 char) := gc_vcbool_false;
 
 -- Staistics Period
   gc_stats_period_day                   constant varchar2(20 char) := 'DAY';

@@ -1,6 +1,16 @@
 create or replace package body flow_boundary_events
 is 
 
+/* -- Flows for APEX - flow_boundary_events.pkb
+--
+-- (c) Copyright Flowquest Ltd and / or its affiliates, 2021-2025
+--
+-- Created  22-Feb-2021   Richard Allen - 
+-- Modified 15-Jun-2022   Moritz Klein (MT AG)
+-- Modified 02-Apr-2025   Richard Allen (Flowquest)
+*/
+
+
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
@@ -58,6 +68,7 @@ is
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => p_subflow_id
+          , pi_step_key    => null
           , pi_var_scope   => boundary_events.sbfl_scope
           , pi_expr_scope  => boundary_events.sbfl_scope
           );
@@ -118,6 +129,7 @@ is
           , pi_set         => flow_constants_pkg.gc_expr_set_before_event
           , pi_prcs_id     => p_process_id
           , pi_sbfl_id     => l_new_non_int_event_sbfl.sbfl_id
+          , pi_step_key    => l_new_non_int_event_sbfl.step_key
           , pi_var_scope   => boundary_events.sbfl_scope
           , pi_expr_scope  => boundary_events.sbfl_scope
           );
@@ -295,6 +307,9 @@ is
     l_step_key               flow_subflows.sbfl_step_key%type;
     l_timestamp              flow_subflows.sbfl_became_current%type;
     l_scope                  flow_subflows.sbfl_scope%type;
+    l_sbfl_rec               flow_subflows%rowtype;
+    l_apex_business_admin    flow_subflows.sbfl_apex_business_admin%type;
+    l_apex_task_id           flow_subflows.sbfl_apex_task_id%type;
   begin
     apex_debug.enter 
     ( 'handle_interrupting_boundary_event'
@@ -310,10 +325,14 @@ is
            , main_objt.objt_tag_name
            , main_objt.objt_bpmn_id
            , sbfl.sbfl_scope
+           , sbfl.sbfl_apex_business_admin
+           , sbfl.sbfl_apex_task_id
         into l_boundary_objt_bpmn_id
            , l_parent_objt_tag
            , l_parent_objt_bpmn_id
            , l_scope
+           , l_apex_business_admin
+           , l_apex_task_id
         from flow_subflows sbfl
         join flow_objects main_objt
           on main_objt.objt_bpmn_id = sbfl.sbfl_current
@@ -332,10 +351,14 @@ is
            , main_objt.objt_tag_name
            , main_objt.objt_bpmn_id
            , sbfl.sbfl_scope
+           , sbfl.sbfl_apex_business_admin
+           , sbfl.sbfl_apex_task_id
         into l_boundary_objt_bpmn_id
            , l_parent_objt_tag
            , l_parent_objt_bpmn_id
            , l_scope
+           , l_apex_business_admin
+           , l_apex_task_id
         from flow_subflows sbfl
         join flow_objects main_objt
           on main_objt.objt_bpmn_id = sbfl.sbfl_current
@@ -379,6 +402,25 @@ is
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     );
+    -- log the step interruption on the interupted object
+    flow_logging.log_step_event
+    ( p_process_id       => p_process_id
+    , p_subflow_id       => p_subflow_id
+    , p_event            => flow_constants_pkg.gc_step_event_interrupted
+    , p_event_level      => flow_constants_pkg.gc_logging_level_routine
+    , p_comment          => 'Interrupted by Boundary Event '||l_boundary_objt_bpmn_id
+    );
+    -- clean up any APEX Human Tasks started for the interrupted object
+    if ( l_parent_objt_tag = flow_constants_pkg.gc_bpmn_usertask 
+       and  l_apex_task_id is not null ) then
+      flow_usertask_pkg.cancel_apex_task
+      ( p_process_id            => p_process_id
+      , p_subflow_id            => p_subflow_id
+      , p_objt_bpmn_id          => l_parent_objt_bpmn_id
+      , p_apex_task_id          => l_apex_task_id
+      , p_apex_business_admin   => l_apex_business_admin
+      );
+    end if;
     -- generate a step key & insert in the update...use later
     l_timestamp := systimestamp;
     l_step_key := flow_engine_util.step_key ( pi_sbfl_id   => p_subflow_id
@@ -389,6 +431,8 @@ is
     update flow_subflows sbfl
        set sbfl.sbfl_current        = l_boundary_objt_bpmn_id
          , sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+         , sbfl.sbfl_apex_task_id   = null
+         , sbfl.sbfl_apex_business_admin = null
          , sbfl.sbfl_last_completed = l_parent_objt_bpmn_id
          , sbfl.sbfl_became_current = l_timestamp
          , sbfl.sbfl_step_key       = l_step_key
@@ -400,12 +444,14 @@ is
      where sbfl.sbfl_id = p_subflow_id 
        and sbfl.sbfl_prcs_id = p_process_id
     ;
+ 
     -- process on-event variable expressions for the boundary event
     flow_expressions.process_expressions
     ( pi_objt_bpmn_id => l_boundary_objt_bpmn_id  
     , pi_set          => flow_constants_pkg.gc_expr_set_on_event
     , pi_prcs_id      => p_process_id
     , pi_sbfl_id      => p_subflow_id
+    , pi_step_key     => l_step_key
     , pi_var_scope    => l_scope
     , pi_expr_scope   => l_scope
     );
@@ -505,12 +551,6 @@ is
     -- called to process an escallation from an Escalation ITE or an Escalation End Event
     -- both can be Interrupting or Non interrupting
     --
-    -- set the throwing event to completed
-/*    flow_logging.log_step_completion   
-    ( p_process_id => pi_sbfl_info.sbfl_prcs_id
-    , p_subflow_id => pi_sbfl_info.sbfl_id
-    , p_completed_object => pi_step_info.target_objt_ref
-    );  */
     -- find matching boundary event of its type
     get_boundary_event
     ( pi_dgrm_id            => pi_step_info.dgrm_id
@@ -575,6 +615,7 @@ is
       , pi_set          => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id      => pi_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id      => pi_par_sbfl
+      , pi_step_key     => l_step_key
       , pi_var_scope    => l_parent_sbfl_scope
       , pi_expr_scope   => l_parent_sbfl_scope
       );
@@ -623,6 +664,7 @@ is
       , pi_set          => flow_constants_pkg.gc_expr_set_on_event
       , pi_prcs_id      => pi_sbfl_info.sbfl_prcs_id
       , pi_sbfl_id      => l_new_sbfl.sbfl_id
+      , pi_step_key     => l_new_sbfl.step_key
       , pi_var_scope    => l_parent_sbfl_scope
       , pi_expr_scope   => l_parent_sbfl_scope
       );     
@@ -663,6 +705,40 @@ is
     end if;
   end process_escalation;
 
+  procedure handle_task_error_boundary_event
+  ( pi_sbfl_info        in  flow_subflows%rowtype
+  )
+  is
+    l_boundary_event_bpmn_id         flow_objects.objt_bpmn_id%type;
+    l_boundary_event_is_interrupting boolean;
+    l_boundary_event_scope           flow_subflows.sbfl_scope%type;
+  begin
+    apex_debug.enter  
+    ( 'handle_task_error_boundary_event'
+    , 'current object: ', pi_sbfl_info.sbfl_current
+    );
+
+    get_boundary_event 
+    ( pi_dgrm_id            => pi_sbfl_info.sbfl_dgrm_id
+    , pi_throw_objt_bpmn_id => pi_sbfl_info.sbfl_current
+    , pi_par_sbfl           => pi_sbfl_info.sbfl_id
+    , pi_sub_tag_name       => flow_constants_pkg.gc_bpmn_error_event_definition
+    , po_boundary_objt      => l_boundary_event_bpmn_id
+    , po_is_interrupting    => l_boundary_event_is_interrupting
+    , po_par_sbfl_scope     => l_boundary_event_scope
+    );
+    apex_debug.message
+    ( p_message => 'Interrupting Error Boundary Event found: %0'  
+    , p0        => l_boundary_event_bpmn_id
+    );
+    -- handle the error event
+    handle_interrupting_boundary_event
+    ( p_process_id      => pi_sbfl_info.sbfl_prcs_id
+    , p_subflow_id      => pi_sbfl_info.sbfl_id
+    , p_event_type      => flow_constants_pkg.gc_bpmn_error_event_definition
+    , p_boundary_object => l_boundary_event_bpmn_id
+    );
+  end handle_task_error_boundary_event;
 
 end flow_boundary_events;
 /

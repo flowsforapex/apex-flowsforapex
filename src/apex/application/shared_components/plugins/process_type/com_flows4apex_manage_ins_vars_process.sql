@@ -4,8 +4,8 @@ begin
 --     PLUGIN: COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -16,15 +16,15 @@ wwv_flow_imp_shared.create_plugin(
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_name=>'COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS'
 ,p_display_name=>'Flows for APEX - Manage Flow Instance Variables'
-,p_supported_ui_types=>'DESKTOP'
 ,p_supported_component_types=>'APEX_APPLICATION_PAGE_PROC'
 ,p_image_prefix => nvl(wwv_flow_application_install.get_static_plugin_file_prefix('PROCESS TYPE','COM.FLOWS4APEX.MANAGE_INS_VARS.PROCESS'),'')
-,p_api_version=>2
+,p_api_version=>1
 ,p_execution_function=>'flow_plugin_manage_instance_variables.execution'
 ,p_substitute_attributes=>true
+,p_version_scn=>3139074521
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage <i>Flows for APEX</i> Flow Instance Variable(s). The plug-in allows you to get or set variable(s).'
-,p_version_identifier=>'24.1'
+,p_version_identifier=>'25.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
@@ -156,7 +156,6 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_attribute_type=>'SELECT LIST'
 ,p_is_required=>false
 ,p_default_value=>'item'
-,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
 ,p_lov_type=>'STATIC'
 ,p_help_text=>'This attribute allows you to define the way to manage the variables.'
@@ -194,7 +193,6 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_prompt=>'Process Variable(s) Name(s)'
 ,p_attribute_type=>'TEXT'
 ,p_is_required=>true
-,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
@@ -214,7 +212,6 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_prompt=>'APEX item(s)'
 ,p_attribute_type=>'PAGE ITEMS'
 ,p_is_required=>true
-,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
@@ -239,7 +236,6 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_prompt=>'JSON'
 ,p_attribute_type=>'TEXTAREA'
 ,p_is_required=>true
-,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
@@ -325,7 +321,6 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_is_required=>true
 ,p_sql_min_column_count=>1
 ,p_sql_max_column_count=>1
-,p_supported_ui_types=>'DESKTOP'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(84722146745460990)
 ,p_depending_on_has_to_exist=>true
@@ -442,6 +437,9 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '<li>A Page Item on your page.</li>',
 '</ul>'))
 );
+end;
+/
+begin
 wwv_flow_imp.component_end;
 end;
 /

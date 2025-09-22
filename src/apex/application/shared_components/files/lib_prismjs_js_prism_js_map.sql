@@ -4,8 +4,8 @@ begin
 --     APP STATIC FILES: 100
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -225,19 +225,6 @@ wwv_flow_imp.g_varchar2_table(210) := '41415136442C6141456842674D2C514141532C574
 wwv_flow_imp.g_varchar2_table(211) := '2C65414165432C6B4241416B4272522C47413244724373522C4341416B4274522C4B414368422C474145486D522C4F41494B482C454145502C53414153472C494143522F482C594141572C5741416338482C454141532C55414159502C454141532C6942';
 wwv_flow_imp.g_varchar2_table(212) := '414978442C534141534F2C454141534B2C4741436A424E2C45414153704E2C59414163384D2C45414153592C4741436843502C45414153394D2C614141612C6B4241416D42714E2C4F41724A314333432C51414151432C4B41414B2C3244415066222C22';
 wwv_flow_imp.g_varchar2_table(213) := '66696C65223A22707269736D2E6A73227D';
-null;
-wwv_flow_imp.component_end;
-end;
-/
-begin
-wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
-,p_default_workspace_id=>2400405578329584
-,p_default_application_id=>100
-,p_default_id_offset=>0
-,p_default_owner=>'FLOWS4APEX'
-);
 wwv_flow_imp_shared.create_app_static_file(
  p_id=>wwv_flow_imp.id(57432329230854672)
 ,p_file_name=>'lib/prismjs/js/prism.js.map'
@@ -245,7 +232,6 @@ wwv_flow_imp_shared.create_app_static_file(
 ,p_file_charset=>'utf-8'
 ,p_file_content => wwv_flow_imp.varchar2_to_blob(wwv_flow_imp.g_varchar2_table)
 );
-null;
 wwv_flow_imp.component_end;
 end;
 /

@@ -27,6 +27,7 @@ as
              when 'created' then 'fa-plus-circle-o'
              when 'completed' then 'fa-check-circle-o'
              when 'terminated' then 'fa-stop-circle-o'
+             when 'suspended' then 'fa-pause-circle-o'
              when 'error' then 'fa-exclamation-circle-o'
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'
@@ -38,6 +39,9 @@ as
              when 'waiting for message' then 'fa fa-envelope-o'
              when 'waiting iterations' then 'fa fa-align-justify fa-rotate-90'
              when 'iterating' then 'fa fa-align-justify fa-rotate-90'
+             when 'delete on resume' then 'fa fa-trash fam-pause fam-is-danger'
+             when 'restart on resume' then 'fa fa-pause-circle-o'
+             when 'canceling task' then 'fa fa-trash fam-play fam-is-danger'
          end as sbfl_status_icon
        , sbfl.sbfl_priority
        , sbfl.sbfl_due_on

@@ -3,12 +3,12 @@ create or replace package body flow_log_admin as
   -- Flows for APEX - flow_log_admin.pkb
   -- 
   -- (c) Copyright Oracle Corporation and / or its affiliates, 2023.
-  -- (c) Copyright Flowquest Consulting Limited. 2024
+  -- (c) Copyright Flowquest Consulting Limited. 2024-25
   --
   -- Created    18-Feb-2023  Richard Allen (Oracle)
   -- Modified   11-Feb-2024  Richard Allen (Flowquest Consulting)
   --
-  -- Package flow_log_admin manaes the Flows for APEX log tables, including
+  -- Package flow_log_admin manages the Flows for APEX log tables, including
   --    - creation of instance archive summary
   --    - archiving of instance logs
   --    - purging of instance log tables 
@@ -27,7 +27,6 @@ create or replace package body flow_log_admin as
   , oci_credential_static_id       flow_types_pkg.t_vc200  -- APEX Static ID of Credential
   );
 
-
   function get_instance_json_summary
   ( p_process_id     in flow_processes.prcs_id%type
   ) return clob
@@ -42,6 +41,9 @@ create or replace package body flow_log_admin as
                , prcs_status
                , prcs_init_ts
                , prcs_init_by
+               , prcs_start_ts
+               , prcs_complete_ts
+               , prcs_was_altered
                , prcs_due_on
           from   flow_processes prcs
           where  prcs_id = p_process_id               
@@ -51,17 +53,20 @@ create or replace package body flow_log_admin as
           from   flow_variable_event_log sc
         )
     select json_object (
-       'processID'    value p.prcs_id,
-       'mainDiagram'  value p.prcs_dgrm_id,
-       'processName'  value p.prcs_name,
-       'businessID'   value prov.prov_var_vc2,
-       'priority'     value p.prcs_priority,
-       'prcs_status'  value p.prcs_status,
-       'prcs_init_ts' value p.prcs_init_ts,
-       'prcs_init_by' value p.prcs_init_by,
-       'prcs_due_on'  value p.prcs_due_on,
-       'json_created' value systimestamp,
-       'diagramsUsed' value
+       'processID'        value p.prcs_id,
+       'mainDiagram'      value p.prcs_dgrm_id,
+       'processName'      value p.prcs_name,
+       'businessID'       value prov.prov_var_vc2,
+       'priority'         value p.prcs_priority,
+       'prcs_status'      value p.prcs_status,
+       'prcs_was_altered' value p.prcs_was_altered,
+       'prcs_init_ts'     value p.prcs_init_ts,
+       'prcs_init_by'     value p.prcs_init_by,
+       'prcs_due_on'      value p.prcs_due_on,
+       'prcs_start_ts'    value p.prcs_start_ts,
+       'prcs_complete_ts' value p.prcs_complete_ts,
+       'json_created'     value systimestamp,
+       'diagramsUsed'     value
             (select json_arrayagg 
                        ( json_object 
                            (
@@ -84,11 +89,16 @@ create or replace package body flow_log_admin as
                        ( json_object 
                            (
                            'event'                      value lgpr_prcs_event,
+                           'severity'                   value lgpr_severity,
                            'object'                     value lgpr_objt_id,
+                           'stepKey'                    value lgpr_step_key,
+                           'subflowID'                  value lgpr_sbfl_id,
+                           'processLevel'               value lgpr_process_level,
                            'diagram'                    value lgpr_dgrm_id,
                            'timestamp'                  value lgpr_timestamp,
                            'user'                       value lgpr_user,
                            'error-info'                 value lgpr_error_info,
+                           'apexTaskId'                 value lgpr_apex_task_id,
                            'comment'                    value lgpr_comment absent on null
                            ) order by lgpr_timestamp 
                         returning clob )
@@ -135,6 +145,7 @@ create or replace package body flow_log_admin as
                                                'expr_set'        value lgvr.lgvr_expr_set,
                                                'type'            value lgvr.lgvr_var_type,
                                                'timestamp'       value lgvr.lgvr_timestamp,
+                                               'user'            value lgvr.lgvr_user,
                                                'newValue'        value case lgvr.lgvr_var_type
                                                           when 'VARCHAR2'                   then lgvr.lgvr_var_vc2
                                                           when 'NUMBER'                     then to_char(lgvr.lgvr_var_num)
@@ -270,7 +281,6 @@ create or replace package body flow_log_admin as
   return t_archive_location
   is
     l_archive_location              t_archive_location;
-    e_archive_bad_destination_json  exception;
     l_destination_json              flow_configuration.cfig_value%type;
   begin
     apex_debug.enter ( 'get_archive_location');
@@ -279,11 +289,15 @@ create or replace package body flow_log_admin as
                              ( p_config_key  => p_archive_type
                              , p_default_value  => null);
 
+         
+    if l_destination_json is null then
+      raise e_archive_destination_null;
+    end if;   
     apex_debug.message 
     ( p_message => 'Retrieved configuration parameter %0 contents %1'
     , p0 => p_archive_type
     , p1 => l_destination_json
-    );                         
+    );             
     -- dbms_output.put_line('archive destination'||l_destination_json);
     apex_json.parse (p_source => l_destination_json);
 
@@ -320,18 +334,15 @@ create or replace package body flow_log_admin as
     end case;
     return l_archive_location;
     exception
+    when e_archive_destination_null then
+        raise;
       when others then 
         apex_debug.info 
         ( p_message => ' --- Error in %0 configuration parameter definition. Value :'
         , p0  => flow_constants_pkg.gc_config_logging_archive_location
         , p1  => l_destination_json
         );
-        flow_errors.handle_general_error
-        ( pi_message_key    => 'archive-destination-bad-json'
-        , p0 => l_destination_json
-        );  
-        -- $F4AMESSAGE 'archive-destination-bad-json' || 'Error in archive destination configuration parameter.  Parameter: %0' 
-      return null;
+        raise e_archive_bad_destination_json;
   end get_archive_location;
 
   procedure archive_to_database
@@ -563,10 +574,31 @@ create or replace package body flow_log_admin as
       end loop;      
     end if;
   exception  
+    when e_archive_destination_null then
+      flow_errors.handle_general_error
+      ( pi_message_key  => 'archive-destination-null'
+      , p0 => flow_constants_pkg.gc_config_logging_archive_location
+      );
+      -- $F4AMESSAGE 'archive-destination-null' || 'No archive or logging destination has been configured - See Configurations > Logging or Archiving'
+      raise;
+    when e_archive_bad_destination_json then
+      flow_errors.handle_general_error
+      ( pi_message_key  => 'archive-destination-bad-json'
+      , p0 => flow_constants_pkg.gc_config_logging_archive_location
+      );
+      -- $F4AMESSAGE 'archive-destination-bad-json' || 'Error in archive destination configuration parameter.  Parameter: %0'
+      raise;
+    when e_upload_failed_exception then
+      flow_errors.handle_general_error( pi_message_key  => 'log-archive-error'
+                                      , p0 => apex_web_service.g_status_code);
+      -- $F4AMESSAGE 'log-archive-error' || 'Error occurred while archiving log for process %0.'
+      raise;
+    
     when others then
       flow_errors.handle_general_error( pi_message_key  => 'log-archive-error'
                                       , p0 => apex_web_service.g_status_code);
-      raise;      
+      -- $F4AMESSAGE 'log-archive-error' || 'Error occurred while archiving log for process %0.'
+      raise;
   end archive_completed_instances;
 
 end flow_log_admin;

@@ -18,6 +18,7 @@ create or replace view flow_apex_my_combined_task_list_vw
      , priority_level
      , initiator
      , initiator_lower
+     , initiator_can_complete
      , actual_owner
      , actual_owner_lower
      , state_code
@@ -46,7 +47,7 @@ as select
      , task_def_name
      , task_def_static_id
      , subject
-     , 'APPROVAL' as task_type
+     , task_type
      , details_app_id
      , details_app_name
      , details_link_target
@@ -58,6 +59,7 @@ as select
      , priority_level
      , initiator
      , initiator_lower
+     , initiator_can_complete
      , actual_owner
      , actual_owner_lower
      , state_code
@@ -77,7 +79,7 @@ as select
      , null
      , null
      , null
-    from table ( apex_approval.get_tasks ( p_context => 'MY_TASKS' ) )
+    from table ( apex_human_task.get_tasks ( p_context => 'MY_TASKS' ) )
     UNION ALL
     select  
        manager
@@ -99,6 +101,7 @@ as select
      , priority_level
      , initiator
      , initiator_lower
+     , initiator_can_complete
      , actual_owner
      , actual_owner_lower
      , state_code

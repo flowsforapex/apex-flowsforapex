@@ -28,6 +28,8 @@ PROMPT >> Engine
 @plsql/flow_services.pks
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
+@plsql/flow_instances_util_ee.pks
+@plsql/flow_rewind.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
 @plsql/flow_reservations.pks
@@ -49,6 +51,7 @@ PROMPT >> Engine
 @plsql/flow_statistics.pks
 @plsql/flow_iteration.pks
 @plsql/flow_simple_form_template.pks
+@plsql/flow_ai_prompt_ee.pks
 
 PROMPT >>
 PROMPT >> REST API Support
@@ -77,6 +80,7 @@ PROMPT >> Installing Views
 @views/flow_instance_scopes_vw.sql
 @views/flow_diagrams_vw.sql
 @views/flow_instance_diagrams_lov.sql
+@views/flow_instance_events_vw.sql
 @views/flow_diagrams_instanciated_lov.sql
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
@@ -85,7 +89,10 @@ PROMPT >> Installing Views
 @views/flow_rest_message_subscriptions_vw.sql
 @views/flow_rest_process_vars_vw.sql
 @views/flow_rest_processes_vw.sql
+@views/flow_rest_step_event_log_vw.sql
 @views/flow_rest_subflows_vw.sql
+@views/flow_viewer_vw.sql
+@views/flow_variable_event_timeline_vw
 
 PROMPT >> Installing Package Bodies
 PROMPT >>
@@ -124,6 +131,7 @@ PROMPT >> Engine
 @plsql/flow_statistics.pkb
 @plsql/flow_simple_form_template.pkb
 
+
 PROMPT >>
 PROMPT >> REST API Support
 set define off
@@ -155,13 +163,12 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
 @views/engine-app/flow_p0008_message_subscriptions_vw.sql
-@views/engine-app/flow_p0008_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
-@views/engine-app/flow_p0010_vw.sql
 @views/engine-app/flow_p0013_attributes_vw.sql
 @views/engine-app/flow_p0013_expressions_vw.sql
 @views/engine-app/flow_p0013_instance_log_vw.sql
 @views/engine-app/flow_p0013_step_log_vw.sql
+@views/engine-app/flow_p0013_step_events_vw.sql
 @views/engine-app/flow_p0013_subflows_vw.sql
 @views/engine-app/flow_p0013_variable_log_vw.sql
 @views/engine-app/flow_p0013_called_diagrams_vw.sql
@@ -169,6 +176,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_step_log_vw.sql
 @views/engine-app/flow_p0014_subflows_vw.sql
 @views/engine-app/flow_p0014_variable_log_vw.sql
+@views/engine-app/flow_p0019_vw.sql
 @views/engine-app/flow_p0020_instance_timeline_vw.sql
 
 
@@ -191,6 +199,9 @@ PROMPT >> Modeler Plugin Objects
 PROMPT >> Viewer Plugin Objects
 @plugins/viewer/plsql/flow_viewer.pks
 @plugins/viewer/plsql/flow_viewer.pkb
+
+PROMPT >> Installing Data
+@data/insert_bpmn_type_data.sql
 
 PROMPT >> Engine Messages
 @data/install_engine_messages_de.sql

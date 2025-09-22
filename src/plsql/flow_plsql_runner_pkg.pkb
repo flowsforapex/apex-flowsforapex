@@ -68,6 +68,7 @@ as
       p_plsql_code || apex_application.lf ||
       'end;'
     ;
+  
   end execute_plsql;
 
   procedure get_runner_config
@@ -145,6 +146,7 @@ as
                           ( pi_expr       => l_plsql_code
                           , pi_prcs_id     => pi_prcs_id
                           , pi_sbfl_id    => pi_sbfl_id
+                          , pi_step_key   => pi_step_key
                           , pi_scope      => flow_globals.scope
                           );
     end if;
@@ -170,7 +172,21 @@ as
         p_message => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
       , p0        => sqlerrm
       );
-      raise e_plsql_script_requested_stop;     
+      raise flow_globals.request_stop_engine;  
+    when flow_globals.request_stop_engine then   
+      apex_debug.error
+      (
+        p_message => 'User script run by flow_plsql_runner_pkg.run_task_script requested stop.'
+      , p0        => sqlerrm
+      );
+      raise flow_globals.request_stop_engine;  
+    when flow_globals.throw_bpmn_error_event then
+      apex_debug.error
+      (
+        p_message => 'User script run by flow_plsql_runner_pkg.run_task_script threw BPMN error.'
+      , p0        => sqlerrm
+      );
+      raise flow_globals.throw_bpmn_error_event;
     when others then
       apex_debug.error
       (

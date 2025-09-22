@@ -3,7 +3,7 @@ create or replace package body test_helper as
 -- Flows for APEX - test_helper.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
--- (c) Copyright Flowquest Limited and/or its affiliates,  2024.
+-- (c) Copyright Flowquest Limited and/or its affiliates,  2024-2025.
 --
 -- Created 18-May-2022   Richard Allen, Oracle
 -- Edited  02-Aug-2024   Richard Allen, Flowquest Limited
@@ -21,6 +21,14 @@ create or replace package body test_helper as
       into l_dgrm_id
       from flow_diagrams
      where dgrm_name = pi_dgrm_name;
+    return l_dgrm_id;
+  exception
+    when too_many_rows then
+      select dgrm_id
+        into l_dgrm_id
+        from flow_diagrams
+       where dgrm_name = pi_dgrm_name
+         and dgrm_status = flow_constants_pkg.gc_dgrm_status_released;
     return l_dgrm_id;
   end set_dgrm_id;
 
@@ -155,6 +163,23 @@ create or replace package body test_helper as
         and sbfl_current = pi_current;
      return l_sbfl_id;
    end get_sbfl_id;
+
+   -- get the stepkey for the subflow that has pi_current as the current object.
+
+   function get_step_key
+   ( pi_prcs_id       in flow_processes.prcs_id%type
+   , pi_current       in flow_objects.objt_bpmn_id%type
+   ) return flow_subflows.sbfl_step_key%type
+   is 
+     l_sbfl_step_key flow_subflows.sbfl_step_key%type;
+   begin
+     select sbfl_step_key
+       into l_sbfl_step_key
+       from flow_subflows
+      where sbfl_prcs_id = pi_prcs_id
+        and sbfl_current = pi_current;
+     return l_sbfl_step_key;
+   end get_step_key;
   
 
   -- check subflow log to see if an object in main diagram has completed

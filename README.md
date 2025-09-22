@@ -1,6 +1,6 @@
 # Flows for APEX - Model and run process flows all within Oracle APEX
 
-This github repository is for developers willing to contribute to the upcoming version of Flows for APEX.
+This GitHub repository is for developers willing to contribute to the upcoming version of Flows for APEX.
 
 ## Resources you might find useful
 

@@ -1,4 +1,32 @@
-# Flows for APEX - Changelog
+# Flows for APEX - Change Log
+
+## v25.1 Community Edition
+- Adds an AI-generation Service Task, using the APEX_AI services.
+- Logging Enhancements:
+  - Adds Event-based logging of step events for audit trail and debugging.
+  - Adds a process instance logging level to allow event logging to be specified on a per-diagram and per-instance basis.
+  - Any process instances that have been restarted, suspended, rewound, or otherwise manually adjusted are high-lighted in the Flow Monitor and logs.
+- Adds error boundary event on PL/SQL script tasks. Raise flow_globals.throw_bpmn_error_event exception in script to trigger.  flow_globals.request_stop_engine also added - functionality as for existing flow_plsql_runner_pkg.e_plsql_script_requested_stop (simpler naming).
+- Enhancements to process instance naming.  Setting prcs_name is no longer mandatory on flow_api_pkg.flow_create. On creation, defaults to dgrm_name||sysdate.  Process name can be specified on bpmn:process object in diagram as substitutable string, executed during instance start (after variable expressions have run) if defined.
+- User Task working vs waiting time recording
+  - Changes behavior for flow_api_pkg.start_step to record working and waiting time on user tasks. Work starts and pauses (flow_api_pkg.start_step and pause_step) can be called multiple times during step execution and are recorded in the event log. 
+  - Add support for start_step and pause_step calls in the manage-flow-instance-step plugin.
+- APEX Human Task support enhancements
+  - Added flow_api_pkg.get_task_potential_owners and get_task_business_admins so that an APEX Human Task can pull potential owners and business admin information from the workflow.
+  - Added new Task Action plugin return-task-state-outcome to return task state and task outcome from APEX Human Tasks.  Can be used on task completion, cancellation and task expiry.
+  - Added new cleanup routines to cancel any APEX Human Tasks left after a process instance is reset, terminated, deleted or the process flow cancels an active task.
+- Adds a new Flow Viewer plugin built as a web component.  Plugin supports badging.  New plugin has an improved API.
+- Flow Monitor now includes a report showing how many running instances of a model are currently on each step, using the new Flow Viewer badging.
+- Adds an automation to automatically delete completed process instances n days after process completion.
+- Step Key is now available for substitution or binding in most places, including variable expression.
+- Fixed a bug where Scope previously couldn't be substituted.
+- Added an APEX Component Group containing all of the components required in a Flows for APEX application.  Application items for PROCESS_ID, SUBFLOW_ID, STEP_KEY.  All plugins for use in customer applications.
+- Scheduler Jobs and Processes for timers and APEX task cleanup are now created automatically by the installer.  
+- Automations used for archiving, purging and statistics collection are now visible from the Flows for APEX app.
+- Deprecates update, upload, upload and parse functions (all except parse) in bpmn_parser_pkg.   These have been available through flow_diagrams package since 23.1, and will be removed from bpmn_parser_pkg in a future release.
+- Required APEX version increased to APEX v24.1, in line with Oracle's support policy for APEX.
+- Privileges.   Installer now checks for required privileges. Flows for APEX user now requires CREATE JOB database system privilege.  
+- Documentation has had a major enhancement. 
 
 ## v24.1 Community Edition
 
@@ -10,7 +38,7 @@
 - Enhancement to BPMN Viewer to allow task start from the viewer.
 - Enhances flow_admin_api so that a diagram can be 'released' from the API.  This is useful for remote deployment of diagrams into production environments.
 - Change internal storage of the APEX Task Id from a process variable to flow_subflows.sbfl_apex_task_id when APEX Human Tasks are used in UserTasks.
-- Fixes a bug preventing rescheduling interuptable timers on subflows having a previous interrupting timer event.
+- Fixes a bug preventing rescheduling interruptible timers on subflows having a previous interrupting timer event.
 - Adds a new example application that can be used as a process hub for end users to start new processes.
 - Required APEX version increased to APEX v22.1
 
@@ -51,7 +79,7 @@
 - Adds process variable bind syntax (:F4A$myvar) to bind varchar2, number, and date variables into Gateway Routing Expressions.
 - Adds error detection to Inclusive and Exclusive Gateways when no Routing Variable is detected and Gateway Routing Expressions are present.
 - Adds support for integration of Flows for APEX userTasks into the APEX v22.1+ Unified Task Inbox through custom Task Inbox views.   (Note that this functionality may change in upcoming APEX and Flows for APEX releases).
-- Makes processVariable naming case-independant, so that myVar and MYVAR are the same variable.
+- Makes processVariable naming case-independent, so that myVar and MYVAR are the same variable.
 - Creates an APEX session for non-APEX originated end points, ensuring that variable expressions, debugging, etc. work correctly from non-APEX API calls, after timers, from test engines, etc.
 - Changes Lane processing from parse-time to step-run-time to facilitate call activities with or without lanes in any involved diagram.
 - Internally enhances storage of parsed BPMN object attributes using JSON structures in place of the flow_object_attributes table.
@@ -82,11 +110,11 @@
 - Introduces 3 process plugins to ease application integration:
 
   - Manage Flow Instance, for controlling instance creation, starting, termination, reset and deletion.
-  - Manage Flow Instance Step, for controlling step statrt, reservation, release and completion.
+  - Manage Flow Instance Step, for controlling step start, reservation, release and completion.
   - Manage Flow Instance Variables, for transferring process variable content to and from APEX page items.
 - Introduces Transaction Safety, making each process step a separate database transaction.
 - Introduces new Instance Status of 'error' and 'terminated' to signal abnormal instance conditions.
-- Introduces new Subflow status of 'error' signalling an abnormal condition.
+- Introduces new Subflow status of 'error' signaling an abnormal condition.
 - Steps halted with error status can be re-started after an administrator fixes the problem.
 - Introduces Monitoring and Auditing event logs of Instances, instance steps, and process variables
 - Major upgrade of the Flow Engine Application, with enhancements to the modeler, viewer, and the app UI.
@@ -103,9 +131,9 @@
 - Adds a configuration option to allow editing of models in a development environment without strict versioning enforcement.
 - Makes process_id and subflow_id available to scripts and expressions through flow_globals.
 - New sample app "Expense Claims".
-- Modifies behaviour of flow_reset to delete all non-built-in process variables.
+- Modifies behavior of flow_reset to delete all non-built-in process variables.
 - Disables (non-operative) cycle timers from all timer event types.
-- Allows Inclusive Gateways to be used as 'merge-then-resplit' gateways.
+- Allows Inclusive Gateways to be used as 'merge-then-re-split' gateways.
 - Allows process variables to be deleted.
 - Introduces a flow_configuration table containing configuration parameters, initially for audit and language settings.
 - Makes Engine App and engine error messages available in French language.
@@ -123,7 +151,7 @@
 
 ## v5.1.1
 
-- Fixed several bugs occuring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
+- Fixed several bugs occurring when all of the objects after an event object or a gateway are scriptTasks or serviceTasks, causing process not to be marked as Completed when finished.
 - Fixed a bug causing the first task after an Interrupting Escalation Boundary Event to be skipped
 - Fixed bug preventing flow monitor showing process progress in extremely large and repetitive models
 - Fixed a problem with diagram export file names being too long
@@ -180,8 +208,8 @@
 
 - New Subflow architecture to support Parallel Gateways, Sub Processes
 - Support for subprocesses (n levels deep)
-- Support for Parallel Gateways (AND) and parallel flows, including process re-synchronisation
-- Support for Inclusive Gateways (OR) and optional parallel flows, including process re-synchronisation
+- Support for Parallel Gateways (AND) and parallel flows, including process re-synchronization
+- Support for Inclusive Gateways (OR) and optional parallel flows, including process re-synchronization
 - Support for IntermediateCatchEvents and eventBasedGateways
 - Support for Terminate Stop Events in top level processes
 - Process viewer now shows all present and completed steps, and expanded views of sub-processes

@@ -4,8 +4,8 @@ begin
 --     PAGE: 00016
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,15 +13,12 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>16
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Process Statistics'
 ,p_alias=>'PROCESS-STATISTICS'
 ,p_step_title=>'Process Statistics'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_page_component_map=>'04'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240926144145'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(2143958569493923)
@@ -118,7 +115,6 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_source_type=>'NATIVE_JET_CHART'
 ,p_ajax_items_to_submit=>'P16_DGRM_ID'
 ,p_plug_query_num_rows=>15
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_imp_page.create_jet_chart(
  p_id=>wwv_flow_imp.id(2144034250493924)
@@ -253,7 +249,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_color=>'#000000'
 ,p_line_style=>'solid'
 ,p_line_type=>'auto'
-,p_marker_rendered=>'auto'
+,p_marker_rendered=>'off'
 ,p_marker_shape=>'auto'
 ,p_assigned_to_y2=>'on'
 ,p_items_label_rendered=>true
@@ -273,7 +269,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_color=>'#FF3B30'
 ,p_line_style=>'solid'
 ,p_line_type=>'auto'
-,p_marker_rendered=>'auto'
+,p_marker_rendered=>'off'
 ,p_marker_shape=>'auto'
 ,p_assigned_to_y2=>'on'
 ,p_items_label_rendered=>true
@@ -389,7 +385,6 @@ wwv_flow_imp_page.create_page_plug(
 'order by max(stsf_duration_max_sec) desc'))
 ,p_plug_source_type=>'NATIVE_JET_CHART'
 ,p_ajax_items_to_submit=>'P16_DGRM_ID,P16_PERIOD'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 );
 wwv_flow_imp_page.create_jet_chart(
  p_id=>wwv_flow_imp.id(2550693860373356)

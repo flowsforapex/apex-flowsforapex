@@ -168,6 +168,7 @@ as
         , pi_set          => flow_constants_pkg.gc_expr_set_in_variables
         , pi_prcs_id      => p_process_id
         , pi_sbfl_id      => l_called_subflow_context.sbfl_id   --- should this be logged on calling or called subflows?  variables only in scope of called...
+        , pi_step_key     => l_called_subflow_context.step_key
         , pi_var_scope    => l_called_subflow_context.scope
         , pi_expr_scope   => l_calling_sbfl_scope
         );
@@ -177,6 +178,7 @@ as
         ( p_process_id    => p_process_id
         , p_objt_bpmn_id  => p_step_info.target_objt_ref
         , p_event         => flow_constants_pkg.gc_prcs_event_enter_call
+        , p_event_level   => flow_constants_pkg.gc_logging_level_routine
         , p_comment       => 'Starting called diagram '||l_call_definition.dgrm_name||
                              ' version '||l_call_definition.dgrm_version||
                              ' in diagram level '||l_called_subflow_context.sbfl_id
@@ -202,6 +204,7 @@ as
             , pi_set          => flow_constants_pkg.gc_expr_set_on_event
             , pi_prcs_id      => p_process_id
             , pi_sbfl_id      => l_called_subflow_context.sbfl_id
+            , pi_step_key     => l_called_subflow_context.step_key
             , pi_var_scope    => l_called_subflow_context.scope
             , pi_expr_scope   => l_called_subflow_context.scope
             );

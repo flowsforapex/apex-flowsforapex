@@ -32,13 +32,16 @@ comment on table flow_configuration         is 'Flows for APEX table containing 
 comment on table flow_messages              is 'Flows for APEX table containing language-specific error and warning messages used by Flows for APEX.';
 comment on table flow_iterated_objects      is 'Flows for APEX table containing live run-time state of all objects that are iterated or looped.';
 
-comment on column flow_diagrams.dgrm_id           is 'Unique reference number for a diagram'; 
-comment on column flow_diagrams.dgrm_name         is 'diagram name - often the business process name'; 
-comment on column flow_diagrams.dgrm_version      is 'version of this diagram'; 
-comment on column flow_diagrams.dgrm_status       is 'current diagram status - draft, released (for normal production use), depracated (for use only by current instances), or archived (no longer in use)'; 
-comment on column flow_diagrams.dgrm_category     is ' '; 
-comment on column flow_diagrams.dgrm_last_update  is ' '; 
-comment on column flow_diagrams.dgrm_content      is ' '; 
+comment on column flow_diagrams.dgrm_id                is 'Unique reference number for a diagram'; 
+comment on column flow_diagrams.dgrm_name              is 'diagram name - often the business process name'; 
+comment on column flow_diagrams.dgrm_version           is 'version of this diagram'; 
+comment on column flow_diagrams.dgrm_status            is 'current diagram status - draft, released (for normal production use), depracated (for use only by current instances), or archived (no longer in use)'; 
+comment on column flow_diagrams.dgrm_category          is ' '; 
+comment on column flow_diagrams.dgrm_last_update       is ' '; 
+comment on column flow_diagrams.dgrm_content           is ' '; 
+comment on column flow_diagrams.dgrm_short_description is 'brief explanation of the diagram'; 
+comment on column flow_diagrams.dgrm_description       is 'more detailed explanation of the diagram'; 
+comment on column flow_diagrams.dgrm_icon              is 'icon for this diagram'; 
 
 comment on column FLOW_CONNECTIONS.CONN_ID is 'Connection ID. A system generated unique identifier for a connection.  Note that the Connection ID changes when a diagram is re-parsed.';                          
 comment on column FLOW_CONNECTIONS.CONN_BPMN_ID is 'The unique identifier for a connection that is contained in the BPMN process diagram.';                     
@@ -181,18 +184,6 @@ comment on column FLOW_INSTANCE_STATS.STPR_DURATION_50PC_SEC is ' ';
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_90PC_SEC is ' ';       
 comment on column FLOW_INSTANCE_STATS.STPR_DURATION_MAX_SEC is ' ';    
 
-comment on column FLOW_INSTANCE_TIMELINE_VW.OPERATION is ' ';              
-comment on column FLOW_INSTANCE_TIMELINE_VW.DESCRIPTION is ' ';            
-comment on column FLOW_INSTANCE_TIMELINE_VW.OBJT is ' ';                   
-comment on column FLOW_INSTANCE_TIMELINE_VW.SUBFLOW is ' ';                
-comment on column FLOW_INSTANCE_TIMELINE_VW.PROCESS_LEVEL is ' ';          
-comment on column FLOW_INSTANCE_TIMELINE_VW.PROC_VAR is ' ';               
-comment on column FLOW_INSTANCE_TIMELINE_VW.VALUE is ' ';                  
-comment on column FLOW_INSTANCE_TIMELINE_VW.EVENT_COMMENT is ' ';
-comment on column FLOW_INSTANCE_TIMELINE_VW.PERFORMED_ON is ' ';             
-comment on column FLOW_INSTANCE_TIMELINE_VW.PERFORMED_BY is ' ';             
-comment on column FLOW_INSTANCE_TIMELINE_VW.PRCS_ID is ' ';   
-
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_PRCS_ID is ' ';            
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_VAR_NAME is ' ';           
 comment on column FLOW_INSTANCE_VARIABLES_VW.PROV_SCOPE is ' ';              
@@ -266,14 +257,7 @@ comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_ORDER is ' ';
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_VAR_NAME is ' ';         
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_VAR_TYPE is ' ';         
 comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_TYPE is ' ';             
-comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_EXPRESSION is ' ';       
-
-comment on column FLOW_PARSER_LOG.PLOG_ID is ' ';                       
-comment on column FLOW_PARSER_LOG.PLOG_DGRM_ID is ' ';                  
-comment on column FLOW_PARSER_LOG.PLOG_BPMN_ID is ' ';                  
-comment on column FLOW_PARSER_LOG.PLOG_LOG_TIME is ' ';                 
-comment on column FLOW_PARSER_LOG.PLOG_PARSE_STEP is ' ';               
-comment on column FLOW_PARSER_LOG.PLOG_PAYLOAD is ' ';              
+comment on column FLOW_OBJECT_EXPRESSIONS.EXPR_EXPRESSION is ' ';                  
 
 comment on column FLOW_PROCESSES.PRCS_ID is ' ';                        
 comment on column FLOW_PROCESSES.PRCS_DGRM_ID is ' ';                   

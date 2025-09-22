@@ -1,4 +1,12 @@
 create or replace package flow_reservations
+/* 
+-- Flows for APEX - flow_reservations.pks
+-- 
+-- (c) Copyright Flowquest Limited and / or its affiliates, 2021.
+--
+-- Created 05-May-2021  Richard Allen (Flowquest)
+--
+*/
   authid definer
   accessible by (flow_api_pkg, flow_engine)
 as 

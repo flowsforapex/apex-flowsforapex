@@ -3,11 +3,13 @@ create or replace package body flow_timers_pkg as
 -- Flows for APEX - flow_timers_pkg.pkb
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates. 2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2025.
 --
 -- Created 2020        Franco Soldaro
 -- Edited  2020        Moritz Klein - MT AG  
 -- Edited  24-Feb-2023 Richard Allen, Oracle
 -- Edited  05-Jun-2023 Louis Moreaux, Insum
+-- Edited  20-May-2024 Richard Allen, Flowquest
 --
 */
   lock_timeout             exception;
@@ -249,7 +251,7 @@ create or replace package body flow_timers_pkg as
       select * into l_timers
         from flow_timers
        where rowid in (
-          select max(rowid) keep (dense_rank first order by coalesce( timr_last_run, timr_created_on )) trowid
+          select max(rowid) keep (dense_rank first order by timr_start_on) trowid
             from flow_timers
            where timr_status = c_created
              --and coalesce( timr_last_run, timr_created_on )  < l_run_time 
@@ -654,6 +656,7 @@ create or replace package body flow_timers_pkg as
         , p2             => l_timer_def.timer_type
         , p3             => l_timer_def.timer_definition
         );
+        -- $F4AMESSAGE 'timer-definition-error' || 'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3]'
       when others then
         flow_errors.handle_instance_error
         (
@@ -665,7 +668,8 @@ create or replace package body flow_timers_pkg as
         , p2             => l_timer_def.timer_type
         , p3             => l_timer_def.timer_definition
         );
-    end;    
+        -- $F4AMESSAGE 'timer-definition-error' || 'Error parsing timer definition in process %0, subflow %1. Timer Type: %2, Definition: %3]'
+    end;
 
     insert into flow_timers
       (
@@ -914,11 +918,12 @@ begin
        and sbfl.sbfl_prcs_id = p_process_id
     ;
 
-    flow_logging.log_instance_event
+    flow_logging.log_step_event
     ( p_process_id  => p_process_id
-    , p_objt_bpmn_id  => l_current_object
-    , p_event  => flow_constants_pkg.gc_prcs_event_rescheduled
-    , p_comment  => p_comment
+    , p_subflow_id  => p_subflow_id
+    , p_event       => flow_constants_pkg.gc_prcs_event_rescheduled
+    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+    , p_comment     => p_comment
     );
 
   end if;
@@ -952,8 +957,41 @@ exception
 
 end reschedule_timer;
 
+/******************************************************************************
+  suspend_process_timers
+    suspend all timers for a process instance
+******************************************************************************/
 
+  procedure suspend_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  is
+  begin
+    update flow_timers
+       set timr_status = c_suspended
+     where timr_prcs_id = pi_prcs_id
+       and timr_status = c_created
+    ;
+  end suspend_process_timers;
 
+/******************************************************************************
+  resume_process_timers
+    resume all timers for a process instance    
+******************************************************************************/
+
+  procedure resume_process_timers
+  (
+    pi_prcs_id  in  flow_processes.prcs_id%type
+  )
+  is
+  begin
+    update flow_timers
+       set timr_status = c_created
+     where timr_prcs_id = pi_prcs_id
+       and timr_status = c_suspended
+    ;
+  end resume_process_timers;
 
 /******************************************************************************
   EXPIRE_TIMER
@@ -1086,6 +1124,7 @@ end reschedule_timer;
       l_host_url := apex_util.host_url;
       
       if ( l_host_url like '%apex.oracle.com%'
+         or l_host_url like '%oracleapex.com%'
          or l_host_url like '%apex.oraclecorp.com%' 
          )
       then 

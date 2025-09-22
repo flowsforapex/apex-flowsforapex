@@ -349,7 +349,7 @@ create or replace package body test_003_startEvents is
       -- this should throw an exception trying to convert a string 'rubbish' to a number.
    end  bad_before_event_1;
 
-   --test(03h-a - timer startEvent with bad before-event var exp - restart )
+   --test(03h-b - timer startEvent with bad before-event var exp - restart)
    procedure bad_before_event_2
    is
     l_actual      sys_refcursor;

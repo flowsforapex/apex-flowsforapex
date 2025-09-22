@@ -5,6 +5,7 @@ as
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022-2023.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and/or its affiliates. 2025.
 --
 -- Created  10-Dec-2021 Dennis Amthor - MT AG  
 -- Modified 22-May-2022 Moritz Klein - MT AG
@@ -14,13 +15,16 @@ as
   
   function upload_diagram
   (
-    pi_dgrm_name       in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version    in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category   in flow_diagrams.dgrm_category%type
-  , pi_dgrm_content    in flow_diagrams.dgrm_content%type
-  , pi_dgrm_status     in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_log_comment     in flow_flow_event_log.lgfl_comment%type default null
-  , pi_force_overwrite in boolean default false
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status            in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_log_comment            in flow_flow_event_log.lgfl_comment%type default null
+  , pi_force_overwrite        in boolean default false
   ) return flow_diagrams.dgrm_id%type
   as
     l_cnt     number;
@@ -41,15 +45,19 @@ as
 
     if l_dgrm_id is null then
       insert
-        into flow_diagrams ( dgrm_name, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
-        values ( pi_dgrm_name, pi_dgrm_version, pi_dgrm_category, 
-                 pi_dgrm_status,  systimestamp, pi_dgrm_content )
+        into flow_diagrams ( dgrm_name, dgrm_short_description, dgrm_description, dgrm_icon, dgrm_version, dgrm_category, dgrm_status, dgrm_last_update, dgrm_content )
+        values ( pi_dgrm_name, pi_dgrm_short_description, pi_dgrm_description, pi_dgrm_icon,
+                 pi_dgrm_version, pi_dgrm_category,
+                 pi_dgrm_status, systimestamp, pi_dgrm_content )
       returning dgrm_id into l_dgrm_id
       ;
     else
       if (pi_force_overwrite) then
         update flow_diagrams
-          set dgrm_content = pi_dgrm_content
+          set dgrm_short_description = pi_dgrm_short_description
+            , dgrm_description = pi_dgrm_description
+            , dgrm_icon = pi_dgrm_icon
+            , dgrm_content = pi_dgrm_content
             , dgrm_last_update = systimestamp
             , dgrm_status  = pi_dgrm_status
         where dgrm_id = l_dgrm_id
@@ -73,18 +81,22 @@ as
 
   procedure upload_diagram
   (
-    pi_dgrm_name     in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category in flow_diagrams.dgrm_category%type
-  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
-  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_log_comment   in flow_flow_event_log.lgfl_comment%type default null
-  , pi_force_overwrite in boolean default false
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status            in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_log_comment            in flow_flow_event_log.lgfl_comment%type default null
+  , pi_force_overwrite        in boolean default false
   )
   as
     l_dgrm_id       flow_diagrams.dgrm_id%type;
   begin
     l_dgrm_id := upload_diagram ( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                                  pi_dgrm_short_description => pi_dgrm_short_description, pi_dgrm_description => pi_dgrm_description, pi_dgrm_icon => pi_dgrm_icon,
                                   pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
                                   pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite,
                                   pi_log_comment => pi_log_comment
@@ -93,19 +105,23 @@ as
 
   procedure upload_and_parse
   (
-    pi_dgrm_name     in flow_diagrams.dgrm_name%type
-  , pi_dgrm_version  in flow_diagrams.dgrm_version%type
-  , pi_dgrm_category in flow_diagrams.dgrm_category%type
-  , pi_dgrm_content  in flow_diagrams.dgrm_content%type
-  , pi_dgrm_status   in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
-  , pi_log_comment   in flow_flow_event_log.lgfl_comment%type default null 
-  , pi_force_overwrite in boolean default false
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_dgrm_status            in flow_diagrams.dgrm_status%type default flow_constants_pkg.gc_dgrm_status_draft
+  , pi_log_comment            in flow_flow_event_log.lgfl_comment%type default null 
+  , pi_force_overwrite        in boolean default false
   )
   as
     l_dgrm_id  flow_diagrams.dgrm_id%type;
   begin
 
     l_dgrm_id := upload_diagram ( pi_dgrm_name => pi_dgrm_name, pi_dgrm_version => pi_dgrm_version,
+                                  pi_dgrm_short_description => pi_dgrm_short_description, pi_dgrm_description => pi_dgrm_description, pi_dgrm_icon => pi_dgrm_icon,
                                   pi_dgrm_category => pi_dgrm_category, pi_dgrm_content => pi_dgrm_content,
                                   pi_dgrm_status => pi_dgrm_status, pi_force_overwrite => pi_force_overwrite,
                                   pi_log_comment => pi_log_comment
@@ -137,9 +153,12 @@ as
   end update_diagram;
 
   function create_diagram(
-    pi_dgrm_name in flow_diagrams.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type)
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type)
   return flow_diagrams.dgrm_id%type
   as
     l_diagram_exists binary_integer;
@@ -156,13 +175,16 @@ as
 
     if l_diagram_exists = 0 then
       l_dgrm_id := upload_diagram
-            ( pi_dgrm_name     => pi_dgrm_name
-            , pi_dgrm_version  => pi_dgrm_version
-            , pi_dgrm_category => pi_dgrm_category
-            , pi_dgrm_content  => replace ( flow_constants_pkg.gc_default_xml, '#RANDOM_PRCS_ID#',
-                                            lower(sys.dbms_random.string('X',8))
-                                          )
-            , pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft
+            ( pi_dgrm_name              => pi_dgrm_name
+            , pi_dgrm_short_description => pi_dgrm_short_description
+            , pi_dgrm_description       => pi_dgrm_description
+            , pi_dgrm_icon              => pi_dgrm_icon
+            , pi_dgrm_version           => pi_dgrm_version
+            , pi_dgrm_category          => pi_dgrm_category
+            , pi_dgrm_content           => replace ( flow_constants_pkg.gc_default_xml, '#RANDOM_PRCS_ID#',
+                                                     lower(sys.dbms_random.string('X',8))
+                                                   )
+            , pi_dgrm_status            => flow_constants_pkg.gc_dgrm_status_draft
             );
 
             flow_logging.log_diagram_event 
@@ -196,12 +218,15 @@ as
      where dgrm_id = pi_dgrm_id;
 
     l_dgrm_id := upload_diagram 
-                 ( pi_dgrm_name     => r_diagrams.dgrm_name
-                 , pi_dgrm_version  => pi_dgrm_version
-                 , pi_dgrm_category => r_diagrams.dgrm_category
-                 , pi_dgrm_content  => r_diagrams.dgrm_content
-                 , pi_dgrm_status   => flow_constants_pkg.gc_dgrm_status_draft
-                 , pi_log_comment   => 'Add new version'
+                 ( pi_dgrm_name              => r_diagrams.dgrm_name
+                 , pi_dgrm_short_description => r_diagrams.dgrm_short_description
+                 , pi_dgrm_description       => r_diagrams.dgrm_description
+                 , pi_dgrm_icon              => r_diagrams.dgrm_icon
+                 , pi_dgrm_version           => pi_dgrm_version
+                 , pi_dgrm_category          => r_diagrams.dgrm_category
+                 , pi_dgrm_content           => r_diagrams.dgrm_content
+                 , pi_dgrm_status            => flow_constants_pkg.gc_dgrm_status_draft
+                 , pi_log_comment            => 'Add new version'
                  );
 
     --no need to log here - upload_diagram will log
@@ -212,11 +237,14 @@ as
 
 
   function import_diagram(
-    pi_dgrm_name in flow_diagrams.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type,
-    pi_dgrm_content in flow_diagrams.dgrm_content%type,
-    pi_force_overwrite in varchar2 default flow_constants_pkg.gc_false) 
+    pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_content           in flow_diagrams.dgrm_content%type
+  , pi_force_overwrite        in varchar2 default flow_constants_pkg.gc_false) 
   return flow_diagrams.dgrm_id%type
   as
     l_dgrm_id flow_diagrams.dgrm_id%type;
@@ -246,12 +274,15 @@ as
 
     if l_diagram_unknown or l_diagram_is_draft then
       l_dgrm_id := upload_diagram
-                   ( pi_dgrm_name       => pi_dgrm_name
-                   , pi_dgrm_version    => pi_dgrm_version
-                   , pi_dgrm_category   => pi_dgrm_category
-                   , pi_dgrm_content    => pi_dgrm_content
-                   , pi_force_overwrite => pi_force_overwrite = flow_constants_pkg.gc_true
-                   , pi_log_comment     => 'import diagram'
+                   ( pi_dgrm_name              => pi_dgrm_name
+                   , pi_dgrm_short_description => pi_dgrm_short_description
+                   , pi_dgrm_description       => pi_dgrm_description
+                   , pi_dgrm_icon              => pi_dgrm_icon
+                   , pi_dgrm_version           => pi_dgrm_version
+                   , pi_dgrm_category          => pi_dgrm_category
+                   , pi_dgrm_content           => pi_dgrm_content
+                   , pi_force_overwrite        => pi_force_overwrite = flow_constants_pkg.gc_true
+                   , pi_log_comment            => 'import diagram'
                    );
       flow_bpmn_parser_pkg.parse ( pi_dgrm_id => l_dgrm_id );
     else
@@ -346,6 +377,68 @@ as
     end;
     return l_starting_object;
   end get_start_event;
+
+  function get_bpmn_process_object
+  ( p_dgrm_id                 in flow_diagrams.dgrm_id%type
+  , p_process_id              in flow_processes.prcs_id%type
+  , p_event_starting_object   in flow_objects.objt_bpmn_id%type default null
+  ) return flow_objects%rowtype
+  is 
+    l_bpmn_process     flow_objects%rowtype;
+  begin
+    -- note: this function gets the bpmn:process object for the diagram.  
+    -- To avoid confusion with the process object in the flow_processes table,
+    -- we refer to this as the 'bpmn_process' and 'bpmn:process' in this routine
+    begin
+      if p_event_starting_object is null then 
+        -- get the diagram starting bpmn:process object 
+        select parent.*
+          into l_bpmn_process
+          from flow_objects objt
+          join flow_objects parent
+            on parent.objt_id       = objt.objt_objt_id
+           and parent.objt_dgrm_id  = objt.objt_dgrm_id
+           and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         where objt.objt_dgrm_id    = p_dgrm_id
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event  
+           and (    objt.objt_sub_tag_name is null 
+               or   objt.objt_sub_tag_name = flow_constants_pkg.gc_bpmn_timer_event_definition )
+        ;
+      else 
+        -- get the specified starting object
+        select parent.*
+          into l_bpmn_process
+          from flow_objects objt
+          join flow_objects parent
+            on parent.objt_id       = objt.objt_objt_id
+           and parent.objt_dgrm_id  = objt.objt_dgrm_id
+           and parent.objt_tag_name = flow_constants_pkg.gc_bpmn_process
+         where objt.objt_dgrm_id = p_dgrm_id
+           and objt.objt_bpmn_id = p_event_starting_object
+           and objt.objt_tag_name   = flow_constants_pkg.gc_bpmn_start_event 
+        ;
+      end if;
+
+      apex_debug.info
+      ( p_message => 'Found bpmn:process object %0'
+      , p0 => l_bpmn_process.objt_bpmn_id
+      );
+    exception
+      when too_many_rows then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-multiple-start-events'
+        );
+        -- $F4AMESSAGE 'start-multiple-start-events' || 'You have multiple starting events defined. Make sure your diagram has only one start event.'
+      when no_data_found then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'start-no-start-event'
+        );
+        -- $F4AMESSAGE 'start-no-start-event' || 'No starting event is defined in the Flow diagram.'
+    end;
+    return l_bpmn_process;
+  end get_bpmn_process_object;
 
   function get_current_diagram
     ( pi_dgrm_name              in flow_diagrams.dgrm_name%type
@@ -455,10 +548,13 @@ as
 
 
   procedure edit_diagram(
-    pi_dgrm_id in flow_diagrams.dgrm_id%type,
-    pi_dgrm_name in flow_diagrams.dgrm_name%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_dgrm_version in flow_diagrams.dgrm_version%type)
+    pi_dgrm_id                in flow_diagrams.dgrm_id%type
+  , pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type default null
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type default null
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type)
   as
     l_dgrm_category flow_diagrams.dgrm_category%type;
   begin
@@ -468,6 +564,7 @@ as
       from flow_diagrams
      where dgrm_id = pi_dgrm_id;
 
+    -- update category of all diagrams with the same name (=all versions of this diagram)
     if coalesce(l_dgrm_category, chr(10)) != coalesce(pi_dgrm_category, chr(10) ) then
       -- category has changed
       update flow_diagrams
@@ -481,6 +578,9 @@ as
 
     update flow_diagrams
        set dgrm_name = pi_dgrm_name,
+           dgrm_short_description = pi_dgrm_short_description,
+           dgrm_description =  pi_dgrm_description,
+           dgrm_icon =  pi_dgrm_icon,
            dgrm_version = pi_dgrm_version,
            dgrm_category = pi_dgrm_category
      where dgrm_id = pi_dgrm_id;
@@ -540,28 +640,6 @@ as
     l_dgrm_id_deprecated  flow_diagrams.dgrm_id%type;
     l_dgrm_content        clob;
   begin
-/*    update flow_diagrams
-       set dgrm_status = flow_constants_pkg.gc_dgrm_status_deprecated
-     where dgrm_name = (
-           select dgrm_name 
-             from flow_diagrams
-            where dgrm_id = pi_dgrm_id)
-       and dgrm_status = flow_constants_pkg.gc_dgrm_status_released
-    returning dgrm_id into l_dgrm_id_deprecated;
-
-    if l_dgrm_id_deprecated is not null then 
-      -- log deprecation of old diagram
-      apex_debug.message ( p_message => 'Release Diagram - Diagram %0 being deprecated in favor of new diagram %1.)'
-      , p0 => l_dgrm_id_deprecated
-      , p1 => pi_dgrm_id
-      );
-      flow_logging.log_diagram_event 
-      ( p_dgrm_id         => l_dgrm_id_deprecated
-      , p_dgrm_status     => flow_constants_pkg.gc_dgrm_status_deprecated
-      , p_comment         => 'Diagram deprecated when dgrm_id '||pi_dgrm_id||' released.'
-      );
-    end if; */
-
     -- deprecate existing released version of model if one exists
     begin
       select dgrm_id
@@ -684,7 +762,7 @@ as
     when e_has_running_instances then
           -- initial process start so call general error (instance not yet running)
           flow_errors.handle_general_error ( pi_message_key => 'diagram-archive-has-instances');
-          -- $F4AMESSAGE 'version-not-found' || 'Cannot find specified diagram version.  Please check version specification.'
+          -- $F4AMESSAGE 'diagram-archive-has-instances' || 'Cannot find specified diagram version.  Please check version specification.'
   end archive_diagram;   
 
   function get_diagram_name

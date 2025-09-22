@@ -4,8 +4,8 @@ begin
 --     APPLICATION COMPUTATION: APP_NAME_TITLE
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -19,6 +19,7 @@ wwv_flow_imp_shared.create_flow_computation(
 ,p_computation_type=>'STATIC_ASSIGNMENT'
 ,p_computation_processed=>'REPLACE_EXISTING'
 ,p_computation=>'Flows for APEX'
+,p_version_scn=>1760504921
 );
 wwv_flow_imp.component_end;
 end;

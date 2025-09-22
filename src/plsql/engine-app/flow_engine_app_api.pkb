@@ -170,7 +170,7 @@ as
       apex_debug.message( p_message => 'Action: %0, PRCS: %1, SBFL: %2, STEP KEY: %3', p0 => apex_application.g_x01, 
       p1 => apex_application.g_x02, p2 => apex_application.g_x03 , p3 => apex_application.g_x04);
 
-      if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
+      if upper( apex_application.g_x01 )in ('COMPLETE-STEP', 'RESTART-STEP' ,'FORCE-NEXT-STEP') then
         select prcs_status
         into l_before_prcs_status
         from flow_instances_vw
@@ -191,6 +191,10 @@ as
                 p_page => 10
               , p_clear_cache => 10
           );
+        when 'SUSPEND-FLOW-INSTANCE' then 
+          flow_admin_api.suspend_process( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
+        when 'RESUME-FLOW-INSTANCE' then 
+          flow_admin_api.resume_process( p_process_id => apex_application.g_x02, p_comment => apex_application.g_x03 );
         when 'RESERVE-STEP' then
           flow_api_pkg.flow_reserve_step
           (
@@ -208,6 +212,50 @@ as
           , p_subflow_id => apex_application.g_x03
           , p_step_key   => apex_application.g_x04
           );    
+        when 'DELETE-ON-RESUME' then
+          flow_admin_api.mark_subflow_for_deletion
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'RETURN-PREV-GW-RESUME' then
+          flow_admin_api.return_to_prior_gateway
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REPOSITION-SUBFLOW' then
+          flow_admin_api.return_to_prior_step
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_new_step   => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REWIND-LAST-STEP' then
+          flow_admin_api.return_to_last_step
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+--          , p_step_key   => apex_application.g_x04
+          , p_comment    => apex_application.g_x05
+          );
+        when 'REWIND-SUBPROCESS-ON-RESUME' then
+          flow_admin_api.rewind_from_subprocess
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'REWIND-CALL-ACTIVITY-ON-RESUME' then
+          flow_admin_api.rewind_from_call_activity
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
+        when 'REWIND-LINK-EVENT-ON-RESUME' then
+          flow_admin_api.rewind_to_matched_throwing_link_event
+          ( p_process_id => apex_application.g_x02 
+          , p_subflow_id => apex_application.g_x03
+          , p_comment    => apex_application.g_x04
+          );
         when 'COMPLETE-STEP' then
           flow_api_pkg.flow_complete_step
           (
@@ -218,6 +266,14 @@ as
                   apex_debug.message (p_message => 'ajax handler happy');
         when 'RESTART-STEP' then 
           flow_api_pkg.flow_restart_step 
+          (
+            p_process_id    => apex_application.g_x02
+          , p_subflow_id    => apex_application.g_x03
+          , p_step_key      => apex_application.g_x04
+          , p_comment       => apex_application.g_x05       
+          );
+        when 'FORCE-NEXT-STEP' then 
+          flow_admin_api.flow_force_next_step 
           (
             p_process_id    => apex_application.g_x02
           , p_subflow_id    => apex_application.g_x03
@@ -235,6 +291,19 @@ as
           l_url := apex_page.get_url(
               p_page => 7
             , p_items => 'P7_DGRM_ID'
+            , p_values => apex_application.g_x02
+          );
+
+        when 'PROCESS-VARIABLE-HISTORY' then
+          l_url := apex_page.get_url(
+              p_page => 21
+            , p_items => 'P21_PRCS_ID,P21_VAR_NAME,P21_VAR_NAME_UC,P21_SCOPE'
+            , p_values => apex_application.g_x02||','||apex_application.g_x03||','||apex_application.g_x04||','||apex_application.g_x05
+          );  
+        when 'INSTANCES-PER-STEP' then
+          l_url := apex_page.get_url(
+              p_page => 19
+            , p_items => 'P19_DGRM_ID'
             , p_values => apex_application.g_x02
           );
         when 'OPEN-FLOW-INSTANCE-DETAILS' then
@@ -349,7 +418,7 @@ as
       end case;
 
         apex_debug.message (p_message => 'after ajax handler case end');
-      if ( upper( apex_application.g_x01 ) = 'COMPLETE-STEP' or upper( apex_application.g_x01 ) = 'RESTART-STEP' ) then
+      if upper( apex_application.g_x01 ) in ('COMPLETE-STEP', 'RESTART-STEP', 'FORCE-NEXT-STEP' )  then
         select prcs_status
         into l_after_prcs_status
         from flow_instances_vw
@@ -892,6 +961,54 @@ as
 
   end check_apex_upgrade;
 
+  function flow_apex_automation_disabled(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean
+  is
+    l_cnt number;
+  begin
+    select count(*)
+      into l_cnt
+      from apex_appl_automations  
+     where application_id = p_app_id
+       and static_id like 'flows-for-apex-%'
+       and trigger_type_code = 'POLLING'
+       and polling_status_code = 'DISABLED';
+
+    return (l_cnt > 0);
+  end flow_apex_automation_disabled;
+
+
+  function flow_apex_automation_failure(
+    p_app_id number default apex_application.g_flow_id
+  ) return boolean
+  is
+    l_cnt number;
+  begin
+    with automation_log as (
+      select a.static_id
+           , l.status_code
+           , start_timestamp
+           , row_number() over(partition by a.static_id order by start_timestamp desc) as rn
+        from apex_appl_automations	a
+        join apex_automation_log l  
+          on l.automation_id  = a.automation_id 
+         and l.application_id = a.application_id
+       where a.application_id = p_app_id
+         and a.static_id like 'flows-for-apex-%'
+         and a.trigger_type_code = 'POLLING'
+    )
+    select count(*)
+      into l_cnt
+      from automation_log
+      where rn = 1
+        and status_code = 'FAILURE'
+    ;
+
+    return (l_cnt > 0);
+  
+  end flow_apex_automation_failure;
+
 
   /* page 4 */
 
@@ -971,6 +1088,37 @@ as
     return l_file_name;
   end get_file_name;
 
+  function safe_enquote_literal(
+    p_value in varchar2
+  ) 
+  return varchar2
+  is
+  begin
+    if p_value is null then
+      return 'null';
+    else
+      begin
+        -- First try the standard approach
+        return dbms_assert.enquote_literal(p_value);
+      exception
+        when others then
+          -- If dbms_assert.enquote_literal fails, use alternative quoting
+          -- Replace single quotes with two single quotes and wrap in quotes
+          -- Also handle any potential length issues by truncating if necessary
+          declare
+            l_safe_value varchar2(4000);
+          begin
+            -- Limit to 4000 characters if longer to avoid issues
+            l_safe_value := case when length(p_value) > 4000 
+                              then substr(p_value, 1, 4000) 
+                              else p_value 
+                            end;
+            return '''' || replace(l_safe_value, '''', '''''') || '''';
+          end;
+      end;
+    end if;
+  end safe_enquote_literal;
+
 
   function get_sql_script(
       p_dgrm_id in number
@@ -979,7 +1127,7 @@ as
   is
     l_split_content apex_t_varchar2;
     l_sql clob;
-    l_buffer varchar2(32767);  
+    l_buffer clob;
     r_diagrams flow_diagrams%rowtype;
   begin 
     dbms_lob.createtemporary(l_sql,true, DBMS_LOB.CALL);
@@ -1008,6 +1156,9 @@ as
     l_buffer := l_buffer||utl_tcp.crlf;
     l_buffer := l_buffer||'  flow_diagram.upload_and_parse('||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_name => '||dbms_assert.enquote_literal(r_diagrams.dgrm_name)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_short_description => '||dbms_assert.enquote_literal(r_diagrams.dgrm_short_description)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_description => '||safe_enquote_literal(r_diagrams.dgrm_description)||','||utl_tcp.crlf;
+    l_buffer := l_buffer||'    pi_dgrm_icon => '||dbms_assert.enquote_literal(r_diagrams.dgrm_icon)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_version => '||dbms_assert.enquote_literal(r_diagrams.dgrm_version)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_category => '||dbms_assert.enquote_literal(r_diagrams.dgrm_category)||','||utl_tcp.crlf;
     l_buffer := l_buffer||'    pi_dgrm_content => l_dgrm_content'||utl_tcp.crlf||');'||utl_tcp.crlf;
@@ -1116,12 +1267,15 @@ as
     l_warning     pls_integer := 0;
     l_mime_type   varchar2(100) := 'application/octet';
     type r_flow   is record (
-      dgrm_id       flow_diagrams.dgrm_id%type, 
-      dgrm_name     flow_diagrams.dgrm_name%type,
-      dgrm_version  flow_diagrams.dgrm_version%type,
-      dgrm_status   flow_diagrams.dgrm_status%type,
-      dgrm_category flow_diagrams.dgrm_category%type,
-      filename      varchar2(300)
+      dgrm_id                flow_diagrams.dgrm_id%type, 
+      dgrm_name              flow_diagrams.dgrm_name%type,
+      dgrm_short_description flow_diagrams.dgrm_short_description%type,
+      dgrm_description       flow_diagrams.dgrm_description%type,
+      dgrm_icon              flow_diagrams.dgrm_icon%type,
+      dgrm_version           flow_diagrams.dgrm_version%type,
+      dgrm_status            flow_diagrams.dgrm_status%type,
+      dgrm_category          flow_diagrams.dgrm_category%type,
+      filename               varchar2(300)
     );
     type t_flows  is table of r_flow index by binary_integer;
     l_flows       t_flows;
@@ -1140,6 +1294,9 @@ as
       select 
         dgrm_id, 
         dgrm_name,
+        dgrm_short_description,
+        dgrm_description,
+        dgrm_icon,
         dgrm_version,
         dgrm_status,
         dgrm_category,
@@ -1175,6 +1332,9 @@ as
         if ( p_download_as = 'BPMN' ) then
           l_json_object := json_object_t('{}');
           l_json_object.put('dgrm_name' ,  l_flows(i).dgrm_name);
+          l_json_object.put('dgrm_short_description' ,  l_flows(i).dgrm_short_description);
+          l_json_object.put('dgrm_description' ,  l_flows(i).dgrm_description);
+          l_json_object.put('dgrm_icon' ,  l_flows(i).dgrm_icon);
           l_json_object.put('dgrm_version' ,  l_flows(i).dgrm_version);
           l_json_object.put('dgrm_status' ,  l_flows(i).dgrm_status);
           l_json_object.put('dgrm_category' ,  l_flows(i).dgrm_category);
@@ -1308,13 +1468,16 @@ as
     
     
     function upload_and_parse(
-        pi_import_from     in varchar2,
-        pi_dgrm_name       in flow_diagrams.dgrm_name%type,
-        pi_dgrm_category   in flow_diagrams.dgrm_category%type,
-        pi_dgrm_version    in flow_diagrams.dgrm_version%type,
-        pi_dgrm_content    in flow_diagrams.dgrm_content%type,
-        pi_file_name       in varchar2,
-        pi_force_overwrite in varchar2
+        pi_import_from            in varchar2,
+        pi_dgrm_name              in flow_diagrams.dgrm_name%type,
+        pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type,
+        pi_dgrm_description       in flow_diagrams.dgrm_description%type default null,
+        pi_dgrm_icon              in flow_diagrams.dgrm_icon%type default null,
+        pi_dgrm_category          in flow_diagrams.dgrm_category%type,
+        pi_dgrm_version           in flow_diagrams.dgrm_version%type,
+        pi_dgrm_content           in flow_diagrams.dgrm_content%type,
+        pi_file_name              in varchar2,
+        pi_force_overwrite        in varchar2
     ) return flow_diagrams.dgrm_id%type
     is
         l_dgrm_id flow_diagrams.dgrm_id%type;
@@ -1332,6 +1495,9 @@ as
             
         l_dgrm_id := flow_diagram.import_diagram(
             pi_dgrm_name => pi_dgrm_name,
+            pi_dgrm_short_description => pi_dgrm_short_description,
+            pi_dgrm_description => pi_dgrm_description,
+            pi_dgrm_icon => pi_dgrm_icon,
             pi_dgrm_version => pi_dgrm_version,
             pi_dgrm_category => pi_dgrm_category,
             pi_dgrm_content => l_dgrm_content,
@@ -1354,18 +1520,21 @@ as
         pi_force_overwrite in varchar2
     )
     as
-        l_dgrm_id       flow_diagrams.dgrm_id%type;
-        l_dgrm_name     flow_diagrams.dgrm_name%type;
-        l_dgrm_category flow_diagrams.dgrm_category%type;
-        l_dgrm_version  flow_diagrams.dgrm_version%type;
-        l_dgrm_content  flow_diagrams.dgrm_content%type;
-        l_file          varchar2(300);
-        l_json_array    json_array_t;
-        l_json_object   json_object_t;
-        l_blob_content  blob;
-        l_json_file     blob;
-        l_bpmn_file     blob;
-        l_clob          clob;
+        l_dgrm_id                flow_diagrams.dgrm_id%type;
+        l_dgrm_name              flow_diagrams.dgrm_name%type;
+        l_dgrm_short_description flow_diagrams.dgrm_short_description%type;
+        l_dgrm_description       flow_diagrams.dgrm_description%type;
+        l_dgrm_icon              flow_diagrams.dgrm_icon%type;
+        l_dgrm_category          flow_diagrams.dgrm_category%type;
+        l_dgrm_version           flow_diagrams.dgrm_version%type;
+        l_dgrm_content           flow_diagrams.dgrm_content%type;
+        l_file                   varchar2(300);
+        l_json_array             json_array_t;
+        l_json_object            json_object_t;
+        l_blob_content           blob;
+        l_json_file              blob;
+        l_bpmn_file              blob;
+        l_clob                   clob;
     begin
         select blob_content
         into l_blob_content
@@ -1377,12 +1546,15 @@ as
         );
         l_json_array := json_array_t.parse(l_json_file);
         for i in 0..l_json_array.get_size() - 1 loop
-            l_json_object := treat(l_json_array.get(i) as json_object_t);
-            l_dgrm_name     := l_json_object.get_String('dgrm_name');
-            l_dgrm_version  := l_json_object.get_String('dgrm_version');
-            l_dgrm_category := l_json_object.get_String('dgrm_category');
-            l_dgrm_name     := l_json_object.get_String('dgrm_name');
-            l_file          := l_json_object.get_String('file');   
+            l_json_object            := treat(l_json_array.get(i) as json_object_t);
+            l_dgrm_name              := l_json_object.get_String('dgrm_name');
+            l_dgrm_short_description := l_json_object.get_String('dgrm_short_description');
+            l_dgrm_description       := l_json_object.get_String('dgrm_description');
+            l_dgrm_icon              := l_json_object.get_String('dgrm_icon');
+            l_dgrm_version           := l_json_object.get_String('dgrm_version');
+            l_dgrm_category          := l_json_object.get_String('dgrm_category');
+            l_dgrm_name              := l_json_object.get_String('dgrm_name');
+            l_file                   := l_json_object.get_String('file');   
             l_bpmn_file := apex_zip.get_file_content(
                 p_zipped_blob => l_blob_content,
                 p_file_name   => l_file
@@ -1394,6 +1566,9 @@ as
             l_dgrm_id := upload_and_parse(
                   pi_import_from => 'text'
                 , pi_dgrm_name => l_dgrm_name
+                , pi_dgrm_short_description => l_dgrm_short_description
+                , pi_dgrm_description => l_dgrm_description
+                , pi_dgrm_icon => l_dgrm_icon
                 , pi_dgrm_category => l_dgrm_category
                 , pi_dgrm_version => l_dgrm_version
                 , pi_dgrm_content => l_clob
@@ -1425,25 +1600,34 @@ as
   
 
   procedure process_page_p7(
-    pio_dgrm_id      in out nocopy flow_diagrams.dgrm_id%type,
-    pi_dgrm_name     in flow_diagrams.dgrm_name%type,
-    pi_dgrm_version  in flow_diagrams.dgrm_version%type,
-    pi_dgrm_category in flow_diagrams.dgrm_category%type,
-    pi_new_version   in flow_diagrams.dgrm_version%type,
-    pi_cascade       in varchar2,
-    pi_request       in varchar2)
+    pio_dgrm_id               in out nocopy flow_diagrams.dgrm_id%type
+  , pi_dgrm_name              in flow_diagrams.dgrm_name%type
+  , pi_dgrm_short_description in flow_diagrams.dgrm_short_description%type
+  , pi_dgrm_description       in flow_diagrams.dgrm_description%type
+  , pi_dgrm_icon              in flow_diagrams.dgrm_icon%type
+  , pi_dgrm_version           in flow_diagrams.dgrm_version%type
+  , pi_dgrm_category          in flow_diagrams.dgrm_category%type
+  , pi_new_version            in flow_diagrams.dgrm_version%type
+  , pi_cascade                in varchar2
+  , pi_request                in varchar2)
   as
   begin
     case pi_request
       when 'CREATE' then
         pio_dgrm_id := flow_diagram.create_diagram(
                          pi_dgrm_name => pi_dgrm_name,
+                         pi_dgrm_short_description => pi_dgrm_short_description,
+                         pi_dgrm_description => pi_dgrm_description,
+                         pi_dgrm_icon => pi_dgrm_icon,
                          pi_dgrm_category => pi_dgrm_category,
                          pi_dgrm_version => pi_dgrm_version);
       when 'SAVE' then
         flow_diagram.edit_diagram(
           pi_dgrm_id => pio_dgrm_id,
           pi_dgrm_name => pi_dgrm_name,
+          pi_dgrm_short_description => pi_dgrm_short_description,
+          pi_dgrm_description => pi_dgrm_description,
+          pi_dgrm_icon => pi_dgrm_icon,
           pi_dgrm_category => pi_dgrm_category,
           pi_dgrm_version => pi_dgrm_version);
       when 'DELETE' then
@@ -1724,16 +1908,18 @@ as
 
 
   function create_instance(
-    pi_dgrm_id      in flow_diagrams.dgrm_id%type
-  , pi_prcs_name    in flow_processes.prcs_name%type
-  , pi_business_ref in flow_process_variables.prov_var_vc2%type
+    pi_dgrm_id        in flow_diagrams.dgrm_id%type
+  , pi_prcs_name      in flow_processes.prcs_name%type default null
+  , pi_business_ref   in flow_process_variables.prov_var_vc2%type 
+  , pi_logging_level  in flow_processes.prcs_logging_level%type
   ) return flow_processes.prcs_id%type
   as
     l_prcs_id flow_processes.prcs_id%type;
   begin
     l_prcs_id := flow_api_pkg.flow_create( 
                    pi_dgrm_id   => pi_dgrm_id,
-                   pi_prcs_name => pi_prcs_name);
+                   pi_prcs_name => pi_prcs_name,
+                   pi_logging_level => pi_logging_level);
     
     if pi_business_ref is not null then
       flow_process_vars.set_var( 
@@ -1832,35 +2018,41 @@ as
 
   procedure set_logging_settings(
     pi_logging_language          in flow_configuration.cfig_value%type
-  , pi_logging_level             in flow_configuration.cfig_value%type
+  , pi_logging_default_level     in flow_configuration.cfig_value%type
   , pi_logging_hide_userid       in flow_configuration.cfig_value%type
   , pi_logging_retain_logs       in flow_configuration.cfig_value%type
   , pi_logging_message_flow_recd in flow_configuration.cfig_value%type
   , pi_logging_retain_msg_flow   in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_enabled      in flow_configuration.cfig_value%type
+  , pi_logging_bpmn_retain_days  in flow_configuration.cfig_value%type
   )
   as
   begin
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_language          , p_value => pi_logging_language);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_level             , p_value => pi_logging_level);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_default_level     , p_value => pi_logging_default_level);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_hide_userid       , p_value => pi_logging_hide_userid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_logs       , p_value => pi_logging_retain_logs);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_message_flow_recd , p_value => pi_logging_message_flow_recd);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_retain_msg_flow   , p_value => pi_logging_retain_msg_flow);
-
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_enabled      , p_value => pi_logging_bpmn_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_bpmn_retain_days  , p_value => pi_logging_bpmn_retain_days);
   end set_logging_settings;
 
 
   procedure set_archiving_settings(
-    pi_archiving_enabled  in flow_configuration.cfig_value%type
+    pi_archiving_enabled             in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purging        in flow_configuration.cfig_value%type
+  , pi_completed_prcs_purge_days     in flow_configuration.cfig_value%type
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled  , p_value => pi_archiving_enabled);
-
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled     , p_value => pi_archiving_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purging     , p_value => pi_completed_prcs_purging);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purge_days  , p_value => pi_completed_prcs_purge_days);
   end set_archiving_settings;
 
 
-  procedure set_statictis_settings(
+  procedure set_statistics_settings(
     pi_stats_retain_daily in flow_configuration.cfig_value%type
   , pi_stats_retain_month in flow_configuration.cfig_value%type
   , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
@@ -1870,7 +2062,22 @@ as
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month , p_value => pi_stats_retain_month);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr , p_value => pi_stats_retain_qtr);
+  end set_statistics_settings;
 
+-- The typo set_statictis_settings was included in 23.1 and 24.1 releases and is retained here for upwards
+-- compatibility (but just calls set_statistics_settings)    
+  procedure set_statictis_settings(
+    pi_stats_retain_daily in flow_configuration.cfig_value%type
+  , pi_stats_retain_month in flow_configuration.cfig_value%type
+  , pi_stats_retain_qtr   in flow_configuration.cfig_value%type
+  )
+  as
+  begin
+      set_statistics_settings 
+      ( pi_stats_retain_daily => pi_stats_retain_daily
+      , pi_stats_retain_month => pi_stats_retain_month
+      , pi_stats_retain_qtr   => pi_stats_retain_qtr
+      );
   end set_statictis_settings;
 
 
@@ -1891,6 +2098,7 @@ as
   , pi_default_application       in flow_configuration.cfig_value%type
   , pi_default_pageid            in flow_configuration.cfig_value%type
   , pi_default_username          in flow_configuration.cfig_value%type
+  , pi_default_business_admin    in flow_configuration.cfig_value%type
   )
   as
   begin
@@ -1900,6 +2108,8 @@ as
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_application  , p_value => pi_default_application);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_pageid       , p_value => pi_default_pageid);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_username     , p_value => pi_default_username);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_default_apex_business_admin 
+                                                                                                           , p_value => pi_default_business_admin);
 
   end set_engine_settings;
 

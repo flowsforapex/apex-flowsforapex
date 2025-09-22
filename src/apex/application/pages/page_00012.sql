@@ -4,8 +4,8 @@ begin
 --     PAGE: 00012
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>12
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Viewer'
 ,p_alias=>'VIEWER'
 ,p_page_mode=>'NON_MODAL'
@@ -21,8 +20,6 @@ wwv_flow_imp_page.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch:t-Dialog--noPadding'
 ,p_page_component_map=>'17'
-,p_last_updated_by=>'DENNIS.AMTHOR@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240930064036'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(6161598858353963900)
@@ -34,27 +31,23 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_query_type=>'TABLE'
-,p_query_table=>'FLOW_INSTANCE_DETAILS_VW'
+,p_query_table=>'FLOW_VIEWER_VW'
 ,p_query_where=>'prcs_id = :P12_PRCS_ID'
 ,p_include_rowid_column=>false
-,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION'
+,p_plug_source_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION.251'
 ,p_ajax_items_to_submit=>'P12_PRCS_ID'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'DGRM_CONTENT'
-,p_attribute_02=>'ALL_CURRENT'
-,p_attribute_03=>'PRDG_ID'
-,p_attribute_04=>'ALL_COMPLETED'
-,p_attribute_05=>'PRDG_PRDG_ID'
-,p_attribute_06=>'ALL_ERRORS'
-,p_attribute_07=>'CALLING_OBJT'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'Y'
-,p_attribute_11=>'Y'
-,p_attribute_12=>'BREADCRUMB'
-,p_attribute_13=>'DRILLDOWN_ALLOWED'
-,p_attribute_14=>'Y'
-,p_attribute_15=>'N'
-,p_attribute_16=>'Y'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'badges_data', 'BADGES_DATA',
+  'call_activity_data', 'CALL_ACTIVITY_DATA',
+  'diagram_identifier', 'PRDG_ID',
+  'diagram_xml', 'DGRM_CONTENT',
+  'enable_mousewheel_zoom', 'N',
+  'highlighting_data', 'HIGHLIGHTING_DATA',
+  'iteration_data', 'ITERATION_DATA',
+  'refresh_on_load', 'Y',
+  'show_toolbar', 'Y',
+  'use_bpmn_colors', 'Y',
+  'user_task_data', 'USER_TASK_DATA')).to_clob
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(7334819132307030)
@@ -138,6 +131,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_condition_element=>'P12_PRCS_NAME'
 ,p_triggering_condition_type=>'NOT_NULL'
 ,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded'
 );
 wwv_flow_imp_page.create_page_da_action(
@@ -191,6 +185,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
 ,p_triggering_expression=>'clickCondition($v(''P12_OBJT_LIST''), this.data);'
 ,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
 );
 wwv_flow_imp_page.create_page_da_action(
@@ -253,6 +248,7 @@ wwv_flow_imp_page.create_page_process(
 ');'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_internal_uid=>7335772142307039
 );
 wwv_flow_imp.component_end;
 end;

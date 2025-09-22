@@ -101,7 +101,7 @@ create or replace package body flow_plugin_manage_instance_step as
       l_attribute2      p_process.attribute_02%type := p_process.attribute_02; -- Process ID (APEX item)
       l_attribute3      p_process.attribute_03%type := p_process.attribute_03; -- Subflow ID (APEX item)
       l_attribute4      p_process.attribute_04%type := p_process.attribute_04; -- SQL query (2 columns process id and subflow id)
-      l_attribute5      p_process.attribute_05%type := p_process.attribute_05; -- Action (complete/reserve/release)
+      l_attribute5      p_process.attribute_05%type := p_process.attribute_05; -- Action (complete/reserve/release/start/pause)
       l_attribute6      p_process.attribute_06%type := p_process.attribute_06; -- Set Gateway route? (Y/N)
       l_attribute7      p_process.attribute_07%type := p_process.attribute_07; -- Gateway ID
       l_attribute8      p_process.attribute_08%type := p_process.attribute_08; -- Route ID
@@ -322,6 +322,19 @@ create or replace package body flow_plugin_manage_instance_step as
          );
 
          flow_api_pkg.flow_start_step(
+              p_process_id => l_process_id
+            , p_subflow_id => l_subflow_id
+            , p_step_key   => l_step_key
+         );
+      elsif ( l_attribute5 = 'pause' ) then
+         apex_debug.info(
+              p_message => '...Pause Step - Flow Instance Id %s - Subflow Id %s - Step Key %s'
+            , p0        => l_process_id
+            , p1        => l_subflow_id
+            , p2        => l_step_key
+         );
+
+         flow_api_pkg.flow_pause_step(
               p_process_id => l_process_id
             , p_subflow_id => l_subflow_id
             , p_step_key   => l_step_key

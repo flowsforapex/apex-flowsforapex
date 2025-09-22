@@ -1,0 +1,14 @@
+---
+- # ====== Build Option: Exclude ===============================
+  id: 88199069651756122
+  identification: 
+    name: Exclude
+
+  status: 
+    status: Exclude
+    default-on-export: Same as Current Status
+    on-upgrade-keep-status: false
+
+  subscription: 
+    version-number: 1760506490
+

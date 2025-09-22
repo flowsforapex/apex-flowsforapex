@@ -1,0 +1,220 @@
+---
+- # ====== Automation: Flows for APEX - Daily Instance Archive =
+  id: 2130974654065929
+  identification: 
+    name: Flows for APEX - Daily Instance Archive
+    static-id: flows-for-apex-daily-instance-archive
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=0
+    schedule-status: Active
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  comments: 
+    comments: |
+      Flows for APEX Daily Instance Archive.
+      For each process instance that has reached 'completed' or 'terminated' status, this daily job creates a JSON summary of the instance execution, diagrams used, sub flows run, variables set, process events.
+      Archives are stored based on the F4A Configuration Parameter  'logging_archive_location', and can be set to a database table or to OCI Object Storage.
+
+  actions: 
+  - # ====== Action: Run Daily Instance Archive ==================
+    id: 2131266656065931
+    identification: 
+      name: Run Daily Instance Archive
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.archive_completed_instances;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Daily Instance Summary Archive process error
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Purge Statistics =======
+  id: 2132078093091545
+  identification: 
+    name: Flows for APEX - Purge Statistics
+    static-id: flows-for-apex-purge-statistics
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=0
+    schedule-status: Active
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  actions: 
+  - # ====== Action: Purge Old Statistics ========================
+    id: 2132703073101244
+    identification: 
+      name: Purge Old Statistics
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.purge_statistics;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Error purging Flows for APEX Statistics summaries
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Gather Daily Statistics 
+  id: 2133342671110884
+  identification: 
+    name: Flows for APEX - Gather Daily Statistics
+    static-id: flows-for-apex-gather-daily-statistics
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=12
+    schedule-status: Disabled
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  actions: 
+  - # ====== Action: Gather Daily Stats ==========================
+    id: 2133626467110885
+    identification: 
+      name: Gather Daily Stats
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.run_daily_stats;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Error gathering daily Flows for APEX Stats
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Purge Logs =============
+  id: 2134304189122562
+  identification: 
+    name: Flows for APEX - Purge Logs
+    static-id: flows-for-apex-purge-logs
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYHOUR=0;BYMINUTE=5
+    schedule-status: Disabled
+    actions-initiated-on: Always
+
+  action-execution: 
+    action-error-handling: Ignore
+
+  comments: 
+    comments: Flows for APEX Purge Instance Log Tables.   This purges records in the flow_instance_events, flow_step_events, and flow_variable_events tables to keep log table size under control.  If instance summary archiving is enabled, a json document containing a full summary / audit trail for each process instance should have been created and stored in archive storage (database table or OCI Object Storage) before the relevant records are purged.   See documentation.
+
+  actions: 
+  - # ====== Action: Purge Log Tables ============================
+    id: 2134675479122562
+    identification: 
+      name: Purge Log Tables
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_admin_api.purge_instance_logs;
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: Flows for APEX - Error purging log tables.
+      stop-execution-on-error: true
+
+- # ====== Automation: Flows for APEX - Purge Completed Instance
+  id: 14794647413752629
+  identification: 
+    name: Flows for APEX - Purge Completed Instances
+    static-id: flows-for-apex-purge-completed-instances
+
+  execution: 
+    type: Scheduled
+    schedule-expression: FREQ=DAILY;INTERVAL=1;BYMINUTE=0
+    schedule-status: Active
+    actions-initiated-on: Rows returned
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select prcs_id, prcs_complete_ts, prcs_status
+      from flow_processes
+      where prcs_complete_ts <  SYSTIMESTAMP - NUMTODSINTERVAL (TO_NUMBER(flow_admin_api.get_config_value(
+                   p_config_key    => 'completed_prcs_purge_after_completion_days',
+                   p_default_value => '365'
+                 )) 
+                 , 'DAY')
+        and flow_admin_api.get_config_value(
+                   p_config_key    => 'completed_prcs_purging',
+                   p_default_value => 'Y'
+                 ) = 'Y'
+        and prcs_status in ('completed', 'terminated')
+
+  column-mapping: 
+    primary-key-column: PRCS_ID
+
+  action-execution: 
+    commit: Each Row
+    action-error-handling: Ignore
+
+  comments: 
+    comments: Purges (deletes) process instances from the active Flows for APEX system, n days after the instance completed or was terminated.  Individual process purging is logged in the automation log.
+
+  actions: 
+  - # ====== Action: Purge Instance ==============================
+    id: 14794958511752617
+    identification: 
+      name: Purge Instance
+      type: Execute Code
+
+    source: 
+      location: Local Database
+      language: PL/SQL
+      pl/sql-code: |
+        begin
+            flow_api_pkg.flow_delete (p_process_id => :PRCS_ID, p_comment => 'deleted by completed instance purge automation on &SYSDATE.');
+            apex_automation.log_info ( 'Process Instance deleted: '||:PRCS_ID || '( status : '|| :PRCS_STATUS || ' - on ' || :PRCS_COMPLETE_TS ||' )');
+        end;
+
+    execution: 
+      sequence: 10
+
+    error: 
+      error-message: 'Error purging :PRCS_ID'
+      stop-execution-on-error: true
+

@@ -4,8 +4,8 @@ begin
 --     PAGE: 00050
 --   Manifest End
 wwv_flow_imp.component_begin (
- p_version_yyyy_mm_dd=>'2022.04.12'
-,p_release=>'22.1.11'
+ p_version_yyyy_mm_dd=>'2024.05.31'
+,p_release=>'24.1.11'
 ,p_default_workspace_id=>2400405578329584
 ,p_default_application_id=>100
 ,p_default_id_offset=>0
@@ -13,7 +13,6 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>50
-,p_user_interface_id=>wwv_flow_imp.id(12495499263265880052)
 ,p_name=>'Simple Form Templates'
 ,p_alias=>'SIMPLE-FORM-TEMPLATES'
 ,p_step_title=>'Simple Form Templates'
@@ -21,8 +20,6 @@ wwv_flow_imp_page.create_page(
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
-,p_last_updated_by=>'XUANBACH.LE@HYAND.COM'
-,p_last_upd_yyyymmddhh24miss=>'20240930074949'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(5570494030899126)
@@ -40,9 +37,9 @@ wwv_flow_imp_page.create_page_plug(
 '<br/>',
 'The Simple Form functionality for User Tasks is provided by integrating the <a href="https://github.com/simonuwe/oracle-apex-json-region" target="_blank">JSON-region plug-in</a>.',
 'For more information on how to work with Simple Forms in Flows for APEX, see the latest <a href="https://flowsforapex.org/latest/getting-started/" target="_blank">documentation</a>.'))
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_attribute_01=>'N'
-,p_attribute_02=>'HTML'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(5598277955964021)
@@ -58,7 +55,6 @@ wwv_flow_imp_page.create_page_plug(
 '       sfte.sfte_content',
 '  from flow_simple_form_templates sfte'))
 ,p_plug_source_type=>'NATIVE_IR'
-,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_prn_content_disposition=>'ATTACHMENT'
 ,p_prn_units=>'INCHES'
 ,p_prn_paper_size=>'LETTER'
@@ -200,6 +196,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_is_hot=>'Y'
 ,p_button_image_alt=>'Create Template'
 ,p_button_position=>'RIGHT_OF_IR_SEARCH_BAR'
+,p_button_alignment=>'RIGHT'
 ,p_button_redirect_url=>'f?p=&APP_ID.:51:&SESSION.::&DEBUG.:51'
 ,p_icon_css_classes=>'fa-plus'
 );
@@ -210,6 +207,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_element_type=>'REGION'
 ,p_triggering_region_id=>wwv_flow_imp.id(5598277955964021)
 ,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'apexafterclosedialog'
 );
 wwv_flow_imp_page.create_page_da_action(

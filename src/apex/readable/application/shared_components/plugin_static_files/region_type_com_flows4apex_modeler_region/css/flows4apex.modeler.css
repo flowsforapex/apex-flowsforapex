@@ -1,0 +1,21 @@
+f4a-modeler {
+  --color-flows-button-link: #52B415;
+  --color-flows-button-link-text: white;
+
+  --color-flows-canvas-background: #f0f0f0;
+  
+  --color-flows-fill: white;
+  --color-flows-stroke: black;
+
+  /* dark mode */
+  --color-flows-dark-canvas-background: #2b3035;
+  
+  --color-flows-dark-fill: #282c30;
+  --color-flows-dark-stroke: white;
+
+}
+
+@font-face {
+    font-family: "codicon";
+    src: url("../fonts/codicon.ttf");
+}

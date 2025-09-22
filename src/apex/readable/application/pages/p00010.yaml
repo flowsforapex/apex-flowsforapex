@@ -1,0 +1,2436 @@
+---
+# ====== Page: Flow Monitor ==================================
+id: 10
+identification: 
+  name: Flow Monitor
+  alias: FLOW-MONITOR
+  title: Flow Monitor - &APP_NAME_TITLE.
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: initPage10();
+
+css: 
+  inline: |
+    /* Adjust width of IRR Settings to be auto */
+    .a-IRR-controls-cell--label {
+        width: auto;
+    }
+    
+    /*Tweak was altered icon font size*/
+    span.flow-was-altered-icon {
+        font-size: 24px;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Instances - Header Actions ==================
+  id: 2436340351881201
+  identification: 
+    name: Instances - Header Actions
+    type: List
+
+  source: 
+    list: P10_INSTANCE_HEADER_ACTION_MENU # 2431522092873048
+
+  layout: 
+    sequence: 20
+    parent-region: Flow Instances # 12493545854579486121
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: instance_header_action
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Instance Action =============================
+  id: 6177850959209923
+  identification: 
+    name: Instance Action
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    css-classes: 
+    - f4a-dynamic-title
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: instance_action_dialog
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Action Menu =================================
+  id: 7938158412499704
+  identification: 
+    name: Action Menu
+    type: List
+
+  source: 
+    list: P10_ACTION_MENU # 7946860874526805
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: actions
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+
+- # ====== Region: Breadcrumb ==================================
+  id: 34403200187171418
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 12495636486941880396
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Instances - Row Actions =====================
+  id: 40001946826317109
+  identification: 
+    name: Instances - Row Actions
+    type: List
+
+  source: 
+    list: P10_INSTANCE_ROW_ACTION_MENU # 40423692118997018
+
+  layout: 
+    sequence: 10
+    parent-region: Flow Instances # 12493545854579486121
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: instance_row_action
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Menu Popup
+      template-options: 
+      - '#DEFAULT#'
+      - js-addActions
+      - js-menu-callout
+
+- # ====== Region: Flow Viewer =================================
+  id: 6127698437330102702
+  identification: 
+    name: Flow Viewer
+    type: Flows for APEX - Viewer
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_VIEWER_VW
+    include-rowid-column: false
+    where-clause: 'prcs_id = :P10_PRCS_ID'
+    page-items-to-submit: 
+    - P10_PRCS_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - js-showMaximizeButton
+    - t-Region--scrollBody
+    css-classes: 
+    - js-react-on-prcs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-monitor
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      diagram-xml: DGRM_CONTENT
+      diagram-identifier: PRDG_ID
+      use-bpmn-colors: true
+      highlighting-data: HIGHLIGHTING_DATA
+      call-activity-data: CALL_ACTIVITY_DATA
+      iteration-data: ITERATION_DATA
+      user-task-data: USER_TASK_DATA
+      badges-data: BADGES_DATA
+      refresh-on-load: true
+      show-toolbar: true
+      enable-mousewheel-zoom: false
+
+- # ====== Region: Flow Instances ==============================
+  id: 12493545854579486121
+  identification: 
+    name: Flow Instances
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select PRCS_ID,
+             PRCS_NAME,
+             PRCS_DGRM_ID,
+             PRCS_DGRM_NAME,
+             PRCS_DGRM_VERSION,
+             PRCS_DGRM_STATUS,
+             PRCS_DGRM_CATEGORY,
+             PRCS_STATUS,
+             PRCS_DGRM_STATUS_ICON,
+             PRCS_STATUS_ICON,
+             PRCS_INIT_DATE,
+             PRCS_LAST_UPDATE,
+             PRCS_BUSINESS_REF,
+             PRCS_WAS_ALTERED,
+             PRCS_LOGGING_LEVEL,
+             BTN,
+             CHECKBOX,
+             QUICK_ACTION
+        from FLOW_P0010_INSTANCES_VW
+        where :P10_FILTER_DGRM_ID is null
+        or (
+            :P10_FILTER_DGRM_ID is not null
+            and prcs_id in (
+                select prdg.prdg_prcs_id 
+                from flow_instance_diagrams prdg 
+                where prdg.prdg_dgrm_id = :P10_FILTER_DGRM_ID
+            )
+        )
+    page-items-to-submit: 
+    - P10_FILTER_DGRM_ID
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: flow-instances
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 26094211779304629
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: true
+      maximum-rows-per-page: 1000
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 26608389028834346
+      identification: 
+        name: Primary Report
+        alias: 266084
+
+    columns: 
+    - # ====== Column: PRCS_WAS_ALTERED ============================
+      id: 21292281623519
+      identification: 
+        column-name: PRCS_WAS_ALTERED
+        type: Plain Text
+
+      heading: 
+        heading: '&nbsp;'
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 190
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '{if PRCS_WAS_ALTERED/}<span class="flow-was-altered-icon fa fa-2x fa-exclamation-triangle-o u-warning-text" title="Ran with errors or interventions - see logs"></span>{endif/}'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_LOGGING_LEVEL ==========================
+      id: 21449747623520
+      identification: 
+        column-name: PRCS_LOGGING_LEVEL
+        type: Plain Text
+
+      heading: 
+        heading: Logging Level
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 200
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_STATUS_ICON ============================
+      id: 6176739527209912
+      identification: 
+        column-name: PRCS_STATUS_ICON
+        type: Hidden
+
+      heading: 
+        heading: Prcs Status Icon
+
+      layout: 
+        sequence: 160
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: PRCS_DGRM_ID ================================
+      id: 7938514653499708
+      identification: 
+        column-name: PRCS_DGRM_ID
+        type: Hidden
+
+      heading: 
+        heading: Prcs Dgrm Id
+
+      layout: 
+        sequence: 130
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: QUICK_ACTION ================================
+      id: 8024079343825609
+      identification: 
+        column-name: QUICK_ACTION
+        type: Plain Text
+
+      heading: 
+        heading: Quick Action
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 170
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" title="&APP_TEXT$APP_P10_ACTION_DETAILS." aria-label="&APP_TEXT$APP_P10_ACTION_DETAILS." class="t-Button t-Button--icon t-Button--iconLeft t-Button--link js-actionButton"
+          data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#" data-action="open-flow-instance-details">
+          <span aria-hidden="true" class="t-Icon t-Icon--left fa fa-search"></span>&APP_TEXT$APP_P10_ACTION_DETAILS.</button>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: quick_action_col
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: PRCS_DGRM_STATUS_ICON =======================
+      id: 15357984541942527
+      identification: 
+        column-name: PRCS_DGRM_STATUS_ICON
+        type: Hidden
+
+      heading: 
+        heading: Prcs Dgrm Status Icon
+
+      layout: 
+        sequence: 180
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: PRCS_ID =====================================
+      id: 26094328735304630
+      identification: 
+        column-name: PRCS_ID
+        type: Plain Text
+
+      heading: 
+        heading: Process ID
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 110
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_NAME ===================================
+      id: 26094452210304631
+      identification: 
+        column-name: PRCS_NAME
+        type: Link
+
+      heading: 
+        heading: Name
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      link: 
+        target: 'javascript:void(0);'
+        link-text: '#PRCS_NAME#'
+        link-attributes: title="&APP_TEXT$APP_VIEW." class="view-link" data-prcs="#PRCS_ID#" data-name="#PRCS_NAME#"
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: PRCS_NAME
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_DGRM_NAME ==============================
+      id: 26094567431304632
+      identification: 
+        column-name: PRCS_DGRM_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Model Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_DGRM_VERSION ===========================
+      id: 26094640100304633
+      identification: 
+        column-name: PRCS_DGRM_VERSION
+        type: Plain Text
+
+      heading: 
+        heading: Model Version
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_DGRM_STATUS ============================
+      id: 26094739199304634
+      identification: 
+        column-name: PRCS_DGRM_STATUS
+        type: Plain Text
+
+      heading: 
+        heading: Model Status
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 50
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <div class="ffa-dgrm-badge">
+              <i class="#PRCS_DGRM_STATUS_ICON#"></i>
+              <span class="ffa-dgrm-badge-text">#PRCS_DGRM_STATUS#</span>
+          </div>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_DGRM_CATEGORY ==========================
+      id: 26094816603304635
+      identification: 
+        column-name: PRCS_DGRM_CATEGORY
+        type: Plain Text
+
+      heading: 
+        heading: Model Category
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_STATUS =================================
+      id: 26094928056304636
+      identification: 
+        column-name: PRCS_STATUS
+        type: Plain Text
+
+      heading: 
+        heading: Status
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '<span class="prcs_status_badge"><i class="status_icon fa #PRCS_STATUS_ICON#"></i>#PRCS_STATUS#</span>'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: instance_status_col
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_INIT_DATE ==============================
+      id: 26095045075304637
+      identification: 
+        column-name: PRCS_INIT_DATE
+        type: Plain Text
+
+      heading: 
+        heading: Creation Date
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      appearance: 
+        format-mask: '&APP_DATE_TIME_FORMAT.'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_LAST_UPDATE ============================
+      id: 26095177493304638
+      identification: 
+        column-name: PRCS_LAST_UPDATE
+        type: Plain Text
+
+      heading: 
+        heading: Last Update
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 90
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      appearance: 
+        format-mask: '&APP_DATE_TIME_FORMAT.'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: BTN =========================================
+      id: 26095284298304639
+      identification: 
+        column-name: BTN
+        type: Plain Text
+
+      heading: 
+        heading: <button type="button" title="&APP_TEXT$APP_P10_HEADER_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P10_HEADER_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon js-menuButton" id="instance-header-action" data-menu="instance_header_action_menu"><span aria-hidden="true" class="t-Icon fa fa-bars"></span></button>
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 100
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: |
+          <button type="button" title="&APP_TEXT$APP_P10_ROW_BUTTON_TITLE." aria-label="&APP_TEXT$APP_P10_ROW_BUTTON_TITLE." class="t-Button t-Button--noLabel t-Button--icon flow-instance-actions-btn js-menuButton" 
+                  data-menu="instance_row_action_menu"
+                  data-prcs="#PRCS_ID#"
+                  data-status="#PRCS_STATUS#"
+                  data-name="#PRCS_NAME#"
+                  data-dgrm="#PRCS_DGRM_ID#"
+                  >
+              <span aria-hidden="true" class="t-Icon fa fa-bars"></span>
+          </button>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: instance_action_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: false
+
+    - # ====== Column: PRCS_BUSINESS_REF ===========================
+      id: 34631054458575812
+      identification: 
+        column-name: PRCS_BUSINESS_REF
+        type: Plain Text
+
+      heading: 
+        heading: Business Reference
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 120
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: CHECKBOX ====================================
+      id: 40002069571317110
+      identification: 
+        column-name: CHECKBOX
+        type: Plain Text
+
+      heading: 
+        heading: <input type="checkbox" id="check-all-instances">
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 140
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: instance_checkbox_col
+
+      enable-users-to: 
+        hide: false
+        sort: false
+        filter: false
+        highlight: false
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: false
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Flow Instances
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+page-items: 
+- # ====== Page Item: P10_OBJT_BPMN_ID =========================
+  id: 2448762581538242
+  identification: 
+    name: P10_OBJT_BPMN_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Flow Viewer # 6127698437330102702
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_OBJT_NAME ============================
+  id: 2448870230538243
+  identification: 
+    name: P10_OBJT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Flow Viewer # 6127698437330102702
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_OBJT_LIST ============================
+  id: 5522035116864941
+  identification: 
+    name: P10_OBJT_LIST
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Flow Viewer # 6127698437330102702
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_COMMENT ==============================
+  id: 6177972762209924
+  identification: 
+    name: P10_COMMENT
+    type: Textarea
+
+  label: 
+    label: Comment
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: Instance Action # 6177850959209923
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_CONFIRM_TEXT =========================
+  id: 6179426398209939
+  identification: 
+    name: P10_CONFIRM_TEXT
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Instance Action # 6177850959209923
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_PRCS_NAME ============================
+  id: 7334592520307027
+  identification: 
+    name: P10_PRCS_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Flow Instances # 12493545854579486121
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_DISPLAY_SETTING ======================
+  id: 34634208559575844
+  identification: 
+    name: P10_DISPLAY_SETTING
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Breadcrumb # 34403200187171418
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_LOADED_DIAGRAM =======================
+  id: 42701880150211103
+  identification: 
+    name: P10_LOADED_DIAGRAM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Flow Viewer # 6127698437330102702
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_FILTER_DGRM_ID =======================
+  id: 63516095778355425
+  identification: 
+    name: P10_FILTER_DGRM_ID
+    type: Popup LOV
+
+  label: 
+    label: Model
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 40
+    region: Flow Instances # 12493545854579486121
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-none
+    - margin-right-none
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: DIAGRAMS_INSTANCIATED_LOV # 66615520889086574
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '- Select -'
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10_PRCS_ID ==============================
+  id: 12491864731021262829
+  identification: 
+    name: P10_PRCS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Flow Instances # 12493545854579486121
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CONFIRM =====================================
+  id: 6178284555209927
+  identification: 
+    button-name: CONFIRM
+    label: Confirm
+
+  layout: 
+    sequence: 20
+    region: Instance Action # 6177850959209923
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: confirm-btn
+    custom-attributes: 
+    - data-action=""
+    - data-prcs=""
+    - data-sbfl=""
+    - data-no-update="true"
+
+- # ====== Button: CANCEL ======================================
+  id: 6179972139209944
+  identification: 
+    button-name: CANCEL
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Instance Action # 6177850959209923
+    slot: PREVIOUS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: ACTION_MENU =================================
+  id: 7937992279499702
+  identification: 
+    button-name: ACTION_MENU
+    label: Action Menu
+
+  layout: 
+    sequence: 20
+    region: Breadcrumb # 34403200187171418
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-menuButton
+    icon: fa-bars
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    custom-attributes: 
+    - data-menu="actions_menu"
+
+- # ====== Button: RESET_INSTANCE_IR ===========================
+  id: 34569800907098125
+  identification: 
+    button-name: RESET_INSTANCE_IR
+    label: Reset
+
+  layout: 
+    sequence: 60
+    region: Flow Instances # 12493545854579486121
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--iconLeft
+    icon: fa-undo-alt
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:RP,10,RIR::'
+      page: 10 # Flow Monitor
+      clear-cache: RP,10,RIR
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: CREATE ======================================
+  id: 12491866636991262848
+  identification: 
+    button-name: CREATE
+    label: Create instance
+
+  layout: 
+    sequence: 10
+    region: Breadcrumb # 34403200187171418
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--mobileHideLabel
+    - t-Button--iconLeft
+    icon: fa-plus
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:11:&SESSION.::&DEBUG.:RP,11::'
+      page: 11 # Create Flow Instance
+      clear-cache: RP,11
+
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: Change check-all-instances ==========
+  id: 4300450048764256
+  identification: 
+    name: Change check-all-instances
+
+  execution: 
+    sequence: 270
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: jQuery Selector
+    jquery-selector: '#check-all-instances'
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 4300813188764310
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($('#flow-instances #check-all-instances' ).is(':checked') ) {
+              $('#flow-instances input[type=checkbox][name=f01]').prop('checked',true);
+             } else {
+             $('#flow-instances input[type=checkbox][name=f01]').prop('checked',false);
+         } 
+
+    execution: 
+      sequence: 10
+      event: Change check-all-instances # 4300450048764256
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Element clicked =====================
+  id: 5522150485864942
+  identification: 
+    name: Element clicked
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click
+    selection-type: Region
+    region: Flow Viewer # 6127698437330102702
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: clickCondition($v('P10_OBJT_LIST'), this.data);
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 2448959260538244
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.element.id
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_OBJT_BPMN_ID
+
+    execution: 
+      sequence: 20
+      event: Element clicked # 5522150485864942
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 2449082180538245
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P10_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_name(
+            p_objt_bpmn_id => :P10_OBJT_BPMN_ID
+          , p_prdg_id => :P10_LOADED_DIAGRAM
+        );
+        end if;
+      items-to-submit: 
+      - P10_OBJT_BPMN_ID
+      - P10_LOADED_DIAGRAM
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_OBJT_NAME
+
+    execution: 
+      sequence: 30
+      event: Element clicked # 5522150485864942
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 5522263817864943
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: openObjectDialog($v('P10_OBJT_BPMN_ID'), $v('P10_OBJT_NAME'), 10);
+
+    execution: 
+      sequence: 40
+      event: Element clicked # 5522150485864942
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 6180087025209945
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 290
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL # 6179972139209944
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 6180129920209946
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Instance Action # 6177850959209923
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 6180087025209945
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click on Flow Name ==================
+  id: 8023857502825607
+  identification: 
+    name: Click on Flow Name
+
+  execution: 
+    sequence: 300
+    event-scope: Dynamic
+    static-container-(jquery-selector): '#flow-instances'
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: jQuery Selector
+    jquery-selector: .view-link
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8023966198825608
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.actions.invoke("view-flow-instance", "", this.triggeringElement);
+
+    execution: 
+      sequence: 10
+      event: Click on Flow Name # 8023857502825607
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Instances Report Refreshed ==========
+  id: 24414763832878706
+  identification: 
+    name: Instances Report Refreshed
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: Flow Instances # 12493545854579486121
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 24414806355878707
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var prcsId= apex.item( "P10_PRCS_ID" ).getValue();
+        if (prcsId !== "" ) { 
+          markAsCurrent( prcsId ); 
+        }
+        
+        if ($("th.a-IRR-header--group").length > 0) {
+            $("th.a-IRR-header").each(function(i){
+                if ( apex.jQuery(this).attr("id") === undefined) {
+                  apex.jQuery(this).find('input[type="checkbox"]').hide();
+                  apex.jQuery(this).find('button#instance-header-action').hide();
+                } else {
+                  apex.jQuery(this).addClass("u-alignMiddle");
+                }
+            });
+        }
+        
+        $("td[headers*=instance_status_col]").each(function() {
+            var className = 'ffa-color--' + $(this).text();
+            $(this).addClass(className);
+          }
+        );
+        
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Viewer # 6127698437330102702
+
+    execution: 
+      sequence: 10
+      event: Instances Report Refreshed # 24414763832878706
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Viewer Diagram Loaded ===============
+  id: 24417684477878735
+  identification: 
+    name: Viewer Diagram Loaded
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded
+    selection-type: Region
+    region: Flow Viewer # 6127698437330102702
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 5522598629864946
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        if :P10_LOADED_DIAGRAM is not null then
+        return flow_engine_app_api.get_objt_list(p_prdg_id => :P10_LOADED_DIAGRAM);
+        end if;
+      items-to-submit: 
+      - P10_LOADED_DIAGRAM
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_OBJT_LIST
+
+    execution: 
+      sequence: 40
+      event: Viewer Diagram Loaded # 24417684477878735
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 5522653812864947
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: changeCursor($v('P10_OBJT_LIST'));
+
+    execution: 
+      sequence: 50
+      event: Viewer Diagram Loaded # 24417684477878735
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33736700260406138
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: initViewer($v('P10_PRCS_ID'), $v('P10_PRCS_NAME'), $v('P10_DISPLAY_SETTING'));
+
+    execution: 
+      sequence: 20
+      event: Viewer Diagram Loaded # 24417684477878735
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 42701983528211104
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: this.data.diagramIdentifier
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_LOADED_DIAGRAM
+
+    execution: 
+      sequence: 30
+      event: Viewer Diagram Loaded # 24417684477878735
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Create Process Dialog (Report) closed
+  id: 25020236512509606
+  identification: 
+    name: Create Process Dialog (Report) closed - refresh Instances
+
+  execution: 
+    sequence: 110
+    event-scope: Dynamic
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Flow Instances # 12493545854579486121
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 25020304399509607
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Instances # 12493545854579486121
+
+    execution: 
+      sequence: 20
+      event: Create Process Dialog (Report) closed - refresh Instances # 25020236512509606
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33737098416406141
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.message.showPageSuccess(apex.lang.getMessage("APP_INSTANCE_CREATED"));
+
+    execution: 
+      sequence: 30
+      event: Create Process Dialog (Report) closed - refresh Instances # 25020236512509606
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 33737390268406144
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P11_PRCS_ID
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_PRCS_ID
+
+    execution: 
+      sequence: 10
+      event: Create Process Dialog (Report) closed - refresh Instances # 25020236512509606
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Change Display Setting ===========
+  id: 34634407162575846
+  identification: 
+    name: On Change Display Setting
+
+  execution: 
+    sequence: 260
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P10_DISPLAY_SETTING
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 34634644617575848
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: 'flow_engine_app_api.set_viewport(:P10_DISPLAY_SETTING);'
+      items-to-submit: 
+      - P10_DISPLAY_SETTING
+
+    execution: 
+      sequence: 10
+      event: On Change Display Setting # 34634407162575846
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On change Model =====================
+  id: 63516126981355426
+  identification: 
+    name: On change Model
+
+  execution: 
+    sequence: 310
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P10_FILTER_DGRM_ID
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 63516252784355427
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Instances # 12493545854579486121
+
+    execution: 
+      sequence: 10
+      event: On change Model # 63516126981355426
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Create Process Dialog closed - refres
+  id: 160797771746501981
+  identification: 
+    name: Create Process Dialog closed - refresh Instances
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: CREATE # 12491866636991262848
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 6433779174417647
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P11_PRCS_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_PRCS_NAME
+
+    execution: 
+      sequence: 30
+      event: Create Process Dialog closed - refresh Instances # 160797771746501981
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 8023336794825602
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Viewer # 6127698437330102702
+
+    execution: 
+      sequence: 50
+      event: Create Process Dialog closed - refresh Instances # 160797771746501981
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 29602959246125302
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        
+        apex.message.showPageSuccess(apex.lang.getMessage("APP_INSTANCE_CREATED"));
+
+    execution: 
+      sequence: 70
+      event: Create Process Dialog closed - refresh Instances # 160797771746501981
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 33737253943406143
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P11_PRCS_ID
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P10_PRCS_ID
+
+    execution: 
+      sequence: 20
+      event: Create Process Dialog closed - refresh Instances # 160797771746501981
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 160797694678501980
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Flow Instances # 12493545854579486121
+
+    execution: 
+      sequence: 40
+      event: Create Process Dialog closed - refresh Instances # 160797771746501981
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: GET_URL ====================================
+  id: 5522324613864944
+  identification: 
+    name: GET_URL
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      flow_engine_app_api.get_url_p13(
+        pi_prcs_id => :P10_PRCS_ID
+      , pi_prdg_id => :P10_LOADED_DIAGRAM
+      , pi_objt_id => apex_application.g_x01
+      , pi_title => apex_application.g_x02
+      );
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Set Viewport for BPMN-Viewer ===============
+  id: 33735382808406124
+  identification: 
+    name: Set Viewport for BPMN-Viewer
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: flow_engine_app_api.add_viewport_script('P10_DISPLAY_SETTING');
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+

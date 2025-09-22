@@ -94,7 +94,7 @@ create or replace package body test_022_usertask_misc as
     l_sbfl_id         flow_subflows.sbfl_id%type;
     l_step_key        flow_subflows.sbfl_step_key%type;
   begin
-    -- get dgrm_id to use for comparaison
+    -- get dgrm_id to use for comparison
     l_dgrm_id     := g_dgrm_a22a_id;
     l_prcs_name   := g_test_prcs_name_a;
     -- create a new instance
