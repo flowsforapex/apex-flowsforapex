@@ -33,8 +33,8 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   08:20 Monday September 22, 2025
---   Exported By:     DENNIS.AMTHOR@HYAND.COM
+--   Date and Time:   08:43 Monday September 22, 2025
+--   Exported By:     NIELSDEBR@GMAIL.COM
 --   Flashback:       0
 --   Export Type:     Application Export
 --     Pages:                     15
@@ -113,7 +113,7 @@ wwv_imp_workspace.create_flow(
 ,p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,'')
 ,p_documentation_banner=>'Application created from create application wizard 2024.05.23.'
 ,p_authentication_id=>wwv_flow_imp.id(39083558809370189)
-,p_application_tab_set=>0
+,p_application_tab_set=>1
 ,p_logo_type=>'T'
 ,p_logo_text=>'Flows for APEX - Simple Process Starter'
 ,p_public_user=>'APEX_PUBLIC_USER'
@@ -1058,6 +1058,11 @@ wwv_flow_imp_page.create_page_group(
  p_id=>wwv_flow_imp.id(39227261133370333)
 ,p_group_name=>'Administration'
 );
+end;
+/
+prompt --application/comments
+begin
+null;
 end;
 /
 prompt --application/shared_components/navigation/breadcrumbs/breadcrumb
@@ -15719,6 +15724,11 @@ wwv_flow_imp_shared.create_template_option(
 end;
 /
 prompt --application/shared_components/globalization/language
+begin
+null;
+end;
+/
+prompt --application/shared_components/globalization/translations
 begin
 null;
 end;
@@ -32797,8 +32807,8 @@ wwv_flow_imp_shared.create_install(
 'drop table form_templates cascade constraints;',
 'drop table form_instances cascade constraints;',
 '',
-'--drop table json_region_schema cascade constraints;',
-'--drop function json_region_generate_enum;',
+'drop table json_region_schema cascade constraints;',
+'drop function json_region_generate_enum;',
 '',
 'delete from flow_simple_form_templates',
 'where sfte_static_id = ''order'';',
