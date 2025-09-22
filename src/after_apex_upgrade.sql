@@ -3,7 +3,7 @@ Upgrades the APEX version enviroment and recompiles all PL/SQL packages
 Run this after an APEX version upgrade
 */
 
-PROMPT >> Update Flows for APEX after an potential_starting_groupsAPEX Version Information
+PROMPT >> Update Flows for APEX after an APEX Version Change
 PROMPT >> =================
 PROMPT >> Upgrading APEX Version Info
 declare
