@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   13:36 Friday September 19, 2025
+--   Date and Time:   08:20 Monday September 22, 2025
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -33564,7 +33564,7 @@ unistr('      ,q''[  \00A7'';]'''),
 '      ,q''[    <bpmn:userTask id="Activity_ReviewInvoice" name="Review invoice" apex:type="apexSimpleForm" apex:manualInput="false">]''',
 '      ,q''[      <bpmn:extensionElements>]''',
 '      ,q''[        <apex:apexSimpleForm>]''',
-'      ,q''[          <apex:applicationId>984343</apex:applicationId>]''',
+'      ,q''[          <apex:applicationId>]'' || apex_application.g_flow_id || q''[</apex:applicationId>]''',
 '      ,q''[          <apex:pageId>7</apex:pageId>]''',
 '      ,q''[          <apex:pageItems>]''',
 '      ,q''[            <apex:pageItem>]''',
