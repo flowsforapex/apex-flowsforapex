@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   15:51 Wednesday September 24, 2025
+--   Date and Time:   16:03 Wednesday September 24, 2025
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -31715,10 +31715,10 @@ prompt --application/pages/page_00011
 begin
 wwv_flow_imp_page.create_page(
  p_id=>11
-,p_name=>'Form Data'
+,p_name=>'Form Data Dialog'
 ,p_alias=>'FORM-DATA-DIALOG'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Form Data'
+,p_step_title=>'Form'
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
@@ -31825,7 +31825,7 @@ wwv_flow_imp_page.create_page(
 ,p_name=>'Form Data Content'
 ,p_alias=>'FORM-DATA-CONTENT'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Form Data Content'
+,p_step_title=>'Content'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
