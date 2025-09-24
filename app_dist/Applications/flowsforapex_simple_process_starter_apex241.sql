@@ -33,18 +33,18 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   08:43 Monday September 22, 2025
---   Exported By:     NIELSDEBR@GMAIL.COM
+--   Date and Time:   16:03 Wednesday September 24, 2025
+--   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
---     Pages:                     15
---       Items:                   47
+--     Pages:                     16
+--       Items:                   49
 --       Computations:             8
 --       Validations:              1
---       Processes:               26
---       Regions:                 46
+--       Processes:               27
+--       Regions:                 48
 --       Buttons:                 22
---       Dynamic Actions:         17
+--       Dynamic Actions:         18
 --     Shared Components:
 --       Logic:
 --         Items:                  3
@@ -77,7 +77,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 --       Reports:
 --       E-Mail:
 --     Supporting Objects:  Included
---       Install scripts:         11
+--       Install scripts:         10
 --       Validations:              1
 --   Version:         24.1.11
 --   Instance ID:     716670337569372
@@ -113,7 +113,7 @@ wwv_imp_workspace.create_flow(
 ,p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,'')
 ,p_documentation_banner=>'Application created from create application wizard 2024.05.23.'
 ,p_authentication_id=>wwv_flow_imp.id(39083558809370189)
-,p_application_tab_set=>1
+,p_application_tab_set=>0
 ,p_logo_type=>'T'
 ,p_logo_text=>'Flows for APEX - Simple Process Starter'
 ,p_public_user=>'APEX_PUBLIC_USER'
@@ -1058,11 +1058,6 @@ wwv_flow_imp_page.create_page_group(
  p_id=>wwv_flow_imp.id(39227261133370333)
 ,p_group_name=>'Administration'
 );
-end;
-/
-prompt --application/comments
-begin
-null;
 end;
 /
 prompt --application/shared_components/navigation/breadcrumbs/breadcrumb
@@ -15724,11 +15719,6 @@ wwv_flow_imp_shared.create_template_option(
 end;
 /
 prompt --application/shared_components/globalization/language
-begin
-null;
-end;
-/
-prompt --application/shared_components/globalization/translations
 begin
 null;
 end;
@@ -31181,7 +31171,7 @@ begin
 wwv_flow_imp_page.create_page(
  p_id=>10
 ,p_name=>'Form Data'
-,p_alias=>'FORMDATA'
+,p_alias=>'FORM-DATA'
 ,p_step_title=>'Form Data'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
@@ -31459,14 +31449,14 @@ wwv_flow_imp_page.create_region_column(
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'FDTA_ID'
 ,p_data_type=>'NUMBER'
-,p_session_state_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_LINK'
+,p_heading=>'Form'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>30
 ,p_value_alignment=>'CENTER'
 ,p_link_target=>'f?p=&APP_ID.:11:&SESSION.::&DEBUG.::P11_FDTA_ID:&FDTA_ID.'
-,p_link_text=>'<img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-view.png" class="apex-edit-view" alt="">'
+,p_link_text=>'<span role="img" aria-label="Search" class="fa fa-search" title="Search"></span>'
 ,p_enable_filter=>false
 ,p_filter_is_required=>false
 ,p_use_as_row_header=>false
@@ -31511,17 +31501,14 @@ wwv_flow_imp_page.create_region_column(
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'FDTA_CONTENT'
 ,p_data_type=>'VARCHAR2'
-,p_session_state_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXTAREA'
-,p_heading_alignment=>'LEFT'
+,p_item_type=>'NATIVE_LINK'
+,p_heading=>'Content'
+,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>50
-,p_value_alignment=>'LEFT'
-,p_attribute_01=>'Y'
-,p_attribute_02=>'N'
-,p_attribute_03=>'N'
-,p_attribute_04=>'BOTH'
-,p_is_required=>false
+,p_value_alignment=>'CENTER'
+,p_link_target=>'f?p=&APP_ID.:12:&SESSION.::&DEBUG.::P12_FDTA_ID:&FDTA_ID.'
+,p_link_text=>'<span role="img" aria-label="Edit" class="fa fa-dynamic-content" title="Content"></span>'
 ,p_enable_filter=>true
 ,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
@@ -31534,6 +31521,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
+,p_escape_on_http_output=>true
 );
 wwv_flow_imp_page.create_region_column(
  p_id=>wwv_flow_imp.id(41659017057092446)
@@ -31611,16 +31599,16 @@ wwv_flow_imp_page.create_ig_report_view(
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(11237234798181540)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>3
+,p_display_seq=>4
 ,p_column_id=>wwv_flow_imp.id(10437876560481772)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>142
+,p_width=>136
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(11494021463676261)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>7
+,p_display_seq=>8
 ,p_column_id=>wwv_flow_imp.id(11254694813215174)
 ,p_is_visible=>false
 ,p_is_frozen=>false
@@ -31629,7 +31617,7 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(11495009817676262)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>5
+,p_display_seq=>6
 ,p_column_id=>wwv_flow_imp.id(11254802775215175)
 ,p_is_visible=>false
 ,p_is_frozen=>false
@@ -31638,29 +31626,29 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(11507282644783600)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>6
+,p_display_seq=>7
 ,p_column_id=>wwv_flow_imp.id(11255363501215180)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>167
+,p_width=>212
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(11794031986099616)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>4
+,p_display_seq=>5
 ,p_column_id=>wwv_flow_imp.id(11691991518811781)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>165
+,p_width=>211
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(16142898433688777)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>9
+,p_display_seq=>10
 ,p_column_id=>wwv_flow_imp.id(11644799769239070)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>119.6
+,p_width=>119
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(40976553156600102)
@@ -31669,16 +31657,16 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(40963542992456879)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>51
+,p_width=>65
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(40979191550600111)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>8
+,p_display_seq=>9
 ,p_column_id=>wwv_flow_imp.id(40963835787456882)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>147
+,p_width=>162
 ,p_sort_order=>1
 ,p_sort_direction=>'DESC'
 ,p_sort_nulls=>'FIRST'
@@ -31686,16 +31674,16 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(40980143589600113)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>10
+,p_display_seq=>2
 ,p_column_id=>wwv_flow_imp.id(40963879699456883)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_width=>613.8000015258789
+,p_width=>76
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(41668278365112548)
 ,p_view_id=>wwv_flow_imp.id(40976000565600096)
-,p_display_seq=>2
+,p_display_seq=>3
 ,p_column_id=>wwv_flow_imp.id(41659017057092446)
 ,p_is_visible=>true
 ,p_is_frozen=>false
@@ -31727,10 +31715,10 @@ prompt --application/pages/page_00011
 begin
 wwv_flow_imp_page.create_page(
  p_id=>11
-,p_name=>'Form Data'
-,p_alias=>'FORM-DATA'
+,p_name=>'Form Data Dialog'
+,p_alias=>'FORM-DATA-DIALOG'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Form Data'
+,p_step_title=>'Form'
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>'var htmldb_delete_message=''"DELETE_CONFIRM_MSG"'';'
@@ -31827,6 +31815,105 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_type=>'NATIVE_FORM_INIT'
 ,p_process_name=>'Initialize form Form Data'
 ,p_internal_uid=>39252667908558212
+);
+end;
+/
+prompt --application/pages/page_00012
+begin
+wwv_flow_imp_page.create_page(
+ p_id=>12
+,p_name=>'Form Data Content'
+,p_alias=>'FORM-DATA-CONTENT'
+,p_page_mode=>'MODAL'
+,p_step_title=>'Content'
+,p_autocomplete_on_off=>'OFF'
+,p_page_template_options=>'#DEFAULT#'
+,p_protection_level=>'C'
+,p_page_component_map=>'17'
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(16610956504628205)
+,p_plug_name=>'Form Data Content'
+,p_region_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_imp.id(39110418904370228)
+,p_plug_display_sequence=>10
+,p_query_type=>'SQL'
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select fdta_id',
+'     , json_serialize(fdta_content returning clob pretty) as fdta_content',
+'  from form_data'))
+,p_is_editable=>false
+,p_plug_source_type=>'NATIVE_FORM'
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(16610852391628204)
+,p_plug_name=>'FDTA_CONTENT'
+,p_parent_plug_id=>wwv_flow_imp.id(16610956504628205)
+,p_region_template_options=>'#DEFAULT#'
+,p_plug_template=>wwv_flow_imp.id(39110418904370228)
+,p_plug_display_sequence=>130
+,p_location=>null
+,p_plug_source=>'<pre id="code-fdta-content"></pre>'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(16611101835628207)
+,p_name=>'P12_FDTA_ID'
+,p_source_data_type=>'NUMBER'
+,p_is_primary_key=>true
+,p_is_query_only=>true
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(16610956504628205)
+,p_item_source_plug_id=>wwv_flow_imp.id(16610956504628205)
+,p_source=>'FDTA_ID'
+,p_source_type=>'REGION_SOURCE_COLUMN'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_protection_level=>'S'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(16611323419628209)
+,p_name=>'P12_FDTA_CONTENT'
+,p_data_type=>'CLOB'
+,p_source_data_type=>'CLOB'
+,p_item_sequence=>30
+,p_item_plug_id=>wwv_flow_imp.id(16610956504628205)
+,p_item_source_plug_id=>wwv_flow_imp.id(16610956504628205)
+,p_source=>'FDTA_CONTENT'
+,p_source_type=>'REGION_SOURCE_COLUMN'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(16612263883628218)
+,p_name=>'Load JSON'
+,p_event_sequence=>10
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(16612334411628219)
+,p_event_id=>wwv_flow_imp.id(16612263883628218)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'const fdta_content = apex.items.P12_FDTA_CONTENT.getValue();',
+'document.getElementById(''code-fdta-content'').innerHTML = fdta_content;'))
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(16611019896628206)
+,p_process_sequence=>10
+,p_process_point=>'BEFORE_HEADER'
+,p_region_id=>wwv_flow_imp.id(16610956504628205)
+,p_process_type=>'NATIVE_FORM_INIT'
+,p_process_name=>'Initialize form Form Data Content'
+,p_internal_uid=>16611019896628206
 );
 end;
 /
@@ -32807,9 +32894,6 @@ wwv_flow_imp_shared.create_install(
 'drop table form_templates cascade constraints;',
 'drop table form_instances cascade constraints;',
 '',
-'drop table json_region_schema cascade constraints;',
-'drop function json_region_generate_enum;',
-'',
 'delete from flow_simple_form_templates',
 'where sfte_static_id = ''order'';',
 '',
@@ -32831,21 +32915,6 @@ wwv_flow_imp_shared.create_install(
 '',
 'delete from flow_diagrams',
 'where dgrm_name = ''Invoice Processing'';',
-'',
-'-- Drop Oracle Text Policy (AI Invoice Use Case)',
-'declare',
-'  l_check_policy number;',
-'begin',
-'  select 1',
-'    into l_check_policy',
-'    from ctx_user_preferences',
-'    where pre_name = ''AI_DOC_FAST_FILTER'';',
-'  if l_check_policy = 1 then',
-'    ctx_ddl.drop_policy( policy_name => ''ai_doc_policy'' );',
-'    ctx_ddl.drop_preference( preference_name => ''ai_doc_fast_filter'' );',
-'  end if;',
-'end;',
-'/',
 '',
 '-- Drop JSON Plugin objects',
 'declare',
@@ -33213,8 +33282,8 @@ wwv_flow_imp_shared.create_install_script(
 '    apex_t_varchar2(',
 '      q''[<?xml version="1.0" encoding="UTF-8"?>]''',
 '      ,q''[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://'
-||'www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="24.1.0">]''',
-'      ,q''[  <bpmn:process id="Process_fd38np1r" isExecutable="false" apex:isStartable="true" apex:manualInput="false">]''',
+||'www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">]''',
+'      ,q''[  <bpmn:process id="Process_fd38np1r" isExecutable="false" apex:isStartable="true" apex:minLoggingLevel="4" apex:manualInput="false">]''',
 '      ,q''[    <bpmn:startEvent id="Event_1xpz2xs" name="Submitted Order">]''',
 '      ,q''[      <bpmn:outgoing>Flow_1ag2t99</bpmn:outgoing>]''',
 '      ,q''[    </bpmn:startEvent>]''',
@@ -33345,7 +33414,7 @@ wwv_flow_imp_shared.create_install_script(
 '      q''[<?xml version="1.0" encoding="UTF-8"?>]''',
 '      ,q''[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://'
 ||'www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">]''',
-'      ,q''[  <bpmn:process id="Process_t2xkg1v4" isExecutable="false" apex:isCallable="true" apex:isStartable="true" apex:minLoggingLevel="0" apex:manualInput="false">]''',
+'      ,q''[  <bpmn:process id="Process_t2xkg1v4" isExecutable="false" apex:isCallable="true" apex:isStartable="true" apex:minLoggingLevel="4" apex:manualInput="false">]''',
 '      ,q''[    <bpmn:startEvent id="Event_0cg5b92" name="Invoice Uploaded">]''',
 '      ,q''[      <bpmn:extensionElements>]''',
 '      ,q''[        <apex:onEvent>]''',
@@ -33391,6 +33460,13 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[            <apex:varDataType>NUMBER</apex:varDataType>]''',
 '      ,q''[            <apex:varExpressionType>static</apex:varExpressionType>]''',
 '      ,q''[            <apex:varExpression>0</apex:varExpression>]''',
+'      ,q''[          </apex:processVariable>]''',
+'      ,q''[          <apex:processVariable>]''',
+'      ,q''[            <apex:varSequence>4</apex:varSequence>]''',
+'      ,q''[            <apex:varName>ADJUSTED_CURRENCY</apex:varName>]''',
+'      ,q''[            <apex:varDataType>VARCHAR2</apex:varDataType>]''',
+'      ,q''[            <apex:varExpressionType>static</apex:varExpressionType>]''',
+'      ,q''[            <apex:varExpression></apex:varExpression>]''',
 '      ,q''[          </apex:processVariable>]''',
 '      ,q''[        </apex:beforeSplit>]''',
 '      ,q''[      </bpmn:extensionElements>]''',
@@ -33549,10 +33625,10 @@ unistr('      ,q''[  \00A7'';]'''),
 '      ,q''[begin]''',
 '      ,q''[  case ]''',
 '      ,q''[    when :F4A$TOTAL &gt; 200 then]''',
-'      ,q''[      l_payment_info := ''The amount exceeded the limit for the AI agent, so it was manually processed. We have transferred &lt;strong&gt;''|| :F4A$ADJUSTED_TOTAL ||'' ''|| :F4A$CURRENCY || ''&lt;/strong&gt; to your bank account.'';]''',
+'      ,q''[      l_payment_info := ''The amount exceeded the limit for the AI agent, so it was manually processed. We have transferred &lt;strong&gt;''|| :F4A$ADJUSTED_TOTAL ||'' ''|| :F4A$ADJUSTED_CURRENCY || ''&lt;/strong&gt; to your bank account.'';]''',
 '      ,q''[    when :F4A$PROBABILITY &lt; 90 then ]''',
-'      ,q''[      l_payment_info := ''Our AI agent was not confident enough about the amount stated on the invoice, so it got manually processed. We have transferred &lt;strong&gt;''|| :F4A$ADJUSTED_TOTAL ||'' ''|| :F4A$CURRENCY || ''&lt;/strong&gt; to your'
-||' bank account.'';]''',
+'      ,q''[      l_payment_info := ''Our AI agent was not confident enough about the amount stated on the invoice, so it got manually processed. We have transferred &lt;strong&gt;''|| :F4A$ADJUSTED_TOTAL ||'' ''|| :F4A$ADJUSTED_CURRENCY || ''&lt;/strong&gt'
+||'; to your bank account.'';]''',
 '      ,q''[    else ]''',
 '      ,q''[      l_payment_info := ''Based on this information, the amount was transferred automatically to your bank account without manual intervention.'';]''',
 '      ,q''[  end case;]''',
@@ -33607,7 +33683,17 @@ unistr('      ,q''[  \00A7'';]'''),
 '      ,q''[            <apex:varName>ADJUSTED_TOTAL</apex:varName>]''',
 '      ,q''[            <apex:varDataType>NUMBER</apex:varDataType>]''',
 '      ,q''[            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>]''',
-'      ,q''[            <apex:varExpression>select json_value(fdta_content,''$.AdaptedValue'')]''',
+'      ,q''[            <apex:varExpression>select json_value(fdta_content,''$.AdjustedTotal'')]''',
+'      ,q''[  from form_data ]''',
+'      ,q''[  where fdta_inst_id = :F4A$BUSINESS_REF]''',
+'      ,q''[    and fdta_task_bpmn_id = ''Activity_ReviewInvoice'';</apex:varExpression>]''',
+'      ,q''[          </apex:processVariable>]''',
+'      ,q''[          <apex:processVariable>]''',
+'      ,q''[            <apex:varSequence>1</apex:varSequence>]''',
+'      ,q''[            <apex:varName>ADJUSTED_CURRENCY</apex:varName>]''',
+'      ,q''[            <apex:varDataType>VARCHAR2</apex:varDataType>]''',
+'      ,q''[            <apex:varExpressionType>sqlQuerySingle</apex:varExpressionType>]''',
+'      ,q''[            <apex:varExpression>select json_value(fdta_content,''$.AdjustedCurrency'')]''',
 '      ,q''[  from form_data ]''',
 '      ,q''[  where fdta_inst_id = :F4A$BUSINESS_REF]''',
 '      ,q''[    and fdta_task_bpmn_id = ''Activity_ReviewInvoice'';</apex:varExpression>]''',
@@ -33970,42 +34056,49 @@ wwv_flow_imp_shared.create_install_script(
 '         "type": "object",',
 '         "properties": {',
 '              "total": {',
-'                   "type": "number",',
-'                   "apex": {',
-'                        "label": "total",',
-'                        "colSpan": 6,',
-'                        "readonly": true',
-'                   }',
+'                  "type": "number",',
+'                  "apex": {',
+'                      "label": "Total",',
+'                      "colSpan": 6,',
+'                      "readonly": true',
+'                  }',
 '              },',
 '              "currency": {',
-'                   "type": "string",',
-'                   "apex": {',
-'                        "label": "currency",',
-'                        "colSpan": 6,',
-'                        "readonly": true',
-'                   }',
+'                  "type": "string",',
+'                  "apex": {',
+'                      "label": "Currency",',
+'                       "colSpan": 6,',
+'                       "readonly": true',
+'                  }',
 '              },',
 '              "probability": {',
-'                   "type": "number",',
-'                   "apex": {',
-'                        "label": "probability",',
-'                        "colSpan": 2,',
-'                        "readonly": true',
-'                   }',
+'                  "type": "number",',
+'                  "apex": {',
+'                      "label": "Probability",',
+'                      "colSpan": 2,',
+'                      "readonly": true',
+'                  }',
 '              },',
 '              "explanation_probability": {',
+'                  "type": "string",',
+'                  "apex": {',
+'                      "label": "Explanation Probability",',
+'                      "colSpan": 10,',
+'                      "readonly": true',
+'                  }',
+'              },',
+'              "AdjustedTotal": {',
 '                   "type": "string",',
 '                   "apex": {',
-'                        "label": "explanation_probability",',
-'                        "colSpan": 10,',
-'                        "readonly": true',
+'                        "textBefore": "Please review and fill in the correct values for total and currency",',
+'                        "label": "Total",',
+'                        "colSpan": 6',
 '                   }',
 '              },',
-'              "AdaptedValue": {',
+'              "AdjustedCurrency": {',
 '                   "type": "string",',
 '                   "apex": {',
-'                        "textBefore": "Please review and fill in the Total Value",',
-'                        "label": "AdaptedValue",',
+'                        "label": "Currency",',
 '                        "colSpan": 6',
 '                   }',
 '              }',
@@ -34201,45 +34294,6 @@ wwv_flow_imp_shared.create_install_script(
 );
 end;
 /
-prompt --application/deployment/install/install_oracle_text_policy_invoice
-begin
-wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16820765555649377)
-,p_install_id=>wwv_flow_imp.id(39283140404587418)
-,p_name=>'Oracle Text Policy - Invoice'
-,p_sequence=>70
-,p_script_type=>'INSTALL'
-,p_condition_type=>'EXISTS'
-,p_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
-' SELECT 1',
-'  FROM all_tab_privs',
-'  WHERE table_name = ''CTX_DDL''',
-'    AND privilege = ''EXECUTE''',
-'    AND (',
-'          grantee = USER',
-'          OR grantee = ''PUBLIC''',
-'          OR grantee IN (SELECT role FROM session_roles)',
-'        )'))
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'begin',
-'  ctx_ddl.create_preference',
-'  ( preference_name => ''ai_doc_fast_filter''',
-'  , object_name => ''AUTO_FILTER''',
-'  );',
-'  ctx_ddl.set_attribute',
-'  ( preference_name => ''ai_doc_fast_filter''',
-'  , attribute_name => ''OUTPUT_FORMATTING''',
-'  , attribute_value => ''FALSE''',
-'  );',
-'  ctx_ddl.create_policy',
-'  ( policy_name => ''ai_doc_policy''',
-'  , filter => ''ai_doc_fast_filter''',
-'  );',
-'end;',
-''))
-);
-end;
-/
 prompt --application/deployment/checks
 begin
 wwv_flow_imp_shared.create_install_check(
@@ -34289,7 +34343,7 @@ wwv_flow_imp_shared.create_install_check(
 '    return l_check_success;',
 'end;'))
 ,p_check_condition2=>'PLSQL'
-,p_failure_message=>'Please install the extension "Flows for APEX 24.1.x" first.'
+,p_failure_message=>'Please first install Flows for APEX 25.1.x.'
 );
 end;
 /
