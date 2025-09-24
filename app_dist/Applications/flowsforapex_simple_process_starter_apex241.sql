@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   09:42 Wednesday September 24, 2025
+--   Date and Time:   15:51 Wednesday September 24, 2025
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -113,7 +113,7 @@ wwv_imp_workspace.create_flow(
 ,p_flow_image_prefix => nvl(wwv_flow_application_install.get_image_prefix,'')
 ,p_documentation_banner=>'Application created from create application wizard 2024.05.23.'
 ,p_authentication_id=>wwv_flow_imp.id(39083558809370189)
-,p_application_tab_set=>1
+,p_application_tab_set=>0
 ,p_logo_type=>'T'
 ,p_logo_text=>'Flows for APEX - Simple Process Starter'
 ,p_public_user=>'APEX_PUBLIC_USER'
@@ -1058,11 +1058,6 @@ wwv_flow_imp_page.create_page_group(
  p_id=>wwv_flow_imp.id(39227261133370333)
 ,p_group_name=>'Administration'
 );
-end;
-/
-prompt --application/comments
-begin
-null;
 end;
 /
 prompt --application/shared_components/navigation/breadcrumbs/breadcrumb
@@ -15724,11 +15719,6 @@ wwv_flow_imp_shared.create_template_option(
 end;
 /
 prompt --application/shared_components/globalization/language
-begin
-null;
-end;
-/
-prompt --application/shared_components/globalization/translations
 begin
 null;
 end;
@@ -33470,6 +33460,13 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[            <apex:varDataType>NUMBER</apex:varDataType>]''',
 '      ,q''[            <apex:varExpressionType>static</apex:varExpressionType>]''',
 '      ,q''[            <apex:varExpression>0</apex:varExpression>]''',
+'      ,q''[          </apex:processVariable>]''',
+'      ,q''[          <apex:processVariable>]''',
+'      ,q''[            <apex:varSequence>4</apex:varSequence>]''',
+'      ,q''[            <apex:varName>ADJUSTED_CURRENCY</apex:varName>]''',
+'      ,q''[            <apex:varDataType>VARCHAR2</apex:varDataType>]''',
+'      ,q''[            <apex:varExpressionType>static</apex:varExpressionType>]''',
+'      ,q''[            <apex:varExpression></apex:varExpression>]''',
 '      ,q''[          </apex:processVariable>]''',
 '      ,q''[        </apex:beforeSplit>]''',
 '      ,q''[      </bpmn:extensionElements>]''',
