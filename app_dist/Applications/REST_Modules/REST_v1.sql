@@ -90,6 +90,73 @@ BEGIN
       );
   ORDS.DEFINE_TEMPLATE(
       p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id/export',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'diagrams/:dgrm_id/export',
+      p_method         => 'GET',
+      p_source_type    => 'plsql/block',
+      p_mimes_allowed  => NULL,
+      p_comments       => NULL,
+      p_source         => 
+'declare
+    --
+    l_content   clob;
+    l_filename  varchar2(255);
+    l_chunk     varchar2(32767);
+    l_pos       integer;
+    l_len       integer;
+    --
+begin
+    --
+    begin
+        --
+        select dgrm_content, TO_CHAR(SYSDATE, ''YYYYMMDD-HH24mi'') || ''_'' ||regexp_replace(dgrm_name, ''\s+'', ''_'') || ''_'' || dgrm_status  || ''_'' || dgrm_version || ''.bpmn''
+        into l_content, l_filename
+        from flow_diagrams
+        where dgrm_id = :dgrm_id;
+        --
+        l_len := dbms_lob.getlength(l_content);
+        l_pos := 1;
+        --
+        owa_util.mime_header(''application/xml'', FALSE);
+        htp.p(''Content-Disposition: attachment; filename="'' || l_filename || ''"'');
+        owa_util.http_header_close;
+        --
+        while l_pos <= l_len loop
+            l_chunk := dbms_lob.substr(l_content, 32767, l_pos);
+            htp.p(l_chunk);
+            l_pos := l_pos + 32767;
+        end loop;
+        --
+    exception
+        --
+        when no_da' || 'ta_found then     
+            --
+            :status_code := 404;
+            owa_util.mime_header(''application/json'');
+            owa_util.http_header_close;
+            htp.p(''{"success": false, "message": "Item not found"}'');
+            --
+    end;
+    --
+end;');
+  ORDS.DEFINE_PARAMETER(
+      p_module_name        => 'v1',
+      p_pattern            => 'diagrams/:dgrm_id/export',
+      p_method             => 'GET',
+      p_name               => 'dgrm_id',
+      p_bind_variable_name => 'dgrm_id',
+      p_source_type        => 'URI',
+      p_param_type         => 'DOUBLE',
+      p_access_method      => 'IN',
+      p_comments           => NULL);
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
       p_pattern        => 'diagrams/:dgrm_id/processes',
       p_priority       => 0,
       p_etag_type      => 'HASH',
@@ -273,6 +340,96 @@ end;
   where 1 = (select flow_rest_auth.has_privilege_read(:current_user) from dual)
     and prcs_id = :prcs_id'
       );
+  ORDS.DEFINE_TEMPLATE(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/activities',
+      p_priority       => 0,
+      p_etag_type      => 'HASH',
+      p_etag_query     => NULL,
+      p_comments       => NULL);
+  ORDS.DEFINE_HANDLER(
+      p_module_name    => 'v1',
+      p_pattern        => 'processes/:prcs_id/activities',
+      p_method         => 'GET',
+      p_source_type    => 'plsql/block',
+      p_mimes_allowed  => NULL,
+      p_comments       => 'Get Running, Ended and Error process Activities',
+      p_source         => 
+'declare
+	--
+    l_content   clob;
+    l_chunk     varchar2(32767);
+    l_pos       integer;
+    l_len       integer;
+	--
+begin
+	--
+    begin
+		--
+		WITH  current_activities AS (
+			 SELECT s.sbfl_current
+			 FROM   FLOW_SUBFLOWS s
+				 ,  FLOW_PROCESSES p 
+			 WHERE  s.sbfl_prcs_id = p.prcs_id	 	 
+			 AND    p.prcs_id      = :prcs_id
+			 AND    s.sbfl_status != ''error''
+		),
+		completed_activities AS (
+			SELECT e.lgsf_objt_id
+			FROM   FLOW_STEP_EVENT_LOG e
+				 , FLOW_PROCESSES      p 
+			WHERE  e.lgsf_prcs_id = p.prcs_id
+			AND    p.prcs_id      = :prcs_id
+		),
+		error_activities AS (
+			 SELECT s.sbfl_current
+			 FROM   FLOW_SUBFLOWS s
+				 ,  FLOW_PROCESSES p 
+			 WHERE  s.sbfl_prcs_id = p.prcs_id	 	 
+			 AND    p.prcs_id      = :prcs_id
+			 AND    s.sbfl_status  = ''error''
+		)
+		SELECT  JSON_OBJECT(
+					''current''   value (select JSON_ARRAYAGG(sbfl_current ORDER BY sbfl_current) from current_activities),
+					''completed'' value (select JSON_ARRAYA' || 'GG(lgsf_objt_id ORDER BY lgsf_objt_id)from completed_activities),
+					''error''     value (select JSON_ARRAYAGG(sbfl_current ORDER BY sbfl_current) from error_activities)
+				) AS result
+		INTO    l_content
+		FROM    dual;		
+        --
+        l_len := dbms_lob.getlength(l_content);
+        l_pos := 1;
+    	--
+        owa_util.mime_header(''application/json'', FALSE);    
+        owa_util.http_header_close;
+    	--
+        while l_pos <= l_len loop
+            l_chunk := dbms_lob.substr(l_content, 32767, l_pos);
+            htp.p(l_chunk);
+            l_pos := l_pos + 32767;
+        end loop;
+		--
+    exception
+	
+        when no_data_found then
+            :status_code := 404;
+            owa_util.mime_header(''application/json'');
+            owa_util.http_header_close;
+            htp.p(''{"success": false, "message": "Item not found"}'');
+		--
+    end;
+    --
+end;');
+  ORDS.DEFINE_PARAMETER(
+      p_module_name        => 'v1',
+      p_pattern            => 'processes/:prcs_id/activities',
+      p_method             => 'GET',
+      p_name               => 'prcs_id',
+      p_bind_variable_name => 'prcs_id',
+      p_source_type        => 'URI',
+      p_param_type         => 'DOUBLE',
+      p_access_method      => 'IN',
+      p_comments           => 'Process Instance Id');
   ORDS.DEFINE_TEMPLATE(
       p_module_name    => 'v1',
       p_pattern        => 'processes/:prcs_id/message_subscriptions',
