@@ -1,0 +1,100 @@
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+begin
+*
+ERROR at line 1:
+ORA-20987: APEX - Cannot find specified diagram version.  Please check version specification.
+ORA-06512: at "APEX_240200.WWV_FLOW_ERROR", line 1150
+ORA-06512: at "APEX_240200.WWV_FLOW_ERROR", line 1179
+ORA-06512: at "APEX_240200.WWV_FLOW_ERROR_API", line 54
+ORA-06512: at "WKSP_F4A251EEDEMO.FLOW_ERRORS", line 252
+ORA-06512: at "WKSP_F4A251EEDEMO.FLOW_DIAGRAM", line 509
+ORA-06512: at "WKSP_F4A251EEDEMO.FLOW_DIAGRAM", line 693
+ORA-06512: at "WKSP_F4A251EEDEMO.FLOW_ADMIN_API", line 112
+ORA-06512: at line 23
+
+https://docs.oracle.com/error-help/db/ora-20987/
+
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-20987/
+https://docs.oracle.com/error-help/db/ora-06512/
+
+Commit complete.
+
