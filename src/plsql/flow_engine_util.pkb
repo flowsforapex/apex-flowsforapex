@@ -446,10 +446,17 @@ end get_object_tag;
     if p_parent_subflow is  null then
     -- initial subflow in process.   Get starting Lane info. (could be null)
     -- database 23.3 bug 35862529 means this will return NDF if there are no lanes so we handle (ignore) the NDF
-      begin
-        select lane_objt.objt_bpmn_id
+    -- database 23.8 bug 36838600 requires that you add the column aliases isRole and role on the 3rd and 4th line of 
+    --                            select list (or get ORA-600 [qolTextIdn:1])
+    -- database 23.10 (aka 26.0)  bug introduced while fixing 33561572 means we have to add an optimiser instruction using 
+    --                            fix_control to disable that fix to avoid another ORA-600 [qolTextIdn:1] 
+    --                            adds - ( /*+ OPT_PARAM('_fix_control' '33561572:0') */ )
+
+      begin 
+        select /*+ OPT_PARAM('_fix_control' '33561572:0') */
+               lane_objt.objt_bpmn_id
              , lane_objt.objt_name
-             , lane_objt.objt_attributes."apex"."isRole" isrole
+             , lane_objt.objt_attributes."apex"."isRole" isRole
              , lane_objt.objt_attributes."apex"."role"   role
           into l_lane
              , l_lane_name

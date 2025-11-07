@@ -1926,7 +1926,9 @@ as
     if pi_parent_id is null then
       for rec in (
                  select proc.proc_id
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
+                      , case proc.proc_type when 'bpmn:subProcess'      then 'SUB_PROCESS' 
+                                            when 'bpmn:adHocSubProcess' then 'AD_HOC_SUB_PROCESS'
+                                            else 'PROCESS'              end as proc_type_rem
                       , proc.proc_type
                       , proc.proc_callable
                       , proc.proc_startable
@@ -1938,6 +1940,7 @@ as
                       , proc.proc_business_admin
                       , proc.proc_steps
                       , proc.proc_sub_procs
+                      , proc.proc_ad_hoc_sub_procs
                       , proc.proc_name
                       , proc.proc_laneset
                       , proc.proc_extensions
@@ -1958,8 +1961,10 @@ as
                         , proc_page_id            varchar2( 50 char) path '@apex:pageId'
                         , proc_username           varchar2( 50 char) path '@apex:username'
                         , proc_business_admin     varchar2( 50 char) path '@apex:businessAdmin'
-                        , proc_steps              sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:laneSet'
+                        , proc_steps              sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements 
+                                                                             except bpmn:laneSet except bpmn:adHocSubProcess'
                         , proc_sub_procs          sys.xmltype        path 'bpmn:subProcess'
+                        , proc_ad_hoc_sub_procs   sys.xmltype        path 'bpmn:adHocSubProcess'
                         , proc_laneset            sys.xmltype        path 'bpmn:laneSet'
                         , proc_extensions         sys.xmltype        path 'bpmn:extensionElements'
                       ) proc
@@ -2083,27 +2088,42 @@ as
 
         end if;
 
+        -- recurse if adhoc sub processes found
+        if rec.proc_ad_hoc_sub_procs is not null then
+
+          parse_xml
+          ( 
+            pi_xml => rec.proc_ad_hoc_sub_procs
+          , pi_parent_id => rec.proc_id
+          );
+
+        end if;
+
       end loop;
-    else
+    else -- it is a sub process or adhoc sub process (need to differentiate)
       for rec in (
                  select proc.proc_id
                       , proc.proc_name
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
+                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' 
+                                            when 'bpmn:adHocSubProcess' then 'ADHOC_SUB_PROCESS'
+                                            else 'PROCESS' end as proc_type_rem
                       , proc.proc_type
                       , proc.proc_steps
                       , proc.proc_sub_procs
+                      , proc.proc_ad_hoc_sub_procs
                       , proc.proc_extensions
                    from xmltable
                       (
                         xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
                       , 'bpmn:subProcess' passing pi_xml
                         columns
-                          proc_id         varchar2(50  char) path '@id'
-                        , proc_name       varchar2(200 char) path '@name'
-                        , proc_type       varchar2(50  char) path 'name()'
-                        , proc_steps      sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements'
-                        , proc_sub_procs  sys.xmltype        path 'bpmn:subProcess'
-                        , proc_extensions sys.xmltype        path 'bpmn:extensionElements'
+                          proc_id               varchar2(50  char) path '@id'
+                        , proc_name             varchar2(200 char) path '@name'
+                        , proc_type             varchar2(50  char) path 'name()'
+                        , proc_steps            sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:adHocSubProcess'
+                        , proc_sub_procs        sys.xmltype        path 'bpmn:subProcess'
+                        , proc_ad_hoc_sub_procs sys.xmltype        path 'bpmn:adHocSubProcess'
+                        , proc_extensions       sys.xmltype        path 'bpmn:extensionElements'
                       ) proc
                  )
       loop
@@ -2140,7 +2160,16 @@ as
             pi_xml       => rec.proc_sub_procs
           , pi_parent_id => rec.proc_id
           );
-        end if;        
+        end if;   
+
+        -- recurse if we found any adhoc sub process
+        if rec.proc_ad_hoc_sub_procs is not null then
+          parse_xml
+          (
+            pi_xml       => rec.proc_ad_hoc_sub_procs
+          , pi_parent_id => rec.proc_id
+          );     
+        end if;
       end loop;
     end if;
   end parse_xml;
