@@ -1905,8 +1905,9 @@ as
 
   procedure parse_xml
   (
-    pi_xml       in sys.xmltype
-  , pi_parent_id in flow_types_pkg.t_bpmn_id
+    pi_xml        in sys.xmltype
+  , pi_parent_id  in flow_types_pkg.t_bpmn_id
+  , pi_child_type in flow_types_pkg.t_bpmn_id default null
   )
   as
   begin
@@ -1917,7 +1918,7 @@ as
       (
         pi_plog_dgrm_id    => g_dgrm_id
       , pi_plog_bpmn_id    => pi_parent_id
-      , pi_plog_parse_step => 'parse_xml'
+      , pi_plog_parse_step => 'parse_xml' || case when pi_child_type is not null then ' - child type: ' || pi_child_type else '' end
       , pi_plog_payload    => pi_xml
       );
 
@@ -2084,6 +2085,7 @@ as
           ( 
             pi_xml => rec.proc_sub_procs
           , pi_parent_id => rec.proc_id
+          , pi_child_type => flow_constants_pkg.gc_bpmn_subprocess
           );
 
         end if;
@@ -2095,82 +2097,138 @@ as
           ( 
             pi_xml => rec.proc_ad_hoc_sub_procs
           , pi_parent_id => rec.proc_id
+          , pi_child_type => flow_constants_pkg.gc_bpmn_ad_hoc_subprocess
           );
 
         end if;
 
       end loop;
     else -- it is a sub process or adhoc sub process (need to differentiate)
-      for rec in (
-                 select proc.proc_id
-                      , proc.proc_name
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' 
-                                            when 'bpmn:adHocSubProcess' then 'ADHOC_SUB_PROCESS'
-                                            else 'PROCESS' end as proc_type_rem
-                      , proc.proc_type
-                      , proc.proc_steps
-                      , proc.proc_sub_procs
-                      , proc.proc_ad_hoc_sub_procs
-                      , proc.proc_extensions
-                   from xmltable
-                      (
-                        xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                      , 'bpmn:subProcess' passing pi_xml
-                        columns
-                          proc_id               varchar2(50  char) path '@id'
-                        , proc_name             varchar2(200 char) path '@name'
-                        , proc_type             varchar2(50  char) path 'name()'
-                        , proc_steps            sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:adHocSubProcess'
-                        , proc_sub_procs        sys.xmltype        path 'bpmn:subProcess'
-                        , proc_ad_hoc_sub_procs sys.xmltype        path 'bpmn:adHocSubProcess'
-                        , proc_extensions       sys.xmltype        path 'bpmn:extensionElements'
-                      ) proc
-                 )
-      loop
-        -- We add an entry for a sub process here,
-        -- as it is an object within the master process
-        register_object
-        (
-          pi_objt_bpmn_id        => rec.proc_id
-        , pi_objt_tag_name       => rec.proc_type
-        , pi_objt_name           => rec.proc_name
-        , pi_objt_parent_bpmn_id => pi_parent_id
-        );
-
-        if rec.proc_extensions is not null then
-          parse_extension_elements
+      if pi_child_type = flow_constants_pkg.gc_bpmn_subprocess then
+        for rec in (
+                   select proc.proc_id
+                        , proc.proc_name
+                        , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' 
+                                              when 'bpmn:adHocSubProcess' then 'ADHOC_SUB_PROCESS'
+                                              else 'PROCESS' end as proc_type_rem
+                        , proc.proc_type
+                        , proc.proc_steps
+                        , proc.proc_sub_procs
+                        , proc.proc_ad_hoc_sub_procs
+                        , proc.proc_extensions
+                     from xmltable
+                        (
+                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                        , 'bpmn:subProcess' passing pi_xml
+                          columns
+                            proc_id               varchar2(50  char) path '@id'
+                          , proc_name             varchar2(200 char) path '@name'
+                          , proc_type             varchar2(50  char) path 'name()'
+                          , proc_steps            sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:adHocSubProcess'
+                          , proc_sub_procs        sys.xmltype        path 'bpmn:subProcess'
+                          , proc_ad_hoc_sub_procs sys.xmltype        path 'bpmn:adHocSubProcess'
+                          , proc_extensions       sys.xmltype        path 'bpmn:extensionElements'
+                        ) proc
+                   )
+        loop
+          -- We add an entry for a sub process here,
+          -- as it is an object within the master process
+          register_object
           (
-            pi_bpmn_id       => rec.proc_id
-          , pi_extension_xml => rec.proc_extensions
+            pi_objt_bpmn_id        => rec.proc_id
+          , pi_objt_tag_name       => rec.proc_type
+          , pi_objt_name           => rec.proc_name
+          , pi_objt_parent_bpmn_id => pi_parent_id
           );
-        end if;
 
-        -- parse any immediate steps
-        parse_steps
-        ( 
-          pi_xml          => rec.proc_steps
-        , pi_proc_type    => rec.proc_type_rem
-        , pi_proc_bpmn_id => rec.proc_id
-        );
+          if rec.proc_extensions is not null then
+            parse_extension_elements
+            (
+              pi_bpmn_id       => rec.proc_id
+            , pi_extension_xml => rec.proc_extensions
+            );
+          end if;
 
-        -- recurse if we found any sub process
-        if rec.proc_sub_procs is not null then
-          parse_xml
-          (
-            pi_xml       => rec.proc_sub_procs
-          , pi_parent_id => rec.proc_id
+          -- parse any immediate steps
+          parse_steps
+          ( 
+            pi_xml          => rec.proc_steps
+          , pi_proc_type    => rec.proc_type_rem
+          , pi_proc_bpmn_id => rec.proc_id
           );
-        end if;   
 
-        -- recurse if we found any adhoc sub process
-        if rec.proc_ad_hoc_sub_procs is not null then
-          parse_xml
+          -- recurse if we found any sub process
+          if rec.proc_sub_procs is not null then
+            parse_xml
+            (
+              pi_xml        => rec.proc_sub_procs
+            , pi_parent_id  => rec.proc_id
+            , pi_child_type => flow_constants_pkg.gc_bpmn_subprocess
+            );
+          end if;   
+
+          -- recurse if we found any adhoc sub process
+          if rec.proc_ad_hoc_sub_procs is not null then
+            parse_xml
+            (
+              pi_xml        => rec.proc_ad_hoc_sub_procs
+            , pi_parent_id  => rec.proc_id
+            , pi_child_type => flow_constants_pkg.gc_bpmn_ad_hoc_subprocess
+            );     
+          end if;
+        end loop;
+      elsif pi_child_type = flow_constants_pkg.gc_bpmn_ad_hoc_subprocess then
+        for rec in (
+                   select proc.proc_id
+                        , proc.proc_name
+                        , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' 
+                                              when 'bpmn:adHocSubProcess' then 'ADHOC_SUB_PROCESS'
+                                              else 'PROCESS' end as proc_type_rem
+                        , proc.proc_type
+                        , proc.proc_steps
+                        , proc.proc_extensions
+                     from xmltable
+                        (
+                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                        , 'bpmn:adHocSubProcess' passing pi_xml
+                          columns
+                            proc_id               varchar2(50  char) path '@id'
+                          , proc_name             varchar2(200 char) path '@name'
+                          , proc_type             varchar2(50  char) path 'name()'
+                          , proc_steps            sys.xmltype        path '* except bpmn:extensionElements'
+                          , proc_extensions       sys.xmltype        path 'bpmn:extensionElements'
+                          , proc_sub_procs        sys.xmltype        path 'bpmn:subProcess'
+                          , proc_ad_hoc_sub_procs sys.xmltype        path 'bpmn:adHocSubProcess'
+                        ) proc
+                   )
+        loop
+          -- We add an entry for a sub process here,
+          -- as it is an object within the master process
+          register_object
           (
-            pi_xml       => rec.proc_ad_hoc_sub_procs
-          , pi_parent_id => rec.proc_id
-          );     
-        end if;
-      end loop;
+            pi_objt_bpmn_id        => rec.proc_id
+          , pi_objt_tag_name       => rec.proc_type
+          , pi_objt_name           => rec.proc_name
+          , pi_objt_parent_bpmn_id => pi_parent_id
+          );
+
+          if rec.proc_extensions is not null then
+            parse_extension_elements
+            (
+              pi_bpmn_id       => rec.proc_id
+            , pi_extension_xml => rec.proc_extensions
+            );
+          end if;
+
+          -- parse any immediate steps
+          parse_steps
+          ( 
+            pi_xml          => rec.proc_steps
+          , pi_proc_type    => rec.proc_type_rem
+          , pi_proc_bpmn_id => rec.proc_id
+          );
+        end loop;
+      end if;
     end if;
   end parse_xml;
 
