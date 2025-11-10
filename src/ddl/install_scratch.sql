@@ -146,6 +146,7 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed             VARCHAR2(50 CHAR),
     sbfl_current                    VARCHAR2(50 CHAR),
     sbfl_step_key                   VARCHAR2(20 CHAR) not null,
+    sbfl_is_adhoc                   VARCHAR2(1 CHAR),
     sbfl_due_on                     TIMESTAMP WITH TIME ZONE,
     sbfl_priority                   NUMBER,
     sbfl_status                     VARCHAR2(20 CHAR),
@@ -177,6 +178,8 @@ CREATE TABLE flow_subflows (
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_pk PRIMARY KEY ( sbfl_id );
 
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_ck_following_ebg_yn CHECK (sbfl_is_following_ebg in ('Y','N'));
+
+ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_ck_adhoc_yn CHECK (sbfl_is_adhoc in ('Y','N'));
 
 create index flow_sbfl_dgrm_prcs_ix on flow_subflows( sbfl_dgrm_id, sbfl_prcs_id );
 
