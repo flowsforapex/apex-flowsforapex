@@ -234,7 +234,7 @@ create or replace package body flow_api_pkg as
     );
   end flow_start_step;
 
-    procedure flow_pause_step
+  procedure flow_pause_step
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -248,6 +248,37 @@ create or replace package body flow_api_pkg as
     , p_step_key    => p_step_key
     );
   end flow_pause_step;
+
+  procedure flow_start_adhoc_activity 
+  (
+    p_process_id       in flow_processes.prcs_id%type -- Process ID
+  , p_subflow_id       in flow_subflows.sbfl_id%type -- Subflow ID
+  , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+  )
+  is
+     l_session_id   number;
+  begin 
+    -- create an APEX session if this has come in from outside APEX
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+    end if;
+
+    flow_adhoc_subprocesses.start_adhoc_activity
+    ( p_process_id        => p_process_id
+    , p_parent_subflow_id => p_subflow_id
+    , p_objt_bpmn_id      => p_activity_bpmn_id
+    );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;
+  exception
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id );
+      end if;
+      raise;
+  end flow_start_adhoc_activity;
 
   procedure flow_restart_step
   (

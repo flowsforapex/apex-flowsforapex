@@ -2097,7 +2097,7 @@ as
           ( 
             pi_xml => rec.proc_ad_hoc_sub_procs
           , pi_parent_id => rec.proc_id
-          , pi_child_type => flow_constants_pkg.gc_bpmn_ad_hoc_subprocess
+          , pi_child_type => flow_constants_pkg.gc_bpmn_adhoc_subprocess
           );
 
         end if;
@@ -2173,11 +2173,11 @@ as
             (
               pi_xml        => rec.proc_ad_hoc_sub_procs
             , pi_parent_id  => rec.proc_id
-            , pi_child_type => flow_constants_pkg.gc_bpmn_ad_hoc_subprocess
+            , pi_child_type => flow_constants_pkg.gc_bpmn_adhoc_subprocess
             );     
           end if;
         end loop;
-      elsif pi_child_type = flow_constants_pkg.gc_bpmn_ad_hoc_subprocess then
+      elsif pi_child_type = flow_constants_pkg.gc_bpmn_adhoc_subprocess then
         for rec in (
                    select proc.proc_id
                         , proc.proc_name

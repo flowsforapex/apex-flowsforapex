@@ -41,6 +41,7 @@ PROMPT >> Engine
 @plsql/flow_plsql_runner_pkg.pks
 @plsql/flow_apex_session.pks
 @plsql/flow_subprocesses.pks
+@plsql/flow_adhoc_subprocesses.pks
 @plsql/flow_call_activities.pks
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
@@ -121,6 +122,7 @@ PROMPT >> Engine
 @plsql/flow_plsql_runner_pkg.pkb
 @plsql/flow_apex_session.pkb
 @plsql/flow_subprocesses.pkb
+@plsql/flow_adhoc_subprocesses.pkb
 @plsql/flow_call_activities.pkb
 @plsql/flow_logging.pkb
 @plsql/flow_globals.pkb

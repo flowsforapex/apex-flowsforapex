@@ -326,8 +326,12 @@ begin
     values ('timer-internal-error', c_load_lang, 'Timer internal error  for object %0. Type: %1; Value: %2');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('rewind-no-parent-subflow', c_load_lang, 'Rewind - no parent subflow found.');
-
-  -- above here manually added for 25.1 dev
+-- below here manually added for 26.1 dev (only add these to the english file...)
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-not-startable-objt', c_load_lang, q'[Activity %0 not startable from an adhoc subprocess.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-already-started', c_load_lang, q'[Activity %0 has already been started in this adhoc subprocess.]');
+  -- above here manually added for 26.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( '', c_load_lang, q'[  ]' );

@@ -146,7 +146,8 @@ CREATE TABLE flow_subflows (
     sbfl_last_completed             VARCHAR2(50 CHAR),
     sbfl_current                    VARCHAR2(50 CHAR),
     sbfl_step_key                   VARCHAR2(20 CHAR) not null,
-    sbfl_is_adhoc                   VARCHAR2(1 CHAR),
+    sbfl_is_adhoc                   VARCHAR2(1 CHAR), -- Y if is a subflow inside an adhoc subprocess
+    sbfl_adhoc_child_process_level  NUMBER, -- process level of any child subflows if current is an adhoc subprocess
     sbfl_due_on                     TIMESTAMP WITH TIME ZONE,
     sbfl_priority                   NUMBER,
     sbfl_status                     VARCHAR2(20 CHAR),

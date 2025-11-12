@@ -417,6 +417,31 @@ begin
 end;
 ```
 **/
+   procedure flow_start_adhoc_activity (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+   ); 
+   /**
+Procedure flow_start_adhoc_activity
+This procedure is used to start an ad-hoc activity within an adhoc sub process.
+
+EXAMPLE
+
+This example will start an ad-hoc activity with BPMN ID 'MyAdHocActivity' in process instance 345.
+
+```sql
+begin
+   flow_api_pkg.flow_start_adhoc_activity(
+        p_process_id       => 345
+      , p_subflow_id       => 3
+      , p_activity_bpmn_id => 'MyAdHocActivity'
+   );
+end;
+```
+**/
    procedure flow_pause_step (
       p_process_id in flow_processes.prcs_id%type -- Process ID
 ,

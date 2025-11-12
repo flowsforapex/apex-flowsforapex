@@ -58,6 +58,7 @@ drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
 drop package flow_engine_app_api;
+drop package flow_adhoc_subprocesses;
 drop package flow_call_activities;
 drop package flow_subprocesses;
 drop package flow_apex_session;

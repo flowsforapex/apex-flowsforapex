@@ -43,6 +43,7 @@ as
   , target_objt_iteration     flow_subflows.sbfl_iteration_type%type
   , target_objt_step_key      flow_subflows.sbfl_step_key%type
   );
+  --todo add source_is_adhoc_endpoint. boolean
 
   type t_subflow_context is record
   ( sbfl_id           flow_subflows.sbfl_id%type

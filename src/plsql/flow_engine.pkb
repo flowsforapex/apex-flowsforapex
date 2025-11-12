@@ -1106,13 +1106,19 @@ begin
 
   exception
     when no_data_found then
-      flow_errors.handle_instance_error
-      ( pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
-      , pi_sbfl_id        => p_sbfl_rec.sbfl_id
-      , pi_message_key    => 'no_next_step_found'
-      , p0 => p_sbfl_rec.sbfl_id
-      );
-      -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'
+      -- check for adhoc subprocess (has no end events)
+      if p_sbfl_rec.sbfl_is_adhoc = 'Y' then
+        -- todo
+        null; -- for now, just return null step info
+      else
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
+        , pi_sbfl_id        => p_sbfl_rec.sbfl_id
+        , pi_message_key    => 'no_next_step_found'
+        , p0 => p_sbfl_rec.sbfl_id
+        );
+        -- $F4AMESSAGE 'no_next_step_found' || 'No Next Step Found on subflow %0.  Check your process diagram.'
+      end if;
     when too_many_rows then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => p_sbfl_rec.sbfl_prcs_id
@@ -1346,6 +1352,11 @@ begin
       , p_sbfl_info => p_sbfl_rec
       , p_step_info => p_step_info
       ); 
+    when flow_constants_pkg.gc_bpmn_adhoc_subprocess then
+      flow_adhoc_subprocesses.start_adhoc_SubProcess
+      ( p_sbfl_info => p_sbfl_rec
+      , p_step_info => p_step_info
+      );      
     when flow_constants_pkg.gc_bpmn_gateway_event_based then
       flow_gateways.process_eventBasedGateway
       ( p_sbfl_info => p_sbfl_rec

@@ -41,7 +41,7 @@ as
 
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
-  gc_bpmn_ad_hoc_subprocess            constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'adHocSubProcess';
+  gc_bpmn_adhoc_subprocess             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'adHocSubProcess';
   gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
 
   gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
@@ -251,6 +251,7 @@ as
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_iterating            constant  varchar2(20 char) := 'iterating';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_in_adhoc_subprocess  constant  varchar2(20 char) := 'in adhoc subprocess';
   gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
   gc_sbfl_status_suspended            constant  varchar2(20 char) := 'suspended';

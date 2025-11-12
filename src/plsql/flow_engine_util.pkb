@@ -410,7 +410,8 @@ end get_object_tag;
     , p_iteration_var             in flow_process_variables.prov_var_name%type default null
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     , p_iter_id                   in flow_iterations.iter_id%type default null    
-    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null                 
+    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null    
+    , p_is_adhoc                  in boolean default false             
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -425,6 +426,7 @@ end get_object_tag;
     l_level_parent        flow_subflows.sbfl_id%type := 0;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_is_new_scope        varchar2(1 byte) := flow_constants_pkg.gc_false;
+    l_is_adhoc            varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_follows_ebg         flow_subflows.sbfl_is_following_ebg%type;
     l_new_iter_id         flow_iterations.iter_id%type;
   begin
@@ -441,6 +443,9 @@ end get_object_tag;
     end if;
     if p_follows_ebg then
       l_follows_ebg := flow_constants_pkg.gc_true;
+    end if;
+    if p_is_adhoc then
+      l_is_adhoc := flow_constants_pkg.gc_true;
     end if;
 
     if p_parent_subflow is  null then
@@ -476,7 +481,7 @@ end get_object_tag;
     else
     -- new subflow in existing process
     -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process
-      select sbfl.sbfl_process_level
+      select coalesce ( sbfl.sbfl_adhoc_child_process_level, sbfl.sbfl_process_level)
            , sbfl.sbfl_diagram_level
            , sbfl.sbfl_scope
            , sbfl.sbfl_lane
@@ -533,6 +538,7 @@ end get_object_tag;
          , sbfl_iteration_var_scope
          , sbfl_iter_id
          , sbfl_iobj_id
+         , sbfl_is_adhoc
          )
     values
          ( p_process_id
@@ -566,6 +572,7 @@ end get_object_tag;
          , p_iteration_var_scope
          , l_new_iter_id  
          , p_iterated_object         
+         , l_is_adhoc 
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 

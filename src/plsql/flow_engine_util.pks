@@ -129,6 +129,7 @@ as
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     , p_iter_id                   in flow_iterations.iter_id%type default null
     , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
+    , p_is_adhoc                  in boolean default false
     ) return flow_types_pkg.t_subflow_context
     ;
 
