@@ -30,6 +30,33 @@ begin
 end;
 /
 
+PROMPT >> > Creating Table flow_adhoc_subflows
+
+create table flow_adhoc_subflows (
+    ahsf_sbfl_id                NUMBER NOT NULL,
+    ahsf_prcs_id                NUMBER NOT NULL,
+    ahsf_subproc_sbfl_id        NUMBER NOT NULL,
+    ahsf_subproc_bpmn_id        VARCHAR2(50 CHAR) NOT NULL,
+    ahsf_subproc_step_key       VARCHAR2(20 CHAR) NOT NULL,
+    ahsf_starting_object        VARCHAR2(50 CHAR) NOT NULL,
+    ahsf_starting_step_key      VARCHAR2(20 CHAR) NOT NULL,
+    ahsf_repeat_count           NUMBER NOT NULL,
+    ahsf_status                 VARCHAR2(20 CHAR) NOT NULL,
+    ahsf_start_time             TIMESTAMP WITH TIME ZONE NOT NULL,
+    ahsf_complete_time          TIMESTAMP WITH TIME ZONE,
+    ahsf_inputs                 CLOB,
+    ahsf_outputs                CLOB
+);
+
+alter table flow_adhoc_subflows
+  add constraint flow_ahsf_pk primary key ( ahsf_sbfl_id );
+
+alter table flow_adhoc_subflows add constraint ahsf_inputs_is_json_ck check ( ahsf_inputs is json );    
+alter table flow_adhoc_subflows add constraint ahsf_outputs_is_json_ck check ( ahsf_outputs is json );
+
+alter table flow_adhoc_subflows add constraint ahsf_unique_uk unique  ( ahsf_prcs_id
+                                                                    , ahsf_starting_object
+                                                                    , ahsf_repeat_count );
 
 PROMPT >> >> Schema Changes Completed
 PROMPT >> --------------------------------------------------- 

@@ -635,6 +635,11 @@ create or replace package body flow_instances as
       from flow_iterated_objects
      where iobj_prcs_id = p_process_id
      ;
+    -- clean up any adhoc subprocesses
+    delete
+      from flow_adhoc_subflows 
+      where ahsf_prcs_id = p_process_id
+    ;
     -- delete the subflows
     delete
       from flow_subflows sbfl
@@ -987,6 +992,11 @@ create or replace package body flow_instances as
       from flow_iterated_objects
      where iobj_prcs_id = p_process_id
      ;
+    -- clean up any adhoc subprocesses
+    delete
+      from flow_adhoc_subflows 
+      where ahsf_prcs_id = p_process_id
+    ;
     delete
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id

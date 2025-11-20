@@ -20,5 +20,10 @@ as
     , p_objt_bpmn_id     in flow_objects.objt_bpmn_id%type
     );
 
+  procedure end_adhoc_activity
+    ( p_process_id        in flow_processes.prcs_id%type
+    , p_subflow_id       in flow_subflows.sbfl_id%type
+    );
+
 end flow_adhoc_subprocesses;
 /

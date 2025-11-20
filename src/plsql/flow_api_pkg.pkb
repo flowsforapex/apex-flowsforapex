@@ -261,6 +261,7 @@ create or replace package body flow_api_pkg as
     -- create an APEX session if this has come in from outside APEX
     if v('APP_SESSION') is null then
       l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+      apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
     end if;
 
     flow_adhoc_subprocesses.start_adhoc_activity

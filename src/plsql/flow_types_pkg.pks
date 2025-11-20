@@ -29,6 +29,7 @@ as
   ( dgrm_id                   flow_diagrams.dgrm_id%type
   , source_objt_tag           flow_objects.objt_tag_name%type
   , source_objt_id            flow_objects.objt_id%type
+  , source_is_adhoc_endpoint  t_single_vc2
   , target_objt_id            flow_objects.objt_id%type
   , target_objt_name          flow_objects.objt_name%type
   , target_objt_ref           flow_objects.objt_bpmn_id%type
@@ -43,7 +44,7 @@ as
   , target_objt_iteration     flow_subflows.sbfl_iteration_type%type
   , target_objt_step_key      flow_subflows.sbfl_step_key%type
   );
-  --todo add source_is_adhoc_endpoint. boolean
+
 
   type t_subflow_context is record
   ( sbfl_id           flow_subflows.sbfl_id%type

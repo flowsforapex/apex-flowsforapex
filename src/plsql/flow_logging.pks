@@ -16,7 +16,7 @@ create or replace package flow_logging
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
                 , flow_call_activities, flow_subprocesses , flow_usertask_pkg, flow_settings
                 , flow_iteration, flow_instances_util_ee, flow_rewind, flow_reservations 
-                , flow_message_util_ee)
+                , flow_message_util_ee, flow_adhoc_subprocesses )
 as
 
   procedure log_diagram_event
