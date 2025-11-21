@@ -778,6 +778,7 @@ begin
                                   , flow_constants_pkg.gc_bpmn_manualTask
                                   , flow_constants_pkg.gc_bpmn_call_activity
                                   , flow_constants_pkg.gc_bpmn_receiveTask
+                                  , flow_constants_pkg.gc_bpmn_adhoc_subprocess
                                   )   -- add any objects that can support timer boundary events here
           -- if any of these events have a timer on them, it must be an interrupting timer.
           -- because non-interupting timers are set on the boundary event itself

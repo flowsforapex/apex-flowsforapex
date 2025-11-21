@@ -2,7 +2,7 @@ create or replace package flow_engine
 /* 
 -- Flows for APEX - flow_engine.pks
 -- 
--- (c) Copyright Flowquest Consulting Limited. 2020-24.
+-- (c) Copyright Flowquest Limited and/or its associates. 2020-25.
 --
 -- Created  11-Sep-2020  Richard Allen (Flowquest)
 -- Modified 09-Jan-2024  Richard Allen, Flowquest Consulting
@@ -13,7 +13,8 @@ create or replace package flow_engine
                 , flow_boundary_events, flow_timers_pkg, flow_subprocesses
                 , flow_call_activities, flow_usertask_pkg
                 , flow_message_util, flow_message_util_ee, flow_message_flow
-                , flow_iteration, flow_instances_util_ee, flow_rewind)
+                , flow_iteration, flow_instances_util_ee, flow_rewind
+                , flow_adhoc_subprocesses)
 as 
   procedure timer_callback
   ( p_process_id    in flow_processes.prcs_id%type

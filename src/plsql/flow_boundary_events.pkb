@@ -375,23 +375,27 @@ is
     end if;
 
     if l_parent_objt_tag in ( flow_constants_pkg.gc_bpmn_subprocess
-                            , flow_constants_pkg.gc_bpmn_call_activity )
+                            , flow_constants_pkg.gc_bpmn_call_activity 
+                            , flow_constants_pkg.gc_bpmn_adhoc_subprocess
+                            )
     then
        -- if the boundary event is on a subprocess or call activity (rather than a task type), terminate the subprocess level
        -- find the process level inside the subprocess and then stop all processing at that level and below
+       -- this wll also work for adhoc subprocesses
       select distinct sbfl.sbfl_process_level
         into l_child_process_level
         from flow_subflows sbfl
        where sbfl.sbfl_sbfl_id = p_subflow_id
-       ;
-       if l_child_process_level is not null 
-       then 
-          flow_engine_util.terminate_level
-          ( p_process_id    => p_process_id
-          , p_process_level => l_child_process_level
-          );
-       end if;
+      ;
+      if l_child_process_level is not null 
+      then 
+         flow_engine_util.terminate_level
+         ( p_process_id    => p_process_id
+         , p_process_level => l_child_process_level
+         );
+      end if;
     end if;
+
     -- clean up any other boundary events on the object
     flow_boundary_events.unset_boundary_events 
     ( p_process_id => p_process_id
