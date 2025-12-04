@@ -138,15 +138,30 @@ as
   end check_subflow_exists;
 
 function get_subprocess_parent_subflow
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_current    in flow_objects.objt_bpmn_id%type -- an object in the subprocess
+  ( p_sbfl_info   in flow_subflows%rowtype
+  , p_current     in flow_objects.objt_bpmn_id%type -- an object in the subprocess
   ) return flow_types_pkg.t_subflow_context
   is
     l_parent_subflow          flow_types_pkg.t_subflow_context;
-    l_parent_subproc_activity flow_objects.objt_bpmn_id%type;
   begin
-
+    -- should return the subprocess that called this subprocess, call activity, 
+    -- or adhoc subprocess
+    case p_sbfl_info.sbfl_is_adhoc 
+    when flow_constants_pkg.gc_true then
+      -- get parent subflow for an adhoc subprocess
+      select calling_sbfl.sbfl_id
+           , calling_sbfl.sbfl_step_key
+           , calling_sbfl.sbfl_scope
+        into l_parent_subflow.sbfl_id
+           , l_parent_subflow.step_key
+           , l_parent_subflow.scope
+        from flow_subflows calling_sbfl
+       where calling_sbfl.sbfl_id      = p_sbfl_info.sbfl_sbfl_id
+         and calling_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+         ;
+      return l_parent_subflow;
+    else 
+    -- get parent subflow for a subprocess or a call_activity
     select calling_sbfl.sbfl_id
          , calling_sbfl.sbfl_step_key
          , calling_sbfl.sbfl_scope
@@ -157,9 +172,10 @@ function get_subprocess_parent_subflow
       join flow_subflows called_sbfl
         on called_sbfl.sbfl_calling_sbfl = calling_sbfl.sbfl_id
        and called_sbfl.sbfl_prcs_id = calling_sbfl.sbfl_prcs_id
-     where called_sbfl.sbfl_id = p_subflow_id
-       and called_sbfl.sbfl_prcs_id = p_process_id
+     where called_sbfl.sbfl_id = p_sbfl_info.sbfl_id
+       and called_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
        ;
+    end case;
     return l_parent_subflow;
   exception
       when no_data_found then
@@ -490,7 +506,11 @@ end get_object_tag;
            , sbfl.sbfl_lane_role
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
-                when 'N' then sbfl.sbfl_calling_sbfl
+                when 'N' then 
+                    case l_is_adhoc
+                      when 'Y' then p_parent_sbfl_proc_level
+                      else sbfl.sbfl_calling_sbfl
+                    end
              end 
            , coalesce(p_iter_id, sbfl_iter_id)
         into l_process_level

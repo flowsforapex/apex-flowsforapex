@@ -159,8 +159,7 @@ end flow_process_link_event;
     --next step can be either end of process, end of a call activity, or a sub-process returning to its parent
     -- get parent subflow
     l_sbfl_context_par := flow_engine_util.get_subprocess_parent_subflow
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
+      ( p_sbfl_info  => p_sbfl_info
       , p_current    => p_sbfl_info.sbfl_current
       );
     -- process any variable expressions in the onEvent set
@@ -349,8 +348,8 @@ end flow_process_link_event;
     l_injected_step_key   flow_subflows.sbfl_step_key%type;
     l_is_interrupting     boolean;
   begin
-    -- currently  supports none, link, and escalation Intermediate throw event 
-    -- but this might later have other case type =  message throw, etc. ....
+    -- currently  supports none, link, message and escalation Intermediate throw event 
+    -- but this might later have other case type
     apex_debug.enter 
     ( 'process_IntermediateThrowEvent'
     , 'p_step_info.target_objt_ref', p_step_info.target_objt_ref
@@ -414,9 +413,8 @@ end flow_process_link_event;
       ;
       -- find the subProcess event in the parent level
       l_par_sbfl := flow_engine_util.get_subprocess_parent_subflow
-      ( p_process_id => p_sbfl_info.sbfl_prcs_id
-      , p_subflow_id => p_sbfl_info.sbfl_id
-      , p_current => p_step_info.target_objt_ref
+      ( p_sbfl_info  => p_sbfl_info
+      , p_current    => p_step_info.target_objt_ref
       );
       -- escalate it to the boundary Event
       flow_boundary_events.process_escalation

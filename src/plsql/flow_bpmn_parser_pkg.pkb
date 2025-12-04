@@ -2187,6 +2187,7 @@ as
                         , proc.proc_type
                         , proc.proc_steps
                         , proc.proc_extensions
+                        , proc.proc_sub_procs
                      from xmltable
                         (
                           xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
@@ -2227,6 +2228,17 @@ as
           , pi_proc_type    => rec.proc_type_rem
           , pi_proc_bpmn_id => rec.proc_id
           );
+
+          -- recurse if we found any sub process
+          if rec.proc_sub_procs is not null then
+            parse_xml
+            (
+              pi_xml        => rec.proc_sub_procs
+            , pi_parent_id  => rec.proc_id
+            , pi_child_type => flow_constants_pkg.gc_bpmn_subprocess
+            );
+          end if;   
+
         end loop;
       end if;
     end if;

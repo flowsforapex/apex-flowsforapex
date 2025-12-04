@@ -551,6 +551,8 @@ is
     apex_debug.enter 
     ( 'process_escalation'
     , 'subflow', pi_sbfl_info.sbfl_id
+    , 'parent subflow', pi_par_sbfl
+    , 'source type', pi_source_type
     );
     -- called to process an escallation from an Escalation ITE or an Escalation End Event
     -- both can be Interrupting or Non interrupting
