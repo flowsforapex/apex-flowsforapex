@@ -1,4 +1,4 @@
-PROMPT >>  Update Current Version Configuration Parameter to 25.1
+PROMPT >>  Update Current Version Configuration Parameter to current release
 
 begin
   update flow_configuration

@@ -7,7 +7,7 @@
   (c) Copyright Flowquest Limited and/or its affiliates.  2025.
 
 */
-PROMPT >> Schema Changes for Adhoc Sub
+PROMPT >> Schema Changes for Adhoc Sub Processes Feature
 PROMPT >> ---------------------------------------------------
 PROMPT >> > Adding columns to Table flow_subflows
 
@@ -21,7 +21,7 @@ begin
      and upper(table_name)  = 'FLOW_SUBFLOWS';    
   if (v_column_exists = 0) then
       execute immediate 'alter table flow_subflows 
-                          add ( sbfl_is_adhoc                   varchar22(1 char) 
+                          add ( sbfl_is_adhoc                   varchar2(1 char) 
                               , sbfl_adhoc_child_process_level  number
                               )';
       execute immediate 'alter table flow_subflows 
@@ -35,6 +35,7 @@ PROMPT >> > Creating Table flow_adhoc_subflows
 create table flow_adhoc_subflows (
     ahsf_sbfl_id                NUMBER NOT NULL,
     ahsf_prcs_id                NUMBER NOT NULL,
+    ahsf_dgrm_id                NUMBER NOT NULL,
     ahsf_subproc_sbfl_id        NUMBER NOT NULL,
     ahsf_subproc_bpmn_id        VARCHAR2(50 CHAR) NOT NULL,
     ahsf_subproc_step_key       VARCHAR2(20 CHAR) NOT NULL,

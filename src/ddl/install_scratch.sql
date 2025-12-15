@@ -270,6 +270,7 @@ alter table flow_iterations add constraint iter_outputs_is_json_ck check ( iter_
 create table flow_adhoc_subflows (
     ahsf_sbfl_id                NUMBER NOT NULL,
     ahsf_prcs_id                NUMBER NOT NULL,
+    ahsf_dgrm_id                NUMBER NOT NULL,
     ahsf_subproc_bpmn_id        VARCHAR2(50 CHAR) NOT NULL,
     ahsf_subproc_sbfl_id        NUMBER NOT NULL,
     ahsf_subproc_step_key       VARCHAR2(20 CHAR) NOT NULL,

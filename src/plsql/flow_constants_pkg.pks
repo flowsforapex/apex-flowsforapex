@@ -14,7 +14,7 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '25.1';
+  gc_version constant varchar2(10 char) := '26.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';

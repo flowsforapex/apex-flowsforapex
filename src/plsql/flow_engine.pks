@@ -59,6 +59,7 @@ procedure restart_step
   , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
   , p_check_for_error     in boolean default true
+  , p_is_adhoc_start      in boolean default false
   );
 
 procedure handle_event_gateway_event

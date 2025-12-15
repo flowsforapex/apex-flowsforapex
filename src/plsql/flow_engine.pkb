@@ -1967,12 +1967,31 @@ begin
       -- $F4AMESSAGE 'timeout_locking_subflow' || 'Unable to lock subflow %0 as currently locked by another user.  Try again later.'        
 end pause_step;
 
+/*----------------------------------------------------------------------------
+-- Name: restart_step
+-- Description: Rather than starting the next step, restart starts the current step.
+-- This is used:
+--   - to restart a step that has errored
+--   - for restarting a subflow from a specific step after a process resume
+--   - in starting a subflow inside an adhoc subprocess, where there is no start event
+--     and the first step is to be started directly.
+--
+-- Parameters:
+--   p_process_id      - process id
+--   p_subflow_id      - subflow id
+--   p_step_key        - step key (optional)
+--   p_comment         - comment to add to instance log (optional)
+--   p_check_for_error - if true (default) then check that the subflow is in error status
+--                      if false then assume caller has already done the check
+------------------------------------------------------------------------------*/
+
 procedure restart_step
   ( p_process_id          in flow_processes.prcs_id%type
   , p_subflow_id          in flow_subflows.sbfl_id%type
   , p_step_key            in flow_subflows.sbfl_step_key%type default null
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
   , p_check_for_error     in boolean default true
+  , p_is_adhoc_start      in boolean default false
   )
 is 
   l_sbfl_rec            flow_subflows%rowtype;
@@ -1992,7 +2011,7 @@ begin
   l_sbfl_rec := flow_engine_util.get_subflow_info 
                 ( p_process_id => p_process_id
                 , p_subflow_id => p_subflow_id
-                , p_lock_process => true
+                , p_lock_process => not p_is_adhoc_start
                 , p_lock_subflow => true
                 );
 
@@ -2031,23 +2050,25 @@ begin
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id      = p_subflow_id
     ;
-    -- log the restart (now a step level event)
-    flow_logging.log_step_event 
-    ( p_sbfl_rec    => l_sbfl_rec
-    , p_event       => case p_check_for_error
-                       when true then 
-                         flow_constants_pkg.gc_step_event_error_restart
-                       else 
-                         flow_constants_pkg.gc_step_event_resumed
-                       end
-    , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
-    );
-
-    -- see if instance can be reset to running - mark instance as altered anyhow
-    flow_instances.reset_process_to_running
-    ( p_subflow_rec => l_sbfl_rec
-    , p_comment     => p_comment
-    );
+    if not p_is_adhoc_start then
+      -- log the restart (now a step level event)
+      flow_logging.log_step_event 
+      ( p_sbfl_rec    => l_sbfl_rec
+      , p_event       => case p_check_for_error
+                         when true then 
+                           flow_constants_pkg.gc_step_event_error_restart
+                         else 
+                           flow_constants_pkg.gc_step_event_resumed
+                         end
+      , p_event_level => flow_constants_pkg.gc_logging_level_abnormal_events
+      );
+  
+      -- see if instance can be reset to running - mark instance as altered anyhow
+      flow_instances.reset_process_to_running
+      ( p_subflow_rec => l_sbfl_rec
+      , p_comment     => p_comment
+      );
+    end if;
 
     if l_step_info.target_objt_subtag = flow_constants_pkg.gc_bpmn_timer_event_definition 
     and l_sbfl_rec.sbfl_status = flow_constants_pkg.gc_sbfl_status_error  then
