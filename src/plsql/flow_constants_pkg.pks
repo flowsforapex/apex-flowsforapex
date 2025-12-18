@@ -284,6 +284,7 @@ as
   gc_prcs_event_leave_call            constant  varchar2(20 char) := 'finish called model';
   gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
   gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
+  gc_prcs_event_logging_level_set     constant  varchar2(20 char) := 'logging level set';
   gc_prcs_event_warning               constant  varchar2(20 char) := 'warning';
   gc_prcs_event_sbfl_marked_delete    constant  varchar2(20 char) := 'subflow mark delete';
   gc_prcs_event_sbfl_deleted          constant  varchar2(20 char) := 'subflow deleted';
@@ -435,6 +436,8 @@ as
   gc_config_logging_level_standard           constant varchar2(2000 char) := 'standard';    -- instances and tasks
   gc_config_logging_level_secure             constant varchar2(2000 char) := 'secure';      -- standard + diagram changes
   gc_config_logging_level_full               constant varchar2(2000 char) := 'full';        -- secure + variable changes
+
+  
   gc_config_engine_app_mode_dev              constant varchar2(2000 char) := 'development';
   gc_config_engine_app_mode_prod             constant varchar2(2000 char) := 'production';
   gc_config_dup_step_prevention_legacy       constant varchar2(2000 char) := 'legacy';      -- null step key allowed

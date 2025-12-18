@@ -13,5 +13,11 @@
   "editor.tabSize": 2,
   "githubPullRequests.ignoredPullRequestBranches": [
     "development"
+  ],
+  "spellright.language": [],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext"
   ]
 }

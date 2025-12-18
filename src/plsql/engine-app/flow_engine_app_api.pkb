@@ -302,6 +302,12 @@ as
             , p_values => apex_application.g_x02||','||apex_application.g_x03
             , p_clear_cache => 'RP'
           );
+        when 'SET-PROCESS-LOGGING-LEVEL' then
+          flow_admin_api.set_process_logging_level
+          (
+            p_process_id     => apex_application.g_x02
+          , p_logging_level  => apex_application.g_x03
+          );  
         when 'EDIT-FLOW-DIAGRAM' then
           l_url := apex_page.get_url(
               p_page => 7
