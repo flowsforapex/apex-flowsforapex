@@ -96,5 +96,11 @@ as
       p_process_id  in flow_processes.prcs_id%type
     );
 
+  procedure set_logging_level
+    (
+      p_process_id     in flow_processes.prcs_id%type
+    , p_logging_level  in flow_processes.prcs_logging_level%type
+    );
+
 end flow_instances;
 /

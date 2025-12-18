@@ -412,6 +412,30 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
         raise;
   end flow_force_next_step;
 
+  procedure set_process_logging_level
+  ( p_process_id     in flow_processes.prcs_id%type
+  , p_logging_level  in flow_processes.prcs_logging_level%type
+  )
+  is
+    l_session_id   number;
+  begin     
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_process_id => p_process_id);
+    end if;   
+
+    flow_instances.set_logging_level ( p_process_id     => p_process_id
+                                    , p_logging_level  => p_logging_level
+                                    );
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;   
+  exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;
+  end set_process_logging_level;
 
 end flow_admin_api;
 /
