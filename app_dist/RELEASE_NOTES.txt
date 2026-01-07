@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v25.1                 *
+*            Flows for APEX v26.1                 *
 *             Community Edition                   *
 *          Installation instructions              *
 *              flowsforapex.org                   *
@@ -38,6 +38,10 @@ MIGRATING EXISTING INSTALLATIONS
 - Follow the instructions at https://flowsforapex.org/latest/migration/
 
 HISTORY
+* v26.1 Community Edition
+  - Adds the ability to change instance logging level of a running process instance using flow_admin_api.set_process_logging_level.
+  - Adds the ability to change instance logging level of a running process instance from the Action menu in the Flow Monitor details page.
+
 * v25.1 Community Edition
   - Adds GenAI Service Task.
   - Adds Error Boundary Events on Script tasks
