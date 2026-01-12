@@ -551,8 +551,9 @@ create or replace package body flow_api_pkg as
             on bref.prov_prcs_id = sbfl.sbfl_prcs_id
            and bref.prov_var_name = 'BUSINESS_REF'
            and bref.prov_scope = 0
-         where curr_objt.objt_tag_name = 'bpmn:userTask' 
-           and sbfl.sbfl_status = 'running'
+         where curr_objt.objt_tag_name in ( 'bpmn:userTask' , 'bpmn:adHocSubProcess' )
+           and sbfl.sbfl_status in ('running', 'in adhoc subprocess')
+           and sbfl.sbfl_hide_in_task_list != 'Y'
            and (instr ( sbfl.sbfl_excluded_users, l_user) = 0
                or sbfl.sbfl_excluded_users is null)
            and ( sbfl.sbfl_reservation = l_user
@@ -597,9 +598,11 @@ create or replace package body flow_api_pkg as
             on bref.prov_prcs_id = sbfl.sbfl_prcs_id
            and bref.prov_var_name = 'BUSINESS_REF'
            and bref.prov_scope = 0
-         where curr_objt.objt_tag_name = 'bpmn:userTask' 
+         where curr_objt.objt_tag_name in ( 'bpmn:userTask' , 'bpmn:adHocSubProcess' )
            and sbfl.sbfl_status in ( flow_constants_pkg.gc_sbfl_status_running
-                                   , flow_constants_pkg.gc_sbfl_status_waiting_approval)
+                                   , flow_constants_pkg.gc_sbfl_status_waiting_approval
+                                   , flow_constants_pkg.gc_sbfl_status_in_adhoc_subprocess
+                                   )
            and prcs.prcs_id = p_prcs_id;
     end case;
 

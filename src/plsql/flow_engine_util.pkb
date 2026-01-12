@@ -427,7 +427,8 @@ end get_object_tag;
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     , p_iter_id                   in flow_iterations.iter_id%type default null    
     , p_iterated_object           in flow_iterated_objects.iobj_id%type default null    
-    , p_is_adhoc                  in boolean default false             
+    , p_is_adhoc                  in boolean default false 
+    , p_hide_in_task_list         in varchar2 default null            
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -559,6 +560,7 @@ end get_object_tag;
          , sbfl_iter_id
          , sbfl_iobj_id
          , sbfl_is_adhoc
+         , sbfl_hide_in_task_list
          )
     values
          ( p_process_id
@@ -593,6 +595,7 @@ end get_object_tag;
          , l_new_iter_id  
          , p_iterated_object         
          , l_is_adhoc 
+         , p_hide_in_task_list
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 
@@ -620,7 +623,7 @@ end get_object_tag;
     end if;
 
     apex_debug.info
-    ( p_message => '... New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7'
+    ( p_message => '... New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7 Hide: %8'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
@@ -629,6 +632,7 @@ end get_object_tag;
     , p5        => l_lane_name
     , p6        => p_loop_counter
     , p7        => l_new_iter_id
+    , p8        => p_hide_in_task_list
     );
     return l_new_subflow_context;
   end subflow_start;

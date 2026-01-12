@@ -129,6 +129,7 @@ as
     , p_iter_id                   in flow_iterations.iter_id%type default null
     , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
     , p_is_adhoc                  in boolean default false
+    , p_hide_in_task_list         in varchar2 default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

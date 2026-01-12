@@ -94,6 +94,12 @@ as
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
   gc_apex_process_business_admin      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'businessAdmin';
   
+  -- adhoc subprocess visibility in APEX task lists
+  gc_adhoc_task_visibility_none       constant flow_types_pkg.t_bpmn_id := 'none';
+  gc_adhoc_task_visibility_subproc    constant flow_types_pkg.t_bpmn_id := 'subprocess';
+  gc_adhoc_task_visibility_activities constant flow_types_pkg.t_bpmn_id := 'activities';
+  gc_adhoc_task_visibility_all        constant flow_types_pkg.t_bpmn_id := 'all';
+
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
   gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
