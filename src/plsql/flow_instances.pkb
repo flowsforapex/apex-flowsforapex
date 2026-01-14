@@ -978,7 +978,7 @@ create or replace package body flow_instances as
       end if;
     end if;
     -- clear out run-time object_log
-    delete
+    delete /*+ NOPARALLEL */
       from flow_subflow_log sflg 
      where sflg_prcs_id = p_process_id
     ;
