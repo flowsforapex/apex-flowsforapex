@@ -1727,10 +1727,7 @@ begin
     elsif l_step_info.source_is_adhoc_endpoint = flow_constants_pkg.gc_true then
       -- if the source was an adhoc endpoint, then the subflow is now complete
       -- unlike normal subflow there is no end event to process - flow_adhoc_subprocesses.end_adhoc_activity should be called instead
-      flow_adhoc_subprocesses.end_adhoc_activity
-      ( p_process_id => p_process_id
-      , p_subflow_id => p_subflow_id
-      );
+      flow_adhoc_subprocesses.end_adhoc_activity ( p_sbfl_rec => l_sbfl_rec );
     else
       l_timestamp := systimestamp;
   

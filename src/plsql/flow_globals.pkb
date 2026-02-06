@@ -21,19 +21,22 @@ as
 
 
   procedure set_context
-  ( pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_sbfl_id      in flow_subflows.sbfl_id%type default null
-  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
-  , pi_scope        in flow_subflows.sbfl_scope%type default null
-  , pi_loop_counter in flow_subflows.sbfl_loop_counter%type default null
+  ( pi_prcs_id          in flow_processes.prcs_id%type
+  , pi_sbfl_id          in flow_subflows.sbfl_id%type default null
+  , pi_step_key         in flow_subflows.sbfl_step_key%type default null
+  , pi_scope            in flow_subflows.sbfl_scope%type default null
+  , pi_loop_counter     in flow_subflows.sbfl_loop_counter%type default null
+  , pi_input_parameters in flow_subflows.sbfl_task_input_parameters%type default null
   )
   is
   begin 
-    process_id    := pi_prcs_id;
-    subflow_id    := pi_sbfl_id;
-    step_key      := pi_step_key;
-    scope         := pi_scope;
-    loop_counter  := pi_loop_counter;
+    process_id       := pi_prcs_id;
+    subflow_id       := pi_sbfl_id;
+    step_key         := pi_step_key;
+    scope            := pi_scope;
+    loop_counter     := pi_loop_counter;
+    input_parameters := pi_input_parameters;    
+    output_parameters := null; -- Initialize as empty for each task execution  
   end set_context;
 
   procedure set_context
@@ -82,6 +85,62 @@ as
   begin
     return g_is_recursive_step;
   end get_is_recursive_step; 
+
+  procedure set_output_parameter
+  ( pi_parameter_name in varchar2
+  , pi_value          in varchar2
+  )
+  is
+    l_json_obj json_object_t;
+  begin
+    -- Initialize JSON object if needed
+    if output_parameters is null or output_parameters is not json then
+      l_json_obj := json_object_t();
+    else
+      l_json_obj := json_object_t(output_parameters);
+    end if;
+    
+    -- Set the parameter value
+    l_json_obj.put(pi_parameter_name, pi_value);
+    
+    -- Update the global variable
+    output_parameters := l_json_obj.to_clob();
+  exception
+    when others then
+      -- If JSON operations fail, create new JSON object with just this parameter
+      l_json_obj := json_object_t();
+      l_json_obj.put(pi_parameter_name, pi_value);
+      output_parameters := l_json_obj.to_clob();
+  end set_output_parameter;
+
+  function get_output_parameters
+  return flow_subflows.sbfl_task_output_parameters%type
+  is
+  begin
+    return output_parameters;
+  end get_output_parameters;
+
+  function input_parameter
+  ( pi_parameter_name in varchar2
+  ) return varchar2
+  is
+    l_json_obj json_object_t;
+  begin
+    if input_parameters is null or input_parameters is not json then
+      return null;
+    end if;
+    
+    l_json_obj := json_object_t(input_parameters);
+    
+    if l_json_obj.has(pi_parameter_name) then
+      return l_json_obj.get_string(pi_parameter_name);
+    else
+      return null;
+    end if;
+  exception
+    when others then
+      return null;
+  end input_parameter;
 
   function business_ref
   (pi_scope       flow_subflows.sbfl_scope%type default 0)

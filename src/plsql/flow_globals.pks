@@ -14,12 +14,14 @@ create or replace package flow_globals
   authid definer
 as
 
-  process_id    flow_processes.prcs_id%type;
-  subflow_id    flow_subflows.sbfl_id%type;
-  step_key      flow_subflows.sbfl_step_key%type;
-  scope         flow_subflows.sbfl_scope%type;
-  rest_call     boolean;
-  loop_counter  flow_subflows.sbfl_loop_counter%type;
+  process_id       flow_processes.prcs_id%type;
+  subflow_id       flow_subflows.sbfl_id%type;
+  step_key         flow_subflows.sbfl_step_key%type;
+  scope            flow_subflows.sbfl_scope%type;
+  rest_call        boolean;
+  loop_counter     flow_subflows.sbfl_loop_counter%type;
+  input_parameters flow_subflows.sbfl_task_input_parameters%type;
+  output_parameters flow_subflows.sbfl_task_output_parameters%type;
 
   throw_bpmn_error_event exception;
   pragma EXCEPTION_INIT(throw_bpmn_error_event, -20101);
@@ -34,12 +36,25 @@ as
   (pi_sbfl_id     flow_subflows.sbfl_id%type)
   return flow_process_variables.prov_var_vc2%type;
 
+  function input_parameter
+  ( pi_parameter_name in varchar2
+  ) return varchar2;
+
+  procedure set_output_parameter
+  ( pi_parameter_name in varchar2
+  , pi_value          in varchar2
+  );
+
+  function get_output_parameters
+  return flow_subflows.sbfl_task_output_parameters%type;
+
   procedure set_context
-  ( pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_sbfl_id      in flow_subflows.sbfl_id%type default null
-  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
-  , pi_scope        in flow_subflows.sbfl_scope%type default null
-  , pi_loop_counter in flow_subflows.sbfl_loop_counter%type default null
+  ( pi_prcs_id         in flow_processes.prcs_id%type
+  , pi_sbfl_id         in flow_subflows.sbfl_id%type default null
+  , pi_step_key        in flow_subflows.sbfl_step_key%type default null
+  , pi_scope           in flow_subflows.sbfl_scope%type default null
+  , pi_loop_counter    in flow_subflows.sbfl_loop_counter%type default null
+  , pi_input_parameters in flow_subflows.sbfl_task_input_parameters%type default null
   );
 
   procedure set_context

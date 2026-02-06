@@ -254,9 +254,11 @@ create or replace package body flow_api_pkg as
     p_process_id       in flow_processes.prcs_id%type -- Process ID
   , p_subflow_id       in flow_subflows.sbfl_id%type -- Subflow ID
   , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+  , p_parameters       in clob default null -- JSON Object containing parameters to set in the ad-hoc activity
   )
   is
-     l_session_id   number;
+     l_session_id          number;
+     e_invalid_json_format exception;
   begin 
     -- create an APEX session if this has come in from outside APEX
     if v('APP_SESSION') is null then
@@ -264,16 +266,30 @@ create or replace package body flow_api_pkg as
       apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
     end if;
 
+    -- Validate JSON format at API entry point
+    if p_parameters is not null and p_parameters is not json then
+        raise e_invalid_json_format;
+    end if;
+
     flow_adhoc_subprocesses.start_adhoc_activity
     ( p_process_id        => p_process_id
     , p_parent_subflow_id => p_subflow_id
     , p_objt_bpmn_id      => p_activity_bpmn_id
+    , p_parameters        => p_parameters
     );
 
     if l_session_id is not null then
       flow_apex_session.delete_session (p_session_id => l_session_id );
     end if;
   exception
+    when e_invalid_json_format then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'input_parameter-invalid-json'
+      , p0             => p_activity_bpmn_id
+      , p1             => p_parameters
+      );
     when others then
       if l_session_id is not null then
         flow_apex_session.delete_session (p_session_id => l_session_id );
@@ -448,7 +464,8 @@ create or replace package body flow_api_pkg as
        and objt.objt_bpmn_id = sbfl.sbfl_current
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
-       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_usertask
+       and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
+                                 , flow_constants_pkg.gc_bpmn_adhoc_subprocess )
     ;
 
     apex_debug.trace( p_message => 'Found OBJT_ID %s', p0 => l_objt_id );
@@ -671,8 +688,10 @@ create or replace package body flow_api_pkg as
                                           end;
         l_task.details_app_id          := null;
         l_task.details_app_name        := l_row.prcs_dgrm_name;
-        l_task.details_link_target     := case l_row.curr_objt_tag_name
-                                              when 'bpmn:userTask' then
+        l_task.details_link_target     := case 
+                                              when l_row.curr_objt_tag_name in (flow_constants_pkg.gc_bpmn_usertask
+                                                                               , flow_constants_pkg.gc_bpmn_adhoc_subprocess) 
+                                              then
                                                 flow_usertask_pkg.get_url
                                                 (
                                                   pi_prcs_id  => l_row.prcs_id

@@ -331,6 +331,8 @@ begin
     values ('adhoc-not-startable-objt', c_load_lang, q'[Activity %0 not startable from an adhoc subprocess.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('adhoc-already-started', c_load_lang, q'[Activity %0 has already been started in this adhoc subprocess.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('input_parameter-invalid-json', c_load_lang, q'[Input Parameter for activity %0 contains invalid JSON %1.]');
   -- above here manually added for 26.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

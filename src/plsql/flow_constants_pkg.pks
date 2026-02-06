@@ -93,6 +93,11 @@ as
   gc_apex_process_page_id             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
   gc_apex_process_business_admin      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'businessAdmin';
+
+  -- bpmnAdhocSubProcess
+  gc_apex_adhoc_completion_condition  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'completionCondition';
+  gc_apex_adhoc_adhoc_visibility      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'adhocVisibility';
+  gc_apex_adhoc_starting_activities   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startingActivities';
   
   -- adhoc subprocess visibility in APEX task lists
   gc_adhoc_task_visibility_none       constant flow_types_pkg.t_bpmn_id := 'none';

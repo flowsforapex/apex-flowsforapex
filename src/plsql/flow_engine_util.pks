@@ -130,6 +130,7 @@ as
     , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
     , p_is_adhoc                  in boolean default false
     , p_hide_in_task_list         in varchar2 default null
+    , p_task_input_parameters     in clob default null
     ) return flow_types_pkg.t_subflow_context
     ;
 
@@ -165,6 +166,11 @@ as
   ( 
     pi_clob in clob
   ) return blob;
+
+  function parameters_to_json_schema
+  (
+    pi_parameters in clob
+  ) return clob;
 
 end flow_engine_util;
 /

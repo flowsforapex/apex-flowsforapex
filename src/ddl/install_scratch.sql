@@ -173,6 +173,8 @@ CREATE TABLE flow_subflows (
     sbfl_iteration_var_scope        NUMBER, -- remove after rewrite - acessible through flow_iterated_objects
     sbfl_loop_counter               NUMBER,
     sbfl_loop_total_instances       NUMBER,
+    sbfl_task_input_parameters      CLOB,
+    sbfl_task_output_parameters     CLOB,
     sbfl_last_update                TIMESTAMP WITH TIME ZONE NOT NULL,
     sbfl_last_update_by             VARCHAR2(255 CHAR)
 );
@@ -182,6 +184,9 @@ ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_pk PRIMARY KEY ( sbfl_id );
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_ck_following_ebg_yn CHECK (sbfl_is_following_ebg in ('Y','N'));
 
 ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_ck_adhoc_yn CHECK (sbfl_is_adhoc in ('Y','N'));
+
+ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_task_input_param_is_json_ck CHECK ( sbfl_task_input_parameters is json );
+ALTER TABLE flow_subflows ADD CONSTRAINT sbfl_task_output_param_is_json_ck CHECK ( sbfl_task_output_parameters is json );
 
 create index flow_sbfl_dgrm_prcs_ix on flow_subflows( sbfl_dgrm_id, sbfl_prcs_id );
 

@@ -423,6 +423,8 @@ end;
       p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
 ,
       p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+,
+      p_parameters in clob default null -- parameters to set in the ad-hoc activity.  Should be valid JSON.
    ); 
    /**
 Procedure flow_start_adhoc_activity
@@ -430,7 +432,8 @@ This procedure is used to start an ad-hoc activity within an adhoc sub process.
 
 EXAMPLE
 
-This example will start an ad-hoc activity with BPMN ID 'MyAdHocActivity' in process instance 345.
+This example will start an ad-hoc activity with BPMN ID 'MyAdHocActivity' in process instance 345, passing in 
+2 parameters 'param1' and 'param2' with values 'value1' and 'value2' respectively.
 
 ```sql
 begin
@@ -438,6 +441,7 @@ begin
         p_process_id       => 345
       , p_subflow_id       => 3
       , p_activity_bpmn_id => 'MyAdHocActivity'
+      , p_parameters       => '{"param1":"value1","param2":"value2"}'
    );
 end;
 ```

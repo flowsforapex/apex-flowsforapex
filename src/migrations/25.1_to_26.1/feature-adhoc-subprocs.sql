@@ -24,9 +24,15 @@ begin
                           add ( sbfl_is_adhoc                   varchar2(1 char) 
                               , sbfl_adhoc_child_process_level  number
                               , sbfl_hide_in_task_list          varchar2(1 char)
+                              , sbfl_task_input_parameters      CLOB
+                              , sbfl_task_output_parameters     CLOB
                               )';
       execute immediate 'alter table flow_subflows 
                           add constraint sbfl_ck_adhoc_yn check (sbfl_is_adhoc in (''Y'',''N''))';
+      execute immediate 'alter table flow_subflows 
+                          add constraint sbfl_task_input_param_is_json_ck check ( sbfl_task_input_parameters is json )';
+      execute immediate 'alter table flow_subflows 
+                          add constraint sbfl_task_output_param_is_json_ck check ( sbfl_task_output_parameters is json )';
   end if;
 end;
 /
