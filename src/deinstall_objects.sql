@@ -131,6 +131,7 @@ drop view flow_instance_timeline_vw;
 drop view flow_instance_variables_vw;
 drop view flow_instances_vw;
 drop view flow_subflows_vw;
+drop view flow_object_input_schema_vw;
 drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;

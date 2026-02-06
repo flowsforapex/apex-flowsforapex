@@ -80,6 +80,7 @@ PROMPT >> Installing Views
 @views/flow_instance_gateways_lov.sql
 @views/flow_instance_scopes_vw.sql
 @views/flow_diagrams_vw.sql
+@views/flow_object_input_schema_vw.sql
 @views/flow_instance_diagrams_lov.sql
 @views/flow_instance_events_vw.sql
 @views/flow_diagrams_instanciated_lov.sql
