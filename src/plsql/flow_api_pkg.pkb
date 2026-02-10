@@ -251,10 +251,10 @@ create or replace package body flow_api_pkg as
 
   procedure flow_start_adhoc_activity 
   (
-    p_process_id       in flow_processes.prcs_id%type -- Process ID
-  , p_subflow_id       in flow_subflows.sbfl_id%type -- Subflow ID
-  , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
-  , p_parameters       in clob default null -- JSON Object containing parameters to set in the ad-hoc activity
+    p_process_id            in flow_processes.prcs_id%type -- Process ID
+  , p_subflow_id            in flow_subflows.sbfl_id%type -- Subflow ID
+  , p_activity_bpmn_id      in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+  , p_user_input_parameters in clob default null -- User input parameters as JSON
   )
   is
      l_session_id          number;
@@ -267,7 +267,7 @@ create or replace package body flow_api_pkg as
     end if;
 
     -- Validate JSON format at API entry point
-    if p_parameters is not null and p_parameters is not json then
+    if p_user_input_parameters is not null and p_user_input_parameters is not json then
         raise e_invalid_json_format;
     end if;
 
@@ -275,7 +275,7 @@ create or replace package body flow_api_pkg as
     ( p_process_id        => p_process_id
     , p_parent_subflow_id => p_subflow_id
     , p_objt_bpmn_id      => p_activity_bpmn_id
-    , p_parameters        => p_parameters
+    , p_user_input_parameters => p_user_input_parameters
     );
 
     if l_session_id is not null then
@@ -288,7 +288,7 @@ create or replace package body flow_api_pkg as
       , pi_sbfl_id     => p_subflow_id
       , pi_message_key => 'input_parameter-invalid-json'
       , p0             => p_activity_bpmn_id
-      , p1             => p_parameters
+      , p1             => p_user_input_parameters
       );
     when others then
       if l_session_id is not null then

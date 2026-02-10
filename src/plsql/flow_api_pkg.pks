@@ -424,7 +424,7 @@ end;
 ,
       p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
 ,
-      p_parameters in clob default null -- parameters to set in the ad-hoc activity.  Should be valid JSON.
+      p_user_input_parameters in clob default null -- User input parameters as JSON. Will be combined with process variables and static values.
    ); 
    /**
 Procedure flow_start_adhoc_activity
@@ -438,10 +438,10 @@ This example will start an ad-hoc activity with BPMN ID 'MyAdHocActivity' in pro
 ```sql
 begin
    flow_api_pkg.flow_start_adhoc_activity(
-        p_process_id       => 345
-      , p_subflow_id       => 3
-      , p_activity_bpmn_id => 'MyAdHocActivity'
-      , p_parameters       => '{"param1":"value1","param2":"value2"}'
+        p_process_id            => 345
+      , p_subflow_id            => 3
+      , p_activity_bpmn_id      => 'MyAdHocActivity'
+      , p_user_input_parameters => '{"param1":"value1","param2":"value2"}'
    );
 end;
 ```

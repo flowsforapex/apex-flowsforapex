@@ -166,6 +166,25 @@ as
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
+  -- Task Input/Output Parameters
+  gc_apex_input_parameters            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'inputParameters';
+  gc_apex_output_parameters           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputParameters';
+  gc_apex_output_assignments          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputAssignments';
+  gc_apex_parameter                   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'parameter';
+  gc_apex_assignment                  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'assignment';
+  gc_apex_parameter_name              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'name';
+  gc_apex_parameter_type              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'type';
+  gc_apex_parameter_required          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'required';
+  gc_apex_parameter_description       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'description';
+  gc_apex_parameter_source            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'source';
+  gc_apex_parameter_expression_type   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expressionType';
+  gc_apex_parameter_expression        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expression';
+  gc_apex_parameter_items             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'items';
+  gc_apex_parameter_properties        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'properties';
+  gc_apex_assignment_source_parameter constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sourceParameter';
+  gc_apex_assignment_target_variable  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'targetVariable';
+  gc_apex_assignment_expression       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expression';
+
   -- Oracle format timer definitions
   gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := 'oracleDate';
   gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := 'oracleDuration';

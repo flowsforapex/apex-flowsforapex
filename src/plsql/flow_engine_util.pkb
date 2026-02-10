@@ -1001,86 +1001,6 @@ end get_object_tag;
 
   end clob_to_blob;
 
-  function parameters_to_json_schema
-  (
-    pi_parameters in clob
-  ) return clob
-  is
-    l_input_array     json_array_t;
-    l_schema          json_object_t;
-    l_properties      json_object_t;
-    l_required_array  json_array_t;
-    l_param           json_object_t;
-    l_property        json_object_t;
-    l_param_name      varchar2(128);
-    l_param_type      varchar2(32);
-    l_is_required     boolean;
-    l_default_value   varchar2(4000);
-  begin
-    -- Return empty schema if no parameters provided
-    if pi_parameters is null or pi_parameters is not json then
-      l_schema := json_object_t();
-      l_schema.put('type', 'object');
-      l_schema.put('properties', json_object_t());
-      return l_schema.to_clob();
-    end if;
-
-    -- Parse input parameters array
-    l_input_array := json_array_t(pi_parameters);
-    
-    -- Initialize schema structure
-    l_schema := json_object_t();
-    l_schema.put('type', 'object');
-    l_properties := json_object_t();
-    l_required_array := json_array_t();
-
-    -- Process each parameter
-    for i in 0 .. l_input_array.get_size - 1 loop
-      l_param := json_object_t(l_input_array.get(i));
-      
-      -- Extract parameter details
-      l_param_name := l_param.get_string('name');
-      l_param_type := l_param.get_string('type');
-      l_is_required := l_param.get_boolean('required');
-      
-      -- Create property object
-      l_property := json_object_t();
-      l_property.put('type', l_param_type);
-      l_property.put('title', initcap(replace(l_param_name, '_', ' ')));
-      
-      -- Add default value if present
-      if l_param.has('default') then
-        l_default_value := l_param.get_string('default');
-        l_property.put('default', l_default_value);
-      end if;
-      
-      -- Add to properties
-      l_properties.put(l_param_name, l_property);
-      
-      -- Add to required array if required
-      if l_is_required then
-        l_required_array.append(l_param_name);
-      end if;
-    end loop;
-
-    -- Build final schema
-    l_schema.put('properties', l_properties);
-    if l_required_array.get_size > 0 then
-      l_schema.put('required', l_required_array);
-    end if;
-
-    return l_schema.to_clob();
-    
-  exception
-    when others then
-      -- Return basic schema on error
-      l_schema := json_object_t();
-      l_schema.put('type', 'object');
-      l_schema.put('properties', json_object_t());
-      l_schema.put('error', 'Failed to parse parameters: ' || sqlerrm);
-      return l_schema.to_clob();
-  end parameters_to_json_schema;
-
   -- initialise step key enforcement parameter
 
   begin
@@ -1090,6 +1010,5 @@ end get_object_tag;
                                 )
                                 = flow_constants_pkg.gc_config_dup_step_prevention_strict
                              );  
-
 end flow_engine_util;
 /

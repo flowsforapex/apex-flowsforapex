@@ -167,10 +167,5 @@ as
     pi_clob in clob
   ) return blob;
 
-  function parameters_to_json_schema
-  (
-    pi_parameters in clob
-  ) return clob;
-
 end flow_engine_util;
 /

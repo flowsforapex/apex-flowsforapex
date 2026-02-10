@@ -15,10 +15,10 @@ as
     );
 
   procedure start_adhoc_activity
-    ( p_process_id           in flow_processes.prcs_id%type
-    , p_parent_subflow_id    in flow_subflows.sbfl_id%type
-    , p_objt_bpmn_id         in flow_objects.objt_bpmn_id%type
-    , p_parameters           in clob default null
+    ( p_process_id                  in flow_processes.prcs_id%type
+    , p_parent_subflow_id           in flow_subflows.sbfl_id%type
+    , p_objt_bpmn_id                in flow_objects.objt_bpmn_id%type
+    , p_user_input_parameters       in clob default null
     );
 
   procedure end_adhoc_activity
