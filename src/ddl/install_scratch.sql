@@ -521,7 +521,9 @@ CREATE TABLE flow_object_expressions (
     expr_var_name    VARCHAR2(50 CHAR) NOT NULL,
     expr_var_type    VARCHAR2(50 CHAR) NOT NULL,
     expr_type        VARCHAR2(130 CHAR) NOT NULL,
-    expr_expression  VARCHAR2(4000 CHAR) 
+    expr_expression  VARCHAR2(4000 CHAR),
+    expr_source_type VARCHAR2(50 CHAR),
+    expr_source      VARCHAR2(50 CHAR)
  );
 
 ALTER TABLE flow_object_expressions ADD CONSTRAINT expr_pk PRIMARY KEY (expr_id);                                                     

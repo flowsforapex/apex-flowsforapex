@@ -252,6 +252,77 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
 - More complex validations (min/max, custom patterns)
 - Conditional parameters (only show if other param has certain value)
 - Parameter groups/sections for complex UIs
+
+## JSONPath Variable Expressions (Design - Next Release)
+
+### Summary
+Introduce a new variable expression type that can extract objects or scalars using JSONPath from:
+- task output parameters
+- task input parameters (after-task only)
+- JSON-typed process variables
+
+### New Expression Type
+- `flow_constants_pkg.gc_expr_type_json_path` := 'jsonPath'
+
+### New Expression Type
+- jsonPath
+  
+### BPMN Modeler Properties Panel
+
+- Add new Variable expression type
+  - Sequence
+  - Variable Name
+  - variable Type (all types allowed)
+  - Expression Type - 'JSON Path Expression' - creates exppressionType 'jsonPath'
+  - Source Type 
+    - Select List - 'Process Variable (JSON)'|Task Input Parameters|Task Output Parameters
+    -  Process Variable is always valid.  
+    -  Input and Output Parameters are only valid on After-Task, On Event variable expressions (subject to change - maybe add everywhere for now!)
+    -  in XML - use tag `apex:varSourceType`
+    -  BPMN values: `processVariable`, `taskOutput`, `taskInput`
+  - Source.  
+    -  in XML - use tag `apex:varSource`
+    - For `processVariable`: source variable name
+    - For `taskOutput`/`taskInput`: use `@`
+  - Expression
+    - - valid json path expression.
+    - default start with $ ?
+
+### Expression Storage (flow_object_expressions)
+Add two nullable columns:
+- `expr_source_type` (VARCHAR2)
+  - in XML - use tag `apex:varSourceType`
+  - Allowed: `processVariable`, `taskOutput`, `taskInput`
+- `expr_source` (VARCHAR2)
+  - in XML - use tag `apex:varSource`
+  - For `processVariable`: source variable name
+  - For `taskOutput`/`taskInput`: use `@`
+
+`expr_expression` stores the JSONPath.
+
+### Availability Rules
+- `taskOutput`: only after task / after event expression sets
+- `taskInput`: only after task expression sets
+- `processVariable`: always available (source variable must be JSON-typed)
+
+### Evaluation Flow (flow_expressions)
+Add `set_json_path` parallel to `set_sql`/`set_plsql`:
+1. Resolve source JSON
+   - `taskOutput` → `flow_subflows.sbfl_task_output_parameters`
+   - `taskInput` → task input JSON (available after task only)
+   - `processVariable` → JSON-typed process var
+2. Apply JSONPath to get value
+3. Coerce to target variable type
+4. Set process variable
+
+### Type Coercion Rules (JSON → Process Variable)
+- **VARCHAR2**: string/number/boolean to text; null → null
+- **NUMBER**: JSON number; string parsed via `to_number`
+- **DATE**: ISO-8601 date or datetime string using `gc_prov_default_date_format`
+- **TIMESTAMP WITH TIME ZONE**: ISO-8601 with timezone using `gc_prov_default_tstz_format`
+- **JSON/CLOB**: object/array/scalar serialized to JSON text
+
+Missing path or JSON null → set target to null (log debug warning).
 ```
 
 ---

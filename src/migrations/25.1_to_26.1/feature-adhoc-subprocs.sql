@@ -37,6 +37,25 @@ begin
 end;
 /
 
+PROMPT >> > Adding columns to Table flow_object_expressions
+
+declare
+  v_column_exists          number := 0;
+begin
+  select count(*)
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'EXPR_SOURCE_TYPE'
+     and upper(table_name)  = 'FLOW_OBJECT_EXPRESSIONS';
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_object_expressions
+                          add ( expr_source_type varchar2(50 char)
+                              , expr_source      varchar2(50 char)
+                              )';
+  end if;
+end;
+/
+
 PROMPT >> > Creating Table flow_adhoc_subflows
 
 create table flow_adhoc_subflows (

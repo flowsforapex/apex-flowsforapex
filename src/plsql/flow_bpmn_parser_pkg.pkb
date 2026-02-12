@@ -109,25 +109,29 @@ as
 
   procedure register_object_expression
   (
-    pi_objt_bpmn_id    in flow_objects.objt_bpmn_id%type
-  , pi_expr_set        in flow_object_expressions.expr_set%type
-  , pi_expr_order      in flow_object_expressions.expr_order%type
-  , pi_expr_var_name   in flow_object_expressions.expr_var_name%type
-  , pi_expr_var_type   in flow_object_expressions.expr_var_type%type
-  , pi_expr_type       in flow_object_expressions.expr_type%type
-  , pi_expr_expression in flow_object_expressions.expr_expression%type
+    pi_objt_bpmn_id     in flow_objects.objt_bpmn_id%type
+  , pi_expr_set         in flow_object_expressions.expr_set%type
+  , pi_expr_order       in flow_object_expressions.expr_order%type
+  , pi_expr_var_name    in flow_object_expressions.expr_var_name%type
+  , pi_expr_var_type    in flow_object_expressions.expr_var_type%type
+  , pi_expr_type        in flow_object_expressions.expr_type%type
+  , pi_expr_expression  in flow_object_expressions.expr_expression%type
+  , pi_expr_source_type in flow_object_expressions.expr_source_type%type default null
+  , pi_expr_source      in flow_object_expressions.expr_source%type default null
   )
   as
     l_object_expression flow_parser_util.t_expr_rec;
     l_insert_index      pls_integer := 0;
   begin
     if pi_objt_bpmn_id is not null then
-      l_object_expression.expr_set        := pi_expr_set;
-      l_object_expression.expr_order      := pi_expr_order;
-      l_object_expression.expr_var_name   := pi_expr_var_name;
-      l_object_expression.expr_var_type   := pi_expr_var_type;
-      l_object_expression.expr_type       := pi_expr_type;
-      l_object_expression.expr_expression := pi_expr_expression;    
+      l_object_expression.expr_set         := pi_expr_set;
+      l_object_expression.expr_order       := pi_expr_order;
+      l_object_expression.expr_var_name    := pi_expr_var_name;
+      l_object_expression.expr_var_type    := pi_expr_var_type;
+      l_object_expression.expr_type        := pi_expr_type;
+      l_object_expression.expr_expression  := pi_expr_expression;    
+      l_object_expression.expr_source_type := pi_expr_source_type;
+      l_object_expression.expr_source      := pi_expr_source;
 
       -- Verify if we already have some variable expression for same object
       if g_objt_expr.exists(pi_objt_bpmn_id) then
@@ -261,13 +265,15 @@ as
 
   procedure insert_object_expression
   (
-    pi_expr_objt_id    in flow_object_expressions.expr_objt_id%type
-  , pi_expr_set        in flow_object_expressions.expr_set%type
-  , pi_expr_order      in flow_object_expressions.expr_order%type
-  , pi_expr_var_name   in flow_object_expressions.expr_var_name%type
-  , pi_expr_var_type   in flow_object_expressions.expr_var_type%type
-  , pi_expr_type       in flow_object_expressions.expr_type%type
-  , pi_expr_expression in flow_object_expressions.expr_expression%type
+    pi_expr_objt_id     in flow_object_expressions.expr_objt_id%type
+  , pi_expr_set         in flow_object_expressions.expr_set%type
+  , pi_expr_order       in flow_object_expressions.expr_order%type
+  , pi_expr_var_name    in flow_object_expressions.expr_var_name%type
+  , pi_expr_var_type    in flow_object_expressions.expr_var_type%type
+  , pi_expr_type        in flow_object_expressions.expr_type%type
+  , pi_expr_expression  in flow_object_expressions.expr_expression%type
+  , pi_expr_source_type in flow_object_expressions.expr_source_type%type default null
+  , pi_expr_source      in flow_object_expressions.expr_source%type default null
   )
   as
   begin
@@ -281,6 +287,8 @@ as
            , expr_var_type
            , expr_type
            , expr_expression
+           , expr_source_type
+           , expr_source
            )
     values (
              pi_expr_objt_id
@@ -290,6 +298,8 @@ as
            , upper(pi_expr_var_type)
            , pi_expr_type
            , pi_expr_expression
+           , pi_expr_source_type
+           , pi_expr_source
            )
     ;
   end insert_object_expression;
@@ -354,13 +364,15 @@ as
       while l_cur_index is not null loop
         insert_object_expression
         (
-          pi_expr_objt_id    => pi_objt_id
-        , pi_expr_set        => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_set
-        , pi_expr_order      => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_order
-        , pi_expr_var_name   => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_name
-        , pi_expr_var_type   => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_type
-        , pi_expr_type       => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_type
-        , pi_expr_expression => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_expression
+          pi_expr_objt_id     => pi_objt_id
+        , pi_expr_set         => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_set
+        , pi_expr_order       => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_order
+        , pi_expr_var_name    => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_name
+        , pi_expr_var_type    => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_type
+        , pi_expr_type        => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_type
+        , pi_expr_expression  => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_expression
+        , pi_expr_source_type => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_source_type
+        , pi_expr_source      => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_source
         );
         l_cur_index := g_objt_expr(pi_objt_bpmn_id).next(l_cur_index);
       end loop;
@@ -734,6 +746,8 @@ as
                        end as variable_type
                      , expression_type
                      , expression_value
+                     , source_type
+                     , source
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
@@ -744,18 +758,22 @@ as
                          , variable_type     varchar2(50 char)   path 'apex:varDataType'
                          , expression_type   varchar2(200 char)  path 'apex:varExpressionType'
                          , expression_value  varchar2(4000 char) path 'apex:varExpression'
+                         , source_type varchar2(50 char)         path 'apex:varSourceType'
+                         , source      varchar2(50 char)         path 'apex:varSource'
                        )
                )
     loop
       register_object_expression
       (
-        pi_objt_bpmn_id    => pi_bpmn_id
-      , pi_expr_set        => pi_execution_point
-      , pi_expr_order      => rec.variable_sequence
-      , pi_expr_var_name   => rec.variable_name
-      , pi_expr_var_type   => rec.variable_type
-      , pi_expr_type       => rec.expression_type
-      , pi_expr_expression => rec.expression_value
+        pi_objt_bpmn_id     => pi_bpmn_id
+      , pi_expr_set         => pi_execution_point
+      , pi_expr_order       => rec.variable_sequence
+      , pi_expr_var_name    => rec.variable_name
+      , pi_expr_var_type    => rec.variable_type
+      , pi_expr_type        => rec.expression_type
+      , pi_expr_expression  => rec.expression_value
+      , pi_expr_source_type => rec.source_type
+      , pi_expr_source      => rec.source
       );
     end loop;
   end parse_process_variables;

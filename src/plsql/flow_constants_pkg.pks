@@ -391,6 +391,7 @@ as
   gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
   gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
   gc_expr_type_sql_json_array           constant flow_types_pkg.t_expr_type := 'sqlQueryArray';
+  gc_expr_type_json_path                constant flow_types_pkg.t_expr_type := 'jsonPath';
   gc_expr_type_plsql_function_body      constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';  -- vc2 typed functionbody (e.g., date returns vc2)
   gc_expr_type_plsql_expression         constant flow_types_pkg.t_expr_type := 'plsqlExpression';    -- vc2 typed expression  (e.g., date returns vc2)
   gc_expr_type_plsql_raw_function_body  constant flow_types_pkg.t_expr_type := 'plsqlRawFunctionBody';  -- raw functionbody  (e.g., date returns date)
