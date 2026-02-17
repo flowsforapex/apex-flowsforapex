@@ -17,9 +17,9 @@ as
        case
             when prov_var_vc2  is not null then prov_var_vc2
             when prov_var_num  is not null then cast(prov_var_num as varchar2(4000))
-            when prov_var_date is not null then to_char(prov_var_date, coalesce(nullif(v('APP_DATE_TIME_FORMAT'),''), 'YYYY-MM-DD HH24:MI:SS'))
+            when prov_var_date is not null then to_char(prov_var_date, coalesce(v('APP_DATE_TIME_FORMAT'), 'YYYY-MM-DD HH24:MI:SS'))
             when prov_var_clob is not null then cast(dbms_lob.substr(prov_var_clob, 1000) as varchar2(4000))
-            when prov_var_tstz is not null then to_char(prov_var_tstz, coalesce(nullif(v('NLS_TIMESTAMP_TZ_FORMAT'),''), 'YYYY-MM-DD HH24:MI:SS TZR'))
+            when prov_var_tstz is not null then to_char(prov_var_tstz, coalesce(v('NLS_TIMESTAMP_TZ_FORMAT'),'YYYY-MM-DD HH24:MI:SS TZR'))
             when prov_var_json is not null then cast(dbms_lob.substr(prov_var_json, 1000) as varchar2(4000))
         end as prov_var_value,
         case when instr(prov_var_name, ':route') > 0 then 'true' else 'false' end is_gateway_route

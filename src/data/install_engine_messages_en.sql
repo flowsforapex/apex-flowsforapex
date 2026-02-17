@@ -333,6 +333,8 @@ begin
     values ('adhoc-already-started', c_load_lang, q'[Activity %0 has already been started in this adhoc subprocess.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('input_parameter-invalid-json', c_load_lang, q'[Input Parameter for activity %0 contains invalid JSON %1.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) 
+    values ('var_exp_jsonpath_error', c_load_lang, q'[Error setting Process Variable %1 in process id %1. JSONPath expression "%2" (Subflow: %0, Set: %3). ]' );
   -- above here manually added for 26.1 dev
 /* template below
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

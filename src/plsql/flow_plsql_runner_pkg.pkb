@@ -195,11 +195,22 @@ as
       );
       raise flow_globals.throw_bpmn_error_event;
     when others then
-      apex_debug.error
-      (
-        p_message => 'Error during flow_plsql_runner_pkg.run_task_script. SQLERRM: %s'
-      , p0        => sqlerrm
-      );
+      -- common error is that l_plsql_code is missing a final semicolon. Test if final char is a semicolon and give a helpful message if not.
+      if l_plsql_code is not null and dbms_lob.substr(l_plsql_code,-1) <> ';' then
+        apex_debug.error
+        (
+          p_message => 'Error during flow_plsql_runner_pkg.run_task_script. Possible missing semicolon at end of PL/SQL code. Code: "%1" SQLERRM: %0'
+        , p0        => sqlerrm
+        , p1        => l_plsql_code
+        );
+      else
+        apex_debug.error
+        (
+          p_message => 'Error during flow_plsql_runner_pkg.run_task_script. Code: "%1" SQLERRM: %0'
+        , p0        => sqlerrm
+        , p1        => l_plsql_code
+        );
+      end if;
       raise e_plsql_script_failed;
   end run_task_script;
 

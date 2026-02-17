@@ -4,7 +4,7 @@ create or replace package flow_globals
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Limited and / or its affiliates. 2021-2025.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2021-2026.
 --
 -- Created    25-Aug-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
@@ -43,6 +43,22 @@ as
   procedure set_output_parameter
   ( pi_parameter_name in varchar2
   , pi_value          in varchar2
+  );
+
+  procedure set_output_parameter_object
+  ( pi_parameter_name  in varchar2
+  , pi_key1            in varchar2 default null
+  , pi_value1          in varchar2 default null
+  , pi_key2            in varchar2 default null
+  , pi_value2          in varchar2 default null
+  , pi_key3            in varchar2 default null
+  , pi_value3          in varchar2 default null
+  , pi_key4            in varchar2 default null
+  , pi_value4          in varchar2 default null
+  , pi_key5            in varchar2 default null
+  , pi_value5          in varchar2 default null
+  , pi_key6            in varchar2 default null
+  , pi_value6          in varchar2 default null
   );
 
   function get_output_parameters

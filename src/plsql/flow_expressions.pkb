@@ -453,7 +453,12 @@ as
           l_json_fragment := json_query(l_source_json, l_path returning clob);
         exception
           when others then
-            l_json_fragment := null;
+            apex_debug.error(
+              p_message => 'JSONPath error for path %0: %1'
+            , p0 => l_path
+            , p1 => sqlerrm
+            );
+            raise e_var_exp_jsonpath_error;
         end;
 
         if l_json_fragment is not null then
@@ -545,6 +550,18 @@ as
       , p1 => pi_expression.expr_var_name
       , p2 => pi_expression.expr_set
       );
+      -- $F4AMESSAGE 'var_exp_json_format' || 'Error setting Process Variable %1: Incorrect JSON Format (Subflow: %0, Set: %3.)'
+    when e_var_exp_jsonpath_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_jsonpath_error'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_expression
+      , p3 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_jsonpath_error' || 'Error setting Process Variable %1: Invalid JSONPath expression "%2" (Subflow: %0, Set: %3).'
     when others then
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id

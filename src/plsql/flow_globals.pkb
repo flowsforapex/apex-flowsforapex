@@ -4,9 +4,11 @@ create or replace package body flow_globals
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2026.
 --
 -- Created    25-Aug-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
+-- Modified   16-Feb-2026  Richard Allen (Flowquest)
 --
 */
 as
@@ -30,12 +32,12 @@ as
   )
   is
   begin 
-    process_id       := pi_prcs_id;
-    subflow_id       := pi_sbfl_id;
-    step_key         := pi_step_key;
-    scope            := pi_scope;
-    loop_counter     := pi_loop_counter;
-    input_parameters := pi_input_parameters;    
+    process_id        := pi_prcs_id;
+    subflow_id        := pi_sbfl_id;
+    step_key          := pi_step_key;
+    scope             := pi_scope;
+    loop_counter      := pi_loop_counter;
+    input_parameters  := pi_input_parameters;    
     output_parameters := null; -- Initialize as empty for each task execution  
   end set_context;
 
@@ -44,11 +46,12 @@ as
   )
   is
   begin
-    set_context ( pi_prcs_id      => pi_sbfl_rec.sbfl_prcs_id
-                , pi_sbfl_id      => pi_sbfl_rec.sbfl_id
-                , pi_step_key     => pi_sbfl_rec.sbfl_step_key
-                , pi_scope        => pi_sbfl_rec.sbfl_scope
-                , pi_loop_counter => pi_sbfl_rec.sbfl_loop_counter
+    set_context ( pi_prcs_id          => pi_sbfl_rec.sbfl_prcs_id
+                , pi_sbfl_id          => pi_sbfl_rec.sbfl_id
+                , pi_step_key         => pi_sbfl_rec.sbfl_step_key
+                , pi_scope            => pi_sbfl_rec.sbfl_scope
+                , pi_loop_counter     => pi_sbfl_rec.sbfl_loop_counter
+                , pi_input_parameters => pi_sbfl_rec.sbfl_task_input_parameters
                 );
   end set_context;
 
@@ -112,6 +115,86 @@ as
       l_json_obj.put(pi_parameter_name, pi_value);
       output_parameters := l_json_obj.to_clob();
   end set_output_parameter;
+
+  procedure set_output_parameter_object
+  ( pi_parameter_name  in varchar2
+  , pi_key1            in varchar2 default null
+  , pi_value1          in varchar2 default null
+  , pi_key2            in varchar2 default null
+  , pi_value2          in varchar2 default null
+  , pi_key3            in varchar2 default null
+  , pi_value3          in varchar2 default null
+  , pi_key4            in varchar2 default null
+  , pi_value4          in varchar2 default null
+  , pi_key5            in varchar2 default null
+  , pi_value5          in varchar2 default null
+  , pi_key6            in varchar2 default null
+  , pi_value6          in varchar2 default null
+  )
+  is
+    l_json_obj     json_object_t;
+    l_nested_obj   json_object_t;
+  begin
+    -- Initialize main JSON object if needed
+    if output_parameters is null or output_parameters is not json then
+      l_json_obj := json_object_t();
+    else
+      l_json_obj := json_object_t(output_parameters);
+    end if;
+    
+    -- Create nested object with key-value pairs
+    l_nested_obj := json_object_t();
+    
+    if pi_key1 is not null then
+      l_nested_obj.put(pi_key1, pi_value1);
+    end if;
+    if pi_key2 is not null then
+      l_nested_obj.put(pi_key2, pi_value2);
+    end if;
+    if pi_key3 is not null then
+      l_nested_obj.put(pi_key3, pi_value3);
+    end if;
+    if pi_key4 is not null then
+      l_nested_obj.put(pi_key4, pi_value4);
+    end if;
+    if pi_key5 is not null then
+      l_nested_obj.put(pi_key5, pi_value5);
+    end if;
+    if pi_key6 is not null then
+      l_nested_obj.put(pi_key6, pi_value6);
+    end if;
+    
+    -- Add the nested object to the main object
+    l_json_obj.put(pi_parameter_name, l_nested_obj);
+    
+    -- Update the global variable
+    output_parameters := l_json_obj.to_clob();
+  exception
+    when others then
+      -- If JSON operations fail, create new JSON object with the nested structure
+      l_json_obj := json_object_t();
+      l_nested_obj := json_object_t();
+      if pi_key1 is not null then
+        l_nested_obj.put(pi_key1, pi_value1);
+      end if;
+      if pi_key2 is not null then
+        l_nested_obj.put(pi_key2, pi_value2);
+      end if;
+      if pi_key3 is not null then
+        l_nested_obj.put(pi_key3, pi_value3);
+      end if;
+      if pi_key4 is not null then
+        l_nested_obj.put(pi_key4, pi_value4);
+      end if;
+      if pi_key5 is not null then
+        l_nested_obj.put(pi_key5, pi_value5);
+      end if;
+      if pi_key6 is not null then
+        l_nested_obj.put(pi_key6, pi_value6);
+      end if;
+      l_json_obj.put(pi_parameter_name, l_nested_obj);
+      output_parameters := l_json_obj.to_clob();
+  end set_output_parameter_object;
 
   function get_output_parameters
   return flow_subflows.sbfl_task_output_parameters%type

@@ -926,7 +926,7 @@ end get_object_tag;
   begin
     apex_debug.info( p_message => '-- Joining JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
     for i in 0..p_json_array.get_size - 1 loop
-      l_return := l_return || p_json_array.get_string( i ) || apex_application.lf;
+      l_return := l_return || p_json_array.get_clob( i ) || apex_application.lf;
     end loop;
     return l_return;
   end json_array_join;
