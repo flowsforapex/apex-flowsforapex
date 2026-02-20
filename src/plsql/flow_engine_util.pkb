@@ -499,7 +499,7 @@ end get_object_tag;
     else
     -- new subflow in existing process
     -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process
-      select coalesce ( sbfl.sbfl_adhoc_child_process_level, sbfl.sbfl_process_level)
+      select coalesce ( ahsp.ahsp_process_level, sbfl.sbfl_process_level)
            , sbfl.sbfl_diagram_level
            , sbfl.sbfl_scope
            , sbfl.sbfl_lane
@@ -525,6 +525,8 @@ end get_object_tag;
            , l_level_parent
            , l_new_iter_id
         from flow_subflows sbfl
+        left join flow_adhoc_subprocs ahsp
+          on sbfl.sbfl_id = ahsp.ahsp_sbfl_id
        where sbfl.sbfl_id = p_parent_subflow;
     end if;
 

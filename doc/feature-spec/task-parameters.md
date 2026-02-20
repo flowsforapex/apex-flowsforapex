@@ -8,18 +8,18 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
 ## Key Design Decisions
 
 ### Input Parameters
-- **Combined Definition**: Parameter schema and source binding in one structure (not separate inputAssignments)
+- **Combined Definition**: Parameter schema and source binding in one structure 
 - **Source Types**: 
   - `processVariable` - Get value from process variable
   - `userInput` - Collect from user in AHSP UI
   - `static` - Use a fixed/hardcoded value
-  - Future: `expression`, `sqlQuery`, `systemValue`, `taskOutput`
-- **Top-level scalars auto-unpacked** in PL/SQL scripts (objects/arrays stay as JSON)
+  - Future: `expression`, `sqlQuery`, `functionBody`, etc (possible for 26.1)
+- **Top-level scalars auto-unpacked** in PL/SQL scripts (objects/arrays stay as JSON) using `l_var := flow_globals.input_parameter(var_name);`
 - **Backward compatible**: Existing tasks without parameters work unchanged
 
 ### Output Parameters
-- Must include `result` field for AHSP display
-- **Output assignments use expressions** for flexibility (e.g., incrementing counters)
+- Must include `result` and optionally `keyValues` field for AHSP display
+- **Output assignments use variable expressions** for flexibility (e.g., incrementing counters)
 - Assignments set process variables after task completion
 
 ### Storage
@@ -27,20 +27,27 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
 - Runtime input values in `flow_adhoc_subflows` table
 - Generate JSON Schema for APEX UI (using Ewe Simon's APEX JSON Region plugin)
 
-## XML Structure
+## XML Structure 
 
 ```xml
 <bpmn:scriptTask id="checkAirports" name="Check Other Airports">
   <bpmn:extensionElements>
+    <apex:displayOrder>nn</apex:displayOrder>
+    <apex:grouping>locate bag</apex:grouping>
+    <apex:isRepeatable>true|false</apex:isRepeatable> (default to false)
+    <apex:description>text to describe the step/task</apex:description>
     <apex:inputParameters>
       <apex:parameter>
         <apex:name>case_id</apex:name>
         <apex:type>string</apex:type>
         <apex:required>true</apex:required>
+        <apex:description>the case id</apex:description>
         <apex:source>
           <apex:expressionType>processVariable</apex:expressionType>
           <apex:expression>P_CASE_ID</apex:expression>
         </apex:source>
+        <apex:displayInstructions>json object listing plugin properties (model on custom extensions region inc json syntax check)
+        </apex:displayInstructions>
       </apex:parameter>
       
       <apex:parameter>
@@ -88,109 +95,94 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
       </apex:parameter>
     </apex:outputParameters>
     
-    <apex:outputAssignments>
-      <apex:assignment>
-        <apex:sourceParameter>bag_found</apex:sourceParameter>
-        <apex:targetVariable>P_BAG_LOCATED</apex:targetVariable>
-        <apex:expression>bag_found</apex:expression>
-      </apex:assignment>
-      <apex:assignment>
-        <apex:sourceParameter>airports_checked</apex:sourceParameter>
-        <apex:targetVariable>P_SEARCH_COUNT</apex:targetVariable>
-        <apex:expression>P_SEARCH_COUNT + json_array_length(airports_checked)</apex:expression>
-      </apex:assignment>
-    </apex:outputAssignments>
   </bpmn:extensionElements>
   
-  <bpmn:script><![CDATA[
-    declare
-      l_output json_object_t := json_object_t();
-      l_airports json_array_t := :airports;  -- Auto-unpacked
-    begin
-      -- :case_id also available as scalar
-      
-      l_output.put('result', 'Checked ' || l_airports.get_size || ' airports');
-      l_output.put('bag_found', false);
-      l_output.put('airports_checked', l_airports);
-      
-      :F4A$OUTPUT := l_output;
-    end;
-  ]]></bpmn:script>
 </bpmn:scriptTask>
 ```
 
-## JSON Storage Format (flow_objects.objt_attributes)
+## Example JSON Storage Format (flow_objects.objt_attributes)
 
 ```json
 {
-  "inputParameters": [
+  "apex" :
+  {
+    "customExtension" :
     {
-      "name": "case_id",
-      "type": "string",
-      "required": true,
-      "source": {
-        "expressionType": "processVariable",
-        "expression": "P_CASE_ID"
-      }
+      "isRepeatable" : true,  (for AHSPs)
+      "description" : "Checks the airport luggage system for a lost bag.  Search can be 'quick or detailed.",
+      "displayOrder" : 20,  (for AHSPs)
+      "grouping" : "Locate Bag",  (for AHSPs)
+      "inputParameters" :
+      [
+        {
+          "name" : "airport_code",
+          "type" : "string",
+          "required" : true,
+          "description" : "Three-letter IATA airport code (e.g., JFK, LAX, LHR)",
+          "source" :
+          {
+            "expressionType" : "userInput"
+          },
+          "apexRendering" :
+          {
+            "itemtype" : "text",
+            "maxLength" : 3,
+            "placeholder" : "Enter airport code"
+          }
+        },
+        {
+          "name" : "search_depth",
+          "type" : "string",
+          "description" : "Search level required - determines how thoroughly the baggage system will be searched",
+          "required" : false,
+          "default" : "standard",
+          "source" :
+          {
+            "expressionType" : "userInput"
+          },
+          "apexRendering" :
+          {
+            "enum" :
+            {
+              "quick" : "Quick Search (5 minutes)",
+              "standard" : "Standard Search (15 minutes)",
+              "deep" : "Deep Search (45 minutes)"
+            }
+          }
+        },
+        {
+          "name" : "bag_tag",
+          "type" : "string",
+          "required" : true,
+          "description" : "Bag tracking number from process variables",
+          "source" :
+          {
+            "expressionType" : "processVariable",
+            "expression" : "BAG_TAG"
+          }
+        }
+      ],
+      "outputParameters" :
+      [
+        {
+          "name" : "result",
+          "type" : "string",
+          "required" : true,
+          "description" : "Activity Result Text"
+        },
+        {
+          "name" : "keyOutputs",
+          "type" : "string",
+          "required" : false
+        }
+      ]
     },
-    {
-      "name": "airports",
-      "type": "array",
-      "required": true,
-      "description": "Airport codes to check",
-      "items": {
-        "type": "string",
-        "pattern": "^[A-Z]{3}$"
-      },
-      "rendering": {
-        "control": "multiselect",
-        "lov": "SELECT airport_code, airport_name FROM airports"
-      },
-      "source": {
-        "expressionType": "userInput"
-      }
-    },
-    {
-      "name": "system_id",
-      "type": "string",
-      "required": true,
-      "source": {
-        "expressionType": "static",
-        "expression": "BAGGAGE_SYSTEM_V2"
-      }
-    }
-  ],
-  "outputParameters": [
-    {
-      "name": "result",
-      "type": "string",
-      "required": true,
-      "description": "Summary of search results"
-    },
-    {
-      "name": "bag_found",
-      "type": "boolean",
-      "required": true
-    },
-    {
-      "name": "airports_checked",
-      "type": "array",
-      "required": true,
-      "items": {"type": "string"}
-    }
-  ],
-  "outputAssignments": [
-    {
-      "sourceParameter": "bag_found",
-      "targetVariable": "P_BAG_LOCATED",
-      "expression": "bag_found"
-    },
-    {
-      "sourceParameter": "airports_checked",
-      "targetVariable": "P_SEARCH_COUNT",
-      "expression": "P_SEARCH_COUNT + json_array_length(airports_checked)"
-    }
-  ]
+    "plsqlCode" :
+    [
+      "airp_demo_api.check_airport_luggage_store;"
+    ]
+  },
+  "taskType" : "executePlsql"
 }
 ```
 
@@ -216,17 +208,15 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
 3. Unpack top-level scalars as bind variables (`:case_id`, `:airports`, etc.)
 
 ### After Task Executes:
-1. Get output JSON from `:F4A$OUTPUT`
-2. For each outputAssignment:
-   - Evaluate expression (can reference output parameters and process variables)
-   - Set targetVariable process variable
-3. Store output JSON in flow_adhoc_subflows for AHSP display
+1. Get output JSON from Output Parameters and use Variable Expressions to set proc vars
+2. Store output JSON in flow_adhoc_subflows for AHSP display
 
 ## Use Cases
 
 1. **AHSP Interactive**: User starts task, fills in `userInput` parameters, process vars auto-populated
 2. **Start Events**: Collect process launch parameters without initial UserTask
-3. **Service Templates**: Reusable REST integrations (Docusign, Salesforce, etc.) with parameter mapping
+3. **UserTasks** - add new AutoForm type (similar to Simple forma but auto create json schema dynamically...)
+4. **Service Templates**: Reusable REST integrations (AI, Docusign, Salesforce, etc.) with parameter mapping
 
 ## Parameter Types Supported
 
@@ -245,6 +235,7 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
 - `checkbox` - Checkbox
 - `datepicker` - Date picker
 - `textarea` - Multi-line text
+- ... see APEX JSON region doc...
 
 ## Future Extensions
 
@@ -253,7 +244,7 @@ Adding structured input/output parameters to BPMN tasks in Flows for APEX. Param
 - Conditional parameters (only show if other param has certain value)
 - Parameter groups/sections for complex UIs
 
-## JSONPath Variable Expressions (Design - Next Release)
+## JSONPath Variable Expressions 
 
 ### Summary
 Introduce a new variable expression type that can extract objects or scalars using JSONPath from:
@@ -273,17 +264,17 @@ Introduce a new variable expression type that can extract objects or scalars usi
   - Sequence
   - Variable Name
   - variable Type (all types allowed)
-  - Expression Type - 'JSON Path Expression' - creates exppressionType 'jsonPath'
+  - Expression Type - 'JSON Path Expression' - creates expressionType 'jsonPath'
   - Source Type 
     - Select List - 'Process Variable (JSON)'|Task Input Parameters|Task Output Parameters
     -  Process Variable is always valid.  
-    -  Input and Output Parameters are only valid on After-Task, On Event variable expressions (subject to change - maybe add everywhere for now!)
+    -  Input and Output Parameters are only displayed on After-Task, On Event variable expressions (subject to change - maybe add everywhere for now!)
     -  in XML - use tag `apex:varSourceType`
     -  BPMN values: `processVariable`, `taskOutput`, `taskInput`
   - Source.  
     -  in XML - use tag `apex:varSource`
     - For `processVariable`: source variable name
-    - For `taskOutput`/`taskInput`: use `@`
+    - For `taskOutput`/`taskInput`: don't use tag
   - Expression
     - - valid json path expression.
     - default start with $ ?
@@ -325,26 +316,3 @@ Add `set_json_path` parallel to `set_sql`/`set_plsql`:
 Missing path or JSON null → set target to null (log debug warning).
 ```
 
----
-
-**To use in VSCode:**
-
-1. Save this as `docs/design/task-parameters.md` in your project
-2. In VSCode Chat, start with:
-
-```
-I'm implementing the task parameters feature described in @docs/design/task-parameters.md
-
-First task: Build the PL/SQL XML parser that extracts apex:inputParameters from BPMN extensionElements and converts to the JSON format for storage in flow_objects.objt_attributes.
-
-The parser should handle:
-- Parameter name, type, required, description
-- Source (sourceType and sourceExpression)
-- Nested structures (items for arrays, properties for objects)
-- Rendering hints
-- Enum values and patterns
-
-Can you help me build this parser function?
-```
-
-This gives Claude all the context it needs in a compact, searchable format!

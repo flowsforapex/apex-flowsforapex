@@ -147,7 +147,7 @@ CREATE TABLE flow_subflows (
     sbfl_current                    VARCHAR2(50 CHAR),
     sbfl_step_key                   VARCHAR2(20 CHAR) not null,
     sbfl_is_adhoc                   VARCHAR2(1 CHAR), -- Y if is a subflow inside an adhoc subprocess
-    sbfl_adhoc_child_process_level  NUMBER, -- process level of any child subflows if current is an adhoc subprocess
+    sbfl_ahsp_id                    NUMBER, -- adhoc subprocess id if current is an adhoc subprocess
     sbfl_hide_in_task_list          VARCHAR2(1 CHAR), -- Y if this subflow is to be hidden in APEX task lists
     sbfl_due_on                     TIMESTAMP WITH TIME ZONE,
     sbfl_priority                   NUMBER,
@@ -273,13 +273,33 @@ alter table flow_iterations add constraint iter_inputs_is_json_ck check ( iter_i
 
 alter table flow_iterations add constraint iter_outputs_is_json_ck check ( iter_outputs is json );
 
+create table flow_adhoc_subprocs (
+    ahsp_id                     NUMBER
+        GENERATED ALWAYS AS IDENTITY ( START WITH 1 NOCACHE )
+    NOT NULL,
+    ahsp_prcs_id                NUMBER NOT NULL,
+    ahsp_sbfl_id                NUMBER NOT NULL,
+    ahsp_dgrm_id                NUMBER NOT NULL,
+    ahsp_bpmn_id                VARCHAR2(50 CHAR) NOT NULL,
+    ahsp_step_key               VARCHAR2(20 CHAR) NOT NULL,
+    ahsp_process_level          NUMBER NOT NULL,
+    ahsp_control                VARCHAR2(20 CHAR) DEFAULT 'manual' NOT NULL,
+    ahsp_last_ai_check          TIMESTAMP WITH TIME ZONE,
+    ahsp_check_interval_minutes NUMBER,
+    ahsp_max_iterations         NUMBER,
+    ahsp_iteration_count        NUMBER,
+    ahsp_status                 VARCHAR2(20 CHAR)
+);
+
+alter table flow_adhoc_subprocs
+  add constraint flow_ahsp_pk primary key ( ahsp_id );
+
+alter table flow_adhoc_subprocs
+  add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid') );
+
 create table flow_adhoc_subflows (
     ahsf_sbfl_id                NUMBER NOT NULL,
-    ahsf_prcs_id                NUMBER NOT NULL,
-    ahsf_dgrm_id                NUMBER NOT NULL,
-    ahsf_subproc_bpmn_id        VARCHAR2(50 CHAR) NOT NULL,
-    ahsf_subproc_sbfl_id        NUMBER NOT NULL,
-    ahsf_subproc_step_key       VARCHAR2(20 CHAR) NOT NULL,
+    ahsf_ahsp_id                NUMBER NOT NULL,
     ahsf_starting_object        VARCHAR2(50 CHAR) NOT NULL,
     ahsf_starting_step_key      VARCHAR2(20 CHAR) NOT NULL,
     ahsf_repeat_count           NUMBER NOT NULL,
@@ -296,9 +316,10 @@ alter table flow_adhoc_subflows
 alter table flow_adhoc_subflows add constraint ahsf_inputs_is_json_ck check ( ahsf_inputs is json );    
 alter table flow_adhoc_subflows add constraint ahsf_outputs_is_json_ck check ( ahsf_outputs is json );
 
-alter table flow_adhoc_subflows add constraint ahsf_unique_uk unique  ( ahsf_prcs_id
-                                                                    , ahsf_starting_object
-                                                                    , ahsf_repeat_count );
+alter table flow_adhoc_subflows add constraint ahsf_unique_uk unique  ( ahsf_ahsp_id
+                                                                     , ahsf_starting_object
+                                                                     , ahsf_repeat_count );
+
 
 CREATE TABLE flow_timers (
     timr_id            NUMBER
@@ -440,6 +461,20 @@ alter table flow_message_subscriptions
 alter table flow_message_subscriptions
     add constraint flow_msub_dgrm_fk FOREIGN KEY ( msub_dgrm_id )
         references flow_diagrams (dgrm_id)
+            ON DELETE CASCADE;
+
+alter table flow_adhoc_subprocs
+    add constraint flow_ahsp_prcs_fk FOREIGN KEY ( ahsp_prcs_id )
+        references flow_processes (prcs_id)
+            ON DELETE CASCADE;
+
+alter table flow_adhoc_subprocs
+    add constraint flow_ahsp_dgrm_fk FOREIGN KEY ( ahsp_dgrm_id )
+        references flow_diagrams (dgrm_id);
+
+alter table flow_adhoc_subflows
+    add constraint flow_ahsf_ahsp_fk FOREIGN KEY ( ahsf_ahsp_id )
+        references flow_adhoc_subprocs ( ahsp_id )
             ON DELETE CASCADE;
             
 -- Oracle SQL Developer Data Modeler Summary Report: 
