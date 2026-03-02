@@ -121,6 +121,8 @@ alter table flow_adhoc_subflows
         references flow_adhoc_subprocs ( ahsp_id )
             ON DELETE CASCADE;
 
+PROMPT >> > Creating table flow_adhoc_subproc_ai_decisions
+
 PROMPT >> >> Schema Changes Completed
 PROMPT >> --------------------------------------------------- 
 
