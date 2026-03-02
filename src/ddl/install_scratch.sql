@@ -320,6 +320,39 @@ alter table flow_adhoc_subflows add constraint ahsf_unique_uk unique  ( ahsf_ahs
                                                                      , ahsf_starting_object
                                                                      , ahsf_repeat_count );
 
+create table flow_adhoc_subproc_ai_decisions (
+    asad_id                     number generated always as identity
+        constraint asad_pk primary key,
+    asad_ahsp_id               number                  not null
+        constraint asad_ahsp_id_fk
+        references flow_adhoc_subprocs (ahsp_id)
+        on delete cascade,
+    asad_turn                  number                  not null,
+    asad_rationale             varchar2(4000 byte),
+    asad_actions               clob
+        constraint asad_actions_is_json check (asad_actions is json),
+    asad_timestamp             timestamp with time zone default systimestamp not null,
+    asad_created_by            varchar2(64 byte) default coalesce(
+                                   sys_context('apex$session','app_user'),
+                                   sys_context('userenv','os_user'), 
+                                   sys_context('userenv','session_user')
+                               )
+);
+
+-- Create index for foreign key
+create index asad_ahsp_id_idx on flow_adhoc_subproc_ai_decisions (asad_ahsp_id, asad_turn);
+
+-- Create index for timestamps
+create index asad_timestamp_idx on flow_adhoc_subproc_ai_decisions (asad_timestamp);
+
+comment on table flow_adhoc_subproc_ai_decisions is 'Tracks AI decisions and reasoning for autonomous adhoc subprocess management';
+comment on column flow_adhoc_subproc_ai_decisions.asad_id is 'Primary key for AI decision record';
+comment on column flow_adhoc_subproc_ai_decisions.asad_ahsp_id is 'Foreign key to flow_adhoc_subprocs';
+comment on column flow_adhoc_subproc_ai_decisions.asad_turn is 'Turn/iteration number for this subprocess';
+comment on column flow_adhoc_subproc_ai_decisions.asad_rationale is 'AI reasoning/rationale for the decision';
+comment on column flow_adhoc_subproc_ai_decisions.asad_actions is 'JSON array of actions recommended by AI (CLOB with IS JSON constraint)';
+comment on column flow_adhoc_subproc_ai_decisions.asad_timestamp is 'When this AI decision was made';
+comment on column flow_adhoc_subproc_ai_decisions.asad_created_by is 'User/system that created the record';
 
 CREATE TABLE flow_timers (
     timr_id            NUMBER

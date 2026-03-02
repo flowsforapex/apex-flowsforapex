@@ -297,6 +297,12 @@ function scope_is_valid
   function get_vars_as_json_object
   ( pi_prcs_id   in flow_processes.prcs_id%type
   , pi_scope     in flow_subflows.sbfl_scope%type
+  , pi_var_names in apex_t_varchar2
+  ) return sys.json_object_t;
+
+  function get_vars_as_json_object
+  ( pi_prcs_id   in flow_processes.prcs_id%type
+  , pi_scope     in flow_subflows.sbfl_scope%type
   , pi_var_list  in flow_types_pkg.t_bpmn_attribute_vc2
   ) return sys.json_object_t;
 

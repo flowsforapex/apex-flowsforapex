@@ -105,6 +105,11 @@ as
   gc_adhoc_task_visibility_activities constant flow_types_pkg.t_bpmn_id := 'activities';
   gc_adhoc_task_visibility_all        constant flow_types_pkg.t_bpmn_id := 'all';
 
+  -- adhoc subprocess control options
+  gc_adhoc_control_manual             constant flow_types_pkg.t_bpmn_id := 'manual';
+  gc_adhoc_control_autonomous         constant flow_types_pkg.t_bpmn_id := 'ai';
+  gc_adhoc_control_hybrid             constant flow_types_pkg.t_bpmn_id := 'hybrid';
+
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
   gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
