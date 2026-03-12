@@ -73,7 +73,9 @@ create table flow_adhoc_subprocs (
     ahsp_check_interval_minutes NUMBER,
     ahsp_max_iterations         NUMBER,
     ahsp_iteration_count        NUMBER,
-    ahsp_status                 VARCHAR2(20 CHAR)
+    ahsp_status                 VARCHAR2(20 CHAR),
+    ahsp_next_recommended_check TIMESTAMP WITH TIME ZONE,
+    ahsp_next_check_reason      VARCHAR2(500 CHAR)
 );
 
 alter table flow_adhoc_subprocs
@@ -90,6 +92,9 @@ alter table flow_adhoc_subprocs
 alter table flow_adhoc_subprocs
     add constraint flow_ahsp_dgrm_fk FOREIGN KEY ( ahsp_dgrm_id )
         references flow_diagrams (dgrm_id);
+
+-- Create index for AI scheduling queries
+create index ahsp_next_check_idx on flow_adhoc_subprocs (ahsp_next_recommended_check); 
 
 PROMPT >> > Creating Table flow_adhoc_subflows
 
@@ -157,7 +162,8 @@ comment on column flow_adhoc_subproc_ai_decisions.asad_rationale is 'AI reasonin
 comment on column flow_adhoc_subproc_ai_decisions.asad_actions is 'JSON array of actions recommended by AI (CLOB with IS JSON constraint)';
 comment on column flow_adhoc_subproc_ai_decisions.asad_timestamp is 'When this AI decision was made';
 comment on column flow_adhoc_subproc_ai_decisions.asad_created_by is 'User/system that created the record';
-
+comment on column flow_adhoc_subprocs.ahsp_next_recommended_check is 'AI-recommended timestamp for next check/wake-up';
+comment on column flow_adhoc_subprocs.ahsp_next_check_reason is 'AI-provided reason for the recommended check timing';
 
 PROMPT >> >> Schema Changes Completed
 PROMPT >> --------------------------------------------------- 

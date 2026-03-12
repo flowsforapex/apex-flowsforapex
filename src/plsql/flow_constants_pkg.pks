@@ -110,6 +110,11 @@ as
   gc_adhoc_control_autonomous         constant flow_types_pkg.t_bpmn_id := 'ai';
   gc_adhoc_control_hybrid             constant flow_types_pkg.t_bpmn_id := 'hybrid';
 
+  -- Operating Mode Constants  (used to control certain aspects of engine behaviour at activity level, 
+  -- such as AI decision making where demo mode allows "demo time" use for future scenarios, for testing/demo purposes)
+  gc_operating_mode_demo              constant varchar2(10) := 'demo';
+  gc_operating_mode_production        constant varchar2(10) := 'production';
+
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
   gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';

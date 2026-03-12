@@ -903,5 +903,30 @@ flow_api_pkg.step_timers;
 ```
 **/
 
+  procedure flow_adhoc_request_ai_decision 
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type  
+  , p_step_key    in flow_subflows.sbfl_step_key%type
+  , p_comment     in varchar2 default 'Manual UI Request'
+  );
+/**
+Procedure flow_adhoc_request_ai_decision
+
+This procedure is used to manually request AI assistance for an adhoc subprocess.
+This can be called from the UI when users want to trigger AI decision-making
+for manual or hybrid control mode subprocesses.
+
+EXAMPLE
+```sql
+flow_api_pkg.flow_adhoc_request_ai_decision(
+  p_process_id => 123,
+  p_subflow_id => 456,
+  p_step_key   => 'A1B2C3',
+  p_comment    => 'User requested AI review'
+);
+```
+**/
+
 end flow_api_pkg;
 /

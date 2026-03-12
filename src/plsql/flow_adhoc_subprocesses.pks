@@ -25,5 +25,36 @@ as
     ( p_sbfl_rec             in flow_subflows%rowtype
     );
 
+  function activity_start_condition_met_YN
+    ( p_process_id                in flow_processes.prcs_id%type
+    , p_activity_start_condition  in varchar2
+    , p_scope                     in flow_subflows.sbfl_scope%type default 0
+    )
+    return varchar2;
+
+  -- Manual AI control API
+  procedure request_ai_decision
+    ( p_process_id  in flow_processes.prcs_id%type
+    , p_subflow_id  in flow_subflows.sbfl_id%type
+    , p_step_key    in flow_subflows.sbfl_step_key%type
+    , p_comment     in varchar2 default 'Manual UI Request'
+    );
+
+  -- AI scheduling information API
+  procedure get_ai_schedule_info
+    ( p_process_id           in flow_processes.prcs_id%type
+    , p_subflow_id           in flow_subflows.sbfl_id%type
+    , p_step_key             in flow_subflows.sbfl_step_key%type
+    , p_next_check_time      out timestamp with time zone
+    , p_check_reason         out varchar2
+    );
+
+  -- Demo/Production mode utilities
+  function get_effective_timestamp
+    ( p_prcs_id in flow_processes.prcs_id%type
+    , p_offset_hours in number default 0
+    )
+    return timestamp with time zone;
+
 end flow_adhoc_subprocesses;
 /
