@@ -27,7 +27,7 @@ as
     l_param_name       varchar2(128);
     l_expression_type  varchar2(50);
     l_expression       varchar2(4000);
-    l_param_value      varchar2(4000);
+    l_param_value      clob;
     l_proc_var         flow_proc_vars_int.t_proc_var_value;
   begin
     apex_debug.enter('process_input_parameters', 'pi_process_id', pi_process_id, 'pi_scope', pi_scope);
