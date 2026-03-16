@@ -286,9 +286,12 @@ create table flow_adhoc_subprocs (
     ahsp_control                VARCHAR2(20 CHAR) DEFAULT 'manual' NOT NULL,
     ahsp_last_ai_check          TIMESTAMP WITH TIME ZONE,
     ahsp_check_interval_minutes NUMBER,
-    ahsp_max_iterations         NUMBER,
     ahsp_iteration_count        NUMBER,
-    ahsp_status                 VARCHAR2(20 CHAR)
+    ahsp_status                 VARCHAR2(20 CHAR),
+    ahsp_next_recommended_check TIMESTAMP WITH TIME ZONE,
+    ahsp_next_check_reason      VARCHAR2(500 CHAR),
+    ahsp_turns_per_session      NUMBER,
+    ahsp_max_total_turns        NUMBER
 );
 
 alter table flow_adhoc_subprocs
