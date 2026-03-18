@@ -61,6 +61,7 @@ alter package flow_bpmn_parser_pkg compile specification;
 alter package flow_message_flow compile specification;
 alter package flow_message_util compile specification;
 alter package flow_message_util_ee compile specification;
+alter package flow_async_tasks_ee compile specification;
 alter package flow_api_pkg compile specification;
 alter package flow_engine_util compile specification;
 alter package flow_gateways compile specification;

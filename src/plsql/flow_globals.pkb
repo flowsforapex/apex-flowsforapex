@@ -18,6 +18,8 @@ as
   g_is_recursive_step boolean := false;
   -- g_recursive_step is set to false for steps that are being performed by the user, and true
   -- for subsequent recursive steps that are performed by the engine (such as gateway steps, scriptTasks, etc.)
+  g_is_async_session boolean := false;
+  -- g_is_async_session is true for the lifetime of an AQ-driven async callback session.
 
 
   procedure set_context
@@ -82,6 +84,19 @@ as
   begin
     return g_is_recursive_step;
   end get_is_recursive_step; 
+
+  procedure set_is_async_session
+  ( p_is_async_session  in boolean default false)
+  is
+  begin
+    g_is_async_session := p_is_async_session;
+  end set_is_async_session;
+
+  function get_is_async_session return boolean
+  is
+  begin
+    return g_is_async_session;
+  end get_is_async_session;
 
   function business_ref
   (pi_scope       flow_subflows.sbfl_scope%type default 0)

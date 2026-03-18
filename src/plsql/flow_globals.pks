@@ -60,6 +60,13 @@ as
   function get_is_recursive_step
   return boolean;
 
+  procedure set_is_async_session
+  ( p_is_async_session  in boolean default false
+  );
+
+  function get_is_async_session
+  return boolean;
+
   procedure set_call_origin
   (
     p_origin in varchar2

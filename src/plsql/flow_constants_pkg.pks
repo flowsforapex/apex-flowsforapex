@@ -196,6 +196,8 @@ as
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
   
   gc_task_type_key                    constant flow_types_pkg.t_bpmn_id := 'taskType';
+  gc_async_before_key                 constant flow_types_pkg.t_bpmn_id := 'async_before';
+  gc_async_after_key                  constant flow_types_pkg.t_bpmn_id := 'async_after';
 
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
@@ -245,6 +247,7 @@ as
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
   gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
   gc_sbfl_status_waiting_message      constant  varchar2(20 char) := 'waiting for message';
+  gc_sbfl_status_queued_async         constant  varchar2(20 char) := 'queued for async';
   gc_sbfl_status_waiting_iter         constant  varchar2(20 char) := 'waiting iterations';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
@@ -312,6 +315,8 @@ as
   gc_step_event_iteration_started     constant  varchar2(20 char) := 'iteration started';
   gc_step_event_iteration_completed   constant  varchar2(20 char) := 'iteration completed';
   gc_step_event_iteration_terminated  constant  varchar2(20 char) := 'iteration terminated';
+  gc_step_event_async_enqueued        constant  varchar2(20 char) := 'async enqueued';
+  gc_step_event_async_dequeued        constant  varchar2(20 char) := 'async dequeued';
   gc_step_event_message_dequeued      constant  varchar2(20 char) := 'message dequeued';
   gc_step_event_message_enqueued      constant  varchar2(20 char) := 'message enqueued';
   gc_step_event_cancelled             constant  varchar2(20 char) := 'APEX task cancelled';

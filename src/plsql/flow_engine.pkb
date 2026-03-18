@@ -15,7 +15,168 @@ create or replace package body flow_engine as
   lock_timeout exception;
   pragma exception_init (lock_timeout, -3006);
 
+  procedure run_step
+  ( p_sbfl_rec              in flow_subflows%rowtype
+  , p_step_info             in flow_types_pkg.flow_step_info
+  , p_iteration_is_complete in boolean default false
+  );
+
   e_feature_requires_ee exception;
+
+  function async_ee_is_available
+    return boolean
+  is
+    l_package_count pls_integer;
+  begin
+    select count(*)
+      into l_package_count
+      from user_objects
+     where object_name = 'FLOW_ASYNC_TASKS_EE'
+       and object_type = 'PACKAGE BODY'
+       and status = 'VALID';
+
+    return l_package_count = 1;
+  end async_ee_is_available;
+
+  function is_async_step
+  ( p_step_info in flow_types_pkg.flow_step_info
+  ) return boolean
+  is
+  begin
+    return coalesce( p_step_info.target_objt_treat_as_tag, p_step_info.target_objt_tag )
+             in ( flow_constants_pkg.gc_bpmn_scripttask
+                , flow_constants_pkg.gc_bpmn_servicetask );
+  end is_async_step;
+
+  function current_step_has_async_before
+  ( p_objt_id in flow_objects.objt_id%type
+  ) return boolean
+  is
+    l_async_before varchar2(10 char);
+  begin
+    select coalesce ( objt.objt_attributes."apex"."customExtension"."async_before"
+                    , flow_constants_pkg.gc_vcbool_false )
+      into l_async_before
+      from flow_objects objt
+     where objt.objt_id = p_objt_id;
+
+    apex_debug.info
+    ( p_message => 'Current step async_before value: %0'
+    , p0        => l_async_before
+    );
+    
+    return l_async_before = flow_constants_pkg.gc_vcbool_true;
+  exception
+    when no_data_found then
+      return false;
+  end current_step_has_async_before;
+
+  function previous_step_has_async_after
+  ( p_dgrm_id              in flow_diagrams.dgrm_id%type
+  , p_previous_objt_bpmn   in flow_objects.objt_bpmn_id%type
+  ) return boolean
+  is
+    l_async_after varchar2(10 char);
+  begin
+    if p_previous_objt_bpmn is null then
+      return false;
+    end if;
+
+    select coalesce ( objt.objt_attributes."apex"."customExtension"."async_after"
+                    , flow_constants_pkg.gc_vcbool_false )
+      into l_async_after
+      from flow_objects objt
+     where objt.objt_dgrm_id = p_dgrm_id
+       and objt.objt_bpmn_id = p_previous_objt_bpmn;
+
+    apex_debug.info
+    ( p_message => 'Previous step async_after value: %0'    
+    , p0        => l_async_after
+    );
+
+    return l_async_after = flow_constants_pkg.gc_vcbool_true;
+  exception
+    when no_data_found then
+      return false;
+  end previous_step_has_async_after;
+
+  function get_async_enqueue_reason
+  ( p_sbfl_rec   in flow_subflows%rowtype
+  , p_step_info  in flow_types_pkg.flow_step_info
+  ) return varchar2
+  is
+  begin
+    if current_step_has_async_before( p_objt_id => p_step_info.target_objt_id ) then
+      return flow_constants_pkg.gc_async_before_key;
+    end if;
+
+    if previous_step_has_async_after
+       ( p_dgrm_id            => p_sbfl_rec.sbfl_dgrm_id
+       , p_previous_objt_bpmn => p_sbfl_rec.sbfl_last_completed
+       )
+    then
+      return flow_constants_pkg.gc_async_after_key;
+    end if;
+
+    return null;
+  end get_async_enqueue_reason;
+
+  procedure dispatch_step
+  ( p_sbfl_rec              in flow_subflows%rowtype
+  , p_step_info             in flow_types_pkg.flow_step_info
+  , p_iteration_is_complete in boolean default false
+  )
+  is
+    l_enqueue_reason varchar2(100 char);
+  begin
+    if not flow_globals.get_is_async_session
+       and async_ee_is_available
+       and is_async_step( p_step_info => p_step_info )
+    then
+      l_enqueue_reason := get_async_enqueue_reason
+                          ( p_sbfl_rec  => p_sbfl_rec
+                          , p_step_info => p_step_info
+                          );
+    end if;
+
+    if l_enqueue_reason is not null then
+    
+      apex_debug.info
+      ( p_message => 'Step %0 is marked for async execution. Reason: %1'
+      , p0        => p_sbfl_rec.sbfl_id
+      , p1        => l_enqueue_reason
+      );
+
+      update flow_subflows sbfl
+         set sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_queued_async
+           , sbfl.sbfl_last_update    = systimestamp
+           , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                                 , sys_context('userenv','os_user')
+                                                 , sys_context('userenv','session_user')
+                                                 )
+       where sbfl.sbfl_prcs_id = p_sbfl_rec.sbfl_prcs_id
+         and sbfl.sbfl_id      = p_sbfl_rec.sbfl_id;
+
+      flow_async_tasks_ee.enqueue_async_step
+      ( p_process_id     => p_sbfl_rec.sbfl_prcs_id
+      , p_subflow_id     => p_sbfl_rec.sbfl_id
+      , p_step_key       => p_sbfl_rec.sbfl_step_key
+      , p_enqueue_reason => l_enqueue_reason
+      );
+
+      apex_debug.info
+      ( p_message => 'Subflow %0 queued for async execution. Reason %1.'
+      , p0        => p_sbfl_rec.sbfl_id
+      , p1        => l_enqueue_reason
+      );
+    else
+      run_step
+      ( p_sbfl_rec              => p_sbfl_rec
+      , p_step_info             => p_step_info
+      , p_iteration_is_complete => p_iteration_is_complete
+      );
+    end if;
+  end dispatch_step;
 
   function flow_get_matching_link_object
   ( p_process_id    in flow_processes.prcs_id%type
@@ -1249,6 +1410,11 @@ begin
   ( p_sbfl_rec    => p_sbfl_rec
   , p_event       => flow_constants_pkg.gc_step_event_became_current
   , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+  , p_comment     => case
+                       when flow_globals.get_is_async_session
+                        and is_async_step( p_step_info => p_step_info )
+                       then 'running async in AQ session'
+                     end
   );
   -- TODO - consider moving this into flow_tasks when you have priority, due on, reservation data...
 
@@ -1704,12 +1870,10 @@ begin
   else
     l_timestamp := systimestamp;
 
-    -- think about adding a check here if suspended and ee and certain object types
-    -- will test using a case statement in the update of sbfl_status...
     l_new_status := case l_sbfl_rec.sbfl_status
-                    when flow_constants_pkg.gc_sbfl_status_suspended then flow_constants_pkg.gc_sbfl_status_restart_on_resume
-                    else flow_constants_pkg.gc_sbfl_status_running
-                    end; 
+            when flow_constants_pkg.gc_sbfl_status_suspended then flow_constants_pkg.gc_sbfl_status_restart_on_resume
+            else flow_constants_pkg.gc_sbfl_status_running
+            end; 
 
     -- update subflow with step completed, and prepare for next step before committing
     update flow_subflows sbfl
@@ -1775,8 +1939,8 @@ begin
       , p_lock_subflow => true
       );
 
-      -- Run the step
-      run_step 
+      -- Run or queue the step
+      dispatch_step
       ( p_sbfl_rec                => l_sbfl_rec
       , p_step_info               => l_step_info 
       , p_iteration_is_complete   => l_iteration_status.is_complete
@@ -2029,7 +2193,7 @@ begin
       );
     else
       -- all other object types, including a timer that is being startded as part of a resume.  restart current task
-      run_step 
+      dispatch_step
       ( p_sbfl_rec => l_sbfl_rec
       , p_step_info => l_step_info
       );
@@ -2043,6 +2207,72 @@ begin
     commit;
   end if;
 end restart_step;
+
+procedure start_async_step
+  ( p_process_id          in flow_processes.prcs_id%type
+  , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_step_key            in flow_subflows.sbfl_step_key%type default null
+  )
+is
+  l_sbfl_rec   flow_subflows%rowtype;
+  l_step_info  flow_types_pkg.flow_step_info;
+begin
+  apex_debug.enter
+  ( 'start_async_step'
+  , 'Process ID', p_process_id
+  , 'Subflow ID', p_subflow_id
+  , 'Step Key',   p_step_key
+  );
+
+  flow_globals.set_is_recursive_step (p_is_recursive_step => true);
+  flow_globals.set_step_error ( p_has_error => false);
+
+  l_sbfl_rec := flow_engine_util.get_subflow_info
+                ( p_process_id   => p_process_id
+                , p_subflow_id   => p_subflow_id
+                , p_lock_process => true
+                , p_lock_subflow => true
+                );
+
+  if flow_engine_util.step_key_valid( pi_prcs_id         => p_process_id
+                                    , pi_sbfl_id         => p_subflow_id
+                                    , pi_step_key_supplied => p_step_key
+                                    , pi_step_key_required => l_sbfl_rec.sbfl_step_key
+                                    )
+  then
+    l_step_info := get_step_info
+                   ( p_sbfl_rec   => l_sbfl_rec
+                   , p_is_restart => true
+                   );
+
+    update flow_subflows sbfl
+       set sbfl.sbfl_status         = flow_constants_pkg.gc_sbfl_status_running
+         , sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_last_update_by = coalesce ( sys_context('apex$session','app_user')
+                                               , sys_context('userenv','os_user')
+                                               , sys_context('userenv','session_user')
+                                               )
+     where sbfl.sbfl_prcs_id = p_process_id
+       and sbfl.sbfl_id      = p_subflow_id;
+
+    l_sbfl_rec := flow_engine_util.get_subflow_info
+                  ( p_process_id   => p_process_id
+                  , p_subflow_id   => p_subflow_id
+                  , p_lock_subflow => true
+                  );
+
+    dispatch_step
+    ( p_sbfl_rec  => l_sbfl_rec
+    , p_step_info => l_step_info
+    );
+  end if;
+
+  if flow_globals.get_step_error then
+    rollback;
+  else
+    commit;
+  end if;
+  end start_async_step;
 
 end flow_engine;
 /

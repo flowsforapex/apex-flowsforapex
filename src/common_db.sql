@@ -20,6 +20,7 @@ PROMPT >> Engine
 @plsql/flow_message_flow.pks
 @plsql/flow_message_util.pks
 @plsql/flow_message_util_ee.pks
+@plsql/flow_async_tasks_ee.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
 @plsql/flow_gateways.pks
