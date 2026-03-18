@@ -40,12 +40,9 @@ Using the GitHub repository, go through the following steps to install the test 
 
 ## Common problems after installing tests in a new workspace / Flows installation.
 
-1.  If you get lots of 'Can't create async session' type errors, ssing the Configurations Panel > Engine.   Make sure that the default parameters use a valid AppID, App Page and Default User ID on the system under test.  Many, many tests will error if this is not set correctly.
-2.  If you get Incorrect Workspace type errors on tests involving APEX Human Tasks, chances are the default app / page info set in your model hasn't ben reset for the new envirobment.  Look in model properties panel > BPMN Process / Collaboration / Background Task Session on the failing models.
-3.  If you get lots of errors on Timer related tests, check that the DBMS Scheduler job is still running.  Sometimes bad code crashes the Scheduler JOb.  Disable and Re-enable it and they normally go away.
-
-
-or APEX application (the "engine app"), import the models into your workspace using the multiple file import feature.
+1.  If you get lots of 'Can't create async session' type errors, using the Configurations Panel > Engine.   Make sure that the default parameters use a valid AppID, App Page and Default User ID on the system under test.  Many, many tests will error if this is not set correctly.
+2.  If you get Incorrect Workspace type errors on tests involving APEX Human Tasks, chances are the default app / page info set in your model hasn't been reset for the new environment.  Look in model properties panel > BPMN Process / Collaboration / Background Task Session on the failing models.
+3.  If you get lots of errors on Timer related tests, check that the DBMS Scheduler Job is still running.  Sometimes bad code crashes the Scheduler JOb.  Disable and Re-enable it and they normally go away.
 
 ## Need Help?
 
