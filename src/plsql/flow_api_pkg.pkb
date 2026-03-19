@@ -234,7 +234,7 @@ create or replace package body flow_api_pkg as
     );
   end flow_start_step;
 
-    procedure flow_pause_step
+  procedure flow_pause_step
   (
     p_process_id    in flow_processes.prcs_id%type
   , p_subflow_id    in flow_subflows.sbfl_id%type
@@ -248,6 +248,89 @@ create or replace package body flow_api_pkg as
     , p_step_key    => p_step_key
     );
   end flow_pause_step;
+
+  procedure flow_start_adhoc_activity 
+  (
+    p_process_id            in flow_processes.prcs_id%type -- Process ID
+  , p_subflow_id            in flow_subflows.sbfl_id%type -- Subflow ID
+  , p_activity_bpmn_id      in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+  , p_user_input_parameters in clob default null -- User input parameters as JSON
+  )
+  is
+     l_session_id          number;
+     e_invalid_json_format exception;
+  begin 
+    -- create an APEX session if this has come in from outside APEX
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+      apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
+    end if;
+
+    -- Validate JSON format at API entry point
+    if p_user_input_parameters is not null and p_user_input_parameters is not json then
+        raise e_invalid_json_format;
+    end if;
+
+    flow_adhoc_subprocesses.start_adhoc_activity
+    ( p_process_id        => p_process_id
+    , p_parent_subflow_id => p_subflow_id
+    , p_objt_bpmn_id      => p_activity_bpmn_id
+    , p_user_input_parameters => p_user_input_parameters
+    );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;
+  exception
+    when e_invalid_json_format then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'input_parameter-invalid-json'
+      , p0             => p_activity_bpmn_id
+      , p1             => p_user_input_parameters
+      );
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id );
+      end if;
+      raise;
+  end flow_start_adhoc_activity;
+
+ procedure flow_adhoc_request_ai_decision 
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type  
+  , p_step_key    in flow_subflows.sbfl_step_key%type
+  , p_comment     in varchar2 default 'Manual UI Request'
+  )
+  is
+     l_session_id          number;
+  begin
+    -- create an APEX session if this has come in from outside APEX
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+      apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
+    end if;
+    
+    -- Delegate to the adhoc subprocesses package
+    flow_adhoc_subprocesses.request_ai_decision(
+      p_process_id => p_process_id,
+      p_subflow_id => p_subflow_id,
+      p_step_key   => p_step_key,
+      p_comment    => p_comment
+    );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;
+  exception
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id );
+      end if;
+      raise;
+  end flow_adhoc_request_ai_decision;
 
   procedure flow_restart_step
   (
@@ -416,7 +499,8 @@ create or replace package body flow_api_pkg as
        and objt.objt_bpmn_id = sbfl.sbfl_current
      where sbfl.sbfl_prcs_id = p_process_id
        and sbfl.sbfl_id = p_subflow_id
-       and objt.objt_tag_name = flow_constants_pkg.gc_bpmn_usertask
+       and objt.objt_tag_name in ( flow_constants_pkg.gc_bpmn_usertask
+                                 , flow_constants_pkg.gc_bpmn_adhoc_subprocess )
     ;
 
     apex_debug.trace( p_message => 'Found OBJT_ID %s', p0 => l_objt_id );
@@ -519,8 +603,9 @@ create or replace package body flow_api_pkg as
             on bref.prov_prcs_id = sbfl.sbfl_prcs_id
            and bref.prov_var_name = 'BUSINESS_REF'
            and bref.prov_scope = 0
-         where curr_objt.objt_tag_name = 'bpmn:userTask' 
-           and sbfl.sbfl_status = 'running'
+         where curr_objt.objt_tag_name in ( 'bpmn:userTask' , 'bpmn:adHocSubProcess' )
+           and sbfl.sbfl_status in ('running', 'in adhoc subprocess')
+           and sbfl.sbfl_hide_in_task_list != 'Y'
            and (instr ( sbfl.sbfl_excluded_users, l_user) = 0
                or sbfl.sbfl_excluded_users is null)
            and ( sbfl.sbfl_reservation = l_user
@@ -565,9 +650,11 @@ create or replace package body flow_api_pkg as
             on bref.prov_prcs_id = sbfl.sbfl_prcs_id
            and bref.prov_var_name = 'BUSINESS_REF'
            and bref.prov_scope = 0
-         where curr_objt.objt_tag_name = 'bpmn:userTask' 
+         where curr_objt.objt_tag_name in ( 'bpmn:userTask' , 'bpmn:adHocSubProcess' )
            and sbfl.sbfl_status in ( flow_constants_pkg.gc_sbfl_status_running
-                                   , flow_constants_pkg.gc_sbfl_status_waiting_approval)
+                                   , flow_constants_pkg.gc_sbfl_status_waiting_approval
+                                   , flow_constants_pkg.gc_sbfl_status_in_adhoc_subprocess
+                                   )
            and prcs.prcs_id = p_prcs_id;
     end case;
 
@@ -636,8 +723,10 @@ create or replace package body flow_api_pkg as
                                           end;
         l_task.details_app_id          := null;
         l_task.details_app_name        := l_row.prcs_dgrm_name;
-        l_task.details_link_target     := case l_row.curr_objt_tag_name
-                                              when 'bpmn:userTask' then
+        l_task.details_link_target     := case 
+                                              when l_row.curr_objt_tag_name in (flow_constants_pkg.gc_bpmn_usertask
+                                                                               , flow_constants_pkg.gc_bpmn_adhoc_subprocess) 
+                                              then
                                                 flow_usertask_pkg.get_url
                                                 (
                                                   pi_prcs_id  => l_row.prcs_id

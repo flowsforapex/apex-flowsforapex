@@ -4,7 +4,7 @@ create or replace package flow_globals
 -- 
 -- (c) Copyright Oracle Corporation and / or its affiliates, 2022.
 -- (c) Copyright MT AG, 2021-2022.
--- (c) Copyright Flowquest Limited and / or its affiliates. 2021-2025.
+-- (c) Copyright Flowquest Limited and / or its affiliates. 2021-2026.
 --
 -- Created    25-Aug-2021  Richard Allen (Flowquest, for MT AG)
 -- Modified   12-Apr-2022  Richard Allen (Oracle)
@@ -14,12 +14,14 @@ create or replace package flow_globals
   authid definer
 as
 
-  process_id    flow_processes.prcs_id%type;
-  subflow_id    flow_subflows.sbfl_id%type;
-  step_key      flow_subflows.sbfl_step_key%type;
-  scope         flow_subflows.sbfl_scope%type;
-  rest_call     boolean;
-  loop_counter  flow_subflows.sbfl_loop_counter%type;
+  process_id       flow_processes.prcs_id%type;
+  subflow_id       flow_subflows.sbfl_id%type;
+  step_key         flow_subflows.sbfl_step_key%type;
+  scope            flow_subflows.sbfl_scope%type;
+  rest_call        boolean;
+  loop_counter     flow_subflows.sbfl_loop_counter%type;
+  input_parameters flow_subflows.sbfl_task_input_parameters%type;
+  output_parameters flow_subflows.sbfl_task_output_parameters%type;
 
   throw_bpmn_error_event exception;
   pragma EXCEPTION_INIT(throw_bpmn_error_event, -20101);
@@ -34,12 +36,41 @@ as
   (pi_sbfl_id     flow_subflows.sbfl_id%type)
   return flow_process_variables.prov_var_vc2%type;
 
+  function input_parameter
+  ( pi_parameter_name in varchar2
+  ) return varchar2;
+
+  procedure set_output_parameter
+  ( pi_parameter_name in varchar2
+  , pi_value          in varchar2
+  );
+
+  procedure set_output_parameter_object
+  ( pi_parameter_name  in varchar2
+  , pi_key1            in varchar2 default null
+  , pi_value1          in varchar2 default null
+  , pi_key2            in varchar2 default null
+  , pi_value2          in varchar2 default null
+  , pi_key3            in varchar2 default null
+  , pi_value3          in varchar2 default null
+  , pi_key4            in varchar2 default null
+  , pi_value4          in varchar2 default null
+  , pi_key5            in varchar2 default null
+  , pi_value5          in varchar2 default null
+  , pi_key6            in varchar2 default null
+  , pi_value6          in varchar2 default null
+  );
+
+  function get_output_parameters
+  return flow_subflows.sbfl_task_output_parameters%type;
+
   procedure set_context
-  ( pi_prcs_id      in flow_processes.prcs_id%type
-  , pi_sbfl_id      in flow_subflows.sbfl_id%type default null
-  , pi_step_key     in flow_subflows.sbfl_step_key%type default null
-  , pi_scope        in flow_subflows.sbfl_scope%type default null
-  , pi_loop_counter in flow_subflows.sbfl_loop_counter%type default null
+  ( pi_prcs_id         in flow_processes.prcs_id%type
+  , pi_sbfl_id         in flow_subflows.sbfl_id%type default null
+  , pi_step_key        in flow_subflows.sbfl_step_key%type default null
+  , pi_scope           in flow_subflows.sbfl_scope%type default null
+  , pi_loop_counter    in flow_subflows.sbfl_loop_counter%type default null
+  , pi_input_parameters in flow_subflows.sbfl_task_input_parameters%type default null
   );
 
   procedure set_context

@@ -3,6 +3,7 @@ as
   select sbfl.sbfl_id
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_current_name as sbfl_current
+       , sbfl.sbfl_current as sbfl_current_bpmn_id
        , sbfl.sbfl_iteration_path
        , sbfl.sbfl_step_key
        , sbfl.sbfl_sbfl_dgrm_id
@@ -32,6 +33,7 @@ as
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'
              when 'in call activity' then 'fa fa-share-alt'
+             when 'in adhoc activity' then 'fa fa-share-alt'
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'

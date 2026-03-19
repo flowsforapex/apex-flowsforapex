@@ -16,7 +16,7 @@ create or replace package flow_logging
                 , flow_boundary_events, flow_gateways, flow_tasks, flow_errors, flow_timers_pkg
                 , flow_call_activities, flow_subprocesses , flow_usertask_pkg, flow_settings
                 , flow_iteration, flow_instances_util_ee, flow_rewind, flow_reservations 
-                , flow_message_util_ee, flow_async_tasks_ee)
+                , flow_message_util_ee, flow_async_tasks_ee, flow_adhoc_subprocesses )
 as
 
   procedure log_diagram_event
@@ -40,12 +40,13 @@ as
   );
 
   procedure log_step_completion
-  ( p_process_id        in flow_subflow_log.sflg_prcs_id%type
-  , p_subflow_id        in flow_subflow_log.sflg_sbfl_id%type
-  , p_completed_object  in flow_subflow_log.sflg_objt_id%type
-  , p_iteration_status  in flow_types_pkg.t_iteration_status default null
-  , p_matching_object   in flow_objects.objt_bpmn_id%type default null
-  , p_notes             in flow_subflow_log.sflg_notes%type default null
+  ( p_process_id          in flow_subflow_log.sflg_prcs_id%type
+  , p_subflow_id          in flow_subflow_log.sflg_sbfl_id%type
+  , p_completed_object    in flow_subflow_log.sflg_objt_id%type
+  , p_iteration_status    in flow_types_pkg.t_iteration_status default null
+  , p_matching_object     in flow_objects.objt_bpmn_id%type default null
+  , p_notes               in flow_subflow_log.sflg_notes%type default null
+  , p_log_to_subflow_log  in boolean default true
   );
 
   procedure log_step_event

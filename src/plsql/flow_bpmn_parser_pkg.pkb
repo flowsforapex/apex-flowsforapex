@@ -109,25 +109,29 @@ as
 
   procedure register_object_expression
   (
-    pi_objt_bpmn_id    in flow_objects.objt_bpmn_id%type
-  , pi_expr_set        in flow_object_expressions.expr_set%type
-  , pi_expr_order      in flow_object_expressions.expr_order%type
-  , pi_expr_var_name   in flow_object_expressions.expr_var_name%type
-  , pi_expr_var_type   in flow_object_expressions.expr_var_type%type
-  , pi_expr_type       in flow_object_expressions.expr_type%type
-  , pi_expr_expression in flow_object_expressions.expr_expression%type
+    pi_objt_bpmn_id     in flow_objects.objt_bpmn_id%type
+  , pi_expr_set         in flow_object_expressions.expr_set%type
+  , pi_expr_order       in flow_object_expressions.expr_order%type
+  , pi_expr_var_name    in flow_object_expressions.expr_var_name%type
+  , pi_expr_var_type    in flow_object_expressions.expr_var_type%type
+  , pi_expr_type        in flow_object_expressions.expr_type%type
+  , pi_expr_expression  in flow_object_expressions.expr_expression%type
+  , pi_expr_source_type in flow_object_expressions.expr_source_type%type default null
+  , pi_expr_source      in flow_object_expressions.expr_source%type default null
   )
   as
     l_object_expression flow_parser_util.t_expr_rec;
     l_insert_index      pls_integer := 0;
   begin
     if pi_objt_bpmn_id is not null then
-      l_object_expression.expr_set        := pi_expr_set;
-      l_object_expression.expr_order      := pi_expr_order;
-      l_object_expression.expr_var_name   := pi_expr_var_name;
-      l_object_expression.expr_var_type   := pi_expr_var_type;
-      l_object_expression.expr_type       := pi_expr_type;
-      l_object_expression.expr_expression := pi_expr_expression;    
+      l_object_expression.expr_set         := pi_expr_set;
+      l_object_expression.expr_order       := pi_expr_order;
+      l_object_expression.expr_var_name    := pi_expr_var_name;
+      l_object_expression.expr_var_type    := pi_expr_var_type;
+      l_object_expression.expr_type        := pi_expr_type;
+      l_object_expression.expr_expression  := pi_expr_expression;    
+      l_object_expression.expr_source_type := pi_expr_source_type;
+      l_object_expression.expr_source      := pi_expr_source;
 
       -- Verify if we already have some variable expression for same object
       if g_objt_expr.exists(pi_objt_bpmn_id) then
@@ -261,13 +265,15 @@ as
 
   procedure insert_object_expression
   (
-    pi_expr_objt_id    in flow_object_expressions.expr_objt_id%type
-  , pi_expr_set        in flow_object_expressions.expr_set%type
-  , pi_expr_order      in flow_object_expressions.expr_order%type
-  , pi_expr_var_name   in flow_object_expressions.expr_var_name%type
-  , pi_expr_var_type   in flow_object_expressions.expr_var_type%type
-  , pi_expr_type       in flow_object_expressions.expr_type%type
-  , pi_expr_expression in flow_object_expressions.expr_expression%type
+    pi_expr_objt_id     in flow_object_expressions.expr_objt_id%type
+  , pi_expr_set         in flow_object_expressions.expr_set%type
+  , pi_expr_order       in flow_object_expressions.expr_order%type
+  , pi_expr_var_name    in flow_object_expressions.expr_var_name%type
+  , pi_expr_var_type    in flow_object_expressions.expr_var_type%type
+  , pi_expr_type        in flow_object_expressions.expr_type%type
+  , pi_expr_expression  in flow_object_expressions.expr_expression%type
+  , pi_expr_source_type in flow_object_expressions.expr_source_type%type default null
+  , pi_expr_source      in flow_object_expressions.expr_source%type default null
   )
   as
   begin
@@ -281,6 +287,8 @@ as
            , expr_var_type
            , expr_type
            , expr_expression
+           , expr_source_type
+           , expr_source
            )
     values (
              pi_expr_objt_id
@@ -290,6 +298,8 @@ as
            , upper(pi_expr_var_type)
            , pi_expr_type
            , pi_expr_expression
+           , pi_expr_source_type
+           , pi_expr_source
            )
     ;
   end insert_object_expression;
@@ -354,13 +364,15 @@ as
       while l_cur_index is not null loop
         insert_object_expression
         (
-          pi_expr_objt_id    => pi_objt_id
-        , pi_expr_set        => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_set
-        , pi_expr_order      => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_order
-        , pi_expr_var_name   => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_name
-        , pi_expr_var_type   => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_type
-        , pi_expr_type       => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_type
-        , pi_expr_expression => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_expression
+          pi_expr_objt_id     => pi_objt_id
+        , pi_expr_set         => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_set
+        , pi_expr_order       => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_order
+        , pi_expr_var_name    => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_name
+        , pi_expr_var_type    => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_var_type
+        , pi_expr_type        => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_type
+        , pi_expr_expression  => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_expression
+        , pi_expr_source_type => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_source_type
+        , pi_expr_source      => g_objt_expr(pi_objt_bpmn_id)(l_cur_index).expr_source
         );
         l_cur_index := g_objt_expr(pi_objt_bpmn_id).next(l_cur_index);
       end loop;
@@ -734,6 +746,8 @@ as
                        end as variable_type
                      , expression_type
                      , expression_value
+                     , source_type
+                     , source
                   from xmltable
                        (
                          xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
@@ -744,18 +758,22 @@ as
                          , variable_type     varchar2(50 char)   path 'apex:varDataType'
                          , expression_type   varchar2(200 char)  path 'apex:varExpressionType'
                          , expression_value  varchar2(4000 char) path 'apex:varExpression'
+                         , source_type varchar2(50 char)         path 'apex:varSourceType'
+                         , source      varchar2(50 char)         path 'apex:varSource'
                        )
                )
     loop
       register_object_expression
       (
-        pi_objt_bpmn_id    => pi_bpmn_id
-      , pi_expr_set        => pi_execution_point
-      , pi_expr_order      => rec.variable_sequence
-      , pi_expr_var_name   => rec.variable_name
-      , pi_expr_var_type   => rec.variable_type
-      , pi_expr_type       => rec.expression_type
-      , pi_expr_expression => rec.expression_value
+        pi_objt_bpmn_id     => pi_bpmn_id
+      , pi_expr_set         => pi_execution_point
+      , pi_expr_order       => rec.variable_sequence
+      , pi_expr_var_name    => rec.variable_name
+      , pi_expr_var_type    => rec.variable_type
+      , pi_expr_type        => rec.expression_type
+      , pi_expr_expression  => rec.expression_value
+      , pi_expr_source_type => rec.source_type
+      , pi_expr_source      => rec.source
       );
     end loop;
   end parse_process_variables;
@@ -1905,8 +1923,9 @@ as
 
   procedure parse_xml
   (
-    pi_xml       in sys.xmltype
-  , pi_parent_id in flow_types_pkg.t_bpmn_id
+    pi_xml        in sys.xmltype
+  , pi_parent_id  in flow_types_pkg.t_bpmn_id
+  , pi_child_type in flow_types_pkg.t_bpmn_id default null
   )
   as
   begin
@@ -1917,7 +1936,7 @@ as
       (
         pi_plog_dgrm_id    => g_dgrm_id
       , pi_plog_bpmn_id    => pi_parent_id
-      , pi_plog_parse_step => 'parse_xml'
+      , pi_plog_parse_step => 'parse_xml' || case when pi_child_type is not null then ' - child type: ' || pi_child_type else '' end
       , pi_plog_payload    => pi_xml
       );
 
@@ -1926,7 +1945,9 @@ as
     if pi_parent_id is null then
       for rec in (
                  select proc.proc_id
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
+                      , case proc.proc_type when 'bpmn:subProcess'      then 'SUB_PROCESS' 
+                                            when 'bpmn:adHocSubProcess' then 'AD_HOC_SUB_PROCESS'
+                                            else 'PROCESS'              end as proc_type_rem
                       , proc.proc_type
                       , proc.proc_callable
                       , proc.proc_startable
@@ -1938,6 +1959,7 @@ as
                       , proc.proc_business_admin
                       , proc.proc_steps
                       , proc.proc_sub_procs
+                      , proc.proc_ad_hoc_sub_procs
                       , proc.proc_name
                       , proc.proc_laneset
                       , proc.proc_extensions
@@ -1958,8 +1980,10 @@ as
                         , proc_page_id            varchar2( 50 char) path '@apex:pageId'
                         , proc_username           varchar2( 50 char) path '@apex:username'
                         , proc_business_admin     varchar2( 50 char) path '@apex:businessAdmin'
-                        , proc_steps              sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:laneSet'
+                        , proc_steps              sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements 
+                                                                             except bpmn:laneSet except bpmn:adHocSubProcess'
                         , proc_sub_procs          sys.xmltype        path 'bpmn:subProcess'
+                        , proc_ad_hoc_sub_procs   sys.xmltype        path 'bpmn:adHocSubProcess'
                         , proc_laneset            sys.xmltype        path 'bpmn:laneSet'
                         , proc_extensions         sys.xmltype        path 'bpmn:extensionElements'
                       ) proc
@@ -2079,69 +2103,162 @@ as
           ( 
             pi_xml => rec.proc_sub_procs
           , pi_parent_id => rec.proc_id
+          , pi_child_type => flow_constants_pkg.gc_bpmn_subprocess
           );
 
         end if;
 
-      end loop;
-    else
-      for rec in (
-                 select proc.proc_id
-                      , proc.proc_name
-                      , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' else 'PROCESS' end as proc_type_rem
-                      , proc.proc_type
-                      , proc.proc_steps
-                      , proc.proc_sub_procs
-                      , proc.proc_extensions
-                   from xmltable
-                      (
-                        xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
-                      , 'bpmn:subProcess' passing pi_xml
-                        columns
-                          proc_id         varchar2(50  char) path '@id'
-                        , proc_name       varchar2(200 char) path '@name'
-                        , proc_type       varchar2(50  char) path 'name()'
-                        , proc_steps      sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements'
-                        , proc_sub_procs  sys.xmltype        path 'bpmn:subProcess'
-                        , proc_extensions sys.xmltype        path 'bpmn:extensionElements'
-                      ) proc
-                 )
-      loop
-        -- We add an entry for a sub process here,
-        -- as it is an object within the master process
-        register_object
-        (
-          pi_objt_bpmn_id        => rec.proc_id
-        , pi_objt_tag_name       => rec.proc_type
-        , pi_objt_name           => rec.proc_name
-        , pi_objt_parent_bpmn_id => pi_parent_id
-        );
+        -- recurse if adhoc sub processes found
+        if rec.proc_ad_hoc_sub_procs is not null then
 
-        if rec.proc_extensions is not null then
-          parse_extension_elements
-          (
-            pi_bpmn_id       => rec.proc_id
-          , pi_extension_xml => rec.proc_extensions
-          );
-        end if;
-
-        -- parse any immediate steps
-        parse_steps
-        ( 
-          pi_xml          => rec.proc_steps
-        , pi_proc_type    => rec.proc_type_rem
-        , pi_proc_bpmn_id => rec.proc_id
-        );
-
-        -- recurse if we found any sub process
-        if rec.proc_sub_procs is not null then
           parse_xml
-          (
-            pi_xml       => rec.proc_sub_procs
+          ( 
+            pi_xml => rec.proc_ad_hoc_sub_procs
           , pi_parent_id => rec.proc_id
+          , pi_child_type => flow_constants_pkg.gc_bpmn_adhoc_subprocess
           );
-        end if;        
+
+        end if;
+
       end loop;
+    else -- it is a sub process or adhoc sub process (need to differentiate)
+      if pi_child_type = flow_constants_pkg.gc_bpmn_subprocess then
+        for rec in (
+                   select proc.proc_id
+                        , proc.proc_name
+                        , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' 
+                                              when 'bpmn:adHocSubProcess' then 'ADHOC_SUB_PROCESS'
+                                              else 'PROCESS' end as proc_type_rem
+                        , proc.proc_type
+                        , proc.proc_steps
+                        , proc.proc_sub_procs
+                        , proc.proc_ad_hoc_sub_procs
+                        , proc.proc_extensions
+                     from xmltable
+                        (
+                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                        , 'bpmn:subProcess' passing pi_xml
+                          columns
+                            proc_id               varchar2(50  char) path '@id'
+                          , proc_name             varchar2(200 char) path '@name'
+                          , proc_type             varchar2(50  char) path 'name()'
+                          , proc_steps            sys.xmltype        path '* except bpmn:subProcess except bpmn:extensionElements except bpmn:adHocSubProcess'
+                          , proc_sub_procs        sys.xmltype        path 'bpmn:subProcess'
+                          , proc_ad_hoc_sub_procs sys.xmltype        path 'bpmn:adHocSubProcess'
+                          , proc_extensions       sys.xmltype        path 'bpmn:extensionElements'
+                        ) proc
+                   )
+        loop
+          -- We add an entry for a sub process here,
+          -- as it is an object within the master process
+          register_object
+          (
+            pi_objt_bpmn_id        => rec.proc_id
+          , pi_objt_tag_name       => rec.proc_type
+          , pi_objt_name           => rec.proc_name
+          , pi_objt_parent_bpmn_id => pi_parent_id
+          );
+
+          if rec.proc_extensions is not null then
+            parse_extension_elements
+            (
+              pi_bpmn_id       => rec.proc_id
+            , pi_extension_xml => rec.proc_extensions
+            );
+          end if;
+
+          -- parse any immediate steps
+          parse_steps
+          ( 
+            pi_xml          => rec.proc_steps
+          , pi_proc_type    => rec.proc_type_rem
+          , pi_proc_bpmn_id => rec.proc_id
+          );
+
+          -- recurse if we found any sub process
+          if rec.proc_sub_procs is not null then
+            parse_xml
+            (
+              pi_xml        => rec.proc_sub_procs
+            , pi_parent_id  => rec.proc_id
+            , pi_child_type => flow_constants_pkg.gc_bpmn_subprocess
+            );
+          end if;   
+
+          -- recurse if we found any adhoc sub process
+          if rec.proc_ad_hoc_sub_procs is not null then
+            parse_xml
+            (
+              pi_xml        => rec.proc_ad_hoc_sub_procs
+            , pi_parent_id  => rec.proc_id
+            , pi_child_type => flow_constants_pkg.gc_bpmn_adhoc_subprocess
+            );     
+          end if;
+        end loop;
+      elsif pi_child_type = flow_constants_pkg.gc_bpmn_adhoc_subprocess then
+        for rec in (
+                   select proc.proc_id
+                        , proc.proc_name
+                        , case proc.proc_type when 'bpmn:subProcess' then 'SUB_PROCESS' 
+                                              when 'bpmn:adHocSubProcess' then 'ADHOC_SUB_PROCESS'
+                                              else 'PROCESS' end as proc_type_rem
+                        , proc.proc_type
+                        , proc.proc_steps
+                        , proc.proc_extensions
+                        , proc.proc_sub_procs
+                     from xmltable
+                        (
+                          xmlnamespaces ('http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn")
+                        , 'bpmn:adHocSubProcess' passing pi_xml
+                          columns
+                            proc_id               varchar2(50  char) path '@id'
+                          , proc_name             varchar2(200 char) path '@name'
+                          , proc_type             varchar2(50  char) path 'name()'
+                          , proc_steps            sys.xmltype        path '* except bpmn:extensionElements'
+                          , proc_extensions       sys.xmltype        path 'bpmn:extensionElements'
+                          , proc_sub_procs        sys.xmltype        path 'bpmn:subProcess'
+                          , proc_ad_hoc_sub_procs sys.xmltype        path 'bpmn:adHocSubProcess'
+                        ) proc
+                   )
+        loop
+          -- We add an entry for a sub process here,
+          -- as it is an object within the master process
+          register_object
+          (
+            pi_objt_bpmn_id        => rec.proc_id
+          , pi_objt_tag_name       => rec.proc_type
+          , pi_objt_name           => rec.proc_name
+          , pi_objt_parent_bpmn_id => pi_parent_id
+          );
+
+          if rec.proc_extensions is not null then
+            parse_extension_elements
+            (
+              pi_bpmn_id       => rec.proc_id
+            , pi_extension_xml => rec.proc_extensions
+            );
+          end if;
+
+          -- parse any immediate steps
+          parse_steps
+          ( 
+            pi_xml          => rec.proc_steps
+          , pi_proc_type    => rec.proc_type_rem
+          , pi_proc_bpmn_id => rec.proc_id
+          );
+
+          -- recurse if we found any sub process
+          if rec.proc_sub_procs is not null then
+            parse_xml
+            (
+              pi_xml        => rec.proc_sub_procs
+            , pi_parent_id  => rec.proc_id
+            , pi_child_type => flow_constants_pkg.gc_bpmn_subprocess
+            );
+          end if;   
+
+        end loop;
+      end if;
     end if;
   end parse_xml;
 

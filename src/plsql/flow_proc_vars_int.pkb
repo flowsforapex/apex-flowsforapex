@@ -1463,27 +1463,24 @@ end lock_var;
   function get_vars_as_json_object
   ( pi_prcs_id   in flow_processes.prcs_id%type
   , pi_scope     in flow_subflows.sbfl_scope%type
-  , pi_var_list  in flow_types_pkg.t_bpmn_attribute_vc2
+  , pi_var_names in apex_t_varchar2
   ) return sys.json_object_t
   is
-    l_var_list   apex_t_varchar2;
     l_var_value  t_proc_var_value;
     l_var_obj    sys.json_object_t;
   begin
     apex_debug.enter ( 'get_vars_as_json_object'
     ,'pi_prcs_id', pi_prcs_id
     ,'pi_scope', pi_scope
-    ,'pi_var_list', pi_var_list
+    ,'pi_var_names count', pi_var_names.count
     );
-    -- split var list
-    l_var_list := apex_string.split ( p_str => pi_var_list, p_sep => ':');
 
     l_var_obj := new sys.json_object_t;
-    if l_var_list.count > 0 then 
-      for i in l_var_list.first..l_var_list.last Loop
-        apex_debug.message ('Var name %0', p0 => l_var_list(i));
+    if pi_var_names.count > 0 then 
+      for i in pi_var_names.first..pi_var_names.last Loop
+        apex_debug.message ('Var name %0', p0 => pi_var_names(i));
         l_var_value := get_var_value  ( pi_prcs_id   => pi_prcs_id
-                                      , pi_var_name  => l_var_list(i)
+                                      , pi_var_name  => pi_var_names(i)
                                       , pi_scope     => pi_scope
                                       );
         apex_debug.message ('Var type: %0 vc2: %1 num: %2', 
@@ -1503,11 +1500,35 @@ end lock_var;
         when flow_constants_pkg.gc_prov_var_type_clob then
           l_var_obj.put(l_var_value.var_name,l_var_value.var_clob);
         else
-          l_var_obj.put_null(l_var_list(i));
+          l_var_obj.put_null(pi_var_names(i));
         end case;
       end loop;
     end if;
     return l_var_obj;
+  end get_vars_as_json_object;
+
+  function get_vars_as_json_object
+  ( pi_prcs_id   in flow_processes.prcs_id%type
+  , pi_scope     in flow_subflows.sbfl_scope%type
+  , pi_var_list  in flow_types_pkg.t_bpmn_attribute_vc2
+  ) return sys.json_object_t
+  is
+    l_var_list   apex_t_varchar2;
+  begin
+    apex_debug.enter ( 'get_vars_as_json_object'
+    ,'pi_prcs_id', pi_prcs_id
+    ,'pi_scope', pi_scope
+    ,'pi_var_list', pi_var_list
+    );
+    -- split var list
+    l_var_list := apex_string.split ( p_str => pi_var_list, p_sep => ':');
+
+    -- call overloaded version
+    return get_vars_as_json_object 
+           ( pi_prcs_id   => pi_prcs_id
+           , pi_scope     => pi_scope  
+           , pi_var_names => l_var_list
+           );
   end get_vars_as_json_object;
 
 end flow_proc_vars_int;
