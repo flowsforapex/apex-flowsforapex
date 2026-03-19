@@ -1803,6 +1803,29 @@ begin
                                                                  , p_iobj_id      => l_next_iobj_id
                                                                  , p_loop_counter => l_next_loop_counter
                                                                  );  
+     -- good to here   
+              end if;
+            else
+              null;
+            end if; -- loop counter
+          when flow_constants_pkg.gc_iteration_parallel then
+            if p_reset_step_key then
+              -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
+              -- so reset the step key in the iteration array
+              apex_debug.message ('call from flow_engine...');
+              flow_iteration.set_iteration_status
+              ( pi_prcs_id        => p_process_id
+              , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
+              , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
+              , pi_step_key       => l_step_info.target_objt_step_key
+              , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
+              , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
+              , pi_iobj_id        => l_sbfl_rec.sbfl_iobj_id
+              );
+            end if;
+            l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
+            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
+     -- looks like after parallel                                                         
             l_next_iobj_id         := l_existing_iobj_id;
             l_next_iter_id         := l_existing_iter_id;
 
@@ -1841,26 +1864,7 @@ begin
                                                                    );  
                                                          
               end if; --treat as tag
-            else
-              null;
             end if; -- loop counter
-          when flow_constants_pkg.gc_iteration_parallel then
-            if p_reset_step_key then
-              -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
-              -- so reset the step key in the iteration array
-              apex_debug.message ('call from flow_engine...');
-              flow_iteration.set_iteration_status
-              ( pi_prcs_id        => p_process_id
-              , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
-              , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
-              , pi_step_key       => l_step_info.target_objt_step_key
-              , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
-              , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
-              , pi_iobj_id        => l_sbfl_rec.sbfl_iobj_id
-              );
-            end if;
-            l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
-            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
           else 
             apex_debug.message (p_message => 'next step not an iteration or loop');
             -- next step is not an iteration or loop 
