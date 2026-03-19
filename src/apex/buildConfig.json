@@ -81,6 +81,7 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_logging.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_flow.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_async_tasks_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_util_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_util.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_migrate_xml_pkg.pks", "add_show_errors": false }

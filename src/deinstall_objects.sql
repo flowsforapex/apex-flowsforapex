@@ -43,6 +43,7 @@ drop package flow_db_exec;
 drop package flow_message_flow;
 drop package flow_message_util;
 drop package flow_message_util_ee;
+drop package flow_async_tasks_ee;
 drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_instances_util_ee;

@@ -14,7 +14,7 @@ create or replace package flow_engine
                 , flow_call_activities, flow_usertask_pkg
                 , flow_message_util, flow_message_util_ee, flow_message_flow
                 , flow_iteration, flow_instances_util_ee, flow_rewind
-                , flow_adhoc_subprocesses)
+                , flow_async_tasks_ee, flow_adhoc_subprocesses)
 as 
   procedure timer_callback
   ( p_process_id    in flow_processes.prcs_id%type
@@ -60,6 +60,12 @@ procedure restart_step
   , p_comment             in flow_instance_event_log.lgpr_comment%type default null
   , p_check_for_error     in boolean default true
   , p_is_adhoc_start      in boolean default false
+  );
+
+procedure start_async_step
+  ( p_process_id          in flow_processes.prcs_id%type
+  , p_subflow_id          in flow_subflows.sbfl_id%type
+  , p_step_key            in flow_subflows.sbfl_step_key%type default null
   );
 
 procedure handle_event_gateway_event
