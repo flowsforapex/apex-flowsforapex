@@ -451,35 +451,56 @@ as
     l_cur_conn_bpmn_id flow_types_pkg.t_bpmn_id;
     l_cur_conn         flow_parser_util.t_conn_rec;
     l_conn_id          flow_connections.conn_id%type;
+    l_src_objt_id      flow_connections.conn_src_objt_id%type;
+    l_tgt_objt_id      flow_connections.conn_tgt_objt_id%type;
   begin
 
     l_cur_conn_bpmn_id := g_connections.first;
     while l_cur_conn_bpmn_id is not null
     loop
       l_conn_id  := null;
+      l_src_objt_id := null;
+      l_tgt_objt_id := null;
       l_cur_conn := g_connections( l_cur_conn_bpmn_id );
 
-      -- verify if we know the IDs for source and target connection if set
-      -- anything strange stop all processing and raise error
-      if (  ( l_cur_conn.conn_src_bpmn_id is not null and not g_objt_lookup.exists( l_cur_conn.conn_src_bpmn_id ) )
-         or ( l_cur_conn.conn_tgt_bpmn_id is not null and not g_objt_lookup.exists( l_cur_conn.conn_tgt_bpmn_id ) )
-         )
-      then
-        raise_application_error(-20000, 'Connection Source or Target not found!');
-      else
-        insert_connection
-        (
-          pi_conn_bpmn_id      => l_cur_conn_bpmn_id
-        , pi_conn_name         => l_cur_conn.conn_name
-        , pi_conn_src_objt_id  => case when l_cur_conn.conn_src_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_src_bpmn_id ) else null end
-        , pi_conn_tgt_objt_id  => case when l_cur_conn.conn_tgt_bpmn_id is not null then g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id ) else null end
-        , pi_conn_tag_name     => l_cur_conn.conn_tag_name
-        , pi_conn_origin       => l_cur_conn.conn_origin
-        , pi_conn_sequence     => l_cur_conn.conn_sequence
-        , pi_conn_attributes   => case when l_cur_conn.conn_attributes is not null then l_cur_conn.conn_attributes.to_clob else null end
-        , po_conn_id           => l_conn_id
-        );
+      -- associations may reference connection BPMN IDs (e.g. a sequenceFlow).
+      -- those endpoints cannot be stored in conn_*_objt_id, so we keep them null.
+      if l_cur_conn.conn_src_bpmn_id is not null then
+        if g_objt_lookup.exists( l_cur_conn.conn_src_bpmn_id ) then
+          l_src_objt_id := g_objt_lookup( l_cur_conn.conn_src_bpmn_id );
+        elsif l_cur_conn.conn_tag_name = flow_constants_pkg.gc_bpmn_association
+           and g_connections.exists( l_cur_conn.conn_src_bpmn_id )
+        then
+          null;
+        else
+          raise_application_error(-20000, 'Connection Source or Target not found!');
+        end if;
       end if;
+
+      if l_cur_conn.conn_tgt_bpmn_id is not null then
+        if g_objt_lookup.exists( l_cur_conn.conn_tgt_bpmn_id ) then
+          l_tgt_objt_id := g_objt_lookup( l_cur_conn.conn_tgt_bpmn_id );
+        elsif l_cur_conn.conn_tag_name = flow_constants_pkg.gc_bpmn_association
+           and g_connections.exists( l_cur_conn.conn_tgt_bpmn_id )
+        then
+          null;
+        else
+          raise_application_error(-20000, 'Connection Source or Target not found!');
+        end if;
+      end if;
+
+      insert_connection
+      (
+        pi_conn_bpmn_id      => l_cur_conn_bpmn_id
+      , pi_conn_name         => l_cur_conn.conn_name
+      , pi_conn_src_objt_id  => l_src_objt_id
+      , pi_conn_tgt_objt_id  => l_tgt_objt_id
+      , pi_conn_tag_name     => l_cur_conn.conn_tag_name
+      , pi_conn_origin       => l_cur_conn.conn_origin
+      , pi_conn_sequence     => l_cur_conn.conn_sequence
+      , pi_conn_attributes   => case when l_cur_conn.conn_attributes is not null then l_cur_conn.conn_attributes.to_clob else null end
+      , po_conn_id           => l_conn_id
+      );
 
       l_cur_conn_bpmn_id := g_connections.next( l_cur_conn_bpmn_id );
     end loop;

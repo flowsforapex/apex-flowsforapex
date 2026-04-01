@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:apex="https://flowsforapex.org" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1wzb475" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">
+  <bpmn:process id="Process_rpb6c02q" isExecutable="false" apex:minLoggingLevel="0" apex:manualInput="false">
+    <bpmn:startEvent id="Event_start" name="start">
+      <bpmn:outgoing>Flow_seqflow1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_A" name="A">
+      <bpmn:incoming>Flow_seqflow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_seqflow2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_seqflow1" name="seqflow1" sourceRef="Event_start" targetRef="Activity_A" apex:sequence="10" />
+    <bpmn:task id="Activity_B" name="B">
+      <bpmn:incoming>Flow_seqflow2</bpmn:incoming>
+      <bpmn:outgoing>Flow_seqflow3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_seqflow2" name="seqflow2" sourceRef="Activity_A" targetRef="Activity_B" apex:sequence="10" />
+    <bpmn:endEvent id="Event_end" name="end">
+      <bpmn:incoming>Flow_seqflow3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_seqflow3" name="seqflow3" sourceRef="Activity_B" targetRef="Event_end" apex:sequence="10" />
+    <bpmn:textAnnotation id="TextAnnotation_comment">
+      <bpmn:text>a comment</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_sf2_to_comment" associationDirection="None" sourceRef="Flow_seqflow2" targetRef="TextAnnotation_comment" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_rpb6c02q">
+      <bpmndi:BPMNShape id="Event_07ye9ws_di" bpmnElement="Event_start">
+        <dc:Bounds x="-698" y="-88" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-691" y="-45" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vofipx_di" bpmnElement="Activity_A">
+        <dc:Bounds x="-610" y="-110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09zo5pf_di" bpmnElement="Activity_B">
+        <dc:Bounds x="-350" y="-110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1d0u0q8_di" bpmnElement="Event_end">
+        <dc:Bounds x="-138" y="-88" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-129" y="-45" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0w4zp90_di" bpmnElement="Association_sf2_to_comment">
+        <di:waypoint x="-430" y="-70" />
+        <di:waypoint x="-364" y="-140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fz8mk7_di" bpmnElement="Flow_seqflow1">
+        <di:waypoint x="-662" y="-70" />
+        <di:waypoint x="-610" y="-70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-658" y="-88" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0efyc9s_di" bpmnElement="Flow_seqflow2">
+        <di:waypoint x="-510" y="-70" />
+        <di:waypoint x="-350" y="-70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-472" y="-88" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04g1l6p_di" bpmnElement="Flow_seqflow3">
+        <di:waypoint x="-250" y="-70" />
+        <di:waypoint x="-138" y="-70" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-216" y="-88" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_14lzxkv_di" bpmnElement="TextAnnotation_comment">
+        <dc:Bounds x="-400" y="-170" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
