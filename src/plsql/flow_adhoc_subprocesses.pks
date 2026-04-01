@@ -19,6 +19,7 @@ as
     , p_parent_subflow_id           in flow_subflows.sbfl_id%type
     , p_objt_bpmn_id                in flow_objects.objt_bpmn_id%type
     , p_user_input_parameters       in clob default null
+    , p_ai_decision_id              in flow_adhoc_subproc_ai_decisions.asad_id%type default null
     );
 
   procedure end_adhoc_activity
@@ -47,6 +48,11 @@ as
     , p_step_key             in flow_subflows.sbfl_step_key%type
     , p_next_check_time      out timestamp with time zone
     , p_check_reason         out varchar2
+    );
+
+  -- Process any autonomous or hybrid AI checks that are due for the process.
+  procedure process_due_ai_checks
+    ( p_process_id           in flow_processes.prcs_id%type
     );
 
   -- Demo/Production mode utilities

@@ -303,6 +303,7 @@ alter table flow_adhoc_subprocs
 create table flow_adhoc_subflows (
     ahsf_sbfl_id                NUMBER NOT NULL,
     ahsf_ahsp_id                NUMBER NOT NULL,
+    ahsf_asad_id                NUMBER,
     ahsf_starting_object        VARCHAR2(50 CHAR) NOT NULL,
     ahsf_starting_step_key      VARCHAR2(20 CHAR) NOT NULL,
     ahsf_repeat_count           NUMBER NOT NULL,
@@ -335,12 +336,21 @@ create table flow_adhoc_subproc_ai_decisions (
     asad_actions               clob
         constraint asad_actions_is_json check (asad_actions is json),
     asad_timestamp             timestamp with time zone default systimestamp not null,
+    asad_dispatch_completed    timestamp with time zone,
+    asad_partial_review        timestamp with time zone,
     asad_created_by            varchar2(64 byte) default coalesce(
                                    sys_context('apex$session','app_user'),
                                    sys_context('userenv','os_user'), 
                                    sys_context('userenv','session_user')
                                )
 );
+
+alter table flow_adhoc_subflows
+  add constraint flow_ahsf_asad_fk foreign key ( ahsf_asad_id )
+      references flow_adhoc_subproc_ai_decisions ( asad_id )
+          on delete set null;
+
+create index ahsf_asad_id_idx on flow_adhoc_subflows (ahsf_asad_id, ahsf_status);
 
 -- Create index for foreign key
 create index asad_ahsp_id_idx on flow_adhoc_subproc_ai_decisions (asad_ahsp_id, asad_turn);
@@ -355,6 +365,8 @@ comment on column flow_adhoc_subproc_ai_decisions.asad_turn is 'Turn/iteration n
 comment on column flow_adhoc_subproc_ai_decisions.asad_rationale is 'AI reasoning/rationale for the decision';
 comment on column flow_adhoc_subproc_ai_decisions.asad_actions is 'JSON array of actions recommended by AI (CLOB with IS JSON constraint)';
 comment on column flow_adhoc_subproc_ai_decisions.asad_timestamp is 'When this AI decision was made';
+comment on column flow_adhoc_subproc_ai_decisions.asad_dispatch_completed is 'When this AI wave finished dispatching all recommended activities';
+comment on column flow_adhoc_subproc_ai_decisions.asad_partial_review is 'When this AI wave triggered a partial re-evaluation while other activities were still running';
 comment on column flow_adhoc_subproc_ai_decisions.asad_created_by is 'User/system that created the record';
 
 CREATE TABLE flow_timers (

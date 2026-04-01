@@ -560,7 +560,7 @@ create or replace package body flow_api_pkg as
     l_cur     sys_refcursor;
     l_user    varchar2(250);
   begin 
-    l_user := coalesce( p_user, SYS_CONTEXT('APEX$SESSION','APP_USER') ); 
+    l_user := upper(coalesce( p_user, SYS_CONTEXT('APEX$SESSION','APP_USER') )); 
 
     case p_context
     when flow_constants_pkg.gc_task_list_context_my_tasks then
@@ -604,12 +604,10 @@ create or replace package body flow_api_pkg as
            and bref.prov_var_name = 'BUSINESS_REF'
            and bref.prov_scope = 0
          where curr_objt.objt_tag_name in ( 'bpmn:userTask' , 'bpmn:adHocSubProcess' )
-           and sbfl.sbfl_status in ('running', 'in adhoc subprocess')
-           and sbfl.sbfl_hide_in_task_list != 'Y'
-           and (instr ( sbfl.sbfl_excluded_users, l_user) = 0
-               or sbfl.sbfl_excluded_users is null)
-           and ( sbfl.sbfl_reservation = l_user
-               OR   sbfl.sbfl_reservation is null );
+           and sbfl.sbfl_status in ( flow_constants_pkg.gc_sbfl_status_running
+                                   , flow_constants_pkg.gc_sbfl_status_in_adhoc_subprocess
+                                   )
+           and nvl(sbfl.sbfl_hide_in_task_list, 'N') != 'Y';
 
     when flow_constants_pkg.gc_task_list_context_single then
         open l_cur for
@@ -816,28 +814,55 @@ create or replace package body flow_api_pkg as
     , p_current_groups  in apex_t_varchar2
     ) return boolean
     is
+      l_excluded_users    apex_t_varchar2;
       l_potential_users   apex_t_varchar2;
       l_potential_groups  apex_t_varchar2;
-      l_group_intersect   apex_t_varchar2;
     begin 
+      if p_task.excluded_owners is not null then
+        l_excluded_users := apex_string.split ( p_str => p_task.excluded_owners
+                                              , p_sep => ':'
+                                              );
+        for i in 1 .. l_excluded_users.count loop
+          if upper(trim(l_excluded_users(i))) = upper(trim(p_user)) then
+            return false;
+          end if;
+        end loop;
+      end if;
+
+      if p_task.actual_owner is not null then
+        return upper(trim(p_task.actual_owner)) = upper(trim(p_user));
+      end if;
+
+      if p_task.potential_owners is null
+         and p_task.potential_groups is null
+      then
+        return true;
+      end if;
+
       if p_task.potential_owners is not null then
         l_potential_users    := apex_string.split ( p_str => p_task.potential_owners
                                                   , p_sep => ':' 
                                                   );
-        if p_user member of l_potential_users then
-          return true;
-        end if;
+        for i in 1 .. l_potential_users.count loop
+          if upper(trim(l_potential_users(i))) = upper(trim(p_user)) then
+            return true;
+          end if;
+        end loop;
       end if;
 
       if p_task.potential_groups is not null then
          l_potential_groups  := apex_string.split ( p_str => p_task.potential_groups
                                                   , p_sep => ':'
                                                   );
-          l_group_intersect   := l_potential_groups multiset intersect p_current_groups;
-          if l_group_intersect is not empty then
-            return true;
+          for i in 1 .. l_potential_groups.count loop
+            for j in 1 .. p_current_groups.count loop
+              if upper(trim(l_potential_groups(i))) = upper(trim(p_current_groups(j))) then
+                return true;
+              end if;
+            end loop;
+          end loop;
           end if;
-      end if;
+
       return false;
     end user_is_eligible;
 
@@ -856,6 +881,10 @@ create or replace package body flow_api_pkg as
            where roles.user_name     = v('APP_USER')
              and roles.workspace_id  = v('WORKSPACE_ID')
           ;
+        end if;
+
+        if l_current_groups is null then
+          l_current_groups := apex_t_varchar2();
         end if;
 
         l_task := flow_api_pkg.t_task_list_item 
