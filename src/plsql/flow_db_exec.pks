@@ -43,8 +43,8 @@ as
   c_wrap_tstz_raw_func_pre  constant flow_types_pkg.t_expr_type := q'#declare function x return timestamp with time zone is begin #';
   c_wrap_tstz_raw_func_post constant flow_types_pkg.t_expr_type := q'#return null; end; begin :BIND_OUT_VAR := to_char(x, '#'||flow_constants_pkg.gc_prov_default_tstz_format||q'#'); end;#';
 
-  c_wrap_bool_expr_pre      constant flow_types_pkg.t_expr_type := q'#begin :BIND_OUT_VAR := case #';
-  c_wrap_bool_expr_post     constant flow_types_pkg.t_expr_type := q'# when true then 'true' else 'false' end; end;#';
+  c_wrap_bool_expr_pre      constant flow_types_pkg.t_expr_type := q'#begin if #';
+  c_wrap_bool_expr_post     constant flow_types_pkg.t_expr_type := q'# then :BIND_OUT_VAR := 'true'; else :BIND_OUT_VAR := 'false'; end if; end;#';
 
 
   function exec_flows_sql

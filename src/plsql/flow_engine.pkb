@@ -1803,7 +1803,7 @@ begin
                                                                  , p_iobj_id      => l_next_iobj_id
                                                                  , p_loop_counter => l_next_loop_counter
                                                                  );  
-     -- good to here   
+
               end if;
             else
               null;
@@ -1824,8 +1824,7 @@ begin
               );
             end if;
             l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
-            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
-     -- looks like after parallel                                                         
+            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;                                                      
             l_next_iobj_id         := l_existing_iobj_id;
             l_next_iter_id         := l_existing_iter_id;
 
