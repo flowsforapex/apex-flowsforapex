@@ -26,6 +26,11 @@ as
     ( p_sbfl_rec             in flow_subflows%rowtype
     );
 
+  procedure complete_adhoc_SubProcess
+    ( p_process_id           in flow_processes.prcs_id%type
+    , p_subproc_sbfl_id      in flow_subflows.sbfl_id%type
+    );
+
   function activity_start_condition_met_YN
     ( p_process_id                in flow_processes.prcs_id%type
     , p_activity_start_condition  in varchar2
