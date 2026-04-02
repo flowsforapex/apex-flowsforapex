@@ -54,5 +54,12 @@ as
   ( pi_expr          sys.json_object_t
   ) return   flow_types_pkg.t_iteration_vars;    
 
+  function get_json_setting_multiline
+  ( pi_objt_attributes   in clob
+  , pi_setting_path      in varchar2
+  , pi_default_value     in varchar2 default null
+  , pi_line_separator    in varchar2 default chr(10)
+  ) return varchar2;
+
 end flow_settings;
 /

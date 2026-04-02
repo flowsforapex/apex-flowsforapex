@@ -30,6 +30,9 @@ PROMPT >> Engine
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
 @plsql/flow_instances_util_ee.pks
+@plsql/flow_adhoc_subprocesses_util.pks
+@plsql/flow_adhoc_subprocesses_core.pks
+@plsql/flow_adhoc_subprocesses_ai.pks
 @plsql/flow_rewind.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
