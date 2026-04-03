@@ -11,6 +11,7 @@ as
 
   function adhoc_completion_condition_met
     ( p_process_id            in flow_processes.prcs_id%type
+    , p_subproc_sbfl_id       in flow_subflows.sbfl_id%type
     , p_adhoc_subproc_bpmn_id in flow_objects.objt_bpmn_id%type
     , p_adhoc_subproc_dgrm_id in flow_subflows.sbfl_dgrm_id%type
     , p_scope                 in flow_subflows.sbfl_scope%type
