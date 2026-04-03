@@ -333,6 +333,22 @@ begin
     values ('adhoc-already-started', c_load_lang, q'[Activity %0 has already been started in this adhoc subprocess.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('input_parameter-invalid-json', c_load_lang, q'[Input Parameter for activity %0 contains invalid JSON %1.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-startable-acts-error', c_load_lang, q'[Error evaluating startable activities for adhoc subprocess %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-invalid-response', c_load_lang, q'[AI returned an invalid control response for adhoc subprocess %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-subprocess-not-found', c_load_lang, q'[Adhoc subprocess not found or already completed for process %0, subflow %1, step %2.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-completion-invalid-json', c_load_lang, q'[Adhoc subprocess completion condition for object %0 is not valid JSON.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-completion-cond-error', c_load_lang, q'[Error evaluating adhoc subprocess completion condition for object %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-start-acts-bad-config', c_load_lang, q'[Adhoc subprocess starting activities definition for object %0 is invalid.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-start-acts-error', c_load_lang, q'[Error starting default adhoc activities for adhoc subprocess %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-invoke-error', c_load_lang, q'[Error invoking adhoc AI control for object %0. %1]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) 
     values ('var_exp_jsonpath_error', c_load_lang, q'[Error setting Process Variable %1 in process id %1. JSONPath expression "%2" (Subflow: %0, Set: %3). ]' );
   -- above here manually added for 26.1 dev
