@@ -70,6 +70,7 @@ as
   gc_bpmn_gateway_event_based          constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'eventBasedGateway';
 
   gc_bpmn_sequence_flow                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sequenceFlow';
+  gc_bpmn_association                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'association';
 
   gc_bpmn_task                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'task';
   gc_bpmn_usertask                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'userTask';
