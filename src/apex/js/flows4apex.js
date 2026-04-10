@@ -92,6 +92,19 @@ function getBulkSubflowData(action){
   };
 }
 
+function getAdhocActivityData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
+  return {
+    "x01": action,
+    "x02": apex.jQuery( el ).attr("data-prcs"),
+    "x03": apex.jQuery( el ).attr("data-sbfl"),
+    "x04": apex.jQuery( el ).attr("data-activity")
+  };
+}
+
 function openModalConfirmWithComment( action, element, confirmMessageKey, titleKey ){
   let el = element;
   if ( el.type === undefined || el.type !== "button") {
@@ -364,6 +377,18 @@ function redirectToFlowDiagram( action, element ){
 function redirectToFlowDiagramTaskStatus(action, element){
   var data = getflowInstanceData(action, element);
   data.x02 = apex.jQuery( element ).attr("data-dgrm");
+  sendToServer(data);
+}
+
+function redirectToAdhocActivityPage(action, element){
+  var data = getSubflowData(action, element);
+  data.x05 = apex.jQuery( element ).attr("data-dgrm");
+  data.x06 = apex.jQuery( element ).attr("data-current");
+  sendToServer(data);
+}
+
+function startAdhocActivity(action, element){
+  var data = getAdhocActivityData(action, element);
   sendToServer(data);
 }
 
@@ -1294,6 +1319,12 @@ function initActions(){
           }
         },
         {
+          name: "open-adhoc-activities",
+          action: function ( event, focusElement ) {
+            redirectToAdhocActivityPage(this.name, focusElement);
+          }
+        },
+        {
           name: "add-process-variable",
           action: function ( event, focusElement ) {
             addProcessVariable( 'process-variable', focusElement );
@@ -1429,6 +1460,17 @@ function initActions(){
       );
     }
 
+    if ( pageId === "22") {
+      apex.actions.add( [
+        {
+          name: "start-adhoc-activity",
+          action: function ( event, focusElement ) {
+            startAdhocActivity( this.name, focusElement );
+          },
+        }
+      ] );
+    }
+
     if (pageId === "8" || pageId === "10") {
       apex.actions.add([
         {
@@ -1536,6 +1578,7 @@ function initActions(){
         apex.actions.update( "choose-setting" );
       }, 1 );
     }
+
 
     apex.actions.add( [
       {
@@ -1994,6 +2037,26 @@ function initPage10() {
       ui.menu.items = menuItems;
     } );
 
+  } );
+}
+
+function initPage22() {
+  initActions();
+  apex.jQuery( window ).on( "theme42ready", function () {
+
+
+    $( "#actions_menu" ).on( "menubeforeopen", function ( event, ui ) {
+      var menuItems = ui.menu.items;
+      var dgrmStatus = apex.item("P7_DGRM_STATUS").getValue();
+      var engineAppMode = apex.item("P7_ENGINE_APP_MODE").getValue();
+      menuItems = menuItems.map( function ( item ) {
+        if ( item.action === "delete-flow-diagram" ) {
+          item.disabled = dgrmStatus === "draft" || dgrmStatus === "archived" || engineAppMode === "development" ? false : true;
+        }
+        return item;
+      } );
+      ui.menu.items = menuItems;
+    } );
   } );
 }
 

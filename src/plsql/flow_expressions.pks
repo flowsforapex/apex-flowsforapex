@@ -19,6 +19,7 @@ create or replace package flow_expressions
 as 
   e_var_exp_date_format_error exception;
   e_var_exp_json_format_error exception;
+  e_var_exp_jsonpath_error    exception;
 
   -- Call using objt_id if you have available
   procedure process_expressions

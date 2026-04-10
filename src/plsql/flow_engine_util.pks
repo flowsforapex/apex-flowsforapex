@@ -55,8 +55,7 @@ as
   --) return boolean;
 
   function get_subprocess_parent_subflow
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
+  ( p_sbfl_info in flow_subflows%rowtype
   , p_current    in flow_objects.objt_bpmn_id%type -- an object in the subprocess
   ) return flow_types_pkg.t_subflow_context;
 
@@ -129,6 +128,9 @@ as
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     , p_iter_id                   in flow_iterations.iter_id%type default null
     , p_iterated_object           in flow_iterated_objects.iobj_id%type default null
+    , p_is_adhoc                  in boolean default false
+    , p_hide_in_task_list         in varchar2 default null
+    , p_task_input_parameters     in clob default null
     ) return flow_types_pkg.t_subflow_context
     ;
 

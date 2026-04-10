@@ -1,122 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
            xmlns:apex="http://flowsforapex.com/bpmn"
            targetNamespace="http://flowsforapex.com/bpmn"
            elementFormDefault="qualified">
 
-    <!-- Extensions for Start Events -->
-    <xs:complexType name="StartEventExtensions">
+    <xs:annotation>
+        <xs:documentation>
+            Flows for APEX BPMN 2.0 Extension Schema
+            
+            This schema defines all apex: namespace extensions used by Flows for APEX
+            to enhance standard BPMN 2.0 with Oracle APEX-specific capabilities.
+            
+            Version: 26.1
+            Namespace: http://flowsforapex.com/bpmn
+            Prefix: apex
+        </xs:documentation>
+    </xs:annotation>
+
+    <!-- ================================================================ -->
+    <!-- PART 1: SIMPLE TYPES (Enumerations and Restrictions)            -->
+    <!-- ================================================================ -->
+
+    <xs:simpleType name="ExpressionTypeEnum">
+        <xs:annotation>
+            <xs:documentation>
+                Types of expressions supported for evaluating dynamic values.
+                
+                - static: Literal value (with process variable substitution support)
+                - processVariable: Reference to existing process variable by name
+                - sqlQuerySingle: SQL query returning single value
+                - sqlQueryMulti: SQL query returning multiple values
+                - plsqlExpression: PL/SQL expression returning value
+                - plsqlFunctionBody: PL/SQL function body returning boolean/value
+                - plsqlRawExpression: PL/SQL expression without F4A$ bind variable support
+                - plsqlRawFunctionBody: PL/SQL function body without F4A$ bind support
+                - jsonPath: JSONPath expression extracting value from JSON source (v26.1+)
+                - interval: ISO 8601 duration/interval for due dates
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="static"/>
+            <xs:enumeration value="processVariable"/>
+            <xs:enumeration value="sqlQuerySingle"/>
+            <xs:enumeration value="sqlQueryMulti"/>
+            <xs:enumeration value="plsqlExpression"/>
+            <xs:enumeration value="plsqlFunctionBody"/>
+            <xs:enumeration value="plsqlRawExpression"/>
+            <xs:enumeration value="plsqlRawFunctionBody"/>
+            <xs:enumeration value="jsonPath"/>
+            <xs:enumeration value="interval"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DataTypeEnum">
+        <xs:annotation>
+            <xs:documentation>
+                Data types for process variables.
+                
+                - VARCHAR2: String/text values (max 4000 chars)
+                - NUMBER: Numeric values (integer or decimal)
+                - DATE: Date and time (format: YYYY-MM-DD HH24:MI:SS)
+                - TIMESTAMP_WITH_TIME_ZONE: Timestamp with timezone (format: YYYY-MM-DD HH24:MI:SS TZR)
+                - CLOB: Large text content
+                - JSON: JSON documents (validated as proper JSON)
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VARCHAR2"/>
+            <xs:enumeration value="NUMBER"/>
+            <xs:enumeration value="DATE"/>
+            <xs:enumeration value="TIMESTAMP_WITH_TIME_ZONE"/>
+            <xs:enumeration value="CLOB"/>
+            <xs:enumeration value="JSON"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="JsonSourceTypeEnum">
+        <xs:annotation>
+            <xs:documentation>
+                Source types for JSONPath expressions (v26.1+).
+                
+                - processVariable: Extract from JSON process variable
+                - taskOutput: Extract from task output parameters (afterTask/onEvent only)
+                - taskInput: Extract from task input parameters (afterTask only)
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="processVariable"/>
+            <xs:enumeration value="taskOutput"/>
+            <xs:enumeration value="taskInput"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="TaskTypeEnum">
+        <xs:annotation>
+            <xs:documentation>
+                Types of user tasks supported in Flows for APEX.
+                
+                - apexPage: Standard APEX page-based task
+                - apexApproval: APEX Approval Component task
+                - apexSimpleForm: Simple form generated from metadata
+                - simpleMessage: Message throw/catch task
+                - externalUrl: Task pointing to external URL
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="apexPage"/>
+            <xs:enumeration value="apexApproval"/>
+            <xs:enumeration value="apexSimpleForm"/>
+            <xs:enumeration value="simpleMessage"/>
+            <xs:enumeration value="externalUrl"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VersionSelectionEnum">
+        <xs:annotation>
+            <xs:documentation>
+                Version selection strategy for called diagrams.
+                
+                - latestVersion: Use latest released version
+                - namedVersion: Use specific version by name
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="latestVersion"/>
+            <xs:enumeration value="namedVersion"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="BooleanString">
+        <xs:annotation>
+            <xs:documentation>
+                Boolean value represented as string "true" or "false".
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true"/>
+            <xs:enumeration value="false"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="LoggingLevelEnum">
+        <xs:annotation>
+            <xs:documentation>
+                Minimum logging level for process instance.
+                
+                Values: off, error, warn, info, debug
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="off"/>
+            <xs:enumeration value="error"/>
+            <xs:enumeration value="warn"/>
+            <xs:enumeration value="info"/>
+            <xs:enumeration value="debug"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ================================================================ -->
+    <!-- PART 2: REUSABLE COMPLEX TYPES (Building Blocks)                -->
+    <!-- ================================================================ -->
+
+    <xs:complexType name="ExpressionType">
+        <xs:annotation>
+            <xs:documentation>
+                Generic expression structure used throughout the system.
+                
+                Contains:
+                - expressionType: How to evaluate the expression
+                - expression: The actual expression content
+                - formatMask: Optional format mask for dates/timestamps
+                - insideVariable: Optional variable name for loop iterations
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="onEvent" type="xs:string" minOccurs="0"/>
-            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+            <xs:element name="formatMask" type="xs:string" minOccurs="0"/>
+            <xs:element name="insideVariable" type="xs:string" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Extensions for Message Throw Events -->
-    <xs:complexType name="MessageThrowEventExtensions">
+    <xs:complexType name="ProcessVariableType">
+        <xs:annotation>
+            <xs:documentation>
+                Process variable declaration with expression evaluation.
+                
+                Used in: beforeTask, afterTask, onEvent, beforeEvent, beforeSplit, afterMerge
+                
+                Fields:
+                - varSequence: Execution order (0-based)
+                - varName: Variable name (must be unique in scope)
+                - varDataType: Data type for the variable
+                - varExpressionType: How to evaluate the value
+                - varExpression: Expression to evaluate
+                - varSourceType: For jsonPath, where to get JSON from (v26.1+)
+                - varSource: For jsonPath, name of source variable/parameter (v26.1+)
+                - varDescription: Optional description (for in/outVariables)
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="messageName" type="xs:string" minOccurs="1"/>
-            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
-            <xs:element name="correlationValue" type="xs:string" minOccurs="0"/>
-            <xs:element name="payload" type="xs:string" minOccurs="0"/>
+            <xs:element name="varSequence" type="xs:nonNegativeInteger" minOccurs="1"/>
+            <xs:element name="varName" type="xs:string" minOccurs="1"/>
+            <xs:element name="varDataType" type="apex:DataTypeEnum" minOccurs="1"/>
+            <xs:element name="varExpressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="varExpression" type="xs:string" minOccurs="1"/>
+            <xs:element name="varSourceType" type="apex:JsonSourceTypeEnum" minOccurs="0"/>
+            <xs:element name="varSource" type="xs:string" minOccurs="0"/>
+            <xs:element name="varDescription" type="xs:string" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Extensions for Message Catch Events -->
-    <xs:complexType name="MessageCatchEventExtensions">
+    <xs:complexType name="ParameterType">
+        <xs:annotation>
+            <xs:documentation>
+                Parameter for APEX Approval Component task.
+                
+                Fields:
+                - parStaticId: Parameter static ID in APEX task definition
+                - parDataType: Parameter data type (String, Number, etc.)
+                - parValue: Value to pass (supports process variable substitution)
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="messageName" type="xs:string" minOccurs="1"/>
-            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
-            <xs:element name="correlationValue" type="xs:string" minOccurs="0"/>
-            <xs:element name="payloadVariable" type="xs:string" minOccurs="0"/>
+            <xs:element name="parStaticId" type="xs:string" minOccurs="1"/>
+            <xs:element name="parDataType" type="xs:string" minOccurs="1"/>
+            <xs:element name="parValue" type="xs:string" minOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Extensions for Timer Events -->
-    <xs:complexType name="TimerEventExtensions">
+    <xs:complexType name="ApexItemType">
+        <xs:annotation>
+            <xs:documentation>
+                APEX page item value for simple form tasks.
+                
+                Fields:
+                - itemName: APEX item name (e.g., P1_ITEM_NAME)
+                - itemValue: Value to set (supports process variable substitution)
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="dueOn" type="xs:string" minOccurs="1"/>
+            <xs:element name="itemName" type="xs:string" minOccurs="1"/>
+            <xs:element name="itemValue" type="xs:string" minOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Extensions for Message Flows -->
-    <xs:complexType name="MessageFlowExtensions">
+    <!-- ================================================================ -->
+    <!-- PART 3: VARIABLE EXPRESSION CONTAINERS                          -->
+    <!-- ================================================================ -->
+
+    <xs:complexType name="BeforeTaskType">
+        <xs:annotation>
+            <xs:documentation>
+                Variable expressions executed before task execution.
+                
+                Used to set process variables before a task starts.
+                Each processVariable is evaluated in sequence order.
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="messageFlowName" type="xs:string" minOccurs="1"/>
-            <xs:element name="sourceProcess" type="xs:string" minOccurs="0"/>
-            <xs:element name="targetProcess" type="xs:string" minOccurs="0"/>
-            <xs:element name="correlationKey" type="xs:string" minOccurs="0"/>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <!-- Define extensionElements and restrict them by BPMN type -->
-    <xs:element name="extensionElements">
-        <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="1">
-                <xs:element name="startEventExtensions" type="StartEventExtensions"/>
-                <xs:element name="messageThrowEventExtensions" type="MessageThrowEventExtensions"/>
-                <xs:element name="messageCatchEventExtensions" type="MessageCatchEventExtensions"/>
-                <xs:element name="timerEventExtensions" type="TimerEventExtensions"/>
-                <xs:element name="messageFlowExtensions" type="MessageFlowExtensions"/>
-            </xs:choice>
-        </xs:complexType>
-    </xs:element>
+    <xs:complexType name="AfterTaskType">
+        <xs:annotation>
+            <xs:documentation>
+                Variable expressions executed after task completion.
+                
+                Can access task output parameters when using jsonPath expressions.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <!-- Additional BPMN Extensions Found Across All Files -->
-    <xs:element name="beforeTask">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="OnEventType">
+        <xs:annotation>
+            <xs:documentation>
+                Variable expressions executed when event is caught.
+                
+                Used with: Start Events, Intermediate Catch Events, Boundary Events
+                Can access event payload when using jsonPath expressions.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="onEvent">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="BeforeEventType">
+        <xs:annotation>
+            <xs:documentation>
+                Variable expressions executed before event is thrown.
+                
+                Used with: Intermediate Throw Events, End Events
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="apexApproval">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="BeforeSplitType">
+        <xs:annotation>
+            <xs:documentation>
+                Variable expressions executed before gateway split.
+                
+                Used to set process variables before gateway routing decisions.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="priority">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="AfterMergeType">
+        <xs:annotation>
+            <xs:documentation>
+                Variable expressions executed after gateway merge.
+                
+                Used after all paths converge at a gateway.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="dueOn">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="InVariablesType">
+        <xs:annotation>
+            <xs:documentation>
+                Input variable definitions for Call Activity.
+                
+                Maps process variables from calling process to called process.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="customExtension">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="OutVariablesType">
+        <xs:annotation>
+            <xs:documentation>
+                Output variable definitions for Call Activity.
+                
+                Maps process variables from called process back to calling process.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="processVariable" type="apex:ProcessVariableType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="executePlsql">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <!-- ================================================================ -->
+    <!-- PART 4: TASK-SPECIFIC TYPES                                     -->
+    <!-- ================================================================ -->
 
-    <xs:element name="apexPage">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="ApexPageType">
+        <xs:annotation>
+            <xs:documentation>
+                APEX Page task configuration.
+                
+                Defines an APEX application page to be used as a user task.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="applicationId" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>APEX Application ID (supports process variable substitution)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="pageId" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>APEX Page ID (supports process variable substitution)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="pageItems" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Optional page items to set (for simple forms)</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="item" type="apex:ApexItemType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="endpoint">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="ApexApprovalType">
+        <xs:annotation>
+            <xs:documentation>
+                APEX Approval Component task configuration.
+                
+                Integrates with APEX 22.1+ Approval Component for structured approval workflows.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="applicationId" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>APEX Application ID</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="taskStaticId" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Task Definition Static ID from APEX Approval Component</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="businessRef" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Business reference for the approval (supports process variable substitution)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="parameters" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Parameters to pass to the approval task</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="parameter" type="apex:ParameterType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="resultVariable" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Process variable to store approval result</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="messageName">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="ExecutePlsqlType">
+        <xs:annotation>
+            <xs:documentation>
+                PL/SQL Script Task configuration.
+                
+                Executes PL/SQL code as part of the process flow.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>PL/SQL code to execute (supports bind variables)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="correlationKey">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="PriorityType">
+        <xs:annotation>
+            <xs:documentation>
+                Priority expression for tasks or process.
+                
+                Can be set at process level or task level. Task level overrides process level.
+                Priority is typically a number (1-5, where 5 is highest priority).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="correlationValue">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="DueOnType">
+        <xs:annotation>
+            <xs:documentation>
+                Due date/time expression for tasks or process.
+                
+                Can be absolute timestamp or interval from current time.
+                Supports multiple expression types including 'interval' for ISO 8601 durations.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+            <xs:element name="formatMask" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Format mask for date/timestamp expressions (e.g., YYYY-MM-DD HH24:MI:SS TZR)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xs:element name="payload">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <!-- ================================================================ -->
+    <!-- PART 5: MESSAGE AND EVENT TYPES                                 -->
+    <!-- ================================================================ -->
 
-    <xs:element name="payloadVariable">
-        <xs:complexType></xs:complexType>
-    </xs:element>
+    <xs:complexType name="EndpointType">
+        <xs:annotation>
+            <xs:documentation>
+                Message endpoint configuration.
+                
+                Defines where messages are sent (local process or external system).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Endpoint identifier. Use "local" for same instance, process name for cross-process messaging.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MessageNameType">
+        <xs:annotation>
+            <xs:documentation>
+                Message name expression.
+                
+                Identifies the message type being sent or received.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CorrelationKeyType">
+        <xs:annotation>
+            <xs:documentation>
+                Correlation key expression.
+                
+                Identifies the correlation key for message matching.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CorrelationValueType">
+        <xs:annotation>
+            <xs:documentation>
+                Correlation value expression.
+                
+                The actual value to correlate on (e.g., customer ID, order number).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PayloadType">
+        <xs:annotation>
+            <xs:documentation>
+                Message payload expression (for throw events).
+                
+                Data to send with the message.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PayloadVariableType">
+        <xs:annotation>
+            <xs:documentation>
+                Payload variable name (for catch events).
+                
+                Process variable to store received message payload.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="TerminateStatusType">
+        <xs:annotation>
+            <xs:documentation>
+                Status for terminate end event.
+                
+                Defines the final status when process is terminated.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ================================================================ -->
+    <!-- PART 6: LOOP AND ITERATOR TYPES                                 -->
+    <!-- ================================================================ -->
+
+    <xs:complexType name="InputCollectionType">
+        <xs:annotation>
+            <xs:documentation>
+                Input collection for multi-instance loops.
+                
+                Defines the collection to iterate over.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OutputCollectionType">
+        <xs:annotation>
+            <xs:documentation>
+                Output collection for multi-instance loops.
+                
+                Variable to collect results from each iteration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CompletionConditionType">
+        <xs:annotation>
+            <xs:documentation>
+                Completion condition for multi-instance loops.
+                
+                Expression evaluated after each iteration to determine if loop should complete early.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LoopConditionType">
+        <xs:annotation>
+            <xs:documentation>
+                Loop condition for standard loops.
+                
+                Boolean expression evaluated before each iteration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LoopMaximumType">
+        <xs:annotation>
+            <xs:documentation>
+                Maximum iterations for standard loops.
+                
+                Prevents infinite loops by setting upper limit.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ================================================================ -->
+    <!-- PART 7: CUSTOM EXTENSION TYPE                                   -->
+    <!-- ================================================================ -->
+
+    <xs:complexType name="CustomExtensionType">
+        <xs:annotation>
+            <xs:documentation>
+                Custom extension for plugin/custom behavior.
+                
+                JSON structure defining custom processing logic.
+                Format: {"pluginName":"value", "config":{...}}
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
+            <xs:element name="expression" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>JSON configuration for custom extension</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- ================================================================ -->
+    <!-- PART 8: GLOBAL ELEMENT DECLARATIONS                             -->
+    <!-- ================================================================ -->
+
+    <!-- Variable Expression Containers -->
+    <xs:element name="beforeTask" type="apex:BeforeTaskType"/>
+    <xs:element name="afterTask" type="apex:AfterTaskType"/>
+    <xs:element name="onEvent" type="apex:OnEventType"/>
+    <xs:element name="beforeEvent" type="apex:BeforeEventType"/>
+    <xs:element name="beforeSplit" type="apex:BeforeSplitType"/>
+    <xs:element name="afterMerge" type="apex:AfterMergeType"/>
+    <xs:element name="inVariables" type="apex:InVariablesType"/>
+    <xs:element name="outVariables" type="apex:OutVariablesType"/>
+
+    <!-- Task Configuration Elements -->
+    <xs:element name="apexPage" type="apex:ApexPageType"/>
+    <xs:element name="apexApproval" type="apex:ApexApprovalType"/>
+    <xs:element name="executePlsql" type="apex:ExecutePlsqlType"/>
+    <xs:element name="priority" type="apex:PriorityType"/>
+    <xs:element name="dueOn" type="apex:DueOnType"/>
+
+    <!-- Message/Event Elements -->
+    <xs:element name="endpoint" type="apex:EndpointType"/>
+    <xs:element name="messageName" type="apex:MessageNameType"/>
+    <xs:element name="correlationKey" type="apex:CorrelationKeyType"/>
+    <xs:element name="correlationValue" type="apex:CorrelationValueType"/>
+    <xs:element name="payload" type="apex:PayloadType"/>
+    <xs:element name="payloadVariable" type="apex:PayloadVariableType"/>
+    <xs:element name="terminateStatus" type="apex:TerminateStatusType"/>
+
+    <!-- Loop/Iterator Elements -->
+    <xs:element name="inputCollection" type="apex:InputCollectionType"/>
+    <xs:element name="outputCollection" type="apex:OutputCollectionType"/>
+    <xs:element name="completionCondition" type="apex:CompletionConditionType"/>
+    <xs:element name="loopCondition" type="apex:LoopConditionType"/>
+    <xs:element name="loopMaximum" type="apex:LoopMaximumType"/>
+
+    <!-- Custom Extension -->
+    <xs:element name="customExtension" type="apex:CustomExtensionType"/>
+
+    <!-- ================================================================ -->
+    <!-- PART 9: GLOBAL ATTRIBUTE DECLARATIONS                           -->
+    <!-- ================================================================ -->
+
+    <!-- Process-Level Attributes -->
+    <xs:attribute name="isCallable" type="apex:BooleanString">
+        <xs:annotation>
+            <xs:documentation>Whether process can be called by other processes via Call Activity</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="isStartable" type="apex:BooleanString">
+        <xs:annotation>
+            <xs:documentation>Whether process can be started directly (via API or UI)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="manualInput" type="apex:BooleanString">
+        <xs:annotation>
+            <xs:documentation>Legacy attribute for manual data entry mode</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="minLoggingLevel" type="apex:LoggingLevelEnum">
+        <xs:annotation>
+            <xs:documentation>Minimum logging level for this process (off, error, warn, info, debug)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="instanceName" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Expression for process instance name (supports process variable substitution)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="applicationId" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Default APEX application ID for tasks in this process</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="pageId" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Default APEX page ID for tasks in this process</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="username" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Process username/creator</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="businessAdmin" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Business administrator for this process</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <!-- Task-Level Attributes -->
+    <xs:attribute name="type" type="apex:TaskTypeEnum">
+        <xs:annotation>
+            <xs:documentation>Type of user task (apexPage, apexApproval, apexSimpleForm, simpleMessage, externalUrl)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <!-- Call Activity Attributes -->
+    <xs:attribute name="calledDiagram" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Name of the diagram to call</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="calledDiagramVersionSelection" type="apex:VersionSelectionEnum">
+        <xs:annotation>
+            <xs:documentation>Version selection strategy (latestVersion or namedVersion)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="calledDiagramVersion" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Specific version to call (when versionSelection is namedVersion)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <!-- Lane Attributes -->
+    <xs:attribute name="isRole" type="apex:BooleanString">
+        <xs:annotation>
+            <xs:documentation>Whether lane represents a role-based assignment</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="role" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>Role name for task assignment (when isRole="true")</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <!-- Sequence Flow Attributes -->
+    <xs:attribute name="sequence" type="xs:nonNegativeInteger">
+        <xs:annotation>
+            <xs:documentation>Execution order for multiple outgoing flows (lower numbers execute first)</xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
 
 </xs:schema>

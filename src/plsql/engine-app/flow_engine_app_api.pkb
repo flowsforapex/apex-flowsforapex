@@ -280,6 +280,21 @@ as
           , p_step_key      => apex_application.g_x04
           , p_comment       => apex_application.g_x05       
           );
+        when 'START-ADHOC-ACTIVITY' then
+          flow_api_pkg.flow_start_adhoc_activity 
+          (
+            p_process_id       => apex_application.g_x02
+          , p_subflow_id       => apex_application.g_x03
+          , p_activity_bpmn_id => apex_application.g_x04
+          );
+        when 'OPEN-ADHOC-ACTIVITIES' then
+          l_url := apex_page.get_url(
+              p_page => 22
+            , p_items => 'P22_PRCS_ID,P22_SBFL_ID,P22_SUBPROC_STEP_KEY,P22_DGRM_ID,P22_SUBPROCESS_BPMN_ID'
+            , p_values => apex_application.g_x02||','||apex_application.g_x03||','||apex_application.g_x04||
+                          ','||apex_application.g_x05||','||apex_application.g_x06
+            , p_clear_cache => 22
+          );
         when 'FLOW-INSTANCE-AUDIT' then
           l_url := apex_page.get_url(
               p_page => 14

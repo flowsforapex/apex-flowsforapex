@@ -98,10 +98,8 @@ as
 
   procedure run_task_script
   (
-    pi_prcs_id  in flow_processes.prcs_id%type
-  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+    pi_sbfl_rec in flow_subflows%rowtype
   , pi_objt_id  in flow_objects.objt_id%type
-  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   )
   as
     l_use_apex_exec boolean := false;
@@ -113,14 +111,16 @@ as
     apex_debug.enter 
     ( 'run_task_script'
     , 'pi_objt_id', pi_objt_id
+    , 'pi_sbfl_id', pi_sbfl_rec.sbfl_id
     );
 
     flow_globals.set_context 
-    ( pi_prcs_id      => pi_prcs_id
-    , pi_sbfl_id      => pi_sbfl_id 
-    , pi_step_key     => pi_step_key
-    , pi_scope        => flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id)
-    , pi_loop_counter => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_id)
+    ( pi_prcs_id         => pi_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id         => pi_sbfl_rec.sbfl_id 
+    , pi_step_key        => pi_sbfl_rec.sbfl_step_key
+    , pi_scope           => flow_engine_util.get_scope ( p_process_id => pi_sbfl_rec.sbfl_prcs_id, p_subflow_id => pi_sbfl_rec.sbfl_id)
+    , pi_loop_counter    => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_rec.sbfl_id)
+    , pi_input_parameters => pi_sbfl_rec.sbfl_task_input_parameters
     );
 
     get_runner_config
@@ -133,10 +133,10 @@ as
 
     flow_proc_vars_int.do_substitution
     (
-      pi_prcs_id  => pi_prcs_id
-    , pi_sbfl_id  => pi_sbfl_id
+      pi_prcs_id  => pi_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id  => pi_sbfl_rec.sbfl_id
     , pi_scope    => flow_globals.scope
-    , pi_step_key => pi_step_key
+    , pi_step_key => pi_sbfl_rec.sbfl_step_key
     , pio_string  => l_plsql_code
     );
 
@@ -144,9 +144,9 @@ as
       -- bind in process variables rather than APEX session state
       l_sql_parameters := flow_proc_vars_int.get_parameter_list
                           ( pi_expr       => l_plsql_code
-                          , pi_prcs_id     => pi_prcs_id
-                          , pi_sbfl_id    => pi_sbfl_id
-                          , pi_step_key   => pi_step_key
+                          , pi_prcs_id     => pi_sbfl_rec.sbfl_prcs_id
+                          , pi_sbfl_id    => pi_sbfl_rec.sbfl_id
+                          , pi_step_key   => pi_sbfl_rec.sbfl_step_key
                           , pi_scope      => flow_globals.scope
                           );
     end if;
@@ -163,6 +163,13 @@ as
       (
         p_plsql_code => l_plsql_code
       );
+    end if;
+
+    -- Save output parameters back to the database if any were set
+    if flow_globals.get_output_parameters is not null then
+      update flow_subflows
+         set sbfl_task_output_parameters = flow_globals.get_output_parameters
+       where sbfl_id = pi_sbfl_rec.sbfl_id;
     end if;
 
   exception
@@ -188,11 +195,22 @@ as
       );
       raise flow_globals.throw_bpmn_error_event;
     when others then
-      apex_debug.error
-      (
-        p_message => 'Error during flow_plsql_runner_pkg.run_task_script. SQLERRM: %s'
-      , p0        => sqlerrm
-      );
+      -- common error is that l_plsql_code is missing a final semicolon. Test if final char is a semicolon and give a helpful message if not.
+      if l_plsql_code is not null and dbms_lob.substr(l_plsql_code,-1) <> ';' then
+        apex_debug.error
+        (
+          p_message => 'Error during flow_plsql_runner_pkg.run_task_script. Possible missing semicolon at end of PL/SQL code. Code: "%1" SQLERRM: %0'
+        , p0        => sqlerrm
+        , p1        => l_plsql_code
+        );
+      else
+        apex_debug.error
+        (
+          p_message => 'Error during flow_plsql_runner_pkg.run_task_script. Code: "%1" SQLERRM: %0'
+        , p0        => sqlerrm
+        , p1        => l_plsql_code
+        );
+      end if;
       raise e_plsql_script_failed;
   end run_task_script;
 
