@@ -190,6 +190,8 @@ as
   is
     l_objt_attributes clob;
     l_attributes_json json_object_t;
+    l_apex_json       json_object_t;
+    l_custom_json     json_object_t;
   begin
     -- Get object attributes
     select objt.objt_attributes
@@ -202,7 +204,19 @@ as
     end if;
     
     l_attributes_json := json_object_t(l_objt_attributes);
-    
+
+    if l_attributes_json.has('apex') then
+      l_apex_json := json_object_t(l_attributes_json.get('apex'));
+      if l_apex_json.has('inputParameters') then
+        return l_apex_json.get_array('inputParameters').to_clob();
+      elsif l_apex_json.has('customExtension') then
+        l_custom_json := json_object_t(l_apex_json.get('customExtension'));
+        if l_custom_json.has('inputParameters') then
+          return l_custom_json.get_array('inputParameters').to_clob();
+        end if;
+      end if;
+    end if;
+
     if l_attributes_json.has('inputParameters') then
       return l_attributes_json.get_array('inputParameters').to_clob();
     else
@@ -222,6 +236,8 @@ as
   is
     l_objt_attributes clob;
     l_attributes_json json_object_t;
+    l_apex_json       json_object_t;
+    l_custom_json     json_object_t;
   begin
     -- Get object attributes
     select objt.objt_attributes
@@ -234,7 +250,19 @@ as
     end if;
     
     l_attributes_json := json_object_t(l_objt_attributes);
-    
+
+    if l_attributes_json.has('apex') then
+      l_apex_json := json_object_t(l_attributes_json.get('apex'));
+      if l_apex_json.has('outputParameters') then
+        return l_apex_json.get_array('outputParameters').to_clob();
+      elsif l_apex_json.has('customExtension') then
+        l_custom_json := json_object_t(l_apex_json.get('customExtension'));
+        if l_custom_json.has('outputParameters') then
+          return l_custom_json.get_array('outputParameters').to_clob();
+        end if;
+      end if;
+    end if;
+
     if l_attributes_json.has('outputParameters') then
       return l_attributes_json.get_array('outputParameters').to_clob();
     else
@@ -344,16 +372,31 @@ as
           
           -- Special handling for enum - extract keys to main schema level
           if l_apex_rendering.has('enum') then
-            l_enum_object := json_object_t(l_apex_rendering.get('enum'));
-            l_enum_keys := l_enum_object.get_keys();
-            l_enum_array := json_array_t();
-            
-            -- Add enum keys to main schema
-            for k in 1 .. l_enum_keys.count loop
-              l_enum_array.append(l_enum_keys(k));
-            end loop;
-            
-            l_property.put('enum', l_enum_array);
+            begin
+              -- Preferred shape: enum stored as JSON object.
+              l_enum_object := json_object_t(l_apex_rendering.get('enum'));
+            exception
+              when others then
+                begin
+                  -- Backward-compatible/tolerant path: enum stored as JSON text.
+                  l_enum_object := json_object_t.parse(l_apex_rendering.get_string('enum'));
+                exception
+                  when others then
+                    l_enum_object := null;
+                end;
+            end;
+
+            if l_enum_object is not null then
+              l_enum_keys := l_enum_object.get_keys();
+              l_enum_array := json_array_t();
+
+              -- Add enum keys to main schema
+              for k in 1 .. l_enum_keys.count loop
+                l_enum_array.append(l_enum_keys(k));
+              end loop;
+
+              l_property.put('enum', l_enum_array);
+            end if;
           end if;
         end;
       end if;
