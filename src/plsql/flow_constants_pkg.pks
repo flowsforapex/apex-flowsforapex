@@ -190,6 +190,7 @@ as
   gc_apex_parameter_source            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'source';
   gc_apex_parameter_expression_type   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expressionType';
   gc_apex_parameter_expression        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expression';
+  gc_apex_parameter_enum              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'enum';
   gc_apex_parameter_items             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'items';
   gc_apex_parameter_properties        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'properties';
   gc_apex_assignment_source_parameter constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sourceParameter';

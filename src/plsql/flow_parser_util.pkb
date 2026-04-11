@@ -118,6 +118,7 @@ as
   , po_json_element  out nocopy sys.json_element_t
   )
   as
+    l_json_text clob;
   begin
 
     split_property_name
@@ -138,10 +139,22 @@ as
       po_json_element := get_lines_array( pi_str => pi_value );
     elsif pi_property_name in ( flow_constants_pkg.gc_apex_servicetask_placeholder
                               , flow_constants_pkg.gc_apex_custom_extension
+                              , flow_constants_pkg.gc_apex_parameter_enum
                               )
     then
-      -- this is already JSON, better store differently
-      po_json_element := sys.json_object_t.parse( replace( replace( pi_value, chr(38)||'amp;', chr(38) ), chr(10) ) );
+      -- This value should be JSON. Some model payloads serialize JSON as escaped text,
+      -- so we normalize common escape sequences before a second parse attempt.
+      l_json_text := replace( pi_value, chr(38)||'amp;', chr(38) );
+      begin
+        po_json_element := sys.json_object_t.parse( l_json_text );
+      exception
+        when others then
+          l_json_text := replace( l_json_text, '\\n', chr(10) );
+          l_json_text := replace( l_json_text, '\\r', chr(13) );
+          l_json_text := replace( l_json_text, '\\t', chr(9) );
+          l_json_text := replace( l_json_text, '\\"', '"' );
+          po_json_element := sys.json_object_t.parse( l_json_text );
+      end;
     
     elsif po_key = 'priority'
     then
