@@ -82,8 +82,14 @@ create table flow_adhoc_subprocs (
 alter table flow_adhoc_subprocs
   add constraint flow_ahsp_pk primary key ( ahsp_id );
 
+-- drop first so re-running migration on dev DBs works cleanly
+begin
+  execute immediate 'alter table flow_adhoc_subprocs drop constraint flow_ahsp_control_ck';
+exception when others then null;
+end;
+/
 alter table flow_adhoc_subprocs
-  add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid') );
+  add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid', 'recommendation') );
 
 alter table flow_adhoc_subprocs
     add constraint flow_ahsp_prcs_fk FOREIGN KEY ( ahsp_prcs_id )

@@ -34,5 +34,21 @@ as
     , p_scope                in flow_subflows.sbfl_scope%type default 0
     );
 
+  -- Recommendation mode approval API
+  procedure approve_ai_recommendation
+    ( p_process_id       in flow_processes.prcs_id%type
+    , p_subflow_id       in flow_subflows.sbfl_id%type
+    , p_step_key         in flow_subflows.sbfl_step_key%type
+    , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+    , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type
+    );
+
+  procedure discard_ai_recommendation
+    ( p_process_id       in flow_processes.prcs_id%type
+    , p_subflow_id       in flow_subflows.sbfl_id%type
+    , p_step_key         in flow_subflows.sbfl_step_key%type
+    , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+    );
+
 end flow_adhoc_subprocesses_ai;
 /

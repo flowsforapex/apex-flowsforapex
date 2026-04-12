@@ -110,6 +110,7 @@ as
   gc_adhoc_control_manual             constant flow_types_pkg.t_bpmn_id := 'manual';
   gc_adhoc_control_autonomous         constant flow_types_pkg.t_bpmn_id := 'ai';
   gc_adhoc_control_hybrid             constant flow_types_pkg.t_bpmn_id := 'hybrid';
+  gc_adhoc_control_recommendation     constant flow_types_pkg.t_bpmn_id := 'recommendation';
 
   -- Operating Mode Constants  (used to control certain aspects of engine behaviour at activity level, 
   -- such as AI decision making where demo mode allows "demo time" use for future scenarios, for testing/demo purposes)

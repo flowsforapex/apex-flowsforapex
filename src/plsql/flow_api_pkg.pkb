@@ -332,6 +332,74 @@ create or replace package body flow_api_pkg as
       raise;
   end flow_adhoc_request_ai_decision;
 
+  procedure flow_adhoc_approve_recommendation
+  (
+    p_process_id       in flow_processes.prcs_id%type
+  , p_subflow_id       in flow_subflows.sbfl_id%type
+  , p_step_key         in flow_subflows.sbfl_step_key%type
+  , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+  , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type
+  )
+  is
+    l_session_id  number;
+  begin
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+      apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
+    end if;
+
+    flow_adhoc_subprocesses.approve_ai_recommendation
+    ( p_process_id       => p_process_id
+    , p_subflow_id       => p_subflow_id
+    , p_step_key         => p_step_key
+    , p_asad_id          => p_asad_id
+    , p_activity_bpmn_id => p_activity_bpmn_id
+    );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id);
+    end if;
+  exception
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id);
+      end if;
+      raise;
+  end flow_adhoc_approve_recommendation;
+
+  procedure flow_adhoc_discard_recommendation
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_step_key    in flow_subflows.sbfl_step_key%type
+  , p_asad_id     in flow_adhoc_subproc_ai_decisions.asad_id%type
+  )
+  is
+    l_session_id  number;
+  begin
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
+      apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
+    end if;
+
+    flow_adhoc_subprocesses.discard_ai_recommendation
+    ( p_process_id => p_process_id
+    , p_subflow_id => p_subflow_id
+    , p_step_key   => p_step_key
+    , p_asad_id    => p_asad_id
+    );
+
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id);
+    end if;
+  exception
+    when others then
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id);
+      end if;
+      raise;
+  end flow_adhoc_discard_recommendation;
+
   procedure flow_restart_step
   (
     p_process_id    in flow_processes.prcs_id%type
