@@ -76,7 +76,11 @@ create table flow_adhoc_subprocs (
     ahsp_next_recommended_check TIMESTAMP WITH TIME ZONE,
     ahsp_next_check_reason      VARCHAR2(500 CHAR),
     ahsp_turns_per_session      NUMBER,
-    ahsp_max_total_turns        NUMBER
+    ahsp_max_total_turns        NUMBER,
+    ahsp_ai_interface           VARCHAR2(30 CHAR),
+    ahsp_ai_service             VARCHAR2(255 CHAR),
+    ahsp_ai_provider            VARCHAR2(255 CHAR),
+    ahsp_ai_model               VARCHAR2(4000 CHAR)
 );
 
 alter table flow_adhoc_subprocs
@@ -183,6 +187,10 @@ comment on column flow_adhoc_subproc_ai_decisions.asad_partial_review is 'When t
 comment on column flow_adhoc_subproc_ai_decisions.asad_created_by is 'User/system that created the record';
 comment on column flow_adhoc_subprocs.ahsp_next_recommended_check is 'AI-recommended timestamp for next check/wake-up';
 comment on column flow_adhoc_subprocs.ahsp_next_check_reason is 'AI-provided reason for the recommended check timing';
+comment on column flow_adhoc_subprocs.ahsp_ai_interface is 'Configured AI interface used by this adhoc subprocess instance';
+comment on column flow_adhoc_subprocs.ahsp_ai_service is 'Configured APEX AI service static ID used by this adhoc subprocess instance';
+comment on column flow_adhoc_subprocs.ahsp_ai_provider is 'Configured UC_AI provider used by this adhoc subprocess instance';
+comment on column flow_adhoc_subprocs.ahsp_ai_model is 'Configured AI model identifier used by this adhoc subprocess instance';
 
 PROMPT >> Enable support for adhoc sub process (ADHOCSP) in BPMN types
 update flow_bpmn_types
