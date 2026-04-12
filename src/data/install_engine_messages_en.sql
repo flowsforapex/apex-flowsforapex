@@ -341,6 +341,12 @@ begin
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('adhoc-ai-invalid-response', c_load_lang, q'[AI returned an invalid control response for adhoc subprocess %0. %1]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-bad-config', c_load_lang, q'[Adhoc subprocess %0 has invalid AI configuration for interface %1. Missing or invalid setting: %2]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-bad-iface', c_load_lang, q'[Adhoc subprocess %0 uses unsupported AI interface %1.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-call-failed', c_load_lang, q'[AI call failed for adhoc subprocess %0 using interface %1. %2]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('adhoc-subprocess-not-found', c_load_lang, q'[Adhoc subprocess not found or already completed for process %0, subflow %1, step %2.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('adhoc-completion-invalid-json', c_load_lang, q'[Adhoc subprocess completion condition for object %0 is not valid JSON.]');

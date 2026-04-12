@@ -291,7 +291,11 @@ create table flow_adhoc_subprocs (
     ahsp_next_recommended_check TIMESTAMP WITH TIME ZONE,
     ahsp_next_check_reason      VARCHAR2(500 CHAR),
     ahsp_turns_per_session      NUMBER,
-    ahsp_max_total_turns        NUMBER
+    ahsp_max_total_turns        NUMBER,
+    ahsp_ai_interface           VARCHAR2(30 CHAR),
+    ahsp_ai_service             VARCHAR2(255 CHAR),
+    ahsp_ai_provider            VARCHAR2(255 CHAR),
+    ahsp_ai_model               VARCHAR2(4000 CHAR)
 );
 
 alter table flow_adhoc_subprocs

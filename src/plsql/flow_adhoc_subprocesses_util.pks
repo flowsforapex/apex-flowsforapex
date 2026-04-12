@@ -26,6 +26,10 @@ as
     , p_task_visibility     out varchar2
     , p_turns_per_session   out number
     , p_max_total_turns     out number
+    , p_ai_interface        out varchar2
+    , p_ai_service          out varchar2
+    , p_ai_provider         out varchar2
+    , p_ai_model            out varchar2
     );
 
   function get_operating_mode
