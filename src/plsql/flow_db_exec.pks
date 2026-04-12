@@ -45,6 +45,12 @@ as
 
   c_wrap_bool_expr_pre      constant flow_types_pkg.t_expr_type := q'#begin if #';
   c_wrap_bool_expr_post     constant flow_types_pkg.t_expr_type := q'# then :BIND_OUT_VAR := 'true'; else :BIND_OUT_VAR := 'false'; end if; end;#';
+  c_wrap_bool_raw_expr_pre  constant flow_types_pkg.t_expr_type := q'#begin if #';
+  c_wrap_bool_raw_expr_post constant flow_types_pkg.t_expr_type := q'# then :BIND_OUT_VAR := 'true'; else :BIND_OUT_VAR := 'false'; end if; end;#';
+  c_wrap_bool_func_pre      constant flow_types_pkg.t_expr_type := q'#declare function x return varchar2 is begin #';
+  c_wrap_bool_func_post     constant flow_types_pkg.t_expr_type := q'#return null; end; begin if x = ''true'' then :BIND_OUT_VAR := ''true''; else :BIND_OUT_VAR := ''false''; end if; end;#';
+  c_wrap_bool_raw_func_pre  constant flow_types_pkg.t_expr_type := q'#declare function x return boolean is begin #';
+  c_wrap_bool_raw_func_post constant flow_types_pkg.t_expr_type := q'#return null; end; begin if x then :BIND_OUT_VAR := ''true''; else :BIND_OUT_VAR := ''false''; end if; end;#';
 
 
   function exec_flows_sql

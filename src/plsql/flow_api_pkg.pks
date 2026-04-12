@@ -928,5 +928,59 @@ flow_api_pkg.flow_adhoc_request_ai_decision(
 ```
 **/
 
+  procedure flow_adhoc_approve_recommendation
+  (
+    p_process_id       in flow_processes.prcs_id%type
+  , p_subflow_id       in flow_subflows.sbfl_id%type
+  , p_step_key         in flow_subflows.sbfl_step_key%type
+  , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+  , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type
+  );
+/**
+Procedure flow_adhoc_approve_recommendation
+
+Approves a single AI-recommended activity in recommendation control mode.
+Validates the decision is still pending, extracts pre-filled parameters from
+the AI decision, and starts the activity via the standard adhoc activity path.
+When all startActivity actions in the recommendation set have been approved the
+decision is automatically marked as dispatched.
+
+EXAMPLE
+```sql
+flow_api_pkg.flow_adhoc_approve_recommendation(
+  p_process_id       => 123,
+  p_subflow_id       => 456,
+  p_step_key         => 'A1B2C3',
+  p_asad_id          => 99,
+  p_activity_bpmn_id => 'Activity_CheckBag'
+);
+```
+**/
+
+  procedure flow_adhoc_discard_recommendation
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_step_key    in flow_subflows.sbfl_step_key%type
+  , p_asad_id     in flow_adhoc_subproc_ai_decisions.asad_id%type
+  );
+/**
+Procedure flow_adhoc_discard_recommendation
+
+Discards a pending AI recommendation in recommendation control mode without
+starting any activities.  The decision is stamped as dispatch_completed so it
+no longer appears on the Startable Activities cards.
+
+EXAMPLE
+```sql
+flow_api_pkg.flow_adhoc_discard_recommendation(
+  p_process_id => 123,
+  p_subflow_id => 456,
+  p_step_key   => 'A1B2C3',
+  p_asad_id    => 99
+);
+```
+**/
+
 end flow_api_pkg;
 /

@@ -298,7 +298,7 @@ alter table flow_adhoc_subprocs
   add constraint flow_ahsp_pk primary key ( ahsp_id );
 
 alter table flow_adhoc_subprocs
-  add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid') );
+    add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid', 'recommendation') );
 
 create table flow_adhoc_subflows (
     ahsf_sbfl_id                NUMBER NOT NULL,
