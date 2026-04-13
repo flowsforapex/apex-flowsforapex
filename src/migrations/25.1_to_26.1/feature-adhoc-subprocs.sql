@@ -37,6 +37,22 @@ begin
 end;
 /
 
+PROMPT >> > Adding sbfl_subject column to Table flow_subflows
+
+declare
+  v_column_exists          number := 0;
+begin
+  select count(*)
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SBFL_SUBJECT'
+     and upper(table_name)  = 'FLOW_SUBFLOWS';
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflows add ( sbfl_subject varchar2(1000 char) )';
+  end if;
+end;
+/
+
 PROMPT >> > Adding columns to Table flow_object_expressions
 
 declare
