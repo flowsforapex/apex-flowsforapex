@@ -19,7 +19,6 @@ as
 
   procedure extract_ahsp_configuration
     ( p_apex_extension       in sys.json_object_t
-    , p_custom_extension     in sys.json_object_t default null
     , p_control             out varchar2
     , p_interval_minutes    out number
     , p_max_iterations      out number

@@ -437,5 +437,51 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
         raise;
   end set_process_logging_level;
 
+  function test_ai_connection
+  ( p_ai_interface   in varchar2
+  , p_ai_service     in varchar2 default null
+  , p_ai_provider    in varchar2 default null
+  , p_ai_model       in varchar2 default null
+  , p_prompt         in clob default 'Hello AI World'
+  ) return clob
+  is
+    l_license_edition  flow_configuration.cfig_value%type;
+    l_result          clob;
+    l_error_response  sys.json_object_t;
+  begin
+    l_license_edition := lower(nvl(get_config_value('license_edition', 'community'), 'community'));
+
+    if l_license_edition != 'enterprise' then
+      l_error_response := sys.json_object_t();
+      l_error_response.put('success', false);
+      l_error_response.put('aiInterface', p_ai_interface);
+      l_error_response.put('errorCode', -20001);
+      l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
+      return l_error_response.to_clob;
+    end if;
+
+    begin
+      execute immediate
+        'begin :x := flow_admin_api_ee.test_ai_connection('
+     || 'p_ai_interface => :1, p_ai_service => :2, p_ai_provider => :3, p_ai_model => :4, p_prompt => :5); end;'
+      using out l_result
+          , in p_ai_interface
+          , in p_ai_service
+          , in p_ai_provider
+          , in p_ai_model
+          , in p_prompt;
+
+      return l_result;
+    exception
+      when others then
+        l_error_response := sys.json_object_t();
+        l_error_response.put('success', false);
+        l_error_response.put('aiInterface', p_ai_interface);
+        l_error_response.put('errorCode', sqlcode);
+        l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
+        return l_error_response.to_clob;
+    end;
+  end test_ai_connection;
+
 end flow_admin_api;
 /

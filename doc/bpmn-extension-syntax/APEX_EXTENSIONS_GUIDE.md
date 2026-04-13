@@ -4,6 +4,8 @@ Version: 26.1
 Namespace: `http://flowsforapex.com/bpmn`  
 Prefix: `apex`
 
+> **`apex:customExtension`** is a Flows for APEX development-team mechanism used to decouple engine development from the BPMN modeler. New properties are prototyped here during development and promoted to first-class `apex:` elements or attributes before public release. It is not available in the published modeler UI and should not be used in production models.
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -30,7 +32,7 @@ Always declare the apex namespace in your BPMN definitions:
 ```xml
 <bpmn:definitions 
     xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-    xmlns:apex="https://flowsforapex.org"
+    xmlns:apex="http://flowsforapex.com/bpmn"
     ...>
 ```
 
