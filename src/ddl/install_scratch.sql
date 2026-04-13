@@ -149,6 +149,7 @@ CREATE TABLE flow_subflows (
     sbfl_is_adhoc                   VARCHAR2(1 CHAR), -- Y if is a subflow inside an adhoc subprocess
     sbfl_ahsp_id                    NUMBER, -- adhoc subprocess id if current is an adhoc subprocess
     sbfl_hide_in_task_list          VARCHAR2(1 CHAR), -- Y if this subflow is to be hidden in APEX task lists
+    sbfl_subject                    VARCHAR2(1000 CHAR),
     sbfl_due_on                     TIMESTAMP WITH TIME ZONE,
     sbfl_priority                   NUMBER,
     sbfl_status                     VARCHAR2(20 CHAR),

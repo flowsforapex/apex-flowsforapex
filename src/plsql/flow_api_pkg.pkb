@@ -659,6 +659,7 @@ create or replace package body flow_api_pkg as
              , sbfl.sbfl_excluded_users
              , sbfl.sbfl_lane_name
              , sbfl.sbfl_lane_role
+             , sbfl.sbfl_subject
           from flow_subflows sbfl
           join flow_processes prcs
             on prcs.prcs_id = sbfl.sbfl_prcs_id
@@ -704,6 +705,7 @@ create or replace package body flow_api_pkg as
              , sbfl.sbfl_excluded_users
              , sbfl.sbfl_lane_name
              , sbfl.sbfl_lane_role
+             , sbfl.sbfl_subject
           from flow_subflows sbfl
           join flow_processes prcs
             on prcs.prcs_id = sbfl.sbfl_prcs_id
@@ -761,6 +763,7 @@ create or replace package body flow_api_pkg as
       , sbfl_excluded_users   varchar2(4000 char)
       , sbfl_lane_name        varchar2( 200 char)
       , sbfl_lane_role        varchar2( 200 char)
+      , sbfl_subject         varchar2(1000 char)
       );
 
     --
@@ -780,7 +783,10 @@ create or replace package body flow_api_pkg as
         l_task.task_def_id             := null;
         l_task.task_def_name           := coalesce( l_row.curr_objt_name, l_row.sbfl_current );
         l_task.task_def_static_id      := null;
-        l_task.subject                 := l_row.prcs_name||' ('||l_row.prcs_business_ref||') - '||coalesce( l_row.curr_objt_name, l_row.sbfl_current);
+        l_task.subject                 := coalesce
+                                           ( l_row.sbfl_subject
+                                           , l_row.prcs_name||' ('||l_row.prcs_business_ref||') - '||coalesce( l_row.curr_objt_name, l_row.sbfl_current)
+                                           );
         l_task.task_type               := case l_row.sbfl_status
                                               when flow_constants_pkg.gc_sbfl_status_waiting_approval then
                                                   'APPROVAL'

@@ -44,7 +44,10 @@ select null as app_id
      , null as task_def_id
      , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as task_def_name
      , null as task_def_static_id
-     , prcs.prcs_name||' ('||bref.prov_var_vc2||') - '||coalesce( objt_curr.objt_name, sbfl.sbfl_current) as subject
+  , coalesce
+    ( sbfl.sbfl_subject
+    , prcs.prcs_name||' ('||bref.prov_var_vc2||') - '||coalesce( objt_curr.objt_name, sbfl.sbfl_current)
+    ) as subject
      , null as details_app_id
      , dgrm.dgrm_name as details_app_name
      , case objt_curr.objt_tag_name

@@ -337,6 +337,11 @@ as
   gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
   gc_prcs_event_rewind_subprocess     constant  varchar2(20 char) := 'rewind subprocess';
   gc_prcs_event_rewind_call_activity  constant  varchar2(20 char) := 'rewind call activity';
+  gc_prcs_event_ahsp_ai_decision      constant  varchar2(20 char) := 'ahsp ai decision';
+  gc_prcs_event_ahsp_ai_schedule      constant  varchar2(20 char) := 'ahsp ai schedule';
+  gc_prcs_event_ahsp_ai_approved      constant  varchar2(20 char) := 'ahsp ai approved';
+  gc_prcs_event_ahsp_ai_discarded     constant  varchar2(20 char) := 'ahsp ai discarded';
+  gc_prcs_event_ahsp_cc_met           constant  varchar2(20 char) := 'ahsp cc met';
 
   -- Subflow and Step Events
   gc_step_event_became_current        constant  varchar2(20 char) := 'current step';
@@ -443,6 +448,7 @@ as
   gc_logging_level_abnormal_events     constant number := 1;
   gc_logging_level_major_events        constant number := 2;
   gc_logging_level_routine             constant number := 4;
+  gc_logging_level_ai_explainability   constant number := 7;
   gc_logging_level_full                constant number := 8;
 
 -- Config Parameter Keys
