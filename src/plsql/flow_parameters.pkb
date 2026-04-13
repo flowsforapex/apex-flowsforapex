@@ -191,7 +191,6 @@ as
     l_objt_attributes clob;
     l_attributes_json json_object_t;
     l_apex_json       json_object_t;
-    l_custom_json     json_object_t;
   begin
     -- Get object attributes
     select objt.objt_attributes
@@ -209,19 +208,10 @@ as
       l_apex_json := json_object_t(l_attributes_json.get('apex'));
       if l_apex_json.has('inputParameters') then
         return l_apex_json.get_array('inputParameters').to_clob();
-      elsif l_apex_json.has('customExtension') then
-        l_custom_json := json_object_t(l_apex_json.get('customExtension'));
-        if l_custom_json.has('inputParameters') then
-          return l_custom_json.get_array('inputParameters').to_clob();
-        end if;
       end if;
     end if;
 
-    if l_attributes_json.has('inputParameters') then
-      return l_attributes_json.get_array('inputParameters').to_clob();
-    else
-      return json_array_t().to_clob();
-    end if;
+    return json_array_t().to_clob();
     
   exception
     when others then
@@ -237,7 +227,6 @@ as
     l_objt_attributes clob;
     l_attributes_json json_object_t;
     l_apex_json       json_object_t;
-    l_custom_json     json_object_t;
   begin
     -- Get object attributes
     select objt.objt_attributes
@@ -255,19 +244,10 @@ as
       l_apex_json := json_object_t(l_attributes_json.get('apex'));
       if l_apex_json.has('outputParameters') then
         return l_apex_json.get_array('outputParameters').to_clob();
-      elsif l_apex_json.has('customExtension') then
-        l_custom_json := json_object_t(l_apex_json.get('customExtension'));
-        if l_custom_json.has('outputParameters') then
-          return l_custom_json.get_array('outputParameters').to_clob();
-        end if;
       end if;
     end if;
 
-    if l_attributes_json.has('outputParameters') then
-      return l_attributes_json.get_array('outputParameters').to_clob();
-    else
-      return json_array_t().to_clob();
-    end if;
+    return json_array_t().to_clob();
     
   exception
     when others then

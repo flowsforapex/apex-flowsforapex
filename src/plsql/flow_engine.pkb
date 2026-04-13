@@ -54,7 +54,7 @@ create or replace package body flow_engine as
   is
     l_async_before varchar2(10 char);
   begin
-    select coalesce ( objt.objt_attributes."apex"."customExtension"."async_before"
+    select coalesce ( objt.objt_attributes."apex"."async_before"
                     , flow_constants_pkg.gc_vcbool_false )
       into l_async_before
       from flow_objects objt
@@ -82,7 +82,7 @@ create or replace package body flow_engine as
       return false;
     end if;
 
-    select coalesce ( objt.objt_attributes."apex"."customExtension"."async_after"
+    select coalesce ( objt.objt_attributes."apex"."async_after"
                     , flow_constants_pkg.gc_vcbool_false )
       into l_async_after
       from flow_objects objt

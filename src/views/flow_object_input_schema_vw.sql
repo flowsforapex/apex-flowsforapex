@@ -17,12 +17,8 @@ select  objt.objt_dgrm_id,
         objt.objt_bpmn_id,
         objt.objt_name,
         objt.objt_tag_name,
-        flow_parameters.parameters_to_json_schema (
-          pi_parameters => coalesce(
-            objt.objt_attributes."apex"."inputParameters",
-            objt.objt_attributes."apex"."customExtension"."inputParameters"
-          ),
-          pi_user_data_only_yn => 'Y')  
+        flow_parameters.parameters_to_json_schema ( pi_parameters => objt.objt_attributes."apex"."inputParameters"
+                                                  , pi_user_data_only_yn => 'Y')  
         as  input_parameters_schema
   from  flow_objects objt
 with read only;

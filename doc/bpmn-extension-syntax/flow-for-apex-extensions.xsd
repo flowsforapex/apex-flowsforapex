@@ -15,6 +15,12 @@
             Version: 26.1
             Namespace: http://flowsforapex.com/bpmn
             Prefix: apex
+
+            apex:customExtension is a Flows for APEX development-team mechanism used to
+            decouple engine development from BPMN modeler development.  New extension
+            properties are introduced via apex:customExtension during development and
+            then promoted to first-class apex: elements or apex: attributes before
+            release.  apex:customExtension is not available in the published modeler UI.
         </xs:documentation>
     </xs:annotation>
 
@@ -667,26 +673,31 @@
     </xs:complexType>
 
     <!-- ================================================================ -->
-    <!-- PART 7: CUSTOM EXTENSION TYPE                                   -->
+    <!-- PART 7: DEVELOPMENT-TEAM EXTENSION TYPE                        -->
     <!-- ================================================================ -->
 
     <xs:complexType name="CustomExtensionType">
         <xs:annotation>
             <xs:documentation>
-                Custom extension for plugin/custom behavior.
-                
-                JSON structure defining custom processing logic.
-                Format: {"pluginName":"value", "config":{...}}
+                FOR FLOWS FOR APEX DEVELOPMENT TEAM USE ONLY.
+
+                apex:customExtension is an active development mechanism that decouples
+                BPMN engine development from BPMN modeler development.  New extension
+                properties are prototyped inside apex:customExtension while engine
+                support is built, then promoted to first-class apex: elements or
+                apex: attributes before public release.
+
+                apex:customExtension is not available in the published modeler UI and
+                should not be used in production models or third-party integrations.
+
+                Content must be a valid JSON structure, stored in the engine as the
+                apex.customExtension object within objt_attributes.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="expressionType" type="apex:ExpressionTypeEnum" minOccurs="1"/>
-            <xs:element name="expression" type="xs:string" minOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>JSON configuration for custom extension</xs:documentation>
-                </xs:annotation>
-            </xs:element>
+            <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:anyAttribute namespace="##any" processContents="lax"/>
     </xs:complexType>
 
     <!-- ================================================================ -->
@@ -726,7 +737,7 @@
     <xs:element name="loopCondition" type="apex:LoopConditionType"/>
     <xs:element name="loopMaximum" type="apex:LoopMaximumType"/>
 
-    <!-- Custom Extension -->
+    <!-- Internal / dev-team element — see Part 7 documentation -->
     <xs:element name="customExtension" type="apex:CustomExtensionType"/>
 
     <!-- ================================================================ -->
