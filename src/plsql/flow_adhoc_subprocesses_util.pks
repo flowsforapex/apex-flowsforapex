@@ -29,6 +29,7 @@ as
     , p_ai_service          out varchar2
     , p_ai_provider         out varchar2
     , p_ai_model            out varchar2
+    , p_subject_template    out flow_types_pkg.t_bpmn_attribute_vc2
     );
 
   function get_operating_mode
