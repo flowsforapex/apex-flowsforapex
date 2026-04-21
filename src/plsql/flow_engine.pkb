@@ -54,14 +54,14 @@ create or replace package body flow_engine as
   is
     l_async_before varchar2(10 char);
   begin
-    select coalesce ( objt.objt_attributes."apex"."async_before"
+    select coalesce ( objt.objt_attributes."apex"."asyncBefore"
                     , flow_constants_pkg.gc_vcbool_false )
       into l_async_before
       from flow_objects objt
      where objt.objt_id = p_objt_id;
 
     apex_debug.info
-    ( p_message => 'Current step async_before value: %0'
+    ( p_message => 'Current step asyncBefore value: %0'
     , p0        => l_async_before
     );
     
@@ -82,7 +82,7 @@ create or replace package body flow_engine as
       return false;
     end if;
 
-    select coalesce ( objt.objt_attributes."apex"."async_after"
+    select coalesce ( objt.objt_attributes."apex"."asyncAfter"
                     , flow_constants_pkg.gc_vcbool_false )
       into l_async_after
       from flow_objects objt
@@ -90,7 +90,7 @@ create or replace package body flow_engine as
        and objt.objt_bpmn_id = p_previous_objt_bpmn;
 
     apex_debug.info
-    ( p_message => 'Previous step async_after value: %0'    
+    ( p_message => 'Previous step asyncAfter value: %0'    
     , p0        => l_async_after
     );
 
