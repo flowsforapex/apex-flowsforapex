@@ -1810,7 +1810,7 @@ begin
             end if; -- loop counter
           when flow_constants_pkg.gc_iteration_parallel then
             if p_reset_step_key then
-              -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
+              -- the next step is the iterating object (not the 2nd phase of the implicit parallel gateway)
               -- so reset the step key in the iteration array
               apex_debug.message ('call from flow_engine...');
               flow_iteration.set_iteration_status
