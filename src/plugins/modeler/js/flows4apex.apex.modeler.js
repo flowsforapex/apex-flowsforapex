@@ -9,8 +9,27 @@ f4a.plugins.modeler = f4a.plugins.modeler || {
             ajaxIdentifier,
             itemsToSubmit,
             showCustomExtensions,
-            themePluginClass
+            themePluginClass,
+            monacoEditorVersion,
         } = options;
+
+        const monacoPath = `${apex_img_dir}libraries/monaco-editor/${monacoEditorVersion}/min/vs`;
+
+        // init monaco worker environment
+        window.MonacoEnvironment = {
+            getWorkerUrl: function (moduleId, label) {
+                return `${monacoPath}/base/worker/workerMain.js`;
+            }
+        };
+
+        // init monaco editor (will be used inside bundled code)
+        // TODO: check library path for different monaco/APEX versions (add to config?)
+        window._monacoReady = new Promise(function (resolve) {
+          require.config({ paths: { vs: monacoPath } });
+          require(['vs/editor/editor.main'], function () {
+            resolve(window.monaco);
+          });
+        });
 
         // store apex-related input
         this.regionId = regionId;

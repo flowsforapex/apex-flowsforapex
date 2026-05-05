@@ -17,6 +17,8 @@ as
       p_plugin => p_plugin
     , p_region => p_region
     );
+
+    apex_javascript.add_requirejs;
     
     -- get config value for plugin mode
     begin
@@ -61,6 +63,12 @@ as
         (
           p_name      => 'themePluginClass'
         , p_value     => v('THEME_PLUGIN_CLASS')
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'monacoEditorVersion'
+        , p_value     => p_plugin.attributes.get_varchar2('monaco_editor_version')
         , p_add_comma => true
         ) ||
         '})'
