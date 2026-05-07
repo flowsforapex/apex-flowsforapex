@@ -2,7 +2,7 @@ var f4a = f4a || {};
 f4a.plugins = f4a.plugins || {};
 f4a.plugins.modeler = f4a.plugins.modeler || {
     
-    render: function(options) {
+    render: async function(options) {
 
         const {
             regionId,
@@ -17,18 +17,28 @@ f4a.plugins.modeler = f4a.plugins.modeler || {
 
         // init monaco worker environment
         window.MonacoEnvironment = {
-            getWorkerUrl: function (moduleId, label) {
+            getWorkerUrl: function (_moduleId, _label) {
                 return `${monacoPath}/base/worker/workerMain.js`;
             }
         };
 
         // init monaco editor (will be used inside bundled code)
-        // TODO: check library path for different monaco/APEX versions (add to config?)
         window._monacoReady = new Promise(function (resolve) {
-          require.config({ paths: { vs: monacoPath } });
-          require(['vs/editor/editor.main'], function () {
-            resolve(window.monaco);
-          });
+            require.config({ paths: { vs: monacoPath } });
+            require(
+                ['vs/editor/editor.main']
+              , (_module) => { resolve(window.monaco) }
+              , (_eror) => { 
+                    apex.message.showErrors( [
+                    {
+                        type: "error",
+                        location: ["page"],
+                        message: "Couldn't find Monaco Editor. <br/> Please check the provided version in the Component Settings.",
+                        unsafe: false,
+                    },
+                ] );
+                }
+            );
         });
 
         // store apex-related input
