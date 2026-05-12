@@ -564,7 +564,8 @@ as
     l_path_parts    apex_t_varchar2;
     l_json_array    sys.json_array_t;
     l_array_size    number;
-    l_result        clob;
+    l_result        varchar2(32767);
+    l_item_value    varchar2(32767);
   begin
     apex_debug.enter('flow_settings.get_json_setting_multiline', 'path', pi_setting_path);
 
@@ -592,10 +593,19 @@ as
       l_array_size := l_json_array.get_size;
 
       for i in 0 .. l_array_size - 1 loop
+        l_item_value := l_json_array.get_string(i);
+
+        if    nvl(length(l_result), 0)
+            + case when i > 0 then length(pi_line_separator) else 0 end
+            + length(l_item_value) > 32767
+        then
+          raise value_error;
+        end if;
+
         if i > 0 then
           l_result := l_result || pi_line_separator;
         end if;
-        l_result := l_result || l_json_array.get_string(i);
+        l_result := l_result || l_item_value;
       end loop;
 
       return l_result;
