@@ -653,7 +653,7 @@ For BPMN files using Flows for APEX extensions:
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-  xmlns:apex="http://flowsforapex.com/bpmn"
+  xmlns:apex="https://flowsforapex.org"
   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
   id="Definitions_1"
