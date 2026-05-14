@@ -43,6 +43,7 @@ PROMPT >> Engine
 @plsql/flow_parameters.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
+@plsql/flow_auto_form_tasks_pkg.pks
 @plsql/flow_plsql_runner_pkg.pks
 @plsql/flow_apex_session.pks
 @plsql/flow_subprocesses.pks
@@ -92,6 +93,7 @@ PROMPT >> Installing Views
 @views/flow_diagrams_instanciated_lov.sql
 @views/flow_instance_timeline_vw.sql
 @views/flow_startable_diagrams_vw.sql
+@views/flow_startable_diagrams_input_schema_vw.sql
 @views/flow_message_subscriptions_vw.sql
 @views/flow_rest_diagrams_vw.sql
 @views/flow_rest_message_subscriptions_vw.sql

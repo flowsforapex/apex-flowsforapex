@@ -72,6 +72,7 @@ create or replace package body flow_tasks as
     l_priority              flow_subflows.sbfl_priority%type;
     l_due_on_json         flow_types_pkg.t_bpmn_attribute_vc2;
     l_due_on              flow_subflows.sbfl_due_on%type;
+    l_auto_form_pkg_count   pls_integer;
   begin
   -- current implementation is limited to 3 userTask types, which are:
   --   - to run a user defined APEX page via the Task Inbox View
@@ -136,6 +137,27 @@ create or replace package body flow_tasks as
        ( p_sbfl_info => p_sbfl_info
        , p_step_info => p_step_info
        );
+      when flow_constants_pkg.gc_apex_usertask_apex_auto_form then
+        select count(*)
+          into l_auto_form_pkg_count
+          from user_objects
+         where object_name = 'FLOW_AUTO_FORM_TASKS_PKG'
+           and object_type = 'PACKAGE BODY'
+           and status = 'VALID';
+
+        if l_auto_form_pkg_count = 1 then
+          flow_auto_form_tasks_pkg.process_auto_form_task
+          ( p_sbfl_info => p_sbfl_info
+          , p_step_info => p_step_info
+          );
+        else
+          flow_errors.handle_instance_error
+          ( pi_prcs_id     => p_sbfl_info.sbfl_prcs_id
+          , pi_sbfl_id     => p_sbfl_info.sbfl_id
+          , pi_message_key => 'feature-requires-ee'
+          );
+          -- $F4AMESSAGE 'feature-requires-ee' || 'Processing this feature requires licensing Flows for APEX Enterprise Edition.'
+        end if;
       else
         null;
     end case;
@@ -155,8 +177,6 @@ create or replace package body flow_tasks as
     );
     -- current implementation is limited to one scriptTask type, which is to run a user defined PL/SQL script
     -- future scriptTask types could include standarised template scripts ??
-    -- current implementation is limited to synchronous script execution (i.e., script is run as part of Flows for APEX process)
-    -- future implementations could include async scriptTasks, where script execution is queued.
   
     -- set work started time
     flow_engine.start_step 
