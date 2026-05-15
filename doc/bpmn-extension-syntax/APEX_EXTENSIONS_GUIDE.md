@@ -1,7 +1,7 @@
 # Flows for APEX BPMN Extensions Guide
 
 Version: 26.1  
-Namespace: `http://flowsforapex.com/bpmn`  
+Namespace: `http://flowsforapex.org`  
 Prefix: `apex`
 
 ## Table of Contents
