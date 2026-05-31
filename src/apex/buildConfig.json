@@ -188,6 +188,7 @@
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0014_variable_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0019_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0020_instance_timeline_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0024_message_start_listeners_vw.sql", "add_show_errors": false }
       ]
     }
   , {

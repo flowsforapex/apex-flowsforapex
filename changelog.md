@@ -1,5 +1,14 @@
 # Flows for APEX - Change Log
 
+## v26.1 Community Edition
+- adds Task input and Output Parameters, which can be used in this release to pass parameters into / out of PL/SQL script tasks.
+- adds JSONpath variable expressions to declaritively extract scalar or JSON objects from a JSON process variable
+- includes a .xsd file defining Flows for APEX extensions to BPMN, for use with AI coding tools.
+- Engine app now includes a report showing any active Message Start Event listeners, supporting EE Message Flow Start Events.
+- All tasks now include a Description for better human and AI understanding of their purpose.
+- Fixes a bug that sometimes caused restarted errored subflows that subsequently error again to cause instance failures.
+- Support for APEX v26.1
+
 ## v25.1 Community Edition
 - Adds an AI-generation Service Task, using the APEX_AI services.
 - Logging Enhancements:
