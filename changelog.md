@@ -1,8 +1,8 @@
 # Flows for APEX - Change Log
 
 ## v26.1 Community Edition
-- adds Task input and Output Parameters, which can be used in this release to pass parameters into / out of PL/SQL script tasks.
-- adds JSONpath variable expressions to declaritively extract scalar or JSON objects from a JSON process variable
+- adds Task Input and Output Parameters, which can be used in this release to pass parameters into / out of PL/SQL script tasks.
+- adds JSONPath variable expressions to declaratively extract scalar or JSON objects from a JSON process variable
 - includes a .xsd file defining Flows for APEX extensions to BPMN, for use with AI coding tools.
 - Engine app now includes a report showing any active Message Start Event listeners, supporting EE Message Flow Start Events.
 - All tasks now include a Description for better human and AI understanding of their purpose.
