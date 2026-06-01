@@ -123,6 +123,7 @@ drop view flow_p0014_subflows_vw;
 drop view flow_p0014_variable_log_vw;
 drop view flow_p0019_vw;
 drop view flow_p0020_instance_timeline_vw;
+drop view flow_p0024_message_start_listeners_vw;
 drop view flow_task_inbox_vw;
 drop view flow_instance_connections_lov;
 drop view flow_instance_scopes_vw;
