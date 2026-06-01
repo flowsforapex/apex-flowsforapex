@@ -341,13 +341,14 @@ create or replace package body flow_api_pkg as
   , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type
   )
   is
-    l_session_id  number;
+    e_feature_requires_ee exception;
+    l_session_id          number;
   begin
     if v('APP_SESSION') is null then
       l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
       apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
     end if;
-
+  $IF flow_apex_env.ee $THEN
     flow_adhoc_subprocesses.approve_ai_recommendation
     ( p_process_id       => p_process_id
     , p_subflow_id       => p_subflow_id
@@ -355,11 +356,24 @@ create or replace package body flow_api_pkg as
     , p_asad_id          => p_asad_id
     , p_activity_bpmn_id => p_activity_bpmn_id
     );
-
+  $ELSE
+    raise e_feature_requires_ee;
+  $END
     if l_session_id is not null then
       flow_apex_session.delete_session (p_session_id => l_session_id);
     end if;
   exception
+    when e_feature_requires_ee then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'feature-requires-ee'
+      , p0             => 'Adhoc AI Recommendation Approval'
+      );
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id);
+      end if;
+      raise;
     when others then
       if l_session_id is not null then
         flow_apex_session.delete_session (p_session_id => l_session_id);
@@ -375,24 +389,38 @@ create or replace package body flow_api_pkg as
   , p_asad_id     in flow_adhoc_subproc_ai_decisions.asad_id%type
   )
   is
-    l_session_id  number;
+    e_feature_requires_ee exception;    
+    l_session_id          number;
   begin
     if v('APP_SESSION') is null then
       l_session_id := flow_apex_session.create_api_session (p_subflow_id => p_subflow_id);
       apex_session.set_debug ( p_session_id => l_session_id, p_level => apex_debug.c_log_level_app_trace );
     end if;
-
+  $IF flow_apex_env.ee $THEN
     flow_adhoc_subprocesses.discard_ai_recommendation
     ( p_process_id => p_process_id
     , p_subflow_id => p_subflow_id
     , p_step_key   => p_step_key
     , p_asad_id    => p_asad_id
     );
-
+  $ELSE
+    raise e_feature_requires_ee;
+  $END
     if l_session_id is not null then
       flow_apex_session.delete_session (p_session_id => l_session_id);
     end if;
   exception
+      when e_feature_requires_ee then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id     => p_process_id
+      , pi_sbfl_id     => p_subflow_id
+      , pi_message_key => 'feature-requires-ee'
+      , p0             => 'Adhoc AI Recommendation Approval'
+      );
+      if l_session_id is not null then
+        flow_apex_session.delete_session (p_session_id => l_session_id);
+      end if;
+      raise;
     when others then
       if l_session_id is not null then
         flow_apex_session.delete_session (p_session_id => l_session_id);
