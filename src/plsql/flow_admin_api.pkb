@@ -461,16 +461,15 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
     end if;
 
     begin
-      execute immediate
-        'begin :x := flow_admin_api_ee.test_ai_connection('
-     || 'p_ai_interface => :1, p_ai_service => :2, p_ai_provider => :3, p_ai_model => :4, p_prompt => :5); end;'
-      using out l_result
-          , in p_ai_interface
-          , in p_ai_service
-          , in p_ai_provider
-          , in p_ai_model
-          , in p_prompt;
-
+      l_result :=
+        flow_admin_api_ee.test_ai_connection
+        (
+          p_ai_interface => p_ai_interface
+        , p_ai_service   => p_ai_service
+        , p_ai_provider  => p_ai_provider
+        , p_ai_model     => p_ai_model
+        , p_prompt       => p_prompt
+        );
       return l_result;
     exception
       when others then
