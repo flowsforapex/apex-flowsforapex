@@ -113,3 +113,22 @@ select prcs_id, prcs_status, systimestamp as json_created_date,
  where prov.prov_var_name   = 'BUSINESS_REF'
    and prov.prov_scope      = 0
 ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_instance_summary_json_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Complete process instance state as nested JSON including diagrams, events, steps, and variable history. If process instance is not yet completed,  this JSON contains state as at creation date.'
+  , add note    'This view is intended for archiving the full state of a process instance as a single JSON document, which can then be parsed and used to display instance details, timelines, variable histories, etc.  Note that the summary_json column can be quite large and may require CLOB handling on the application side.  It can also be used for problem diagnosis and debugging to understand the full state of a process instance at a given point in time.'
+  );
+
+alter view flow_instance_summary_json_vw modify (prcs_id           annotations (add content 'Process instance identifier'));
+alter view flow_instance_summary_json_vw modify (prcs_status       annotations (add content 'Current execution status of the process instance'));
+alter view flow_instance_summary_json_vw modify (json_created_date annotations (add content 'Timestamp when this JSON summary was generated'));
+alter view flow_instance_summary_json_vw modify (summary_json      annotations (add content 'Full instance state as a nested JSON document (CLOB)'));
+
+whenever sqlerror exit failure

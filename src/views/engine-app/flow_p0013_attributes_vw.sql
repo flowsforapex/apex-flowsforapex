@@ -21,3 +21,18 @@ as
       bpmn_id 
    from datas
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0013_attributes_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'BPMN object and connection extension attributes as formatted JSON for the debug panel in engine app page 13'
+  );
+
+alter view flow_p0013_attributes_vw modify (json_attributes annotations (add content 'Extension attributes of the BPMN object or connection formatted as pretty-printed JSON'));
+
+whenever sqlerror exit failure

@@ -99,3 +99,26 @@ with all_completed as (
     left join user_tasks usta
       on prcs.prcs_id = usta.prcs_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_viewer_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'BPMN viewer data with highlighting states, call activity relationships, and user task URLs for diagram visualisation'
+  , add note    'This view is intended for querying the data needed to render a single process diagram in a viewer. It is not intended for general querying across multiple instances or for other purposes. For more general querying of instance states, use the flow_instance_variables_vw, flow_instance_events_vw, and flow_instance_gateways_lov views instead.'
+  );
+
+alter view flow_viewer_vw modify (prcs_id            annotations (add content 'Process instance identifier'));
+alter view flow_viewer_vw modify (prdg_id            annotations (add content 'Instance diagram record being visualised'));
+alter view flow_viewer_vw modify (dgrm_content       annotations (add content 'BPMN XML content for rendering in the viewer'));
+alter view flow_viewer_vw modify (highlighting_data  annotations (add content 'JSON structure defining current, completed, and error element highlighting'));
+alter view flow_viewer_vw modify (call_activity_data annotations (add content 'JSON structure describing call activity sub-process relationships'));
+alter view flow_viewer_vw modify (iteration_data     annotations (add content 'JSON structure describing loop and multi-instance iteration state'));
+alter view flow_viewer_vw modify (user_task_data     annotations (add content 'JSON structure with user task step keys and APEX page display data'));
+alter view flow_viewer_vw modify (badges_data        annotations (add content 'JSON structure for count badge overlays on diagram elements'));
+
+whenever sqlerror exit failure

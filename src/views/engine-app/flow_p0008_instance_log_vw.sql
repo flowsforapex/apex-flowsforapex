@@ -25,3 +25,20 @@ as
        , lgpr.lgpr_severity
     from flow_instance_event_log lgpr
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0008_instance_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Process instance event log with event icons and error HTML formatting for engine app page 8'
+  );
+
+alter view flow_p0008_instance_log_vw modify (lgpr_prcs_event_icon annotations (add content 'FA icon CSS class representing the event type'));
+alter view flow_p0008_instance_log_vw modify (pretag annotations (add content 'HTML pre/code open tag for error info syntax display; null when no error'));
+alter view flow_p0008_instance_log_vw modify (posttag annotations (add content 'HTML pre/code close tag for error info syntax display; null when no error'));
+
+whenever sqlerror exit failure

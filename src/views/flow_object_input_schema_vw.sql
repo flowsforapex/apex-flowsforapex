@@ -23,3 +23,22 @@ select  objt.objt_dgrm_id,
         as  input_parameters_schema
   from  flow_objects objt
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_object_input_schema_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'JSON schema definitions for input parameters of APEX-configured flow objects'
+  );
+
+alter view flow_object_input_schema_vw modify (objt_dgrm_id            annotations (add content 'Diagram containing this object (FK: flow_diagrams)'));
+alter view flow_object_input_schema_vw modify (objt_bpmn_id            annotations (add content 'BPMN identifier of the object from the diagram XML'));
+alter view flow_object_input_schema_vw modify (objt_name               annotations (add content 'Display name of the BPMN object'));
+alter view flow_object_input_schema_vw modify (objt_tag_name           annotations (add content 'BPMN element type, e.g. bpmn:userTask'));
+alter view flow_object_input_schema_vw modify (input_parameters_schema annotations (add content 'JSON schema for input parameters defined via APEX custom extension properties'));
+
+whenever sqlerror exit failure

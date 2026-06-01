@@ -123,3 +123,16 @@ as select
      , current_obj
      from table ( flow_api_pkg.get_current_tasks ( p_context => 'MY_TASKS'))
      ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_apex_my_combined_task_list_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Combined APEX tasks (from Workflows and Human Tasks)and Flows user tasks for the current user with full task metadata'
+  );
+
+whenever sqlerror exit failure

@@ -35,3 +35,20 @@ select dgrm.dgrm_id
    and objt.objt_attributes."apex"."isStartable" = 'true'
   with read only;
 
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_startable_diagrams_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'Diagrams marked as startable with user and group permissions for initiating process instances'
+  );
+
+alter view flow_startable_diagrams_vw modify (process_name annotations (add content 'Display name of the startable process start event'));
+alter view flow_startable_diagrams_vw modify (process_bpmn_id annotations (add content 'BPMN ID of the startable process object'));
+alter view flow_startable_diagrams_vw modify (potential_starting_users annotations (add content 'Evaluated list of users permitted to start this process'));
+alter view flow_startable_diagrams_vw modify (potential_starting_groups annotations (add content 'Evaluated list of groups permitted to start this process'));
+alter view flow_startable_diagrams_vw modify (excluded_starting_users annotations (add content 'Evaluated list of users excluded from starting this process'));
+whenever sqlerror exit failure

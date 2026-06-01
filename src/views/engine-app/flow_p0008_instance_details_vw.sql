@@ -16,3 +16,25 @@ as
        prcs_logging_level as logging_level
   from flow_instances_vw
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0008_instance_details_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Process instance detail with display-friendly column names for engine app page 8'
+  );
+
+alter view flow_p0008_instance_details_vw modify (status annotations (add content 'Process status (running, completed, error, etc.)'));
+alter view flow_p0008_instance_details_vw modify (priority annotations (add content 'Process instance priority level'));
+alter view flow_p0008_instance_details_vw modify (initialized_on annotations (add content 'Timestamp when the process was initialized, in session timezone'));
+alter view flow_p0008_instance_details_vw modify (last_update_on annotations (add content 'Timestamp of the last modification, in session timezone'));
+alter view flow_p0008_instance_details_vw modify (due_on annotations (add content 'Process due date and time in session timezone'));
+alter view flow_p0008_instance_details_vw modify (business_reference annotations (add content 'Business reference value for this process instance'));
+alter view flow_p0008_instance_details_vw modify (was_altered annotations (add content 'Y if the process diagram was altered while this instance was running'));
+alter view flow_p0008_instance_details_vw modify (logging_level annotations (add content 'Logging verbosity level configured for this process instance'));
+
+whenever sqlerror exit failure

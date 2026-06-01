@@ -55,3 +55,34 @@ select events.operation
    and nvl(bpmn.bpmn_interrupting, 2)   = events.object_interrupting
 order by events.performed_on
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_instance_events_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Process event log with object types, severity levels, and performer information'
+  );
+
+alter view flow_instance_events_vw modify (operation       annotations (add content 'Event operation type, e.g. complete, start, error, set-variable'));
+alter view flow_instance_events_vw modify (description     annotations (add content 'Human-readable description of the event'));
+alter view flow_instance_events_vw modify (objt            annotations (add content 'BPMN ID of the object involved in this event'));
+alter view flow_instance_events_vw modify (object_type     annotations (add content 'BPMN element type of the object, e.g. bpmn:userTask'));
+alter view flow_instance_events_vw modify (object_sub_type annotations (add content 'BPMN element sub-type, e.g. bpmn:messageEventDefinition'));
+alter view flow_instance_events_vw modify (bpmn_icon       annotations (add content 'CSS icon class for the BPMN object type'));
+alter view flow_instance_events_vw modify (bpmn_super_type annotations (add content 'High-level BPMN category: event, gateway, activity, etc.'));
+alter view flow_instance_events_vw modify (proc_var        annotations (add content 'Process variable name involved in this event, if applicable'));
+alter view flow_instance_events_vw modify (value           annotations (add content 'Variable value or event payload at the time of the event'));
+alter view flow_instance_events_vw modify (subflow         annotations (add content 'Subflow ID on which the event occurred'));
+alter view flow_instance_events_vw modify (step_key        annotations (add content 'Step key identifying the step within the process where the event occurred'));
+alter view flow_instance_events_vw modify (severity        annotations (add content 'Event severity label: 1 to 8, with 1 being the most severe'));
+alter view flow_instance_events_vw modify (process_level   annotations (add content 'Nesting level of the sub-diagram where the event occurred'));
+alter view flow_instance_events_vw modify (event_comment   annotations (add content 'Optional descriptive comment attached to the event'));
+alter view flow_instance_events_vw modify (performed_on    annotations (add content 'Timestamp when this event was recorded'));
+alter view flow_instance_events_vw modify (performed_by    annotations (add content 'User or system that triggered this event'));
+alter view flow_instance_events_vw modify (prcs_id         annotations (add content 'Process instance this event belongs to'));
+
+whenever sqlerror exit failure

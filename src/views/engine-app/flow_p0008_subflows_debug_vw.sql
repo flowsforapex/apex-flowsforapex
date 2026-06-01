@@ -72,3 +72,27 @@ as
     from flow_subflows_vw sbfl
 with read only
 ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0008_subflows_debug_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Debug subflow view exposing all internal columns, status icons, and action controls (not installed by default)'
+  );
+
+alter view flow_p0008_subflows_debug_vw modify (sbfl_current annotations (add content 'Display name of the current BPMN object (from sbfl_current_name)'));
+alter view flow_p0008_subflows_debug_vw modify (calling_object annotations (add content 'Display name of the calling object or Main Diagram for the root level'));
+alter view flow_p0008_subflows_debug_vw modify (sbfl_starting_object annotations (add content 'Display name of the subflow starting object'));
+alter view flow_p0008_subflows_debug_vw modify (sbfl_status_icon annotations (add content 'FA icon CSS class for the subflow status'));
+alter view flow_p0008_subflows_debug_vw modify (actions annotations (add content 'Null placeholder for inline actions column'));
+alter view flow_p0008_subflows_debug_vw modify (checkbox annotations (add content 'APEX checkbox widget with status, process, step key, and reservation data attributes'));
+alter view flow_p0008_subflows_debug_vw modify (quick_action_icon annotations (add content 'FA icon CSS class for the applicable quick action'));
+alter view flow_p0008_subflows_debug_vw modify (quick_action_label annotations (add content 'Translated label for the quick action button'));
+alter view flow_p0008_subflows_debug_vw modify (quick_action annotations (add content 'Action identifier string used by the JavaScript action handler'));
+alter view flow_p0008_subflows_debug_vw modify (timer_status_info annotations (add content 'Formatted scheduled timer time for subflows waiting for a timer'));
+
+whenever sqlerror exit failure

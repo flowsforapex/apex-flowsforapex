@@ -123,3 +123,17 @@ as select
                               )
           --- if lanes not always being used, change this to your situation
      ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_apex_task_inbox_my_tasks_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'APEX approval tasks and Flows user tasks assigned to the current user for task inbox display (deprecated - use flow_apex_my_combined_task_list_vw instead)'
+  , add deprecation 'This view is deprecated and will be removed in a future release. Use flow_apex_my_combined_task_list_vw instead.'
+  );
+
+whenever sqlerror exit failure

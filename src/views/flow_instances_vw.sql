@@ -29,3 +29,17 @@ as
      and prov.prov_var_type = 'VARCHAR2' 
      and prov.prov_scope = 0
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_instances_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'All process instances with diagram metadata, status, priority, timestamps, and business reference'
+  );
+
+alter view flow_instances_vw modify (prcs_business_ref annotations (add content 'Business reference value from the BUSINESS_REF process variable'));
+whenever sqlerror exit failure

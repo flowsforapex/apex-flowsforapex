@@ -16,3 +16,16 @@ as
        , sbfl.sbfl_apex_task_id
     from flow_subflows sbfl
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0013_subflows_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Subflows with timezone-adjusted timestamps for the debug panel in engine app page 13'
+  );
+
+whenever sqlerror exit failure

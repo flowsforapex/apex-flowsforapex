@@ -35,3 +35,19 @@ select   prcs_id
 from flow_instances_vw
 where prcs_init_by =  sys_context('apex$session','app_user') 
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_my_originated_instances_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Process instances initiated by the current user with status styling and relative timestamps'
+  );
+
+alter view flow_my_originated_instances_vw modify (prcs_status_css annotations (add content 'APEX CSS class for status-based colour styling'));
+alter view flow_my_originated_instances_vw modify (prcs_init_since annotations (add content 'Human-readable relative time since the instance was initiated'));
+alter view flow_my_originated_instances_vw modify (prcs_last_update_since annotations (add content 'Human-readable relative time since the last update'));
+whenever sqlerror exit failure

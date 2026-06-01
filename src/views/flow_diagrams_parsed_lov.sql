@@ -15,3 +15,16 @@ as
     and dgrm_status in ('draft','released')
   with read only
   ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_diagrams_parsed_lov annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'Draft and released parsed diagrams available for LOV selection'
+  );
+
+whenever sqlerror exit failure

@@ -16,3 +16,16 @@ as
     from flow_instance_event_log lgpr
     where lgpr_objt_id is not null
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0013_step_events_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Step-level events with display-friendly column aliases for engine app page 13'
+  );
+
+whenever sqlerror exit failure

@@ -16,3 +16,16 @@ as
        , lgsf.lgsf_comment
     from flow_step_event_log lgsf
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0013_step_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Step completion log with timezone-adjusted timestamps for engine app page 13'
+  );
+
+whenever sqlerror exit failure

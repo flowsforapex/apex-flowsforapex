@@ -18,3 +18,16 @@ as
     )
   with read only
   ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_diagrams_instanciated_lov annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'Diagrams with active process instances for instance-filtered LOV selection'
+  );
+
+whenever sqlerror exit failure

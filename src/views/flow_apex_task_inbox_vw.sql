@@ -123,3 +123,17 @@ left join flow_process_variables bref
 where objt_curr.objt_tag_name = 'bpmn:userTask' 
   and sbfl.sbfl_status = 'running'
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_apex_task_inbox_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Running Flows user tasks with timing, assignment, priority, and lane information for APEX task inbox display. This view is intended for direct use in APEX applications but can be used elsewhere as well.  Deprecated - use flow_apex_my_combined_task_list_vw instead, which combines with APEX native tasks and provides more metadata.'
+  , add deprecation 'This view is deprecated and will be removed in a future release. Use flow_apex_my_combined_task_list_vw instead.'
+  );
+
+whenever sqlerror exit failure

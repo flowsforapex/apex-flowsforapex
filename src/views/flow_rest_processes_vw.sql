@@ -44,3 +44,25 @@ create or replace view flow_rest_processes_vw
           , p.prcs_status
           , p.prcs_init_ts
           , p.prcs_init_by;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_rest_processes_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Process instances with aggregated variables and HATEOAS links formatted for REST API'
+  );
+
+alter view flow_rest_processes_vw modify (dgrm_id      annotations (add content 'Diagram this instance was created from'));
+alter view flow_rest_processes_vw modify (prcs_id      annotations (add content 'Unique process instance identifier'));
+alter view flow_rest_processes_vw modify (name         annotations (add content 'Process instance name'));
+alter view flow_rest_processes_vw modify (status       annotations (add content 'Current execution status'));
+alter view flow_rest_processes_vw modify (init_ts      annotations (add content 'Timestamp when the instance was initialised'));
+alter view flow_rest_processes_vw modify (init_by      annotations (add content 'User who initialised the instance'));
+alter view flow_rest_processes_vw modify (process_vars annotations (add content 'JSON array of current process variables'));
+alter view flow_rest_processes_vw modify (links        annotations (add content 'HATEOAS links JSON for this process instance resource'));
+
+whenever sqlerror exit failure

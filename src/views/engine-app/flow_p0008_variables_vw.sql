@@ -25,3 +25,22 @@ as
         case when instr(prov_var_name, ':route') > 0 then 'true' else 'false' end is_gateway_route
     from flow_instance_variables_vw
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0008_variables_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Process variables with coalesced display value, gateway route flag, and checkbox widget for engine app page 8'
+  );
+
+alter view flow_p0008_variables_vw modify (checkbox annotations (add content 'APEX checkbox widget with process ID data attribute'));
+alter view flow_p0008_variables_vw modify (action annotations (add content 'Null placeholder for an inline action column'));
+alter view flow_p0008_variables_vw modify (calling_object annotations (add content 'Display name of the variable scope diagram or Main Diagram'));
+alter view flow_p0008_variables_vw modify (prov_var_value annotations (add content 'Variable value coalesced across all typed columns as VARCHAR2'));
+alter view flow_p0008_variables_vw modify (is_gateway_route annotations (add content 'True/false string indicating whether this variable is a gateway routing control'));
+
+whenever sqlerror exit failure

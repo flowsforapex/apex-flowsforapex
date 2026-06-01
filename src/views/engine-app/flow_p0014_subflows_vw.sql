@@ -18,3 +18,18 @@ as
                on sbfl.sbfl_current = objt.objt_bpmn_id
               and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0014_subflows_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Subflows with object name lookup and timezone-adjusted timestamps for engine app page 14'
+  );
+
+alter view flow_p0014_subflows_vw modify (current_object annotations (add content 'Display name of the current BPMN object'));
+
+whenever sqlerror exit failure

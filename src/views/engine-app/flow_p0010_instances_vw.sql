@@ -53,3 +53,22 @@ as
           )
 with read only
 ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0010_instances_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Process instances with diagram and status icons, action placeholders, and checkbox widget for engine app page 10'
+  );
+
+alter view flow_p0010_instances_vw modify (prcs_dgrm_status_icon annotations (add content 'FA icon CSS class for the diagram status'));
+alter view flow_p0010_instances_vw modify (prcs_status_icon annotations (add content 'FA icon CSS class for the process instance status'));
+alter view flow_p0010_instances_vw modify (btn annotations (add content 'Null placeholder for an action button column'));
+alter view flow_p0010_instances_vw modify (checkbox annotations (add content 'APEX checkbox widget with process ID and status data attributes'));
+alter view flow_p0010_instances_vw modify (quick_action annotations (add content 'Null placeholder for a quick action column'));
+
+whenever sqlerror exit failure

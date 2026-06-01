@@ -113,3 +113,34 @@ group by sbfl_prcs_id, sbfl_dgrm_id, sbfl_diagram_level
     left join user_tasks usta
       on prcs.prcs_id = usta.prcs_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_instance_details_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Per-diagram-level view for each instance showing current, completed, and error objects with user task URLs'
+  );
+
+alter view flow_instance_details_vw modify (prcs_id           annotations (add content 'Process instance identifier'));
+alter view flow_instance_details_vw modify (prcs_name         annotations (add content 'Process instance name'));
+alter view flow_instance_details_vw modify (prdg_id           annotations (add content 'Instance diagram record for this level'));
+alter view flow_instance_details_vw modify (prdg_prdg_id      annotations (add content 'Parent instance diagram record (FK: flow_instance_diagrams)'));
+alter view flow_instance_details_vw modify (diagram_level     annotations (add content 'Nesting depth of this diagram within the instance'));
+alter view flow_instance_details_vw modify (calling_dgrm      annotations (add content 'Name of the diagram that called this sub-diagram'));
+alter view flow_instance_details_vw modify (calling_objt      annotations (add content 'BPMN ID of the call activity that invoked this sub-diagram'));
+alter view flow_instance_details_vw modify (breadcrumb        annotations (add content 'Slash-separated path of diagram names from root to this level'));
+alter view flow_instance_details_vw modify (drilldown_allowed annotations (add content 'Y if the user may drill into this sub-diagram level'));
+alter view flow_instance_details_vw modify (dgrm_content      annotations (add content 'BPMN XML content for this diagram level'));
+alter view flow_instance_details_vw modify (all_completed     annotations (add content 'Comma-separated BPMN IDs of all completed objects at this level'));
+alter view flow_instance_details_vw modify (last_completed    annotations (add content 'BPMN ID of the most recently completed object'));
+alter view flow_instance_details_vw modify (all_current       annotations (add content 'Comma-separated BPMN IDs of all objects currently active'));
+alter view flow_instance_details_vw modify (all_errors        annotations (add content 'Comma-separated BPMN IDs of objects currently in error'));
+alter view flow_instance_details_vw modify (user_task_urls    annotations (add content 'JSON structure of user task step keys and their APEX page URLs'));
+alter view flow_instance_details_vw modify (iteration_data    annotations (add content 'JSON structure describing loop and multi-instance iteration state'));
+alter view flow_instance_details_vw modify (prcs_business_ref annotations (add content 'Business reference key value for this instance'));
+
+whenever sqlerror exit failure

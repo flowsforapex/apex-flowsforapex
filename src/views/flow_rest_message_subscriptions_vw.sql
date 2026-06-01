@@ -17,3 +17,24 @@ create or replace view flow_rest_message_subscriptions_vw
        , ms.msub_sbfl_id      as sbfl_id
        , ms.msub_step_key     as step_key
   from flow_message_subscriptions ms;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_rest_message_subscriptions_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Active message subscriptions with simplified column names for REST API client consumption'
+  );
+
+alter view flow_rest_message_subscriptions_vw modify (msub_id  annotations (add content 'Unique message subscription identifier'));
+alter view flow_rest_message_subscriptions_vw modify (name     annotations (add content 'Message name this subscription is listening for'));
+alter view flow_rest_message_subscriptions_vw modify (key      annotations (add content 'Correlation key name for message routing'));
+alter view flow_rest_message_subscriptions_vw modify (value    annotations (add content 'Correlation key value for message routing'));
+alter view flow_rest_message_subscriptions_vw modify (prcs_id  annotations (add content 'Process instance waiting for this message'));
+alter view flow_rest_message_subscriptions_vw modify (sbfl_id  annotations (add content 'Subflow waiting for this message'));
+alter view flow_rest_message_subscriptions_vw modify (step_key annotations (add content 'Step key of the receiving message event'));
+
+whenever sqlerror exit failure

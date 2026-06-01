@@ -18,6 +18,11 @@ PROMPT >> -------------------------------------------
 
 @@feature-adhoc-subprocs.sql
 
+PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
+-- note this is only required for 25.1 to 261 upgrade. For subsequent migrations, use replace. Note Oracle 19c bug on ADD OR REPLACE of annotations which complicates this.
+-- run this as last feature migration.
+@@../../ddl/install_ddl_annotations.sql
+
 @@set_flows_version.sql
 
 

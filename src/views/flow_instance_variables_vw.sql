@@ -17,3 +17,16 @@ as
     join flow_processes prcs
       on prcs.prcs_id = prov.prov_prcs_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_instance_variables_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Current process variables for a process instance with names, types, scopes, and typed values'
+  );
+
+whenever sqlerror exit failure

@@ -18,3 +18,17 @@ as
     from flow_variable_event_log
 with read only;
 
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0013_variable_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Variable change log with type-coalesced display value for engine app page 13'
+  );
+
+alter view flow_p0013_variable_log_vw modify (lgvr_value annotations (add content 'Variable value coalesced across all typed columns as VARCHAR2'));
+
+whenever sqlerror exit failure

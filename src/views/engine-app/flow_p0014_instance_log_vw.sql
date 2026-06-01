@@ -25,3 +25,20 @@ as
        , case when lgpr_error_info is not null then '</code></pre>' end as posttag
     from flow_instance_event_log lgpr
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+whenever sqlerror continue
+
+alter view flow_p0014_instance_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Instance event log with event icons and error HTML formatting for engine app page 14'
+  );
+
+alter view flow_p0014_instance_log_vw modify (lgpr_prcs_event_icon annotations (add content 'FA icon CSS class representing the event type'));
+alter view flow_p0014_instance_log_vw modify (pretag annotations (add content 'HTML pre/code open tag for error info display; null when no error'));
+alter view flow_p0014_instance_log_vw modify (posttag annotations (add content 'HTML pre/code close tag for error info display; null when no error'));
+
+whenever sqlerror exit failure

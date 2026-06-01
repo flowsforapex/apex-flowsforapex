@@ -166,6 +166,13 @@ comment on column flow_adhoc_subproc_ai_decisions.asad_created_by is 'User/syste
 comment on column flow_adhoc_subprocs.ahsp_next_recommended_check is 'AI-recommended timestamp for next check/wake-up';
 comment on column flow_adhoc_subprocs.ahsp_next_check_reason is 'AI-provided reason for the recommended check timing';
 
+PROMPT >> Enable support for adhoc sub process (ADHOCSP) in BPMN types
+update flow_bpmn_types
+   set bpmn_is_supported = 'Y'
+ where bpmn_code = 'ADHOCSP'
+   and bpmn_is_supported != 'Y';
+commit;
+
 PROMPT >> >> Schema Changes Completed
 PROMPT >> --------------------------------------------------- 
 
