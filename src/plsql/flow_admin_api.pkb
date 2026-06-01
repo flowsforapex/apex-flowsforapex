@@ -445,41 +445,40 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
   , p_prompt         in clob default 'Hello AI World'
   ) return clob
   is
-    l_license_edition  flow_configuration.cfig_value%type;
+    e_feature_requires_ee exception;
     l_result          clob;
     l_error_response  sys.json_object_t;
   begin
-    l_license_edition := lower(nvl(get_config_value('license_edition', 'community'), 'community'));
-
-    if l_license_edition != 'enterprise' then
+  $IF flow_apex_env.ee $THEN
+    l_result :=
+      flow_admin_api_ee.test_ai_connection
+      (
+        p_ai_interface => p_ai_interface
+      , p_ai_service   => p_ai_service
+      , p_ai_provider  => p_ai_provider
+      , p_ai_model     => p_ai_model
+      , p_prompt       => p_prompt
+      );
+    return l_result;
+  $ELSE
+    raise e_feature_requires_ee;
+  $END
+  exception
+    when e_feature_requires_ee then
       l_error_response := sys.json_object_t();
       l_error_response.put('success', false);
       l_error_response.put('aiInterface', p_ai_interface);
       l_error_response.put('errorCode', -20001);
       l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
       return l_error_response.to_clob;
-    end if;
-
-    begin
-      l_result :=
-        flow_admin_api_ee.test_ai_connection
-        (
-          p_ai_interface => p_ai_interface
-        , p_ai_service   => p_ai_service
-        , p_ai_provider  => p_ai_provider
-        , p_ai_model     => p_ai_model
-        , p_prompt       => p_prompt
-        );
-      return l_result;
-    exception
-      when others then
-        l_error_response := sys.json_object_t();
-        l_error_response.put('success', false);
-        l_error_response.put('aiInterface', p_ai_interface);
-        l_error_response.put('errorCode', sqlcode);
-        l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
-        return l_error_response.to_clob;
-    end;
+    when others then
+      l_error_response := sys.json_object_t();
+      l_error_response.put('success', false);
+      l_error_response.put('aiInterface', p_ai_interface);
+      l_error_response.put('errorCode', sqlcode);
+      -- TODO (26.1): Change error message to something else than not ee 
+      l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
+      return l_error_response.to_clob;
   end test_ai_connection;
 
 end flow_admin_api;
