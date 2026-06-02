@@ -269,6 +269,15 @@ prompt Testing: Script task execution and variable binding
 prompt ---------------------------------------------------------------------
 exec ut.run('test_025_script_tasks');
 
+
+-- Run Parser Regression Tests (Suite 026)
+prompt 
+prompt ---------------------------------------------------------------------
+prompt TEST SUITE 026: Parser Regressions
+prompt Testing: Parser edge cases and bug regression coverage
+prompt ---------------------------------------------------------------------
+exec ut.run('test_026_parser_regressions');
+
 -- Run Variable Expression Error Tests (Suite 027)
 prompt 
 prompt ---------------------------------------------------------------------

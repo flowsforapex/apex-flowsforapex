@@ -274,5 +274,20 @@ Valid logging levels are:
 Available in Flows for APEX Community and Enterprise Edition.
 **/
 
+  function test_ai_connection
+  ( p_ai_interface   in varchar2
+  , p_ai_service     in varchar2 default null
+  , p_ai_provider    in varchar2 default null
+  , p_ai_model       in varchar2 default null
+  , p_prompt         in clob default 'Hello AI World'
+  ) return clob;
+/**
+Function test_ai_connection
+This function executes a lightweight AI connectivity/configuration smoke test for an admin-supplied interface and model configuration.
+The function is intended for design-time/admin validation (for example, from modeler property panel actions), and returns a JSON result payload.
+
+Available in Flows for APEX Enterprise Edition.
+**/
+
 end flow_admin_api;
 /

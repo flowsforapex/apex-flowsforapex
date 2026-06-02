@@ -3,6 +3,8 @@
 **Generated:** 12 February 2026  
 **Purpose:** Complete XSD specification for apex: namespace extensions in BPMN
 
+> **`apex:customExtension`** is a Flows for APEX development-team mechanism used to decouple engine development from the BPMN modeler. New properties are prototyped here during development and promoted to first-class `apex:` elements or attributes before public release. It is not available in the published modeler UI and should not be used in production models.
+
 ---
 
 ## 1. PROCESS-LEVEL EXTENSIONS
@@ -59,10 +61,8 @@
 </apex:outVariables>
 ```
 
-#### 1.2.4 Custom Extension
-```xml
-<apex:customExtension>{"object": "Process A23a"}</apex:customExtension>
-```
+#### 1.2.4 Canonical Process Metadata
+Use first-class process attributes and extension elements (`apex:priority`, `apex:dueOn`, `apex:inVariables`, `apex:outVariables`) rather than generic custom JSON payloads.
 
 ---
 
@@ -379,12 +379,8 @@ Standard BPMN with language attribute:
 </bpmn:conditionExpression>
 ```
 
-### 5.3 Custom Extension on Flow
-```xml
-<bpmn:extensionElements>
-  <apex:customExtension>{"object":"Flow_RouteD"}</apex:customExtension>
-</bpmn:extensionElements>
-```
+### 5.3 Sequence Flow Extension Guidance
+Use standard BPMN sequence flow condition expressions together with supported `apex:*` attributes. Do not model sequence flow metadata using `apex:customExtension`.
 
 ---
 
@@ -516,8 +512,16 @@ On `bpmn:standardLoopCharacteristics`:
 ### 9.2 Lane Extension Elements
 ```xml
 <bpmn:extensionElements>
-  <!-- Can contain variable expressions or custom extensions -->
-  <apex:customExtension>{"lane":"data"}</apex:customExtension>
+  <!-- Use supported apex variable-expression elements only -->
+  <apex:beforeTask>
+    <apex:processVariable>
+      <apex:varSequence>0</apex:varSequence>
+      <apex:varName>laneRole</apex:varName>
+      <apex:varDataType>VARCHAR2</apex:varDataType>
+      <apex:varExpressionType>static</apex:varExpressionType>
+      <apex:varExpression>ROLE_A2</apex:varExpression>
+    </apex:processVariable>
+  </apex:beforeTask>
 </bpmn:extensionElements>
 ```
 
@@ -526,13 +530,16 @@ On `bpmn:standardLoopCharacteristics`:
 ## 10. COLLABORATION EXTENSIONS
 
 ### 10.1 Participant Extensions
-Can contain custom extensions in `bpmn:extensionElements`
+Use supported BPMN and `apex:*` elements only. Generic `apex:customExtension` payloads are not part of the published syntax.
 
 ### 10.2 Message Flow Extensions
 ```xml
 <bpmn:messageFlow>
   <bpmn:extensionElements>
-    <apex:customExtension>{"flow":"metadata"}</apex:customExtension>
+    <apex:messageName>
+      <apex:expressionType>static</apex:expressionType>
+      <apex:expression>MyMessage</apex:expression>
+    </apex:messageName>
   </bpmn:extensionElements>
 </bpmn:messageFlow>
 ```

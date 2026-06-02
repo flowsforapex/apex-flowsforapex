@@ -19,10 +19,16 @@ as
     , p_parent_subflow_id           in flow_subflows.sbfl_id%type
     , p_objt_bpmn_id                in flow_objects.objt_bpmn_id%type
     , p_user_input_parameters       in clob default null
+    , p_ai_decision_id              in flow_adhoc_subproc_ai_decisions.asad_id%type default null
     );
 
   procedure end_adhoc_activity
     ( p_sbfl_rec             in flow_subflows%rowtype
+    );
+
+  procedure complete_adhoc_SubProcess
+    ( p_process_id           in flow_processes.prcs_id%type
+    , p_subproc_sbfl_id      in flow_subflows.sbfl_id%type
     );
 
   function activity_start_condition_met_YN
@@ -40,6 +46,22 @@ as
     , p_comment     in varchar2 default 'Manual UI Request'
     );
 
+  -- Recommendation mode approval API
+  procedure approve_ai_recommendation
+    ( p_process_id       in flow_processes.prcs_id%type
+    , p_subflow_id       in flow_subflows.sbfl_id%type
+    , p_step_key         in flow_subflows.sbfl_step_key%type
+    , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+    , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type
+    );
+
+  procedure discard_ai_recommendation
+    ( p_process_id       in flow_processes.prcs_id%type
+    , p_subflow_id       in flow_subflows.sbfl_id%type
+    , p_step_key         in flow_subflows.sbfl_step_key%type
+    , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+    );
+
   -- AI scheduling information API
   procedure get_ai_schedule_info
     ( p_process_id           in flow_processes.prcs_id%type
@@ -47,6 +69,11 @@ as
     , p_step_key             in flow_subflows.sbfl_step_key%type
     , p_next_check_time      out timestamp with time zone
     , p_check_reason         out varchar2
+    );
+
+  -- Process any autonomous or hybrid AI checks that are due for the process.
+  procedure process_due_ai_checks
+    ( p_process_id           in flow_processes.prcs_id%type
     );
 
   -- Demo/Production mode utilities

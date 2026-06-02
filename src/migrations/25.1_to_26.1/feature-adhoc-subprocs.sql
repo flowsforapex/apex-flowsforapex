@@ -37,6 +37,22 @@ begin
 end;
 /
 
+PROMPT >> > Adding sbfl_subject column to Table flow_subflows
+
+declare
+  v_column_exists          number := 0;
+begin
+  select count(*)
+    into v_column_exists
+    from user_tab_cols
+   where upper(column_name) = 'SBFL_SUBJECT'
+     and upper(table_name)  = 'FLOW_SUBFLOWS';
+  if (v_column_exists = 0) then
+      execute immediate 'alter table flow_subflows add ( sbfl_subject varchar2(1000 char) )';
+  end if;
+end;
+/
+
 PROMPT >> > Adding columns to Table flow_object_expressions
 
 declare
@@ -76,14 +92,24 @@ create table flow_adhoc_subprocs (
     ahsp_next_recommended_check TIMESTAMP WITH TIME ZONE,
     ahsp_next_check_reason      VARCHAR2(500 CHAR),
     ahsp_turns_per_session      NUMBER,
-    ahsp_max_total_turns        NUMBER
+    ahsp_max_total_turns        NUMBER,
+    ahsp_ai_interface           VARCHAR2(30 CHAR),
+    ahsp_ai_service             VARCHAR2(255 CHAR),
+    ahsp_ai_provider            VARCHAR2(255 CHAR),
+    ahsp_ai_model               VARCHAR2(4000 CHAR)
 );
 
 alter table flow_adhoc_subprocs
   add constraint flow_ahsp_pk primary key ( ahsp_id );
 
+-- drop first so re-running migration on dev DBs works cleanly
+begin
+  execute immediate 'alter table flow_adhoc_subprocs drop constraint flow_ahsp_control_ck';
+exception when others then null;
+end;
+/
 alter table flow_adhoc_subprocs
-  add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid') );
+  add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid', 'recommendation') );
 
 alter table flow_adhoc_subprocs
     add constraint flow_ahsp_prcs_fk FOREIGN KEY ( ahsp_prcs_id )
@@ -102,6 +128,7 @@ PROMPT >> > Creating Table flow_adhoc_subflows
 create table flow_adhoc_subflows (
     ahsf_sbfl_id                NUMBER NOT NULL,
     ahsf_ahsp_id                NUMBER NOT NULL,
+    ahsf_asad_id                NUMBER,
     ahsf_starting_object        VARCHAR2(50 CHAR) NOT NULL,
     ahsf_starting_step_key      VARCHAR2(20 CHAR) NOT NULL,
     ahsf_repeat_count           NUMBER NOT NULL,
@@ -142,12 +169,21 @@ create table flow_adhoc_subproc_ai_decisions (
     asad_actions               clob
         constraint asad_actions_is_json check (asad_actions is json),
     asad_timestamp             timestamp with time zone default systimestamp not null,
+    asad_dispatch_completed    timestamp with time zone,
+    asad_partial_review        timestamp with time zone,
     asad_created_by            varchar2(64 byte) default coalesce(
                                    sys_context('apex$session','app_user'),
                                    sys_context('userenv','os_user'), 
                                    sys_context('userenv','session_user')
                                )
 );
+
+  alter table flow_adhoc_subflows
+    add constraint flow_ahsf_asad_fk FOREIGN KEY ( ahsf_asad_id )
+      references flow_adhoc_subproc_ai_decisions ( asad_id )
+        on delete set null;
+
+  create index ahsf_asad_id_idx on flow_adhoc_subflows (ahsf_asad_id, ahsf_status);
 
 -- Create index for foreign key
 create index asad_ahsp_id_idx on flow_adhoc_subproc_ai_decisions (asad_ahsp_id, asad_turn);
@@ -162,9 +198,15 @@ comment on column flow_adhoc_subproc_ai_decisions.asad_turn is 'Turn/iteration n
 comment on column flow_adhoc_subproc_ai_decisions.asad_rationale is 'AI reasoning/rationale for the decision';
 comment on column flow_adhoc_subproc_ai_decisions.asad_actions is 'JSON array of actions recommended by AI (CLOB with IS JSON constraint)';
 comment on column flow_adhoc_subproc_ai_decisions.asad_timestamp is 'When this AI decision was made';
+comment on column flow_adhoc_subproc_ai_decisions.asad_dispatch_completed is 'When this AI wave finished dispatching all recommended activities';
+comment on column flow_adhoc_subproc_ai_decisions.asad_partial_review is 'When this AI wave triggered a partial re-evaluation while other activities were still running';
 comment on column flow_adhoc_subproc_ai_decisions.asad_created_by is 'User/system that created the record';
 comment on column flow_adhoc_subprocs.ahsp_next_recommended_check is 'AI-recommended timestamp for next check/wake-up';
 comment on column flow_adhoc_subprocs.ahsp_next_check_reason is 'AI-provided reason for the recommended check timing';
+comment on column flow_adhoc_subprocs.ahsp_ai_interface is 'Configured AI interface used by this adhoc subprocess instance';
+comment on column flow_adhoc_subprocs.ahsp_ai_service is 'Configured APEX AI service static ID used by this adhoc subprocess instance';
+comment on column flow_adhoc_subprocs.ahsp_ai_provider is 'Configured UC_AI provider used by this adhoc subprocess instance';
+comment on column flow_adhoc_subprocs.ahsp_ai_model is 'Configured AI model identifier used by this adhoc subprocess instance';
 
 PROMPT >> >> Schema Changes Completed
 PROMPT >> --------------------------------------------------- 

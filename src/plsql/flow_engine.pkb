@@ -54,14 +54,14 @@ create or replace package body flow_engine as
   is
     l_async_before varchar2(10 char);
   begin
-    select coalesce ( objt.objt_attributes."apex"."customExtension"."async_before"
+    select coalesce ( objt.objt_attributes."apex"."asyncBefore"
                     , flow_constants_pkg.gc_vcbool_false )
       into l_async_before
       from flow_objects objt
      where objt.objt_id = p_objt_id;
 
     apex_debug.info
-    ( p_message => 'Current step async_before value: %0'
+    ( p_message => 'Current step asyncBefore value: %0'
     , p0        => l_async_before
     );
     
@@ -82,7 +82,7 @@ create or replace package body flow_engine as
       return false;
     end if;
 
-    select coalesce ( objt.objt_attributes."apex"."customExtension"."async_after"
+    select coalesce ( objt.objt_attributes."apex"."asyncAfter"
                     , flow_constants_pkg.gc_vcbool_false )
       into l_async_after
       from flow_objects objt
@@ -90,7 +90,7 @@ create or replace package body flow_engine as
        and objt.objt_bpmn_id = p_previous_objt_bpmn;
 
     apex_debug.info
-    ( p_message => 'Previous step async_after value: %0'    
+    ( p_message => 'Previous step asyncAfter value: %0'    
     , p0        => l_async_after
     );
 
@@ -1803,6 +1803,28 @@ begin
                                                                  , p_iobj_id      => l_next_iobj_id
                                                                  , p_loop_counter => l_next_loop_counter
                                                                  );  
+
+              end if;
+            else
+              null;
+            end if; -- loop counter
+          when flow_constants_pkg.gc_iteration_parallel then
+            if p_reset_step_key then
+              -- the next step is the iterating object (not the 2nd phase of the implicit parallel gateway)
+              -- so reset the step key in the iteration array
+              apex_debug.message ('call from flow_engine...');
+              flow_iteration.set_iteration_status
+              ( pi_prcs_id        => p_process_id
+              , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
+              , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
+              , pi_step_key       => l_step_info.target_objt_step_key
+              , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
+              , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
+              , pi_iobj_id        => l_sbfl_rec.sbfl_iobj_id
+              );
+            end if;
+            l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
+            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;                                                      
             l_next_iobj_id         := l_existing_iobj_id;
             l_next_iter_id         := l_existing_iter_id;
 
@@ -1841,26 +1863,7 @@ begin
                                                                    );  
                                                          
               end if; --treat as tag
-            else
-              null;
             end if; -- loop counter
-          when flow_constants_pkg.gc_iteration_parallel then
-            if p_reset_step_key then
-              -- the next step is the iterating object (not the 2nd phase ogf the implicit parallel gateway)
-              -- so reset the step key in the iteration array
-              apex_debug.message ('call from flow_engine...');
-              flow_iteration.set_iteration_status
-              ( pi_prcs_id        => p_process_id
-              , pi_loop_counter   => l_sbfl_rec.sbfl_loop_counter
-              , pi_new_status     => flow_constants_pkg.gc_iteration_status_running 
-              , pi_step_key       => l_step_info.target_objt_step_key
-              , pi_scope          => l_sbfl_rec.sbfl_iteration_var_scope
-              , pi_prov_var_name  => l_sbfl_rec.sbfl_iteration_var
-              , pi_iobj_id        => l_sbfl_rec.sbfl_iobj_id
-              );
-            end if;
-            l_next_loop_counter := l_sbfl_rec.sbfl_loop_counter;
-            l_total_loop_instances := l_sbfl_rec.sbfl_loop_total_instances;
           else 
             apex_debug.message (p_message => 'next step not an iteration or loop');
             -- next step is not an iteration or loop 

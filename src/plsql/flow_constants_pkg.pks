@@ -110,6 +110,7 @@ as
   gc_adhoc_control_manual             constant flow_types_pkg.t_bpmn_id := 'manual';
   gc_adhoc_control_autonomous         constant flow_types_pkg.t_bpmn_id := 'ai';
   gc_adhoc_control_hybrid             constant flow_types_pkg.t_bpmn_id := 'hybrid';
+  gc_adhoc_control_recommendation     constant flow_types_pkg.t_bpmn_id := 'recommendation';
 
   -- Operating Mode Constants  (used to control certain aspects of engine behaviour at activity level, 
   -- such as AI decision making where demo mode allows "demo time" use for future scenarios, for testing/demo purposes)
@@ -190,6 +191,7 @@ as
   gc_apex_parameter_source            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'source';
   gc_apex_parameter_expression_type   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expressionType';
   gc_apex_parameter_expression        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expression';
+  gc_apex_parameter_enum              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'enum';
   gc_apex_parameter_items             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'items';
   gc_apex_parameter_properties        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'properties';
   gc_apex_assignment_source_parameter constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sourceParameter';
@@ -335,6 +337,11 @@ as
   gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
   gc_prcs_event_rewind_subprocess     constant  varchar2(20 char) := 'rewind subprocess';
   gc_prcs_event_rewind_call_activity  constant  varchar2(20 char) := 'rewind call activity';
+  gc_prcs_event_ahsp_ai_decision      constant  varchar2(20 char) := 'ahsp ai decision';
+  gc_prcs_event_ahsp_ai_schedule      constant  varchar2(20 char) := 'ahsp ai schedule';
+  gc_prcs_event_ahsp_ai_approved      constant  varchar2(20 char) := 'ahsp ai approved';
+  gc_prcs_event_ahsp_ai_discarded     constant  varchar2(20 char) := 'ahsp ai discarded';
+  gc_prcs_event_ahsp_cc_met           constant  varchar2(20 char) := 'ahsp cc met';
 
   -- Subflow and Step Events
   gc_step_event_became_current        constant  varchar2(20 char) := 'current step';
@@ -441,6 +448,7 @@ as
   gc_logging_level_abnormal_events     constant number := 1;
   gc_logging_level_major_events        constant number := 2;
   gc_logging_level_routine             constant number := 4;
+  gc_logging_level_ai_explainability   constant number := 7;
   gc_logging_level_full                constant number := 8;
 
 -- Config Parameter Keys

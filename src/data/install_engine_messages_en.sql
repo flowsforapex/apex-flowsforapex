@@ -10,6 +10,9 @@
 set define '^'
 whenever sqlerror exit rollback;
 
+-- Keep message reload deterministic on Autonomous DB.
+alter session disable parallel dml;
+
 PROMPT >> Loading Engine Messages for Language "en"
 declare
   c_load_lang constant varchar2(10) := 'en';
@@ -333,10 +336,42 @@ begin
     values ('adhoc-already-started', c_load_lang, q'[Activity %0 has already been started in this adhoc subprocess.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('input_parameter-invalid-json', c_load_lang, q'[Input Parameter for activity %0 contains invalid JSON %1.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-startable-acts-error', c_load_lang, q'[Error evaluating startable activities for adhoc subprocess %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-invalid-response', c_load_lang, q'[AI returned an invalid control response for adhoc subprocess %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-bad-config', c_load_lang, q'[Adhoc subprocess %0 has invalid AI configuration for interface %1. Missing or invalid setting: %2]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-bad-iface', c_load_lang, q'[Adhoc subprocess %0 uses unsupported AI interface %1.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-call-failed', c_load_lang, q'[AI call failed for adhoc subprocess %0 using interface %1. %2]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-subprocess-not-found', c_load_lang, q'[Adhoc subprocess not found or already completed for process %0, subflow %1, step %2.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-completion-invalid-json', c_load_lang, q'[Adhoc subprocess completion condition for object %0 is not valid JSON.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-completion-cond-error', c_load_lang, q'[Error evaluating adhoc subprocess completion condition for object %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-start-acts-bad-config', c_load_lang, q'[Adhoc subprocess starting activities definition for object %0 is invalid.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-start-acts-error', c_load_lang, q'[Error starting default adhoc activities for adhoc subprocess %0. %1]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-ai-invoke-error', c_load_lang, q'[Error invoking adhoc AI control for object %0. %1]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content ) 
     values ('var_exp_jsonpath_error', c_load_lang, q'[Error setting Process Variable %1 in process id %1. JSONPath expression "%2" (Subflow: %0, Set: %3). ]' );
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-reco-not-found', c_load_lang, q'[No active adhoc subprocess found for recommendation approval.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-not-recommendation-mode', c_load_lang, q'[Subprocess is not in recommendation control mode.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-recommendation-stale', c_load_lang, q'[Recommendation not found or belongs to a different subprocess.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-reco-already-disp', c_load_lang, q'[Recommendation has already been dispatched or discarded.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('adhoc-reco-activity-not-set', c_load_lang, q'[Activity is not in the pending recommendation action set.]');
   -- above here manually added for 26.1 dev
-/* template below
+/* template below - don't forget fmsg_message_key is max 30 chars
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ( '', c_load_lang, q'[  ]' );
 */

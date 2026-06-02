@@ -51,6 +51,7 @@ drop package flow_rewind;
 drop package flow_engine;
 drop package flow_api_pkg;
 drop package flow_admin_api;
+drop package flow_admin_api_ee;
 drop package flow_timers_pkg;
 drop package flow_reservations;
 drop package flow_gateways;
@@ -60,6 +61,9 @@ drop package flow_types_pkg;
 drop package flow_constants_pkg;
 drop package flow_engine_app_api;
 drop package flow_adhoc_subprocesses;
+drop package flow_adhoc_subprocesses_ai;
+drop package flow_adhoc_subprocesses_core;
+drop package flow_adhoc_subprocesses_util;
 drop package flow_call_activities;
 drop package flow_subprocesses;
 drop package flow_apex_session;
@@ -70,6 +74,7 @@ drop package flow_theme_api;
 drop package flow_apex_env;
 drop package flow_log_admin;
 drop package flow_process_vars;
+drop package flow_parameters;
 drop package flow_statistics;
 drop package flow_simple_form_template;
 drop package flow_ai_prompt_ee;
@@ -194,3 +199,14 @@ drop type flow_t_correlated_message;
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
 
+create or replace view flow_object_input_schema_vw as
+
+select  objt.objt_dgrm_id,
+        objt.objt_bpmn_id,
+        objt.objt_name,
+        objt.objt_tag_name,
+        flow_parameters.parameters_to_json_schema ( pi_parameters => objt.objt_attributes."apex"."inputParameters"
+                                                  , pi_user_data_only_yn => 'Y')  
+        as  input_parameters_schema
+  from  flow_objects objt
+with read only

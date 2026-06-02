@@ -30,6 +30,9 @@ PROMPT >> Engine
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
 @plsql/flow_instances_util_ee.pks
+@plsql/flow_adhoc_subprocesses_util.pks
+@plsql/flow_adhoc_subprocesses_core.pks
+@plsql/flow_adhoc_subprocesses_ai.pks
 @plsql/flow_rewind.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
@@ -37,6 +40,7 @@ PROMPT >> Engine
 @plsql/flow_proc_vars_int.pks
 @plsql/flow_db_exec.pks
 @plsql/flow_process_vars.pks
+@plsql/flow_parameters.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
 @plsql/flow_plsql_runner_pkg.pks
@@ -50,6 +54,7 @@ PROMPT >> Engine
 @plsql/flow_diagram.pks
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
+@plsql/flow_admin_api_ee.pks
 @plsql/flow_statistics.pks
 @plsql/flow_iteration.pks
 @plsql/flow_simple_form_template.pks
@@ -102,6 +107,7 @@ PROMPT >>
 PROMPT >> Engine
 @plsql/flow_proc_vars_int.pkb
 @plsql/flow_process_vars.pkb
+@plsql/flow_parameters.pkb
 @plsql/flow_expressions.pkb
 @plsql/flow_settings.pkb
 @plsql/flow_db_exec.pkb

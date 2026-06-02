@@ -679,6 +679,148 @@ as
     end if;
   end parse_parameters;
 
+  procedure parse_task_parameters
+  (
+    pi_bpmn_id            in flow_types_pkg.t_bpmn_id
+  , pi_parameter_set_name in varchar2
+  , pi_parameters_xml     in sys.xmltype
+  )
+  as
+    l_apex_object     sys.json_object_t;
+    l_parameter_array sys.json_array_t := sys.json_array_t();
+    l_parameter       sys.json_object_t;
+    l_source          sys.json_object_t;
+    l_apex_rendering  sys.json_object_t;
+    l_required_value  varchar2(20 char);
+    l_enum_namespace  flow_types_pkg.t_vc200;
+    l_enum_key        flow_types_pkg.t_vc200;
+    l_enum_element    sys.json_element_t;
+  begin
+    for rec in (
+      select parameter_name
+           , parameter_type
+           , parameter_required
+           , parameter_default
+           , parameter_description
+           , source_expression_type
+           , source_expression
+           , apex_item_type
+           , apex_max_length
+           , apex_placeholder
+           , apex_enum
+        from xmltable
+             (
+               xmlnamespaces ( 'http://www.omg.org/spec/BPMN/20100524/MODEL' as "bpmn", 'https://flowsforapex.org' as "apex" )
+             , '*' passing pi_parameters_xml
+               columns
+                 parameter_name          varchar2(4000 char) path 'apex:name'
+               , parameter_type          varchar2(4000 char) path 'apex:type'
+               , parameter_required      varchar2(  20 char) path 'apex:required'
+               , parameter_default       clob                path 'apex:default'
+               , parameter_description   clob                path 'apex:description'
+               , source_expression_type  varchar2(4000 char) path 'apex:source/apex:expressionType'
+               , source_expression       clob                path 'apex:source/apex:expression'
+               , apex_item_type          varchar2(4000 char) path 'apex:apexRendering/apex:itemType'
+               , apex_max_length         number              path 'apex:apexRendering/apex:maxLength'
+               , apex_placeholder        clob                path 'apex:apexRendering/apex:placeholder'
+               , apex_enum               clob                path 'apex:apexRendering/apex:enum'
+             )
+    )
+    loop
+      l_parameter := sys.json_object_t();
+
+      if rec.parameter_name is not null then
+        l_parameter.put( 'name', rec.parameter_name );
+      end if;
+
+      if rec.parameter_type is not null then
+        l_parameter.put( 'type', rec.parameter_type );
+      end if;
+
+      l_required_value := lower(trim(rec.parameter_required));
+      if l_required_value = flow_constants_pkg.gc_vcbool_true then
+        l_parameter.put( 'required', true );
+      elsif l_required_value = flow_constants_pkg.gc_vcbool_false then
+        l_parameter.put( 'required', false );
+      elsif rec.parameter_required is not null then
+        l_parameter.put( 'required', rec.parameter_required );
+      end if;
+
+      if rec.parameter_default is not null then
+        l_parameter.put( 'default', rec.parameter_default );
+      end if;
+
+      if rec.parameter_description is not null then
+        l_parameter.put( 'description', rec.parameter_description );
+      end if;
+
+      if rec.source_expression_type is not null or rec.source_expression is not null then
+        l_source := sys.json_object_t();
+
+        if rec.source_expression_type is not null then
+          l_source.put( 'expressionType', rec.source_expression_type );
+        end if;
+
+        if rec.source_expression is not null then
+          l_source.put( 'expression', rec.source_expression );
+        end if;
+
+        l_parameter.put( 'source', l_source );
+      end if;
+
+      if rec.apex_item_type is not null
+         or rec.apex_max_length is not null
+         or rec.apex_placeholder is not null
+         or rec.apex_enum is not null
+      then
+        l_apex_rendering := sys.json_object_t();
+
+        if rec.apex_item_type is not null then
+          l_apex_rendering.put( 'itemType', rec.apex_item_type );
+        end if;
+
+        if rec.apex_max_length is not null then
+          l_apex_rendering.put( 'maxLength', rec.apex_max_length );
+        end if;
+
+        if rec.apex_placeholder is not null then
+          l_apex_rendering.put( 'placeholder', rec.apex_placeholder );
+        end if;
+
+        if rec.apex_enum is not null then
+          begin
+            flow_parser_util.property_to_json
+            (
+              pi_property_name => flow_constants_pkg.gc_apex_parameter_enum
+            , pi_value         => rec.apex_enum
+            , po_namespace     => l_enum_namespace
+            , po_key           => l_enum_key
+            , po_json_element  => l_enum_element
+            );
+            if l_enum_element is not null then
+              l_apex_rendering.put( 'enum', l_enum_element );
+            else
+              l_apex_rendering.put( 'enum', rec.apex_enum );
+            end if;
+          exception
+            when others then
+              l_apex_rendering.put( 'enum', rec.apex_enum );
+          end;
+        end if;
+
+        l_parameter.put( 'apexRendering', l_apex_rendering );
+      end if;
+
+      l_parameter_array.append( l_parameter );
+    end loop;
+
+    if l_parameter_array.get_size > 0 then
+      flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_bpmn_id).objt_attributes );
+      l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
+      l_apex_object.put( flow_parser_util.get_property_key( pi_parameter_set_name ), l_parameter_array );
+    end if;
+  end parse_task_parameters;
+
   procedure parse_task_subtypes
   (
     pi_bpmn_id     in flow_types_pkg.t_bpmn_id
@@ -720,6 +862,17 @@ as
         (
           pi_bpmn_id        => pi_bpmn_id
         , pi_parameters_xml => rec.prop_children
+        );
+      -- Task Input / Output Parameters
+      elsif rec.prop_name in ( flow_constants_pkg.gc_apex_input_parameters
+                             , flow_constants_pkg.gc_apex_output_parameters
+                             )
+      then
+        parse_task_parameters
+        (
+          pi_bpmn_id            => pi_bpmn_id
+        , pi_parameter_set_name => rec.prop_name
+        , pi_parameters_xml     => rec.prop_children
         );
       elsif length(rec.prop_value) > 0 then
         flow_parser_util.property_to_json
@@ -979,6 +1132,17 @@ as
         (
           pi_bpmn_id     => pi_bpmn_id
         , pi_subtype_xml => rec.extension_data
+        );
+      -- Task Input / Output Parameters stored as extensionElements siblings
+      elsif rec.extension_type in ( flow_parser_util.get_property_key( flow_constants_pkg.gc_apex_input_parameters )
+                                  , flow_parser_util.get_property_key( flow_constants_pkg.gc_apex_output_parameters )
+                                  )
+      then
+        parse_task_parameters
+        (
+          pi_bpmn_id            => pi_bpmn_id
+        , pi_parameter_set_name => rec.orig_extension_type
+        , pi_parameters_xml     => rec.extension_data
         );
       -- Standard Expressions with expressionType and expression nested
       elsif rec.extension_exp_type is not null then

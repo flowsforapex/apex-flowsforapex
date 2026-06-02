@@ -484,21 +484,23 @@ as
     );
     case pi_expr_type 
     when flow_constants_pkg.gc_expr_type_plsql_expression then
-      -- legacy mode - expression will return a vc2 in our format
+      -- legacy mode - expression returns boolean condition directly
       l_wrap_begin  := c_wrap_bool_expr_pre;
       l_wrap_end    := c_wrap_bool_expr_post;
-  --  when flow_constants_pkg.gc_expr_type_plsql_raw_expression then
-  --    -- new 'raw' mode - expression will return a date
-  --    l_wrap_begin  := c_wrap_bool_raw_expr_pre;
-  --    l_wrap_end    := c_wrap_bool_raw_expr_post;
-  --  when flow_constants_pkg.gc_expr_type_plsql_function_body then
-  --    -- legacy mode - function will return a vc2 in our format
-  --    l_wrap_begin  := c_wrap_bool_func_pre;
-  --    l_wrap_end    := c_wrap_bool_func_post;
-  --  when flow_constants_pkg.gc_expr_type_plsql_raw_function_body then
-  --    -- new 'raw' mode - function will return a date
-  --    l_wrap_begin  := c_wrap_bool_raw_func_pre;
-  --    l_wrap_end    := c_wrap_bool_raw_func_post;
+    when flow_constants_pkg.gc_expr_type_plsql_raw_expression then
+      -- raw mode - expression returns boolean condition directly
+      l_wrap_begin  := c_wrap_bool_raw_expr_pre;
+      l_wrap_end    := c_wrap_bool_raw_expr_post;
+    when flow_constants_pkg.gc_expr_type_plsql_function_body then
+      -- legacy mode - function body returns text 'true'/'false'
+      l_wrap_begin  := c_wrap_bool_func_pre;
+      l_wrap_end    := c_wrap_bool_func_post;
+    when flow_constants_pkg.gc_expr_type_plsql_raw_function_body then
+      -- raw mode - function body returns boolean
+      l_wrap_begin  := c_wrap_bool_raw_func_pre;
+      l_wrap_end    := c_wrap_bool_raw_func_post;
+    else
+      raise_application_error(-20001, 'Unsupported boolean expression type: ' || pi_expr_type);
     end case;
 
     apex_exec.add_parameter ( l_bind_parameters, 'BIND_OUT_VAR','');
@@ -631,7 +633,7 @@ as
       flow_errors.handle_instance_error
       ( pi_prcs_id        => pi_prcs_id
       , pi_sbfl_id        => pi_sbfl_id
-      , pi_message_key    => 'var_exp_plsql_other'
+      , pi_message_key    => 'exec_plsql_other'
       );
       -- $F4AMESSAGE 'exec_plsql_other' || 'Error executing PL/SQL.  PL/SQL error shown in event log.'    
 
