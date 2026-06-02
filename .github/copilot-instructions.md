@@ -5,6 +5,7 @@ This is the Flows for APEX Community Edition (CE).
 - Package Specs (.pks) for both CE and EE packages should be placed in this repo.
 - Do not include package bodies for enterprise-only features here.
 - Changes should remain compatible with open-source distribution.
+- Any new database objects should be added to the manifest in /src/apex/buildConfig.json.
 
 ## Error Handling Conventions
 
