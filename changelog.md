@@ -5,6 +5,8 @@
 - adds JSONPath variable expressions to declaratively extract scalar or JSON objects from a JSON process variable
 - includes a .xsd file defining Flows for APEX extensions to BPMN, for use with AI coding tools.
 - Engine app now includes a report showing any active Message Start Event listeners, supporting EE Message Flow Start Events.
+- Add / Update database comments for all tables and columns
+- Add database schema annotations for all tables and table columns.  Also for views and view columns (view annotations only supported with database 23ai+)
 - All tasks now include a Description for better human and AI understanding of their purpose.
 - Fixes a bug that sometimes caused restarted errored subflows that subsequently error again to cause instance failures.
 - Support for APEX v26.1

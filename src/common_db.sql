@@ -76,6 +76,7 @@ PROMPT >> Installing Views
 @views/flow_subflows_vw.sql
 @views/flow_diagrams_parsed_lov.sql
 @views/flow_diagram_categories_lov.sql
+@views/flow_adhoc_activities_vw.sql
 @views/flow_apex_task_inbox_vw.sql
 @views/flow_apex_task_inbox_my_tasks_vw.sql
 @views/flow_apex_my_combined_task_list_vw.sql
@@ -85,6 +86,7 @@ PROMPT >> Installing Views
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
 @views/flow_instance_scopes_vw.sql
+@views/flow_instance_summary_json_vw.sql
 @views/flow_diagrams_vw.sql
 @views/flow_object_input_schema_vw.sql
 @views/flow_instance_diagrams_lov.sql
@@ -99,6 +101,7 @@ PROMPT >> Installing Views
 @views/flow_rest_processes_vw.sql
 @views/flow_rest_step_event_log_vw.sql
 @views/flow_rest_subflows_vw.sql
+@views/flow_startable_adhoc_activities_vw.sql
 @views/flow_viewer_vw.sql
 @views/flow_variable_event_timeline_vw
 
@@ -188,7 +191,10 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_variable_log_vw.sql
 @views/engine-app/flow_p0019_vw.sql
 @views/engine-app/flow_p0020_instance_timeline_vw.sql
-
+@views/engine-app/flow_p0022_adhoc_activities_vw.sql
+@views/engine-app/flow_p0022_startable_adhoc_activities_vw.sql
+@views/engine-app/flow_p0022_started_adhoc_activities_vw.sql
+@views/engine-app/flow_p0024_message_start_listeners_vw.sql
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb
