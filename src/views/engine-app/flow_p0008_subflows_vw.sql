@@ -76,28 +76,32 @@ with read only
 ;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_p0008_subflows_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0008_subflows_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Subflow list with status icons, quick action controls, and checkbox widget for engine app page 8'
-  );
-
-alter view flow_p0008_subflows_vw modify (sbfl_current annotations (add content 'Display name of the current BPMN object'));
-alter view flow_p0008_subflows_vw modify (sbfl_current_bpmn_id annotations (add content 'Raw BPMN ID of the current object'));
-alter view flow_p0008_subflows_vw modify (calling_object annotations (add content 'Display name of the calling object or Main Diagram for the root level'));
-alter view flow_p0008_subflows_vw modify (sbfl_starting_object annotations (add content 'Display name of the subflow starting object'));
-alter view flow_p0008_subflows_vw modify (sbfl_status_icon annotations (add content 'FA icon CSS class for the subflow status'));
-alter view flow_p0008_subflows_vw modify (sbfl_timr_start_on annotations (add content 'Scheduled timer start time in session timezone'));
-alter view flow_p0008_subflows_vw modify (sbfl_current_lane annotations (add content 'Display name of the lane where the current step is executing'));
-alter view flow_p0008_subflows_vw modify (actions annotations (add content 'Null placeholder for inline actions column'));
-alter view flow_p0008_subflows_vw modify (checkbox annotations (add content 'APEX checkbox widget with status, process, step key, and reservation data attributes'));
-alter view flow_p0008_subflows_vw modify (quick_action_icon annotations (add content 'FA icon CSS class for the quick action'));
-alter view flow_p0008_subflows_vw modify (quick_action_label annotations (add content 'Translated label for the quick action button'));
-alter view flow_p0008_subflows_vw modify (quick_action annotations (add content 'Action identifier string for the JavaScript handler'));
-alter view flow_p0008_subflows_vw modify (timer_status_info annotations (add content 'Formatted timer time for subflows waiting for a timer'));
+  )]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_current annotations (add content 'Display name of the current BPMN object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_current_bpmn_id annotations (add content 'Raw BPMN ID of the current object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (calling_object annotations (add content 'Display name of the calling object or Main Diagram for the root level'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_starting_object annotations (add content 'Display name of the subflow starting object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_status_icon annotations (add content 'FA icon CSS class for the subflow status'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_timr_start_on annotations (add content 'Scheduled timer start time in session timezone'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_current_lane annotations (add content 'Display name of the lane where the current step is executing'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (actions annotations (add content 'Null placeholder for inline actions column'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (checkbox annotations (add content 'APEX checkbox widget with status, process, step key, and reservation data attributes'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (quick_action_icon annotations (add content 'FA icon CSS class for the quick action'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (quick_action_label annotations (add content 'Translated label for the quick action button'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (quick_action annotations (add content 'Action identifier string for the JavaScript handler'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (timer_status_info annotations (add content 'Formatted timer time for subflows waiting for a timer'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

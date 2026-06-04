@@ -36,19 +36,24 @@ select dgrm.dgrm_id
   with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_startable_diagrams_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_startable_diagrams_vw annotations
   ( add app     'Flows for APEX'
   , add type    'definition'
   , add content 'Diagrams marked as startable with user and group permissions for initiating process instances'
-  );
+  )]';
+    execute immediate q'[alter view flow_startable_diagrams_vw modify (process_name annotations (add content 'Display name of the startable process start event'))]';
+    execute immediate q'[alter view flow_startable_diagrams_vw modify (process_bpmn_id annotations (add content 'BPMN ID of the startable process object'))]';
+    execute immediate q'[alter view flow_startable_diagrams_vw modify (potential_starting_users annotations (add content 'Evaluated list of users permitted to start this process'))]';
+    execute immediate q'[alter view flow_startable_diagrams_vw modify (potential_starting_groups annotations (add content 'Evaluated list of groups permitted to start this process'))]';
+    execute immediate q'[alter view flow_startable_diagrams_vw modify (excluded_starting_users annotations (add content 'Evaluated list of users excluded from starting this process'))]';
+  end if;
+end;
+/
 
-alter view flow_startable_diagrams_vw modify (process_name annotations (add content 'Display name of the startable process start event'));
-alter view flow_startable_diagrams_vw modify (process_bpmn_id annotations (add content 'BPMN ID of the startable process object'));
-alter view flow_startable_diagrams_vw modify (potential_starting_users annotations (add content 'Evaluated list of users permitted to start this process'));
-alter view flow_startable_diagrams_vw modify (potential_starting_groups annotations (add content 'Evaluated list of groups permitted to start this process'));
-alter view flow_startable_diagrams_vw modify (excluded_starting_users annotations (add content 'Evaluated list of users excluded from starting this process'));
 whenever sqlerror exit failure

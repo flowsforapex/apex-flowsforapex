@@ -27,18 +27,22 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_p0014_instance_log_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0014_instance_log_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Instance event log with event icons and error HTML formatting for engine app page 14'
-  );
-
-alter view flow_p0014_instance_log_vw modify (lgpr_prcs_event_icon annotations (add content 'FA icon CSS class representing the event type'));
-alter view flow_p0014_instance_log_vw modify (pretag annotations (add content 'HTML pre/code open tag for error info display; null when no error'));
-alter view flow_p0014_instance_log_vw modify (posttag annotations (add content 'HTML pre/code close tag for error info display; null when no error'));
+  )]';
+    execute immediate q'[alter view flow_p0014_instance_log_vw modify (lgpr_prcs_event_icon annotations (add content 'FA icon CSS class representing the event type'))]';
+    execute immediate q'[alter view flow_p0014_instance_log_vw modify (pretag annotations (add content 'HTML pre/code open tag for error info display; null when no error'))]';
+    execute immediate q'[alter view flow_p0014_instance_log_vw modify (posttag annotations (add content 'HTML pre/code close tag for error info display; null when no error'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

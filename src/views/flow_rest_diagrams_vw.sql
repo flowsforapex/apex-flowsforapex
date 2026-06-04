@@ -21,22 +21,26 @@ create or replace view flow_rest_diagrams_vw
     from flow_diagrams d;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_rest_diagrams_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_rest_diagrams_vw annotations
   ( add app     'Flows for APEX'
   , add type    'definition'
   , add content 'Process diagrams formatted for REST API responses with HATEOAS links'
-  );
-
-alter view flow_rest_diagrams_vw modify (dgrm_id  annotations (add content 'Unique numeric ID for the diagram'));
-alter view flow_rest_diagrams_vw modify (name     annotations (add content 'Business process name'));
-alter view flow_rest_diagrams_vw modify (version  annotations (add content 'Version string for this diagram'));
-alter view flow_rest_diagrams_vw modify (status   annotations (add content 'Lifecycle status: draft, released, deprecated, archived'));
-alter view flow_rest_diagrams_vw modify (category annotations (add content 'Optional category for grouping diagrams'));
-alter view flow_rest_diagrams_vw modify (content  annotations (add content 'BPMN XML content of the process diagram'));
-alter view flow_rest_diagrams_vw modify (links    annotations (add content 'HATEOAS links JSON for this diagram resource'));
+  )]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (dgrm_id  annotations (add content 'Unique numeric ID for the diagram'))]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (name     annotations (add content 'Business process name'))]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (version  annotations (add content 'Version string for this diagram'))]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (status   annotations (add content 'Lifecycle status: draft, released, deprecated, archived'))]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (category annotations (add content 'Optional category for grouping diagrams'))]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (content  annotations (add content 'BPMN XML content of the process diagram'))]';
+    execute immediate q'[alter view flow_rest_diagrams_vw modify (links    annotations (add content 'HATEOAS links JSON for this diagram resource'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

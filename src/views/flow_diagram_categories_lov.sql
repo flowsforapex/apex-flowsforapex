@@ -7,17 +7,21 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_diagram_categories_lov annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_diagram_categories_lov annotations
   ( add app     'Flows for APEX'
   , add type    'definition'
   , add content 'Distinct diagram category values for LOV dropdown selection'
-  );
-
-alter view flow_diagram_categories_lov modify (d annotations (add content 'Display value: category name'));
-alter view flow_diagram_categories_lov modify (r annotations (add content 'Return value: category name'));
+  )]';
+    execute immediate q'[alter view flow_diagram_categories_lov modify (d annotations (add content 'Display value: category name'))]';
+    execute immediate q'[alter view flow_diagram_categories_lov modify (r annotations (add content 'Return value: category name'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

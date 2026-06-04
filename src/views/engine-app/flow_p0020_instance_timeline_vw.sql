@@ -56,20 +56,24 @@ create or replace view flow_p0020_instance_timeline_vw as
 from flow_instance_events_vw;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_p0020_instance_timeline_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0020_instance_timeline_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Timeline of process instance events with operation types, icons, and APEX timeline CSS classes for engine app page 20'
   , add note    'This view is intended for use in the engine application and may be subject to change. Use only for single instance timelines, not for querying across multiple instances or for other applications.'
-  );
-
-alter view flow_p0020_instance_timeline_vw modify (user_name annotations (add content 'Username in lowercase'));
-alter view flow_p0020_instance_timeline_vw modify (event_type annotations (add content 'Event operation type label (aliased from operation)'));
-alter view flow_p0020_instance_timeline_vw modify (event_status annotations (add content 'APEX timeline CSS class for the event (is-new, is-updated, is-removed)'));
-alter view flow_p0020_instance_timeline_vw modify (event_icon annotations (add content 'FA icon CSS class representing the event operation type'));
+  )]';
+    execute immediate q'[alter view flow_p0020_instance_timeline_vw modify (user_name annotations (add content 'Username in lowercase'))]';
+    execute immediate q'[alter view flow_p0020_instance_timeline_vw modify (event_type annotations (add content 'Event operation type label (aliased from operation)'))]';
+    execute immediate q'[alter view flow_p0020_instance_timeline_vw modify (event_status annotations (add content 'APEX timeline CSS class for the event (is-new, is-updated, is-removed)'))]';
+    execute immediate q'[alter view flow_p0020_instance_timeline_vw modify (event_icon annotations (add content 'FA icon CSS class representing the event operation type'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

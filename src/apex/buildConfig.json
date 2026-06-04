@@ -38,6 +38,7 @@
     , "content":
       [
         { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_comments.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_annotations.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "ddl/", "name": "create_scheduler_objects.sql", "add_show_errors": false }
       ]
     }

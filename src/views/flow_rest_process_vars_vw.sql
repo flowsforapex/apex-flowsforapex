@@ -22,20 +22,24 @@ create or replace view flow_rest_process_vars_vw
   from flow_process_variables pv;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_rest_process_vars_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_rest_process_vars_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Process variables with type-aware value conversion for REST API responses'
-  );
-
-alter view flow_rest_process_vars_vw modify (prcs_id annotations (add content 'Process instance this variable belongs to'));
-alter view flow_rest_process_vars_vw modify (scope   annotations (add content 'Variable scope number'));
-alter view flow_rest_process_vars_vw modify (name    annotations (add content 'Variable name'));
-alter view flow_rest_process_vars_vw modify (type    annotations (add content 'Variable data type: VARCHAR2, NUMBER, DATE, TIMESTAMP, CLOB, JSON'));
-alter view flow_rest_process_vars_vw modify (value   annotations (add content 'Variable value cast to VARCHAR2 for REST response'));
+  )]';
+    execute immediate q'[alter view flow_rest_process_vars_vw modify (prcs_id annotations (add content 'Process instance this variable belongs to'))]';
+    execute immediate q'[alter view flow_rest_process_vars_vw modify (scope   annotations (add content 'Variable scope number'))]';
+    execute immediate q'[alter view flow_rest_process_vars_vw modify (name    annotations (add content 'Variable name'))]';
+    execute immediate q'[alter view flow_rest_process_vars_vw modify (type    annotations (add content 'Variable data type: VARCHAR2, NUMBER, DATE, TIMESTAMP, CLOB, JSON'))]';
+    execute immediate q'[alter view flow_rest_process_vars_vw modify (value   annotations (add content 'Variable value cast to VARCHAR2 for REST response'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

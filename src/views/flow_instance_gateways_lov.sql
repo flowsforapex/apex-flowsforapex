@@ -31,25 +31,29 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_instance_gateways_lov annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_instance_gateways_lov annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Exclusive and inclusive gateways with multiple outgoing flows for manual conditional routing selection'
-  );
-
-alter view flow_instance_gateways_lov modify (objt_id            annotations (add content 'System ID of the gateway object'));
-alter view flow_instance_gateways_lov modify (objt_bpmn_id       annotations (add content 'BPMN identifier of the gateway'));
-alter view flow_instance_gateways_lov modify (calling_object     annotations (add content 'BPMN ID of the subflow object calling this gateway selection'));
-alter view flow_instance_gateways_lov modify (objt_name          annotations (add content 'Display name of the gateway'));
-alter view flow_instance_gateways_lov modify (select_option      annotations (add content 'Outgoing connection option available for manual routing selection'));
-alter view flow_instance_gateways_lov modify (prcs_id            annotations (add content 'Process instance identifier'));
-alter view flow_instance_gateways_lov modify (prdg_diagram_level annotations (add content 'Diagram level of the subflow executing this gateway'));
-alter view flow_instance_gateways_lov modify (prdg_dgrm_id       annotations (add content 'Diagram ID of the sub-diagram'));
-alter view flow_instance_gateways_lov modify (prdg_prdg_id       annotations (add content 'Parent instance diagram record'));
-alter view flow_instance_gateways_lov modify (prdg_id            annotations (add content 'Instance diagram record for this gateway'));
+  )]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (objt_id            annotations (add content 'System ID of the gateway object'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (objt_bpmn_id       annotations (add content 'BPMN identifier of the gateway'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (calling_object     annotations (add content 'BPMN ID of the subflow object calling this gateway selection'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (objt_name          annotations (add content 'Display name of the gateway'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (select_option      annotations (add content 'Outgoing connection option available for manual routing selection'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (prcs_id            annotations (add content 'Process instance identifier'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (prdg_diagram_level annotations (add content 'Diagram level of the subflow executing this gateway'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (prdg_dgrm_id       annotations (add content 'Diagram ID of the sub-diagram'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (prdg_prdg_id       annotations (add content 'Parent instance diagram record'))]';
+    execute immediate q'[alter view flow_instance_gateways_lov modify (prdg_id            annotations (add content 'Instance diagram record for this gateway'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

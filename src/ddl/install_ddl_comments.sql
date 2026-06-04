@@ -12,6 +12,10 @@
 --
 */
 
+
+PROMPT >> Adding Comments to all Flows for APEX Tables and Columns
+PROMPT >> ========================================================
+
 comment on table flow_diagrams                                 is 'Process definitions and their BPMN XML diagrams';
 comment on column flow_diagrams.dgrm_id                                            is 'Unique numeric ID for this diagram';
 comment on column flow_diagrams.dgrm_name                                          is 'Business process name; often the name of the process being modelled';

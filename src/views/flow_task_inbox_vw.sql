@@ -57,17 +57,21 @@ with read only
 ;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_task_inbox_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_task_inbox_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Subflows currently at user tasks with assignment, priority, business reference, and rendered task link'
-  );
+  )]';
+    execute immediate q'[alter view flow_task_inbox_vw modify (link_text annotations (add content 'Rendered HTML anchor linking to the current task APEX page'))]';
+    execute immediate q'[alter view flow_task_inbox_vw modify (sbfl_business_ref annotations (add content 'Business reference value from the BUSINESS_REF process variable'))]';
+  end if;
+end;
+/
 
-alter view flow_task_inbox_vw modify (link_text annotations (add content 'Rendered HTML anchor linking to the current task APEX page'));
-
-alter view flow_task_inbox_vw modify (sbfl_business_ref annotations (add content 'Business reference value from the BUSINESS_REF process variable'));
 whenever sqlerror exit failure

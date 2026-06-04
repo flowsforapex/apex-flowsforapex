@@ -15,17 +15,21 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_p0013_expressions_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0013_expressions_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Step expression definitions with SQL syntax highlighting tags for the debug panel in engine app page 13'
-  );
-
-alter view flow_p0013_expressions_vw modify (pretag annotations (add content 'HTML pre/code open tag with SQL or PL/SQL syntax highlighting class'));
-alter view flow_p0013_expressions_vw modify (posttag annotations (add content 'HTML pre/code close tag for expression code display'));
+  )]';
+    execute immediate q'[alter view flow_p0013_expressions_vw modify (pretag annotations (add content 'HTML pre/code open tag with SQL or PL/SQL syntax highlighting class'))]';
+    execute immediate q'[alter view flow_p0013_expressions_vw modify (posttag annotations (add content 'HTML pre/code close tag for expression code display'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

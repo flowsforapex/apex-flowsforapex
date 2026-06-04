@@ -115,20 +115,24 @@ select prcs_id, prcs_status, systimestamp as json_created_date,
 ;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_instance_summary_json_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_instance_summary_json_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Complete process instance state as nested JSON including diagrams, events, steps, and variable history. If process instance is not yet completed,  this JSON contains state as at creation date.'
   , add note    'This view is intended for archiving the full state of a process instance as a single JSON document, which can then be parsed and used to display instance details, timelines, variable histories, etc.  Note that the summary_json column can be quite large and may require CLOB handling on the application side.  It can also be used for problem diagnosis and debugging to understand the full state of a process instance at a given point in time.'
-  );
-
-alter view flow_instance_summary_json_vw modify (prcs_id           annotations (add content 'Process instance identifier'));
-alter view flow_instance_summary_json_vw modify (prcs_status       annotations (add content 'Current execution status of the process instance'));
-alter view flow_instance_summary_json_vw modify (json_created_date annotations (add content 'Timestamp when this JSON summary was generated'));
-alter view flow_instance_summary_json_vw modify (summary_json      annotations (add content 'Full instance state as a nested JSON document (CLOB)'));
+  )]';
+    execute immediate q'[alter view flow_instance_summary_json_vw modify (prcs_id           annotations (add content 'Process instance identifier'))]';
+    execute immediate q'[alter view flow_instance_summary_json_vw modify (prcs_status       annotations (add content 'Current execution status of the process instance'))]';
+    execute immediate q'[alter view flow_instance_summary_json_vw modify (json_created_date annotations (add content 'Timestamp when this JSON summary was generated'))]';
+    execute immediate q'[alter view flow_instance_summary_json_vw modify (summary_json      annotations (add content 'Full instance state as a nested JSON document (CLOB)'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

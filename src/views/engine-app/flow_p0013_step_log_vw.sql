@@ -18,14 +18,19 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_p0013_step_log_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0013_step_log_vw annotations
   ( add app     'Flows for APEX'
   , add type    'logging'
   , add content 'Step completion log with timezone-adjusted timestamps for engine app page 13'
-  );
+  )]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

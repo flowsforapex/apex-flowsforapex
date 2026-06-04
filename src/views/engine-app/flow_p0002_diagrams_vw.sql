@@ -59,35 +59,39 @@ with read only
 ;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_p0002_diagrams_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0002_diagrams_vw annotations
   ( add app     'Flows for APEX'
   , add type    'definition'
   , add content 'Diagram management list with per-status instance counts, parsed status, and navigation links for engine app page 2'
-  );
-
-alter view flow_p0002_diagrams_vw modify (btn annotations (add content 'Null placeholder for an inline action button'));
-alter view flow_p0002_diagrams_vw modify (edit_link annotations (add content 'APEX URL to open the diagram in the editor (page 7)'));
-alter view flow_p0002_diagrams_vw modify (create_instance_link annotations (add content 'APEX URL to create a new process instance from this diagram'));
-alter view flow_p0002_diagrams_vw modify (instances annotations (add content 'Total instance count across all statuses; null when zero'));
-alter view flow_p0002_diagrams_vw modify (diagram_parsed annotations (add content 'Yes/No indicator whether diagram objects have been parsed'));
-alter view flow_p0002_diagrams_vw modify (diagram_parsed_icon annotations (add content 'FA icon CSS class indicating whether the diagram is parsed'));
-alter view flow_p0002_diagrams_vw modify (dgrm_status_icon annotations (add content 'FA icon CSS class for the diagram status'));
-alter view flow_p0002_diagrams_vw modify (instance_created annotations (add content 'Count of created instances; null when zero'));
-alter view flow_p0002_diagrams_vw modify (instance_created_link annotations (add content 'APEX URL filtered to created instances'));
-alter view flow_p0002_diagrams_vw modify (instance_running annotations (add content 'Count of running instances; null when zero'));
-alter view flow_p0002_diagrams_vw modify (instance_running_link annotations (add content 'APEX URL filtered to running instances'));
-alter view flow_p0002_diagrams_vw modify (instance_suspended annotations (add content 'Count of suspended instances; null when zero'));
-alter view flow_p0002_diagrams_vw modify (instance_suspended_link annotations (add content 'APEX URL filtered to suspended instances'));
-alter view flow_p0002_diagrams_vw modify (instance_completed annotations (add content 'Count of completed instances; null when zero'));
-alter view flow_p0002_diagrams_vw modify (instance_completed_link annotations (add content 'APEX URL filtered to completed instances'));
-alter view flow_p0002_diagrams_vw modify (instance_terminated annotations (add content 'Count of terminated instances; null when zero'));
-alter view flow_p0002_diagrams_vw modify (instance_terminated_link annotations (add content 'APEX URL filtered to terminated instances'));
-alter view flow_p0002_diagrams_vw modify (instance_error annotations (add content 'Count of instances in error state; null when zero'));
-alter view flow_p0002_diagrams_vw modify (instance_error_link annotations (add content 'APEX URL filtered to error instances'));
-alter view flow_p0002_diagrams_vw modify (checkbox annotations (add content 'APEX checkbox widget with diagram name and version data attributes'));
+  )]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (btn annotations (add content 'Null placeholder for an inline action button'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (edit_link annotations (add content 'APEX URL to open the diagram in the editor (page 7)'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (create_instance_link annotations (add content 'APEX URL to create a new process instance from this diagram'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instances annotations (add content 'Total instance count across all statuses; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (diagram_parsed annotations (add content 'Yes/No indicator whether diagram objects have been parsed'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (diagram_parsed_icon annotations (add content 'FA icon CSS class indicating whether the diagram is parsed'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (dgrm_status_icon annotations (add content 'FA icon CSS class for the diagram status'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_created annotations (add content 'Count of created instances; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_created_link annotations (add content 'APEX URL filtered to created instances'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_running annotations (add content 'Count of running instances; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_running_link annotations (add content 'APEX URL filtered to running instances'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_suspended annotations (add content 'Count of suspended instances; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_suspended_link annotations (add content 'APEX URL filtered to suspended instances'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_completed annotations (add content 'Count of completed instances; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_completed_link annotations (add content 'APEX URL filtered to completed instances'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_terminated annotations (add content 'Count of terminated instances; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_terminated_link annotations (add content 'APEX URL filtered to terminated instances'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_error annotations (add content 'Count of instances in error state; null when zero'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (instance_error_link annotations (add content 'APEX URL filtered to error instances'))]';
+    execute immediate q'[alter view flow_p0002_diagrams_vw modify (checkbox annotations (add content 'APEX checkbox widget with diagram name and version data attributes'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

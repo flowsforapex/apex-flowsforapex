@@ -17,21 +17,25 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_instance_connections_lov annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_instance_connections_lov annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'Sequence flow connections for active process instances for manual routing LOV selection'
-  );
-
-alter view flow_instance_connections_lov modify (conn_bpmn_id     annotations (add content 'BPMN identifier of the sequence flow connection'));
-alter view flow_instance_connections_lov modify (conn_name        annotations (add content 'Display name of the connection'));
-alter view flow_instance_connections_lov modify (conn_src_objt_id annotations (add content 'Source object system ID (FK: flow_objects)'));
-alter view flow_instance_connections_lov modify (src_objt_bpmn_id annotations (add content 'BPMN identifier of the source gateway or object'));
-alter view flow_instance_connections_lov modify (prcs_id          annotations (add content 'Process instance this connection belongs to'));
-alter view flow_instance_connections_lov modify (prdg_id          annotations (add content 'Instance diagram record for this connection'));
+  )]';
+    execute immediate q'[alter view flow_instance_connections_lov modify (conn_bpmn_id     annotations (add content 'BPMN identifier of the sequence flow connection'))]';
+    execute immediate q'[alter view flow_instance_connections_lov modify (conn_name        annotations (add content 'Display name of the connection'))]';
+    execute immediate q'[alter view flow_instance_connections_lov modify (conn_src_objt_id annotations (add content 'Source object system ID (FK: flow_objects)'))]';
+    execute immediate q'[alter view flow_instance_connections_lov modify (src_objt_bpmn_id annotations (add content 'BPMN identifier of the source gateway or object'))]';
+    execute immediate q'[alter view flow_instance_connections_lov modify (prcs_id          annotations (add content 'Process instance this connection belongs to'))]';
+    execute immediate q'[alter view flow_instance_connections_lov modify (prdg_id          annotations (add content 'Instance diagram record for this connection'))]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure

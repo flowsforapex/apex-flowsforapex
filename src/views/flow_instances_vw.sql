@@ -31,15 +31,20 @@ as
 with read only;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_instances_vw annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_instances_vw annotations
   ( add app     'Flows for APEX'
   , add type    'runtime'
   , add content 'All process instances with diagram metadata, status, priority, timestamps, and business reference'
-  );
+  )]';
+    execute immediate q'[alter view flow_instances_vw modify (prcs_business_ref annotations (add content 'Business reference value from the BUSINESS_REF process variable'))]';
+  end if;
+end;
+/
 
-alter view flow_instances_vw modify (prcs_business_ref annotations (add content 'Business reference value from the BUSINESS_REF process variable'));
 whenever sqlerror exit failure

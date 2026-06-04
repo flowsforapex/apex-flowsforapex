@@ -20,14 +20,19 @@ as
   ;
 
 -- ---------------------------------------------------------------------------
--- Schema annotations (Oracle 19.28+ or 23ai; idempotent - safe to re-run)
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
 -- ---------------------------------------------------------------------------
-whenever sqlerror continue
-
-alter view flow_diagrams_instanciated_lov annotations
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_diagrams_instanciated_lov annotations
   ( add app     'Flows for APEX'
   , add type    'definition'
   , add content 'Diagrams with active process instances for instance-filtered LOV selection'
-  );
+  )]';
+  end if;
+end;
+/
 
 whenever sqlerror exit failure
