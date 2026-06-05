@@ -110,7 +110,7 @@ create or replace package body flow_tasks as
     end if;
 
     update flow_subflows sbfl
-       set sbfl.sbfl_subject        = l_subject_template
+       set sbfl.sbfl_subject        = substr(l_subject_template,1, 1000)
          , sbfl.sbfl_last_update    = systimestamp
          , sbfl.sbfl_last_update_by = coalesce
                                        ( sys_context('apex$session','app_user')

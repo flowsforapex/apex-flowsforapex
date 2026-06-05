@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-           xmlns:apex="http://flowsforapex.com/bpmn"
-           targetNamespace="http://flowsforapex.com/bpmn"
+           xmlns:apex="http://flowsforapex.org"
+           targetNamespace="http://flowsforapex.org"
            elementFormDefault="qualified">
 
     <xs:annotation>
@@ -13,7 +13,7 @@
             to enhance standard BPMN 2.0 with Oracle APEX-specific capabilities.
             
             Version: 26.1
-            Namespace: http://flowsforapex.com/bpmn
+            Namespace: http://flowsforapex.org
             Prefix: apex
 
             apex:customExtension is a Flows for APEX development-team mechanism used to
