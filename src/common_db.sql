@@ -175,6 +175,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
 @views/engine-app/flow_p0008_message_subscriptions_vw.sql
+@views/engine-app/flow_p0024_message_start_listeners_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0013_attributes_vw.sql
 @views/engine-app/flow_p0013_expressions_vw.sql
