@@ -33,7 +33,7 @@ as
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'
              when 'in call activity' then 'fa fa-share-alt'
-             when 'in adhoc activity' then 'fa fa-share-alt'
+             when 'in adhoc subprocess' then 'fa fa-user-play'
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
@@ -59,16 +59,19 @@ as
             when sbfl.sbfl_status = 'error' then 'fa-redo-arrow'
             when sbfl.sbfl_status = 'running' then 'fa-sign-out'
             when sbfl.sbfl_status = 'waiting for timer' then 'fa-clock-o'
+            when sbfl.sbfl_status = 'in adhoc subprocess' then 'fa-user-play'
           end as quick_action_icon 
         , case 
             when sbfl.sbfl_status = 'error' then apex_lang.message('APP_RESTART_STEP')
             when sbfl.sbfl_status = 'running' then apex_lang.message('APP_COMPLETE_STEP')
             when sbfl.sbfl_status = 'waiting for timer' then apex_lang.message('APP_RESCHEDULE_TIMER')
+            when sbfl.sbfl_status = 'in adhoc subprocess' then apex_lang.message('APP_ADHOC_DETAILS')
           end as quick_action_label 
         , case 
             when sbfl.sbfl_status = 'error' then 'restart-step'
             when sbfl.sbfl_status = 'running' then 'complete-step'
             when sbfl.sbfl_status = 'waiting for timer' then 'reschedule-timer'
+            when sbfl.sbfl_status = 'in adhoc subprocess' then 'open-adhoc-activities'
           end as quick_action 
         , case when sbfl.sbfl_status = 'waiting for timer' then ' @ ' || sbfl.timr_start_on at time zone sessiontimezone end as timer_status_info
     from flow_subflows_vw sbfl
