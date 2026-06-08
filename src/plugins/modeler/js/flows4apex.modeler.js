@@ -10731,18 +10731,6 @@ class XMLModule {
     this._elementRegistry = elementRegistry;
   }
 
-  static addCustomNamespace(xml) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'text/xml');
-
-    // change apex namespace
-    var [definitions] = xmlDoc.getElementsByTagName('bpmn:definitions');
-
-    if (definitions) definitions.setAttribute('xmlns:apex', 'https://flowsforapex.org');
-
-    return new XMLSerializer().serializeToString(xmlDoc);
-  }
-
   static addStyleToSVG(svg) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(svg, 'text/xml');
@@ -186311,7 +186299,7 @@ class Modeler extends HTMLElement {
       },
       exporter: {
         name: 'Flows for APEX',
-        version: '25.1.0',
+        version: '26.1.0',
       },
       showCustomExtensions: this.showCustomExtensions
     });
@@ -186341,12 +186329,12 @@ class Modeler extends HTMLElement {
     const canvas = this.modeler.get('canvas');
 
     canvas.zoom('fit-viewport', 'auto');
-      
-    if (!this.modeler._definitions.get('xmlns:apex')) {
-      // custom namespace must be added manually for working default values 
-      const refactored = xmlModule.constructor.addCustomNamespace(diagramContent);
-      result = await this.modeler.importXML(refactored);
-    }  
+
+    const definitions = this.modeler.getDefinitions();
+    
+    // custom namespace must be added manually for working default values 
+    definitions.$attrs['xmlns:apex'] = 'https://flowsforapex.org';
+    definitions.$attrs['xsi:schemaLocation'] = [definitions.$attrs['xsi:schemaLocation'], 'https://flowsforapex.org/xsd/flows4apex-bpmn-ext-v26.1.xsd'].join(' ').trim();
 
     xmlModule.refactorElements();
 
