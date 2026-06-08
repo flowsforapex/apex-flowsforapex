@@ -33,7 +33,7 @@ as
              when 'split' then 'fa fa-share-alt'
              when 'in subprocess' then 'fa fa-share-alt'
              when 'in call activity' then 'fa fa-share-alt'
-             when 'in adhoc subprocess' then 'fa fa-user-play'
+             when 'in adhoc subprocess' then 'fa fa-box-arrow-in-east'
              when 'waiting at gateway' then 'fa fa-hand-stop-o'
              when 'waiting for timer' then 'fa fa-clock-o'
              when 'waiting for event' then 'fa fa-hand-stop-o'
@@ -59,7 +59,7 @@ as
             when sbfl.sbfl_status = 'error' then 'fa-redo-arrow'
             when sbfl.sbfl_status = 'running' then 'fa-sign-out'
             when sbfl.sbfl_status = 'waiting for timer' then 'fa-clock-o'
-            when sbfl.sbfl_status = 'in adhoc subprocess' then 'fa-user-play'
+            when sbfl.sbfl_status = 'in adhoc subprocess' then 'fa-box-arrow-in-east'
           end as quick_action_icon 
         , case 
             when sbfl.sbfl_status = 'error' then apex_lang.message('APP_RESTART_STEP')
