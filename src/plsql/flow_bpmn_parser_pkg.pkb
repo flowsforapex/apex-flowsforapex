@@ -815,6 +815,10 @@ as
     end loop;
 
     if l_parameter_array.get_size > 0 then
+      if not g_objects.exists( pi_bpmn_id ) then
+        register_object( pi_objt_bpmn_id => pi_bpmn_id );
+        g_objects(pi_bpmn_id).objt_attributes := sys.json_object_t();
+      end if;
       flow_parser_util.guarantee_apex_object( pio_attributes => g_objects(pi_bpmn_id).objt_attributes );
       l_apex_object := g_objects(pi_bpmn_id).objt_attributes.get_object( 'apex' );
       l_apex_object.put( flow_parser_util.get_property_key( pi_parameter_set_name ), l_parameter_array );
