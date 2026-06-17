@@ -329,6 +329,10 @@ as
       
       -- Handle APEX-specific properties and description
       l_apex_props := json_object_t();
+
+      -- Put onto new line with full width for modern style
+      l_apex_props.put('newRow', true);
+      l_apex_props.put('colSpan', 12);
       
       -- Add description as help text under apex object
       if l_param.has('description') then
@@ -402,7 +406,7 @@ as
     end if;
 
     return l_schema.to_clob();
-    
+
   exception
     when others then
       -- Return basic schema on error
