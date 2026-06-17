@@ -128,6 +128,9 @@ drop view flow_p0014_subflows_vw;
 drop view flow_p0014_variable_log_vw;
 drop view flow_p0019_vw;
 drop view flow_p0020_instance_timeline_vw;
+drop view flow_p0022_adhoc_activities_vw;
+drop view flow_p0022_startable_adhoc_activities_vw;
+drop view flow_p0022_started_adhoc_activities_vw;
 drop view flow_p0024_message_start_listeners_vw;
 drop view flow_task_inbox_vw;
 drop view flow_instance_connections_lov;
@@ -169,6 +172,10 @@ drop table flow_message_subscriptions cascade constraints;
 drop table flow_processes cascade constraints;
 drop table flow_iterations cascade constraints;
 drop table flow_iterated_objects cascade constraints;
+drop table flow_adhoc_subprocs cascade constraints;
+drop table flow_adhoc_subflows cascade constraints;
+drop table flow_call_activities cascade constraints;
+drop table flow_adhoc_subproc_ai_decisions cascade constraints;
 drop table flow_subflows cascade constraints;
 drop table flow_subflow_log cascade constraints;
 drop table flow_diagrams cascade constraints;
@@ -199,14 +206,4 @@ drop type flow_t_correlated_message;
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
 
-create or replace view flow_object_input_schema_vw as
 
-select  objt.objt_dgrm_id,
-        objt.objt_bpmn_id,
-        objt.objt_name,
-        objt.objt_tag_name,
-        flow_parameters.parameters_to_json_schema ( pi_parameters => objt.objt_attributes."apex"."inputParameters"
-                                                  , pi_user_data_only_yn => 'Y')  
-        as  input_parameters_schema
-  from  flow_objects objt
-with read only

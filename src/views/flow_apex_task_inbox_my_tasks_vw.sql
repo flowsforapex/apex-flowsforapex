@@ -123,3 +123,22 @@ as select
                               )
           --- if lanes not always being used, change this to your situation
      ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_apex_task_inbox_my_tasks_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'APEX approval tasks and Flows user tasks assigned to the current user for task inbox display (deprecated - use flow_apex_my_combined_task_list_vw instead)'
+  , add deprecation 'This view is deprecated and will be removed in a future release. Use flow_apex_my_combined_task_list_vw instead.'
+  )]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

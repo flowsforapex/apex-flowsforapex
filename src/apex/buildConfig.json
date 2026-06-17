@@ -20,6 +20,7 @@
       [
         { "content_type": "plaintext", "path": "ddl/", "name": "install_scratch.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "types/", "name": "flow_t_correlated_message.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "types/", "name": "flow_t_async_task.sql", "add_show_errors": false }
       ]
     }
   , {
@@ -38,6 +39,7 @@
     , "content":
       [
         { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_comments.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_annotations.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "ddl/", "name": "create_scheduler_objects.sql", "add_show_errors": false }
       ]
     }
@@ -60,10 +62,16 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_types_pkg.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_constants_pkg.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_proc_vars_int.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_adhoc_subprocesses.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_adhoc_subprocesses_ai.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_adhoc_subprocesses_core.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_adhoc_subprocesses_util.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_admin_api_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_ai_prompt_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_apex_session.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_api_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_async_tasks_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_boundary_events.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_bpmn_parser_pkg.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_call_activities.pks", "add_show_errors": false }
@@ -81,10 +89,10 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_log_admin.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_logging.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_flow.pks", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_async_tasks_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_util_ee.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_util.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_migrate_xml_pkg.pks", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_parameters.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_parser_util.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_plsql_runner_pkg.pks", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_process_vars.pks", "add_show_errors": false }
@@ -225,6 +233,7 @@
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_flow.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_message_util.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_migrate_xml_pkg.pkb", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "plsql/", "name": "flow_parameters.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_parser_util.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_plsql_runner_pkg.pkb", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "plsql/", "name": "flow_proc_vars_int.pkb", "add_show_errors": false }

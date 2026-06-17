@@ -22,3 +22,26 @@ select  objt.objt_dgrm_id,
         as  input_parameters_schema
   from  flow_objects objt
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_object_input_schema_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'JSON schema definitions for input parameters of APEX-configured flow objects'
+  )]';
+    execute immediate q'[alter view flow_object_input_schema_vw modify (objt_dgrm_id            annotations (add content 'Diagram containing this object (FK: flow_diagrams)'))]';
+    execute immediate q'[alter view flow_object_input_schema_vw modify (objt_bpmn_id            annotations (add content 'BPMN identifier of the object from the diagram XML'))]';
+    execute immediate q'[alter view flow_object_input_schema_vw modify (objt_name               annotations (add content 'Display name of the BPMN object'))]';
+    execute immediate q'[alter view flow_object_input_schema_vw modify (objt_tag_name           annotations (add content 'BPMN element type, e.g. bpmn:userTask'))]';
+    execute immediate q'[alter view flow_object_input_schema_vw modify (input_parameters_schema annotations (add content 'JSON schema for input parameters defined via APEX custom extension properties'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

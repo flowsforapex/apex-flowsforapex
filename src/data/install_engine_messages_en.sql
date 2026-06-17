@@ -370,6 +370,8 @@ begin
     values ('adhoc-reco-already-disp', c_load_lang, q'[Recommendation has already been dispatched or discarded.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('adhoc-reco-activity-not-set', c_load_lang, q'[Activity is not in the pending recommendation action set.]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('ai-connection-error', c_load_lang, q'[AI connection definition incorrect - check your configuration]');
   -- above here manually added for 26.1 dev
 /* template below - don't forget fmsg_message_key is max 30 chars
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

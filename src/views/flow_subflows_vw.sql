@@ -81,3 +81,39 @@ left join flow_iterations iter
        on iter.iter_id = sbfl.sbfl_iter_id
 with read only
 ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_subflows_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'All subflow execution instances with current and completed objects, assignments, lane data, and timer information'
+  )]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_process_name annotations (add content 'Process instance name resolved from the process record'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_dgrm_id annotations (add content 'Diagram ID of the top-level process diagram'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_sbfl_dgrm_id annotations (add content 'Diagram ID at the subflow level for called diagrams'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_dgrm_name annotations (add content 'Name of the diagram this subflow is executing'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_dgrm_version annotations (add content 'Version of the diagram this subflow is executing'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_dgrm_status annotations (add content 'Status of the diagram this subflow is executing'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_dgrm_category annotations (add content 'Category of the diagram this subflow is executing'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_starting_object_name annotations (add content 'Display name of the subflow starting BPMN object'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_route_name annotations (add content 'Display name of the sequence flow route taken'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_last_completed_name annotations (add content 'Display name of the last completed BPMN object'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_current_name annotations (add content 'Display name of the current BPMN object, including loop counter'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_iteration_path annotations (add content 'Human-readable path of the current iteration for looping subflows'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_current_tag_name annotations (add content 'BPMN element type of the current object'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_current_lane annotations (add content 'Lane BPMN ID where the current step is executing'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_current_lane_name annotations (add content 'Display name of the lane where the current step is executing'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_current_objt_id annotations (add content 'Internal object ID of the current BPMN object'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (sbfl_prcs_init_ts annotations (add content 'Timestamp when the parent process instance was created'))]';
+    execute immediate q'[alter view flow_subflows_vw modify (timr_start_on annotations (add content 'Scheduled start time for subflows waiting for a timer'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

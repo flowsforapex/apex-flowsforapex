@@ -54,7 +54,7 @@ end test_[NNN]_description;
 ### Basic Model Structure
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="..." xmlns:apex="http://flowsforapex.com/bpmn" ...>
+<bpmn:definitions xmlns:bpmn="..." xmlns:apex="http://flowsforapex.org" ...>
   <bpmn:process id="Process_unique_id" isExecutable="true">
     <bpmn:startEvent id="Start" name="Start">
       <bpmn:outgoing>Flow_start_to_first</bpmn:outgoing>

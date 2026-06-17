@@ -102,12 +102,7 @@ create table flow_adhoc_subprocs (
 alter table flow_adhoc_subprocs
   add constraint flow_ahsp_pk primary key ( ahsp_id );
 
--- drop first so re-running migration on dev DBs works cleanly
-begin
-  execute immediate 'alter table flow_adhoc_subprocs drop constraint flow_ahsp_control_ck';
-exception when others then null;
-end;
-/
+
 alter table flow_adhoc_subprocs
   add constraint flow_ahsp_control_ck check ( ahsp_control in ('manual', 'ai', 'hybrid', 'recommendation') );
 
@@ -207,6 +202,13 @@ comment on column flow_adhoc_subprocs.ahsp_ai_interface is 'Configured AI interf
 comment on column flow_adhoc_subprocs.ahsp_ai_service is 'Configured APEX AI service static ID used by this adhoc subprocess instance';
 comment on column flow_adhoc_subprocs.ahsp_ai_provider is 'Configured UC_AI provider used by this adhoc subprocess instance';
 comment on column flow_adhoc_subprocs.ahsp_ai_model is 'Configured AI model identifier used by this adhoc subprocess instance';
+
+PROMPT >> Enable support for adhoc sub process (ADHOCSP) in BPMN types
+update flow_bpmn_types
+   set bpmn_is_supported = 'Y'
+ where bpmn_code = 'ADHOCSP'
+   and bpmn_is_supported != 'Y';
+commit;
 
 PROMPT >> >> Schema Changes Completed
 PROMPT >> --------------------------------------------------- 

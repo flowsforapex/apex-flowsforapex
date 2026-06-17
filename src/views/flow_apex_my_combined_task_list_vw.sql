@@ -123,3 +123,21 @@ as select
      , current_obj
      from table ( flow_api_pkg.get_current_tasks ( p_context => 'MY_TASKS'))
      ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_apex_my_combined_task_list_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Combined APEX tasks (from Workflows and Human Tasks)and Flows user tasks for the current user with full task metadata'
+  )]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

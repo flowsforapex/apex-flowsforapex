@@ -476,8 +476,8 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
       l_error_response.put('success', false);
       l_error_response.put('aiInterface', p_ai_interface);
       l_error_response.put('errorCode', sqlcode);
-      -- TODO (26.1): Change error message to something else than not ee 
-      l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
+      l_error_response.put('errorMessage', apex_lang.message('ai-connection-error'));
+      -- $F4AMESSAGE 'ai-connection-error' || 'AI connection definition incorrect - check your configuration'
       return l_error_response.to_clob;
   end test_ai_connection;
 

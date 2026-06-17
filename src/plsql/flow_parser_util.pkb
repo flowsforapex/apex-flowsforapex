@@ -11,9 +11,9 @@ as
     l_token_pos pls_integer;
   begin
     l_token_pos := instr( pi_property_name, ':' );
-    if l_token_pos is not null then
-      po_namespace := substr( pi_property_name, 1, instr(pi_property_name, ':') - 1);
-      po_key       := substr( pi_property_name, instr(pi_property_name, ':') + 1 );
+    if l_token_pos > 0 then
+      po_namespace := substr( pi_property_name, 1, l_token_pos - 1);
+      po_key       := substr( pi_property_name, l_token_pos + 1 );
     else
       po_namespace := null;
       po_key       := pi_property_name;
@@ -142,7 +142,7 @@ as
                               , flow_constants_pkg.gc_apex_parameter_enum
                               )
     then
-      -- This value should be JSON. Some model payloads serialize JSON as escaped text,
+      -- This value should be a JSON object. Some model payloads serialize JSON as escaped text,
       -- so we normalize common escape sequences before a second parse attempt.
       l_json_text := replace( pi_value, chr(38)||'amp;', chr(38) );
       begin

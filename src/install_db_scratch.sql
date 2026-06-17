@@ -15,6 +15,9 @@ PROMPT >> Common Objects
 PROMPT >> Adding Comments
 @ddl/install_ddl_comments.sql
 
+PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
+@ddl/install_ddl_annotations.sql
+
 PROMPT >> Installing Database Scheduler Objects
 @ddl/create_scheduler_objects.sql
 

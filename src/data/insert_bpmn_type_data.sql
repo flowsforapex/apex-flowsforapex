@@ -108,7 +108,7 @@ begin
   insert into FLOW_BPMN_TYPES 
     ( BPMN_CODE,BPMN_OBJECT_NAME,BPMN_TAG_NAME,BPMN_SUB_TAG_NAME,BPMN_ICON,BPMN_SUPER_TYPE,BPMN_IS_SUPPORTED,BPMN_INTERRUPTING )
     values 
-    ( 'ADHOCSP','adhoc sub process','bpmn:adHocSubProcess', null,'bpmn-icon-ad-hoc-marker','activity','N', null);
+    ( 'ADHOCSP','adhoc sub process','bpmn:adHocSubProcess', null,'bpmn-icon-ad-hoc-marker','activity','Y', null);
   insert into FLOW_BPMN_TYPES 
     ( BPMN_CODE,BPMN_OBJECT_NAME,BPMN_TAG_NAME,BPMN_SUB_TAG_NAME,BPMN_ICON,BPMN_SUPER_TYPE,BPMN_IS_SUPPORTED,BPMN_INTERRUPTING )
     values 

@@ -19,3 +19,22 @@ as
                on lgsf.lgsf_objt_id = objt.objt_bpmn_id
               and lgsf.lgsf_sbfl_dgrm_id = objt.objt_dgrm_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0014_step_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Step completion log with object name lookup and timezone-adjusted timestamps for engine app page 14'
+  )]';
+    execute immediate q'[alter view flow_p0014_step_log_vw modify (completed_object annotations (add content 'Display name of the completed BPMN object, falling back to the BPMN ID'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

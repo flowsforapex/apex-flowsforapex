@@ -26,3 +26,24 @@ select lgvr_prcs_id
   from flow_variable_event_log
   order by lgvr_timestamp
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_variable_event_timeline_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Timeline of variable assignments with object and scope context for audit and debugging'
+  )]';
+    execute immediate q'[alter view flow_variable_event_timeline_vw modify (lgvr_var_name_uc annotations (add content 'Upper-case variable name for case-insensitive filtering'))]';
+    execute immediate q'[alter view flow_variable_event_timeline_vw modify (lgvr_var_value annotations (add content 'Current value of the variable retrieved as VARCHAR2'))]';
+    execute immediate q'[alter view flow_variable_event_timeline_vw modify (lgvr_objt_name annotations (add content 'Display name of the BPMN object that set the variable'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

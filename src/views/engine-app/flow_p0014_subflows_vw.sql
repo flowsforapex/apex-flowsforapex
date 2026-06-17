@@ -18,3 +18,22 @@ as
                on sbfl.sbfl_current = objt.objt_bpmn_id
               and sbfl.sbfl_dgrm_id = objt.objt_dgrm_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0014_subflows_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Subflows with object name lookup and timezone-adjusted timestamps for engine app page 14'
+  )]';
+    execute immediate q'[alter view flow_p0014_subflows_vw modify (current_object annotations (add content 'Display name of the current BPMN object'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure
