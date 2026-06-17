@@ -2,15 +2,77 @@ var f4a = f4a || {};
 f4a.plugins = f4a.plugins || {};
 f4a.plugins.modeler = f4a.plugins.modeler || {
     
-    render: function(options) {
+    render: async function(options) {
 
         const {
             regionId,
             ajaxIdentifier,
             itemsToSubmit,
             showCustomExtensions,
-            themePluginClass
+            themePluginClass,
+            monacoEditorVersion,
         } = options;
+
+        const monacoPath = `${apex_img_dir}libraries/monaco-editor/${monacoEditorVersion}`;
+
+        // init monaco editor (will be used inside bundled code)
+        window._monacoReady = new Promise(async (resolve, reject) => {
+
+            // already existing
+            if (window.monaco) {
+                apex.debug.info("Monaco Editor already loaded.");
+                
+                resolve(window.monaco);
+                return;
+            }
+
+            // try ESM version first (APEX 26.1+)
+            try {
+                const module = await import(`${monacoPath}/monaco-editor.min.js`);
+                apex.debug.info("ESM version of Monaco Editor loaded.");
+
+                const monaco = module.monaco;
+                window.monaco = monaco;
+
+                resolve(monaco);
+                return;
+            }
+            catch(esmError) {
+                apex.debug.warn("Loading ESM version of Monaco Editor failed. Trying AMD version now.")
+            }
+
+            // try AMD version else (APEX < 26.1)
+            const amdPath = `${monacoPath}/min/vs`;
+
+            // init monaco worker environment
+            window.MonacoEnvironment = {
+                getWorkerUrl: function (_moduleId, _label) {
+                    return `${amdPath}/base/worker/workerMain.js`;
+                }
+            };
+
+            require.config({ paths: { vs: amdPath } });
+
+            require(
+                ['vs/editor/editor.main']
+                , (_module) => { 
+                    apex.debug.info("AMD version of Monaco Editor loaded.");
+                    resolve(window.monaco);
+                }
+                , (_error) => { 
+                    apex.debug.warn("Loading AMD version of Monaco Editor failed.");
+
+                    apex.message.showErrors( [
+                        {
+                            type: "error",
+                            location: ["page"],
+                            message: "Couldn't find Monaco Editor. <br/> Please check the provided version in the Component Settings.",
+                            unsafe: false,
+                        },
+                    ] );
+                }
+            );
+        });
 
         // store apex-related input
         this.regionId = regionId;

@@ -78,15 +78,6 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
                 
                 try {
                     await this.viewerElement.loadDiagram();
-
-                    // trigger load event
-                    apex.event.trigger( "#" + this.regionId, "mtbv_diagram_loaded",
-                        { 
-                            diagramIdentifier: this.viewerElement.diagram.diagramIdentifier, 
-                            callingDiagramIdentifier: this.viewerElement.diagram.callingDiagramIdentifier, 
-                            callingObjectId: this.viewerElement.diagram.callingObjectId
-                        } 
-                    );
                 }
                 catch(err) {
                     apex.debug.error('Loading Diagram failed.', err);
@@ -149,6 +140,16 @@ f4a.plugins.viewer = f4a.plugins.viewer || {
         ];
 
         const eventBus = this.viewerElement.getEventBus();
+
+        eventBus.on("import.done", () => {
+            apex.event.trigger( "#" + this.regionId, "mtbv_diagram_loaded",
+                { 
+                    diagramIdentifier: this.viewerElement.diagram.diagramIdentifier, 
+                    callingDiagramIdentifier: this.viewerElement.diagram.callingDiagramIdentifier, 
+                    callingObjectId: this.viewerElement.diagram.callingObjectId
+                } 
+            );
+        });
         
         capturedEvents.forEach( currentEvent => {
             eventBus.on( currentEvent, eventData => {
