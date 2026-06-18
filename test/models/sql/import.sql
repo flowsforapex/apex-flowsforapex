@@ -110,5 +110,8 @@ set define off;
 @@"A25b - Script Task Exception handling_0.sql";
 @@"A26a - Association to SequenceFlow_0.sql";
 @@"A27a - Variable Expression Errors_0.sql";
+@@"A90a - Basic AI Model_0.sql";
+@@"A90b - Basic AI Model with Variables_0.sql"; 
+@@"A90c - AI Gateway Routing Model_0.sql";
 commit;
 PROMPT >> Models created
