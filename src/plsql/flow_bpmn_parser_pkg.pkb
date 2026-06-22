@@ -691,6 +691,10 @@ as
     l_parameter       sys.json_object_t;
     l_source          sys.json_object_t;
     l_apex_rendering  sys.json_object_t;
+    l_default_json    sys.json_object_t;
+    l_default_element sys.json_element_t;
+    l_default_text    clob;
+    l_parameter_type  varchar2(20 char);
     l_required_value  varchar2(20 char);
     l_enum_namespace  flow_types_pkg.t_vc200;
     l_enum_key        flow_types_pkg.t_vc200;
@@ -737,6 +741,8 @@ as
         l_parameter.put( 'type', rec.parameter_type );
       end if;
 
+      l_parameter_type := lower( trim( rec.parameter_type ) );
+
       l_required_value := lower(trim(rec.parameter_required));
       if l_required_value = flow_constants_pkg.gc_vcbool_true then
         l_parameter.put( 'required', true );
@@ -747,7 +753,29 @@ as
       end if;
 
       if rec.parameter_default is not null then
-        l_parameter.put( 'default', rec.parameter_default );
+        l_default_text := trim( rec.parameter_default );
+
+        if l_parameter_type = 'string' then
+          l_parameter.put( 'default', rec.parameter_default );
+        elsif l_parameter_type = 'boolean' then
+          if lower( l_default_text ) = flow_constants_pkg.gc_vcbool_true then
+            l_parameter.put( 'default', true );
+          elsif lower( l_default_text ) = flow_constants_pkg.gc_vcbool_false then
+            l_parameter.put( 'default', false );
+          else
+            l_parameter.put( 'default', rec.parameter_default );
+          end if;
+        else
+          begin
+            l_default_json := sys.json_object_t.parse( '{"default":' || l_default_text || '}' );
+            l_default_element := l_default_json.get( 'default' );
+            l_parameter.put( 'default', l_default_element );
+          exception
+            when others then
+              -- Keep backward-compatible behavior for plain text defaults like standard.
+              l_parameter.put( 'default', rec.parameter_default );
+          end;
+        end if;
       end if;
 
       if rec.parameter_description is not null then
@@ -783,7 +811,9 @@ as
           l_apex_rendering.put( 'maxLength', rec.apex_max_length );
         end if;
 
-        if rec.apex_placeholder is not null then
+        if rec.apex_placeholder is not null
+           and length( trim( dbms_lob.substr( rec.apex_placeholder, 32767, 1 ) ) ) > 0
+        then
           l_apex_rendering.put( 'placeholder', rec.apex_placeholder );
         end if;
 

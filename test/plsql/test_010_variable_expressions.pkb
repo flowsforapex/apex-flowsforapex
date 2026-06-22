@@ -659,6 +659,105 @@ create or replace package body test_010_variable_expressions is
         l_actual_json := json_element_t.parse(l_actual_json_txt);
 
       ut.expect( l_actual_json ).to_equal( l_expected_json );  
+
+        -- test JSONPath scalar values
+        open l_expected for
+            select
+                'JsonPathVC2' as prov_var_name,
+                'JONES' as prov_var_vc2
+            from dual;
+
+        open l_actual for
+            select prov_var_name, prov_var_vc2
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'VARCHAR2'
+            and prov_var_name = 'JsonPathVC2'
+            and prov_var_num   is null
+            and prov_var_date is null
+            and prov_var_tstz is null
+            and prov_var_json is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+        open l_expected for
+            select
+                'JsonPathNumber' as prov_var_name,
+                '7566' as prov_var_num
+            from dual;
+
+        open l_actual for
+            select prov_var_name, to_char(prov_var_num) as prov_var_num
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'NUMBER'
+            and prov_var_name = 'JsonPathNumber'
+            and prov_var_vc2   is null
+            and prov_var_date is null
+            and prov_var_tstz is null
+            and prov_var_json is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+        open l_expected for
+            select
+                'JsonPathDate' as prov_var_name,
+                '2024-05-01 10:11:12' as prov_var_date
+            from dual;
+
+        open l_actual for
+            select prov_var_name, to_char(prov_var_date,'YYYY-MM-DD HH24:MI:SS') as prov_var_date
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'DATE'
+            and prov_var_name = 'JsonPathDate'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_tstz is null
+            and prov_var_json is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+        open l_expected for
+            select
+                'JsonPathTSTZ' as prov_var_name,
+                '2024-05-01 10:11:12 UTC' as prov_var_tstz
+            from dual;
+
+        open l_actual for
+            select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+            from flow_process_variables
+            where prov_prcs_id = g_prcs_id
+            and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+            and prov_var_name = 'JsonPathTSTZ'
+            and prov_var_num   is null
+            and prov_var_vc2 is null
+            and prov_var_date is null
+            and prov_var_json is null
+            and prov_var_clob is null;
+
+      ut.expect( l_actual ).to_equal( l_expected );
+
+        l_expected_json := json_element_t.parse('{"name":"BLAKE","id":7698}');
+
+        select prov_var_json
+        into l_actual_json_txt
+        from flow_process_variables
+        where prov_prcs_id = g_prcs_id
+        and prov_var_type = 'JSON'
+        and prov_var_name = 'JsonPathJSON'
+        and prov_var_num   is null
+        and prov_var_vc2 is null
+        and prov_var_tstz is null
+        and prov_var_clob is null
+        and prov_var_date is null;
+
+        l_actual_json := json_element_t.parse(l_actual_json_txt);
+
+      ut.expect( l_actual_json ).to_equal( l_expected_json );
       
         -- get step key
         select sbfl_step_key

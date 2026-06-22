@@ -34,6 +34,7 @@ drop package test_022_usertask_misc;
 drop package test_023_custom_extensions;
 drop package test_024_usertask_approval_task;
 drop package test_025_script_tasks;
+drop package test_028_task_parameters;
 
 PROMPT >> Engine Test Packages deleted
 

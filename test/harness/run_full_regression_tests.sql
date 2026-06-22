@@ -286,6 +286,14 @@ prompt Testing: Error handling in variable expressions
 prompt ---------------------------------------------------------------------
 exec ut.run('test_027_var_exp_errors');
 
+-- Run Task Parameters Tests (Suite 028)
+prompt 
+prompt ---------------------------------------------------------------------
+prompt TEST SUITE 028: Task Parameters
+prompt Testing: Script task input/output parameter definitions and processing
+prompt ---------------------------------------------------------------------
+exec ut.run('test_028_task_parameters');
+
 prompt 
 prompt =====================================================================
 prompt FULL REGRESSION TEST EXECUTION COMPLETED
