@@ -42,10 +42,13 @@ is
   --%test('9 - flow_globals.input_parameter is callable from script context')
   procedure flow_globals_input_parameter_from_script;
 
-  --%test('10 - flow_globals output parameter setters are callable from script context')
-  procedure flow_globals_set_output_parameter_from_script;
+  --%test('10 - flow_globals output scalar overload supports six key values')
+  procedure flow_globals_set_output_parameter_6_keys_from_script;
 
-  --%test('11 - flow_globals.business_ref supports lookup by subflow id')
+  --%test('11 - flow_globals output object accepts direct JSON payload')
+  procedure flow_globals_set_output_parameter_json_from_script;
+
+  --%test('12 - flow_globals.business_ref supports lookup by subflow id')
   procedure flow_globals_business_ref_by_sbfl_id;
 
   --%afterall

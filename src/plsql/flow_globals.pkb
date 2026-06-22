@@ -147,19 +147,10 @@ as
   , pi_value6          in varchar2 default null
   )
   is
-    l_json_obj     json_object_t;
     l_nested_obj   json_object_t;
   begin
-    -- Initialize main JSON object if needed
-    if output_parameters is null or output_parameters is not json then
-      l_json_obj := json_object_t();
-    else
-      l_json_obj := json_object_t(output_parameters);
-    end if;
-    
-    -- Create nested object with key-value pairs
     l_nested_obj := json_object_t();
-    
+
     if pi_key1 is not null then
       l_nested_obj.put(pi_key1, pi_value1);
     end if;
@@ -178,37 +169,50 @@ as
     if pi_key6 is not null then
       l_nested_obj.put(pi_key6, pi_value6);
     end if;
+
+    set_output_parameter_object
+    ( pi_parameter_name  => pi_parameter_name
+    , pi_object_json     => l_nested_obj.to_clob()
+    );
+  end set_output_parameter_object;
+
+  procedure set_output_parameter_object
+  ( pi_parameter_name  in varchar2
+  , pi_object_json     in clob
+  )
+  is
+    l_json_obj     json_object_t;
+    l_nested_obj   json_object_t;
+  begin
+    -- Initialize main JSON object, falling back to empty object if existing JSON is invalid.
+    begin
+      if output_parameters is null or output_parameters is not json then
+        l_json_obj := json_object_t();
+      else
+        l_json_obj := json_object_t(output_parameters);
+      end if;
+    exception
+      when others then
+        l_json_obj := json_object_t();
+    end;
+    
+    -- Parse payload as object; empty object if null/invalid.
+    begin
+      if pi_object_json is not null and pi_object_json is json then
+        l_nested_obj := json_object_t(pi_object_json);
+      else
+        l_nested_obj := json_object_t();
+      end if;
+    exception
+      when others then
+        l_nested_obj := json_object_t();
+    end;
     
     -- Add the nested object to the main object
     l_json_obj.put(pi_parameter_name, l_nested_obj);
     
     -- Update the global variable
     output_parameters := l_json_obj.to_clob();
-  exception
-    when others then
-      -- If JSON operations fail, create new JSON object with the nested structure
-      l_json_obj := json_object_t();
-      l_nested_obj := json_object_t();
-      if pi_key1 is not null then
-        l_nested_obj.put(pi_key1, pi_value1);
-      end if;
-      if pi_key2 is not null then
-        l_nested_obj.put(pi_key2, pi_value2);
-      end if;
-      if pi_key3 is not null then
-        l_nested_obj.put(pi_key3, pi_value3);
-      end if;
-      if pi_key4 is not null then
-        l_nested_obj.put(pi_key4, pi_value4);
-      end if;
-      if pi_key5 is not null then
-        l_nested_obj.put(pi_key5, pi_value5);
-      end if;
-      if pi_key6 is not null then
-        l_nested_obj.put(pi_key6, pi_value6);
-      end if;
-      l_json_obj.put(pi_parameter_name, l_nested_obj);
-      output_parameters := l_json_obj.to_clob();
   end set_output_parameter_object;
 
   function get_output_parameters

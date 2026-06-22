@@ -275,8 +275,8 @@ is
     ut.expect( l_from_script ).to_equal( 'A' );
   end flow_globals_input_parameter_from_script;
 
-  -- test('10 - flow_globals output parameter setters are callable from script context')
-  procedure flow_globals_set_output_parameter_from_script
+  -- test('10 - flow_globals output scalar overload supports six key values')
+  procedure flow_globals_set_output_parameter_6_keys_from_script
   is
     l_output_json clob;
   begin
@@ -289,10 +289,18 @@ is
       flow_globals.set_output_parameter('status','OK');
       flow_globals.set_output_parameter_object
       ( pi_parameter_name => 'details'
-      , pi_key1           => 'code'
-      , pi_value1         => '200'
-      , pi_key2           => 'message'
-      , pi_value2         => 'done'
+      , pi_key1           => 'k1'
+      , pi_value1         => 'v1'
+      , pi_key2           => 'k2'
+      , pi_value2         => 'v2'
+      , pi_key3           => 'k3'
+      , pi_value3         => 'v3'
+      , pi_key4           => 'k4'
+      , pi_value4         => 'v4'
+      , pi_key5           => 'k5'
+      , pi_value5         => 'v5'
+      , pi_key6           => 'k6'
+      , pi_value6         => 'v6'
       );
     end;]';
 
@@ -300,11 +308,40 @@ is
 
     ut.expect( l_output_json ).to_be_like( '%"status":"OK"%' );
     ut.expect( l_output_json ).to_be_like( '%"details"%' );
+    ut.expect( l_output_json ).to_be_like( '%"k1":"v1"%' );
+    ut.expect( l_output_json ).to_be_like( '%"k2":"v2"%' );
+    ut.expect( l_output_json ).to_be_like( '%"k3":"v3"%' );
+    ut.expect( l_output_json ).to_be_like( '%"k4":"v4"%' );
+    ut.expect( l_output_json ).to_be_like( '%"k5":"v5"%' );
+    ut.expect( l_output_json ).to_be_like( '%"k6":"v6"%' );
+  end flow_globals_set_output_parameter_6_keys_from_script;
+
+  -- test('11 - flow_globals output object accepts direct JSON payload')
+  procedure flow_globals_set_output_parameter_json_from_script
+  is
+    l_output_json clob;
+  begin
+    flow_globals.set_context
+    ( pi_prcs_id          => 0
+    , pi_input_parameters => '{}'
+    );
+
+    execute immediate q'[begin
+      flow_globals.set_output_parameter_object
+      ( pi_parameter_name => 'details'
+      , pi_object_json    => '{"code":"200","message":"done","rating":5}'
+      );
+    end;]';
+
+    l_output_json := flow_globals.get_output_parameters;
+
+    ut.expect( l_output_json ).to_be_like( '%"details"%' );
     ut.expect( l_output_json ).to_be_like( '%"code":"200"%' );
     ut.expect( l_output_json ).to_be_like( '%"message":"done"%' );
-  end flow_globals_set_output_parameter_from_script;
+    ut.expect( l_output_json ).to_be_like( '%"rating":5%' );
+  end flow_globals_set_output_parameter_json_from_script;
 
-  -- test('11 - flow_globals.business_ref supports lookup by subflow id')
+  -- test('12 - flow_globals.business_ref supports lookup by subflow id')
   procedure flow_globals_business_ref_by_sbfl_id
   is
     l_sbfl_id       flow_subflows.sbfl_id%type;
