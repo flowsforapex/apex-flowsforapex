@@ -105,6 +105,8 @@ as
     l_use_apex_exec boolean := false;
     l_plsql_code    clob;
     l_do_autobind   boolean := false;
+    l_input_parameter_definitions clob;
+    l_input_parameters            clob;
 
     l_sql_parameters apex_exec.t_parameters;
   begin
@@ -114,13 +116,43 @@ as
     , 'pi_sbfl_id', pi_sbfl_rec.sbfl_id
     );
 
-    flow_globals.set_context 
-    ( pi_prcs_id         => pi_sbfl_rec.sbfl_prcs_id
-    , pi_sbfl_id         => pi_sbfl_rec.sbfl_id 
-    , pi_step_key        => pi_sbfl_rec.sbfl_step_key
-    , pi_scope           => flow_engine_util.get_scope ( p_process_id => pi_sbfl_rec.sbfl_prcs_id, p_subflow_id => pi_sbfl_rec.sbfl_id)
-    , pi_loop_counter    => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_rec.sbfl_id)
-    , pi_input_parameters => pi_sbfl_rec.sbfl_task_input_parameters
+    -- AHSP starts may provide precomputed input parameters. For standard PL/SQL tasks,
+    -- compute them from the BPMN definitions at execution time.
+    l_input_parameters := pi_sbfl_rec.sbfl_task_input_parameters;
+
+    if l_input_parameters is null then
+      l_input_parameter_definitions := flow_parameters.get_input_parameter_definitions
+                                       ( pi_objt_id => pi_objt_id );
+
+      if l_input_parameter_definitions is not null
+         and l_input_parameter_definitions is json then
+        l_input_parameters := flow_parameters.process_input_parameters
+                              ( pi_parameter_definitions => l_input_parameter_definitions
+                              , pi_user_input_data       => null
+                              , pi_process_id            => pi_sbfl_rec.sbfl_prcs_id
+                              , pi_subflow_id            => pi_sbfl_rec.sbfl_id
+                              , pi_scope                 => pi_sbfl_rec.sbfl_scope
+                              , pi_allow_user_input      => (pi_sbfl_rec.sbfl_is_adhoc = flow_constants_pkg.gc_true)
+                              );
+
+        update flow_subflows
+           set sbfl_task_input_parameters = l_input_parameters
+         where sbfl_id = pi_sbfl_rec.sbfl_id;
+      end if;
+    end if;
+
+    flow_globals.set_context
+    ( pi_prcs_id          => pi_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id          => pi_sbfl_rec.sbfl_id
+    , pi_step_key         => pi_sbfl_rec.sbfl_step_key
+    , pi_scope            => flow_engine_util.get_scope ( p_process_id => pi_sbfl_rec.sbfl_prcs_id, p_subflow_id => pi_sbfl_rec.sbfl_id)
+    , pi_loop_counter     => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_rec.sbfl_id)
+    , pi_input_parameters => l_input_parameters
+    );
+
+    apex_debug.message
+    ( p_message => 'run_task_script input parameters JSON: %0'
+    , p0        => l_input_parameters
     );
 
     get_runner_config
@@ -164,6 +196,11 @@ as
         p_plsql_code => l_plsql_code
       );
     end if;
+
+    apex_debug.message
+    ( p_message => 'run_task_script output parameters JSON: %0'
+    , p0        => flow_globals.get_output_parameters
+    );
 
     -- Save output parameters back to the database if any were set
     if flow_globals.get_output_parameters is not null then

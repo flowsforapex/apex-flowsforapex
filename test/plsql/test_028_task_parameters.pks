@@ -27,7 +27,7 @@ is
   --%test('4 - Input schema includes enum values for user input parameters')
   procedure input_schema_includes_enum_values;
 
-  --%test('5 - Script task execution path remains valid with task parameters present')
+  --%test('5 - Standard PL/SQL task errors when input uses userInput source')
   procedure script_task_executes_with_parameters;
 
   --%test('6 - validate_parameters returns true when required values are present')
@@ -50,6 +50,12 @@ is
 
   --%test('12 - flow_globals.business_ref supports lookup by subflow id')
   procedure flow_globals_business_ref_by_sbfl_id;
+
+  --%test('13 - process_input_parameters rejects userInput when not allowed')
+  procedure process_input_parameters_disallow_user_input;
+
+  --%test('14 - Runtime maps static/procvar inputs and stores task outputs')
+  procedure runtime_maps_inputs_and_outputs;
 
   --%afterall
   procedure tear_down_tests;

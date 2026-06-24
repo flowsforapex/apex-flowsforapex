@@ -19,6 +19,7 @@ as
   , pi_process_id             in flow_processes.prcs_id%type
   , pi_subflow_id             in flow_subflows.sbfl_id%type default null
   , pi_scope                  in flow_subflows.sbfl_scope%type default 0
+  , pi_allow_user_input       in boolean default true
   ) return clob; -- Complete JSON object with all parameter values
 
   -- Get JSON schema for user input fields only (for APEX UI generation)

@@ -17,8 +17,10 @@ as
   , pi_process_id             in flow_processes.prcs_id%type
   , pi_subflow_id             in flow_subflows.sbfl_id%type default null
   , pi_scope                  in flow_subflows.sbfl_scope%type default 0
+  , pi_allow_user_input       in boolean default true
   ) return clob
   is
+    e_user_input_not_allowed exception;
     l_param_defs       json_array_t;
     l_user_input       json_object_t;
     l_result_params    json_object_t;
@@ -60,6 +62,19 @@ as
         
         case l_expression_type
           when 'userInput' then
+            if not pi_allow_user_input then
+              flow_errors.handle_instance_error
+              ( pi_prcs_id     => pi_process_id
+              , pi_sbfl_id     => pi_subflow_id
+              , pi_message_key => 'task-param-no-user-input'
+              , p0             => l_param_name
+              , p1             => pi_process_id
+              , p2             => pi_subflow_id
+              );
+              -- $F4AMESSAGE 'task-param-no-user-input' || 'Input parameter %0 in process %1 subflow %2 uses userInput source, which is only allowed for AHSP activities.'
+              raise e_user_input_not_allowed;
+            end if;
+
             -- Get value from user input JSON
             if l_user_input.has(l_param_name) then
               l_param_value := l_user_input.get_string(l_param_name);
@@ -124,6 +139,8 @@ as
     return l_result_params.to_clob();
     
   exception
+    when e_user_input_not_allowed then
+      raise;
     when others then
       apex_debug.error('Error in process_input_parameters: ' || sqlerrm);
       return json_object_t().to_clob();
