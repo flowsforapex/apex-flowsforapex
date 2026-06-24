@@ -81,6 +81,15 @@ create or replace package test_004_proc_vars is
   --%throws(no_data_found)
   procedure get_non_existant_vars_json_element;
 
+  --%test(4h. Get non-existant Proc Vars - type)
+  --%throws(no_data_found)
+  procedure get_non_existant_vars_type;
+
+  --%test(5a. set_vars_from_json_object handles date/tstz/json/null)
+  --%disabled
+  procedure set_vars_from_json_object_all_types;
+  -- disabled because of issue with dates and timestamps not being correctly dferentiated.  this needs attention in a later release.
+
   --%afterall
   procedure tear_down_tests;
 

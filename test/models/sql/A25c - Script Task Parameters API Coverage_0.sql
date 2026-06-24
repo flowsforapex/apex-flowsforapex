@@ -111,17 +111,15 @@ begin
       ,q'[    <bpmn:sequenceFlow id="Flow_script_end" sourceRef="Activity_Params" targetRef="Event_End" />]'
       ,q'[  </bpmn:process>]'
       ,q'[</bpmn:definitions>]'
-    )
-  );
-
+  ));
   flow_diagram.upload_and_parse(
-    pi_dgrm_name              => 'A25c - Script Task Parameters API Coverage',
+    pi_dgrm_name => 'A25c - Script Task Parameters API Coverage',
     pi_dgrm_short_description => '',
-    pi_dgrm_description       => null,
-    pi_dgrm_icon              => '',
-    pi_dgrm_version           => '0',
-    pi_dgrm_category          => 'Testing',
-    pi_dgrm_content           => l_dgrm_content
-  );
+    pi_dgrm_description => null,
+    pi_dgrm_icon => '',
+    pi_dgrm_version => '0',
+    pi_dgrm_category => 'Testing',
+    pi_dgrm_content => l_dgrm_content
+);
 end;
 /

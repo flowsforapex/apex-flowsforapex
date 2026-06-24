@@ -1818,6 +1818,97 @@ create or replace package body test_004_proc_vars is
 
   end get_non_existant_vars_json_element;
 
+   --test(4h. Get non-existant Proc Vars - type)
+   procedure get_non_existant_vars_type
+   is
+         l_prcs_id            flow_processes.prcs_id%type;
+         l_actual_vc2         varchar2(4000);
+   begin
+         l_prcs_id := g_prcs_id_1;
+
+         l_actual_vc2 := flow_proc_vars_int.get_var_type
+         ( pi_prcs_id           => l_prcs_id
+         , pi_var_name          => 'NOT_EXISTING'
+         , pi_exception_on_null => true
+         );
+
+   end get_non_existant_vars_type;
+
+   --test(5a. set_vars_from_json_object handles date/tstz/json/null)
+   procedure set_vars_from_json_object_all_types
+   is
+      l_prcs_id       flow_processes.prcs_id%type;
+      l_actual_date   date;
+      l_actual_tstz   timestamp with time zone;
+      l_actual_obj    clob;
+      l_actual_arr    clob;
+      l_row_count     pls_integer;
+      l_expected_tstz timestamp with time zone := to_timestamp_tz('2025-02-03 10:20:30 +00:00', 'YYYY-MM-DD HH24:MI:SS TZH:TZM');
+      l_expected_date date := date '2025-02-04';
+   begin
+      g_prcs_id_8 := flow_api_pkg.flow_create
+      ( pi_dgrm_id   => g_prcs_dgrm_id
+      , pi_prcs_name => g_test_prcs_name
+      );
+
+      l_prcs_id := g_prcs_id_8;
+
+      flow_api_pkg.flow_start( p_process_id => l_prcs_id );
+
+         -- Build payload in dynamic PL/SQL to keep this test compilable on 19c.
+         execute immediate q'~
+         declare
+             l_json_obj sys.json_object_t := sys.json_object_t();
+         begin
+             l_json_obj.put('date_var', date '2025-02-04');
+             l_json_obj.put('tstz_var', to_timestamp_tz('2025-02-03 10:20:30 +00:00', 'YYYY-MM-DD HH24:MI:SS TZH:TZM'));
+             l_json_obj.put('obj_var', sys.json_object_t('{"name":"sam","score":88}'));
+             l_json_obj.put('arr_var', sys.json_array_t('[1,2,3]'));
+             l_json_obj.put_null('null_var');
+
+             flow_proc_vars_int.set_vars_from_json_object
+             ( pi_prcs_id => :b_prcs_id
+             , pi_scope   => 0
+             , pi_json    => l_json_obj
+             );
+         end;
+         ~' using l_prcs_id;
+
+      
+
+      l_actual_date := flow_process_vars.get_var_date
+      ( pi_prcs_id  => l_prcs_id
+      , pi_var_name => 'date_var'
+      );
+      ut.expect( l_actual_date ).to_equal( l_expected_date );
+
+      l_actual_tstz := flow_process_vars.get_var_tstz
+      ( pi_prcs_id  => l_prcs_id
+      , pi_var_name => 'tstz_var'
+      );
+      ut.expect( l_actual_tstz ).to_equal( l_expected_tstz );
+
+      l_actual_obj := flow_process_vars.get_var_json
+      ( pi_prcs_id  => l_prcs_id
+      , pi_var_name => 'obj_var'
+      );
+      ut.expect( sys.json_element_t.parse(l_actual_obj) ).to_equal( sys.json_element_t.parse('{"name":"sam","score":88}') );
+
+      l_actual_arr := flow_process_vars.get_var_json
+      ( pi_prcs_id  => l_prcs_id
+      , pi_var_name => 'arr_var'
+      );
+      ut.expect( sys.json_element_t.parse(l_actual_arr) ).to_equal( sys.json_element_t.parse('[1,2,3]') );
+
+      select count(*)
+         into l_row_count
+         from flow_process_variables
+       where prov_prcs_id = l_prcs_id
+          and upper(prov_var_name) = 'NULL_VAR';
+
+      ut.expect( l_row_count ).to_equal( 0 );
+   end set_vars_from_json_object_all_types;
+
   -- afterall
   procedure tear_down_tests 
   is

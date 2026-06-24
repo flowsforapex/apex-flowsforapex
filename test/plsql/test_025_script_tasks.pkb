@@ -213,6 +213,7 @@ create or replace package body test_025_script_tasks as
   is
   begin
     test_runner_A( p_path => 'E' );
+    -- will result in an error as apex_exec binding seems to strip off the time compoent of a date datatype.
   end script_task_substitutions_A5;
 
   function test_runner_B

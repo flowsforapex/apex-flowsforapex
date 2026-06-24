@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:apex="https://flowsforapex.org" id="Definitions_25c" targetNamespace="http://bpmn.io/schema/b" exporter="Flows for APEX" exporterVersion="25.1.0">
+  <bpmn:process id="Process_025c" name="A25c - Script Task Parameters API Coverage" isExecutable="false" apex:minLoggingLevel="0" apex:manualInput="false">
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_start_pre</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_Pre" name="Pre">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>ticket_id</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>T-100</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_start_pre</bpmn:incoming>
+      <bpmn:outgoing>Flow_pre_script</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:scriptTask id="Activity_Params" name="Script Task with Parameters" apex:type="executePlsql">
+      <bpmn:extensionElements>
+        <apex:inputParameters>
+          <apex:parameter>
+            <apex:name>customer_name</apex:name>
+            <apex:type>string</apex:type>
+            <apex:required>true</apex:required>
+            <apex:description>Customer name input</apex:description>
+            <apex:source>
+              <apex:expressionType>userInput</apex:expressionType>
+            </apex:source>
+            <apex:apexRendering>
+              <apex:itemType>text</apex:itemType>
+              <apex:placeholder>Enter customer name</apex:placeholder>
+            </apex:apexRendering>
+          </apex:parameter>
+          <apex:parameter>
+            <apex:name>customer_tier</apex:name>
+            <apex:type>string</apex:type>
+            <apex:required>true</apex:required>
+            <apex:source>
+              <apex:expressionType>userInput</apex:expressionType>
+            </apex:source>
+            <apex:apexRendering>
+              <apex:itemType>select</apex:itemType>
+              <apex:enum>{"GOLD":"Gold","SILVER":"Silver"}</apex:enum>
+            </apex:apexRendering>
+          </apex:parameter>
+          <apex:parameter>
+            <apex:name>ticket_ref</apex:name>
+            <apex:type>string</apex:type>
+            <apex:required>true</apex:required>
+            <apex:source>
+              <apex:expressionType>processVariable</apex:expressionType>
+              <apex:expression>ticket_id</apex:expression>
+            </apex:source>
+          </apex:parameter>
+          <apex:parameter>
+            <apex:name>default_priority</apex:name>
+            <apex:type>string</apex:type>
+            <apex:required>false</apex:required>
+            <apex:source>
+              <apex:expressionType>static</apex:expressionType>
+              <apex:expression>HIGH</apex:expression>
+            </apex:source>
+          </apex:parameter>
+        </apex:inputParameters>
+        <apex:outputParameters>
+          <apex:parameter>
+            <apex:name>result_code</apex:name>
+            <apex:type>string</apex:type>
+            <apex:required>false</apex:required>
+            <apex:source>
+              <apex:expressionType>processVariable</apex:expressionType>
+              <apex:expression>SCRIPT_RESULT</apex:expression>
+            </apex:source>
+          </apex:parameter>
+          <apex:parameter>
+            <apex:name>result_message</apex:name>
+            <apex:type>string</apex:type>
+            <apex:required>false</apex:required>
+            <apex:source>
+              <apex:expressionType>static</apex:expressionType>
+              <apex:expression>Script completed</apex:expression>
+            </apex:source>
+          </apex:parameter>
+        </apex:outputParameters>
+        <apex:executePlsql>
+          <apex:plsqlCode>begin
+  flow_process_vars.set_var ( pi_prcs_id   => flow_globals.process_id
+                            , pi_var_name  => 'SCRIPT_RESULT'
+                            , pi_vc2_value => 'OK' 
+                            );
+end;</apex:plsqlCode>
+        </apex:executePlsql>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_pre_script</bpmn:incoming>
+      <bpmn:outgoing>Flow_script_end</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_script_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_start_pre" sourceRef="Event_Start" targetRef="Activity_Pre" />
+    <bpmn:sequenceFlow id="Flow_pre_script" sourceRef="Activity_Pre" targetRef="Activity_Params" />
+    <bpmn:sequenceFlow id="Flow_script_end" sourceRef="Activity_Params" targetRef="Event_End" />
+  </bpmn:process>
+</bpmn:definitions>
