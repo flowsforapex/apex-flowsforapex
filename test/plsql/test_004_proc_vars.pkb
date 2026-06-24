@@ -1832,7 +1832,7 @@ create or replace package body test_004_proc_vars is
          , pi_exception_on_null => true
          );
 
-   end get_non_existant_vars_type;
+   end get_non_existent_vars_type;
 
    --test(5a. set_vars_from_json_object handles date/tstz/json/null)
    procedure set_vars_from_json_object_all_types
