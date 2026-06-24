@@ -1819,7 +1819,7 @@ create or replace package body test_004_proc_vars is
   end get_non_existant_vars_json_element;
 
    --test(4h. Get non-existant Proc Vars - type)
-   procedure get_non_existant_vars_type
+   procedure get_non_existent_vars_type
    is
          l_prcs_id            flow_processes.prcs_id%type;
          l_actual_vc2         varchar2(4000);
