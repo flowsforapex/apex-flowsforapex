@@ -151,8 +151,8 @@ as
     );
 
     apex_debug.message
-    ( p_message => 'run_task_script input parameters JSON: %0'
-    , p0        => l_input_parameters
+    ( p_message => 'run_task_script input parameters JSON (first 2000 chars): %0'
+    , p0        => dbms_lob.substr(l_input_parameters, 2000, 1)
     );
 
     get_runner_config
