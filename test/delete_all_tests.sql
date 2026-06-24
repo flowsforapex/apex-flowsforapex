@@ -34,7 +34,12 @@ drop package test_022_usertask_misc;
 drop package test_023_custom_extensions;
 drop package test_024_usertask_approval_task;
 drop package test_025_script_tasks;
+drop package test_026_parser_regressions;
+drop package test_027_var_exp_errors;
 drop package test_028_task_parameters;
+drop package test_090_ai_basic_model;
+drop package test_090_ai_basic_model_b;
+drop package test_090_ai_gateway_routing;
 
 PROMPT >> Engine Test Packages deleted
 
