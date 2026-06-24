@@ -383,7 +383,7 @@ as
     l_source_name       varchar2(50 char);
     l_path              varchar2(4000 char);
     l_json_fragment     clob;
-    l_scalar_text       varchar2(32767 char);
+    l_scalar_text       varchar2(32767);
     l_json_scalar       clob;
     l_has_value         boolean := false;
   begin
