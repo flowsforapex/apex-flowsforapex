@@ -372,6 +372,8 @@ begin
     values ('adhoc-reco-activity-not-set', c_load_lang, q'[Activity is not in the pending recommendation action set.]');
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
     values ('ai-connection-error', c_load_lang, q'[AI connection definition incorrect - check your configuration]');
+  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )
+    values ('task-param-no-user-input', c_load_lang, q'[Input parameter %0 in process %1 subflow %2 uses userInput source, which is only allowed for Adhoc SubProcess activities.]');
   -- above here manually added for 26.1 dev
 /* template below - don't forget fmsg_message_key is max 30 chars
   insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )

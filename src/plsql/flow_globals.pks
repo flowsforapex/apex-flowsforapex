@@ -61,6 +61,11 @@ as
   , pi_value6          in varchar2 default null
   );
 
+  procedure set_output_parameter_object
+  ( pi_parameter_name  in varchar2
+  , pi_object_json     in clob
+  );
+
   function get_output_parameters
   return flow_subflows.sbfl_task_output_parameters%type;
 

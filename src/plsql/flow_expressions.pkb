@@ -383,7 +383,7 @@ as
     l_source_name       varchar2(50 char);
     l_path              varchar2(4000 char);
     l_json_fragment     clob;
-    l_scalar_text       varchar2(4000 char);
+    l_scalar_text       varchar2(32767);
     l_json_scalar       clob;
     l_has_value         boolean := false;
   begin
@@ -417,6 +417,13 @@ as
                            , pi_var_name => l_source_name
                            , pi_scope    => pi_expr_scope
                            );
+          if l_source_json is null then
+            l_source_json := flow_proc_vars_int.get_var_clob
+                             ( pi_prcs_id  => pi_prcs_id
+                             , pi_var_name => l_source_name
+                             , pi_scope    => pi_expr_scope
+                             );
+          end if;
         end if;
 
       when 'taskoutput' then
@@ -447,8 +454,7 @@ as
     if l_source_json is null or l_source_json is not json then
       apex_debug.warn('JSONPath source is null or not JSON for variable %0.', pi_expression.expr_var_name);
     else
-      if pi_expression.expr_var_type in ( flow_constants_pkg.gc_prov_var_type_json
-                                        , flow_constants_pkg.gc_prov_var_type_clob ) then
+      if pi_expression.expr_var_type = flow_constants_pkg.gc_prov_var_type_json then
         begin
           l_json_fragment := json_query(l_source_json, l_path returning clob);
         exception
@@ -512,8 +518,14 @@ as
               l_has_value := true;
             end if;
           when flow_constants_pkg.gc_prov_var_type_clob then
-            l_result_rec.var_clob := json_value(l_source_json, l_path returning clob);
-            l_has_value := (l_result_rec.var_clob is not null);
+            l_scalar_text := json_value(l_source_json, l_path returning varchar2(32767));
+            if l_scalar_text is not null then
+              l_result_rec.var_clob := to_clob(l_scalar_text);
+              l_has_value := true;
+            else
+              l_result_rec.var_clob := json_query(l_source_json, l_path returning clob);
+              l_has_value := (l_result_rec.var_clob is not null);
+            end if;
         end case;
       end if;
     end if;
