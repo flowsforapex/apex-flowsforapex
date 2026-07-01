@@ -164,6 +164,8 @@ drop view flow_variable_event_timeline_vw;
 drop view flow_instance_events_vw;
 drop view flow_instance_summary_json_vw;
 drop view flow_my_originated_instances_vw;
+drop view flow_adhoc_activities_vw;
+drop view flow_startable_adhoc_activities_vw;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
@@ -202,8 +204,7 @@ drop table flow_ai_prompts cascade constraints;
 drop table flow_bpmn_types cascade constraints;
 
 drop type flow_t_correlated_message;
+drop type flow_t_async_task;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
-
-
