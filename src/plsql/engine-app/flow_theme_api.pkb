@@ -45,7 +45,9 @@ as
         on s.application_id = t.application_id
        and s.theme_number = t.theme_number
      where s.application_id = apex_application.g_flow_id
-       and s.theme_style_id = l_theme_style_id;
+       and s.theme_style_id = l_theme_style_id
+     order by s.subscribed_from asc nulls first
+     fetch first 1 rows only;
     return l_theme_name;
   exception
     when no_data_found then 
@@ -86,8 +88,9 @@ as
         on s.application_id = t.application_id
        and s.theme_number = t.theme_number
      where s.application_id = apex_application.g_flow_id
-       and s.name = l_theme_name;
-
+       and s.name = l_theme_name
+     order by s.subscribed_from asc nulls first
+     fetch first 1 rows only;
     apex_theme.set_user_style (
       p_application_id => apex_application.g_flow_id
     , p_user           => apex_application.g_user
@@ -133,12 +136,14 @@ as
 
     select s.theme_style_id
       into l_theme_style_id
-      from apex_application_theme_styles s, apex_application_themes t
+      from apex_application_theme_styles s
+         , apex_application_themes t
      where s.application_id = t.application_id
        and s.theme_number = t.theme_number
        and s.application_id = apex_application.g_flow_id
-       and s.name = l_theme_name;
-
+       and s.name = l_theme_name
+     order by s.subscribed_from asc nulls first
+     fetch first 1 rows only;
      apex_theme.set_user_style (
         p_application_id => apex_application.g_flow_id
       , p_user           => apex_application.g_user
@@ -179,7 +184,8 @@ as
         begin
             select s.name
               into l_theme_name
-              from apex_application_theme_styles s, apex_application_themes t
+              from apex_application_theme_styles s
+                 , apex_application_themes t
              where s.application_id = t.application_id
                and s.theme_number = t.theme_number
                and s.application_id = apex_application.g_flow_id
@@ -187,7 +193,9 @@ as
                                         apex_application.g_flow_id
                                       , apex_application.g_user
                                       , C_UNIVERSAL_THEME
-                                      );
+                                      )
+             order by s.subscribed_from asc nulls first
+             fetch first 1 rows only;
         exception
             when no_data_found
             then l_theme_name := C_VITA;
@@ -196,12 +204,14 @@ as
     
     select s.theme_style_id
       into l_theme_style_id
-      from apex_application_theme_styles s, apex_application_themes t
+      from apex_application_theme_styles s
+         , apex_application_themes t
      where s.application_id = t.application_id
        and s.theme_number = t.theme_number
        and s.application_id = apex_application.g_flow_id
-       and s.name = l_theme_name;
-
+       and s.name = l_theme_name
+     order by s.subscribed_from asc nulls first
+     fetch first 1 rows only;
     apex_theme.set_user_style (
         p_application_id => apex_application.g_flow_id
       , p_user           => apex_application.g_user
