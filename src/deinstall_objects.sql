@@ -204,7 +204,6 @@ drop table flow_ai_prompts cascade constraints;
 drop table flow_bpmn_types cascade constraints;
 
 drop type flow_t_correlated_message;
-drop type flow_t_async_task;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
