@@ -198,12 +198,11 @@ as
         p_plsql_code => l_plsql_code
       );
     end if;
-    ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
-    , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
-    ( p_message => 'run_task_script output parameters JSON: %0'
-    , p0        => flow_globals.get_output_parameters
-    );
 
+    apex_debug ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
+               , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
+               );
+               
     -- Save output parameters back to the database if any were set
     if flow_globals.get_output_parameters is not null then
       update flow_subflows
