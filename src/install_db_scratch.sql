@@ -18,13 +18,14 @@ PROMPT >> Adding Comments
 PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
 column ann_cmd new_value ann_cmd noprint
 select case
-         when dbms_db_version.version >= 23 then
-           '@ddl/install_ddl_annotations.sql'
-         when dbms_db_version.version = 19
-              and nvl(to_number(regexp_substr(dbms_db_version.version_full, '[0-9]+', 1, 2)), 0) >= 28 then
+         when ( select count(*)
+                  from all_views
+                 where owner = 'SYS'
+                   and view_name = 'USER_ANNOTATIONS_USAGE'
+              ) > 0 then
            '@ddl/install_ddl_annotations.sql'
          else
-           'prompt >> Skipping schema annotations on this Oracle version'
+           'prompt >> Skipping schema annotations (annotation feature unavailable)'
        end as ann_cmd
   from dual;
 ^ann_cmd.
