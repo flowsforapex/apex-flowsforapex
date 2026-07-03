@@ -23,11 +23,12 @@ PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
 -- run this as last feature migration.
 column ann_cmd new_value ann_cmd noprint
 select case
-         when ( select count(*)
+         when exists (
+                select 1
                   from all_views
                  where owner = 'SYS'
                    and view_name = 'USER_ANNOTATIONS_USAGE'
-              ) > 0 then
+              ) then
            '@@../../ddl/install_ddl_annotations.sql'
          else
            'prompt >> Skipping schema annotations (annotation feature unavailable)'

@@ -15,14 +15,15 @@ PROMPT >> Common Objects
 PROMPT >> Adding Comments
 @ddl/install_ddl_comments.sql
 
-PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
+PROMPT >> Adding Schema Annotations (requires a version of Oracle containing annotations feature (should be Oracle 19.28+ or 23ai+)
 column ann_cmd new_value ann_cmd noprint
 select case
-         when ( select count(*)
+         when exists (
+                select 1
                   from all_views
                  where owner = 'SYS'
                    and view_name = 'USER_ANNOTATIONS_USAGE'
-              ) > 0 then
+              ) then
            '@ddl/install_ddl_annotations.sql'
          else
            'prompt >> Skipping schema annotations (annotation feature unavailable)'
