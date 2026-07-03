@@ -11,7 +11,14 @@ set define '^'
 whenever sqlerror exit rollback;
 
 -- Keep message reload deterministic on Autonomous DB.
-alter session disable parallel dml;
+begin
+  execute immediate 'alter session disable parallel dml';
+exception
+  when others then
+    -- ignore where unsupported, e.g. XE / older versions
+    null;
+end;
+/
 
 PROMPT >> Loading Engine Messages for Language "en"
 declare
