@@ -152,9 +152,7 @@ as
 
     apex_debug.message
     ( p_message => 'run_task_script input parameters JSON (first 2000 chars): %0'
-
     , p0        => dbms_lob.substr(l_input_parameters, 2000, 1)
-
     );
 
     get_runner_config
@@ -199,9 +197,10 @@ as
       );
     end if;
 
-    apex_debug ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
-               , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
-               );
+    apex_debug.message
+    ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
+    , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
+    );
                
     -- Save output parameters back to the database if any were set
     if flow_globals.get_output_parameters is not null then
