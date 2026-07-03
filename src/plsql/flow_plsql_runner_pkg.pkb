@@ -199,7 +199,9 @@ as
       );
     end if;
     ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
+
     , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
+
     ( p_message => 'run_task_script output parameters JSON: %0'
     , p0        => flow_globals.get_output_parameters
     );
