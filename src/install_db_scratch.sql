@@ -16,7 +16,19 @@ PROMPT >> Adding Comments
 @ddl/install_ddl_comments.sql
 
 PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
-@ddl/install_ddl_annotations.sql
+column ann_cmd new_value ann_cmd noprint
+select case
+         when dbms_db_version.version >= 23 then
+           '@ddl/install_ddl_annotations.sql'
+         when dbms_db_version.version = 19
+              and nvl(to_number(regexp_substr(dbms_db_version.version_full, '[0-9]+', 1, 2)), 0) >= 28 then
+           '@ddl/install_ddl_annotations.sql'
+         else
+           'prompt >> Skipping schema annotations on this Oracle version'
+       end as ann_cmd
+  from dual;
+^ann_cmd.
+whenever sqlerror exit rollback
 
 PROMPT >> Installing Database Scheduler Objects
 @ddl/create_scheduler_objects.sql
