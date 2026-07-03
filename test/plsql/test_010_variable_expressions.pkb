@@ -1578,240 +1578,240 @@ create or replace package body test_010_variable_expressions is
       
     end var_exp_raw_funcbody;  
 
-    -- test('L. JSONpath expressions')
-    procedure var_exp_jsonpath
-    is
-      l_actual   sys_refcursor;
-      l_expected sys_refcursor;
-      l_step_key flow_subflows.sbfl_step_key%type;
-      l_sbfl_id  flow_subflows.sbfl_id%type;
-      l_actual_json_txt clob;
-      l_actual_json     sys.json_element_t;
-      l_expected_json   sys.json_element_t;
-    begin
-      l_sbfl_id := g_sbfl_jsonpath;
+        -- test('L. JSONpath expressions')
+        procedure var_exp_jsonpath
+        is
+            l_actual          sys_refcursor;
+            l_expected        sys_refcursor;
+            l_step_key        flow_subflows.sbfl_step_key%type;
+            l_sbfl_id         flow_subflows.sbfl_id%type;
+            l_actual_json_txt clob;
+            l_actual_json     sys.json_element_t;
+            l_expected_json   sys.json_element_t;
+        begin
+            l_sbfl_id := g_sbfl_jsonpath;
 
-      -- source JSON variable created in Activity_JSONPath
-      l_expected_json := json_element_t.parse('{"vc2Value":"JONES","numberValue":7566,"dateValue":"2024-05-01 10:11:12","tstzValue":"2024-05-01 10:11:12 UTC","clobValue":"This is a JSONPath CLOB sample string.","objectValue":{"name":"BLAKE","id":7698}}');
+            -- source JSON variable created in Activity_JSONPath
+            l_expected_json := json_element_t.parse('{"vc2Value":"JONES","numberValue":7566,"dateValue":"2024-05-01 10:11:12","tstzValue":"2024-05-01 10:11:12 UTC","clobValue":"This is a JSONPath CLOB sample string.","objectValue":{"name":"BLAKE","id":7698}}');
 
-      select prov_var_json
-      into l_actual_json_txt
-      from flow_process_variables
-      where prov_prcs_id = g_prcs_id
-      and prov_var_type = 'JSON'
-      and prov_var_name = 'JSONpathSource'
-      and prov_var_num   is null
-      and prov_var_vc2 is null
-      and prov_var_tstz is null
-      and prov_var_clob is null
-      and prov_var_date is null;
+            select prov_var_json
+                into l_actual_json_txt
+                from flow_process_variables
+             where prov_prcs_id = g_prcs_id
+                 and prov_var_type = 'JSON'
+                 and prov_var_name = 'JSONpathSource'
+                 and prov_var_num is null
+                 and prov_var_vc2 is null
+                 and prov_var_tstz is null
+                 and prov_var_clob is null
+                 and prov_var_date is null;
 
-      l_actual_json := json_element_t.parse(l_actual_json_txt);
+            l_actual_json := json_element_t.parse(l_actual_json_txt);
 
-      ut.expect( l_actual_json ).to_equal( l_expected_json );
+            ut.expect( l_actual_json ).to_equal( l_expected_json );
 
-      -- step from JSONPath to JSONpathVC2 and test VC2
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- step from JSONPath to JSONpathVC2 and test VC2
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
 
-      open l_expected for
-          select
-              'JSONpathVC2' as prov_var_name,
-              'JONES' as prov_var_vc2
-          from dual;
+            open l_expected for
+                select
+                    'JSONpathVC2' as prov_var_name,
+                    'JONES' as prov_var_vc2
+                from dual;
 
-      open l_actual for
-          select prov_var_name, prov_var_vc2
-          from flow_process_variables
-          where prov_prcs_id = g_prcs_id
-          and prov_var_type = 'VARCHAR2'
-          and prov_var_name = 'JSONpathVC2'
-          and prov_var_num   is null
-          and prov_var_date is null
-          and prov_var_tstz is null
-          and prov_var_json is null
-          and prov_var_clob is null;
+            open l_actual for
+                select prov_var_name, prov_var_vc2
+                    from flow_process_variables
+                 where prov_prcs_id = g_prcs_id
+                     and prov_var_type = 'VARCHAR2'
+                     and prov_var_name = 'JSONpathVC2'
+                     and prov_var_num is null
+                     and prov_var_date is null
+                     and prov_var_tstz is null
+                     and prov_var_json is null
+                     and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+            ut.expect( l_actual ).to_equal( l_expected );
 
-      -- step to JSONpathNumber and test number
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- step to JSONpathNumber and test number
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
 
-      open l_expected for
-          select
-              upper('JSONpathNumber') as prov_var_name,
-              '7566' as prov_var_num
-          from dual;
+            open l_expected for
+                select
+                    upper('JSONpathNumber') as prov_var_name,
+                    '7566' as prov_var_num
+                from dual;
 
-      open l_actual for
-          select upper(prov_var_name) as prov_var_name, to_char(prov_var_num) as prov_var_num
-          from flow_process_variables
-          where prov_prcs_id = g_prcs_id
-          and prov_var_type = 'NUMBER'
-          and upper(prov_var_name) = 'JSONPATHNUMBER'
-          and prov_var_vc2   is null
-          and prov_var_date is null
-          and prov_var_tstz is null
-          and prov_var_json is null
-          and prov_var_clob is null;
+            open l_actual for
+                select upper(prov_var_name) as prov_var_name, to_char(prov_var_num) as prov_var_num
+                    from flow_process_variables
+                 where prov_prcs_id = g_prcs_id
+                     and prov_var_type = 'NUMBER'
+                     and upper(prov_var_name) = 'JSONPATHNUMBER'
+                     and prov_var_vc2 is null
+                     and prov_var_date is null
+                     and prov_var_tstz is null
+                     and prov_var_json is null
+                     and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+            ut.expect( l_actual ).to_equal( l_expected );
 
-      -- step to JSONpathDate and test date
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- step to JSONpathDate and test date
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
 
-      open l_expected for
-          select
-              'JSONpathDate' as prov_var_name,
-              '2024-05-01 10:11:12' as prov_var_date
-          from dual;
+            open l_expected for
+                select
+                    'JSONpathDate' as prov_var_name,
+                    '2024-05-01 10:11:12' as prov_var_date
+                from dual;
 
-      open l_actual for
-          select prov_var_name, to_char(prov_var_date,'YYYY-MM-DD HH24:MI:SS') as prov_var_date
-          from flow_process_variables
-          where prov_prcs_id = g_prcs_id
-          and prov_var_type = 'DATE'
-          and prov_var_name = 'JSONpathDate'
-          and prov_var_num   is null
-          and prov_var_vc2 is null
-          and prov_var_tstz is null
-          and prov_var_json is null
-          and prov_var_clob is null;
+            open l_actual for
+                select prov_var_name, to_char(prov_var_date,'YYYY-MM-DD HH24:MI:SS') as prov_var_date
+                    from flow_process_variables
+                 where prov_prcs_id = g_prcs_id
+                     and prov_var_type = 'DATE'
+                     and prov_var_name = 'JSONpathDate'
+                     and prov_var_num is null
+                     and prov_var_vc2 is null
+                     and prov_var_tstz is null
+                     and prov_var_json is null
+                     and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+            ut.expect( l_actual ).to_equal( l_expected );
 
-      -- step to JSONpathTSTZ and test timestamp with timezone
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- step to JSONpathTSTZ and test timestamp with timezone
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
 
-      open l_expected for
-          select
-              'JSONpathTSTZ' as prov_var_name,
-              '2024-05-01 10:11:12 UTC' as prov_var_tstz
-          from dual;
+            open l_expected for
+                select
+                    'JSONpathTSTZ' as prov_var_name,
+                    '2024-05-01 10:11:12 UTC' as prov_var_tstz
+                from dual;
 
-      open l_actual for
-          select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
-          from flow_process_variables
-          where prov_prcs_id = g_prcs_id
-          and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
-          and prov_var_name = 'JSONpathTSTZ'
-          and prov_var_num   is null
-          and prov_var_vc2 is null
-          and prov_var_date is null
-          and prov_var_json is null
-          and prov_var_clob is null;
+            open l_actual for
+                select prov_var_name, to_char(prov_var_tstz,'YYYY-MM-DD HH24:MI:SS TZR') as prov_var_tstz
+                    from flow_process_variables
+                 where prov_prcs_id = g_prcs_id
+                     and prov_var_type = 'TIMESTAMP WITH TIME ZONE'
+                     and prov_var_name = 'JSONpathTSTZ'
+                     and prov_var_num is null
+                     and prov_var_vc2 is null
+                     and prov_var_date is null
+                     and prov_var_json is null
+                     and prov_var_clob is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+            ut.expect( l_actual ).to_equal( l_expected );
 
-      -- step to JSONpathCLOB and test CLOB
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- step to JSONpathCLOB and test CLOB
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
 
-      open l_expected for
-          select
-              upper ('JSONpathCLOB') as prov_var_name,
-              to_clob('This is a JSONPath CLOB sample string.') as prov_var_clob
-          from dual;
+            open l_expected for
+                select
+                    upper('JSONpathCLOB') as prov_var_name,
+                    to_clob('This is a JSONPath CLOB sample string.') as prov_var_clob
+                from dual;
 
-      open l_actual for
-          select upper(prov_var_name) as prov_var_name, prov_var_clob
-          from flow_process_variables
-          where prov_prcs_id = g_prcs_id
-          and prov_var_type = 'CLOB'
-          and upper(prov_var_name) = 'JSONPATHCLOB'
-          and prov_var_num   is null
-          and prov_var_vc2 is null
-          and prov_var_date is null
-          and prov_var_json is null
-          and prov_var_tstz is null;
+            open l_actual for
+                select upper(prov_var_name) as prov_var_name, prov_var_clob
+                    from flow_process_variables
+                 where prov_prcs_id = g_prcs_id
+                     and prov_var_type = 'CLOB'
+                     and upper(prov_var_name) = 'JSONPATHCLOB'
+                     and prov_var_num is null
+                     and prov_var_vc2 is null
+                     and prov_var_date is null
+                     and prov_var_json is null
+                     and prov_var_tstz is null;
 
-      ut.expect( l_actual ).to_equal( l_expected );
+            ut.expect( l_actual ).to_equal( l_expected );
 
-      -- step to JSONpathJSONobj and test JSON object
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- step to JSONpathJSONobj and test JSON object
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
 
-      l_expected_json := json_element_t.parse('{"name":"BLAKE","id":7698}');
+            l_expected_json := json_element_t.parse('{"name":"BLAKE","id":7698}');
 
-      select prov_var_json
-      into l_actual_json_txt
-      from flow_process_variables
-      where prov_prcs_id = g_prcs_id
-      and prov_var_type = 'JSON'
-      and prov_var_name = 'JSONpathJSONobj'
-      and prov_var_num   is null
-      and prov_var_vc2 is null
-      and prov_var_tstz is null
-      and prov_var_clob is null
-      and prov_var_date is null;
+            select prov_var_json
+                into l_actual_json_txt
+                from flow_process_variables
+             where prov_prcs_id = g_prcs_id
+                 and prov_var_type = 'JSON'
+                 and prov_var_name = 'JSONpathJSONobj'
+                 and prov_var_num is null
+                 and prov_var_vc2 is null
+                 and prov_var_tstz is null
+                 and prov_var_clob is null
+                 and prov_var_date is null;
 
-      l_actual_json := json_element_t.parse(l_actual_json_txt);
+            l_actual_json := json_element_t.parse(l_actual_json_txt);
 
-      ut.expect( l_actual_json ).to_equal( l_expected_json );
+            ut.expect( l_actual_json ).to_equal( l_expected_json );
 
-      -- complete JSONPath subflow
-      select sbfl_step_key
-      into l_step_key
-      from flow_subflows
-      where sbfl_id = l_sbfl_id;
+            -- complete JSONPath subflow
+            select sbfl_step_key
+                into l_step_key
+                from flow_subflows
+             where sbfl_id = l_sbfl_id;
 
-      flow_api_pkg.flow_complete_step
-      ( p_process_id => g_prcs_id
-      , p_subflow_id => l_sbfl_id
-      , p_step_key   => l_step_key
-      );
-    end var_exp_jsonpath;
+            flow_api_pkg.flow_complete_step
+            ( p_process_id => g_prcs_id
+            , p_subflow_id => l_sbfl_id
+            , p_step_key   => l_step_key
+            );
+        end var_exp_jsonpath;
 
     --%test('Z. Variable expressions process completed as expected')
 

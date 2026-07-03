@@ -18,9 +18,19 @@ begin
                                 enqueue    => true);                      
       sys.dbms_aqadm.drop_queue (queue_name => 'FLOW_CORRELATED_MESSAGES_Q');
       sys.dbms_aqadm.drop_queue_table (queue_table => 'FLOW_CORRELATED_MESSAGES_QT');
+      sys.dbms_aqadm.stop_queue (queue_name => 'FLOW_ASYNC_TASKS_Q',
+                                enqueue    => true,
+                                dequeue    => true);
+      sys.dbms_aqadm.drop_queue (queue_name => 'FLOW_ASYNC_TASKS_Q');
+      sys.dbms_aqadm.drop_queue_table (queue_table => 'FLOW_ASYNC_TASKS_QT');
+
     end;   
 
     execute immediate 'drop view flow_optimised_diagrams_vw_EE';
+    execute immediate 'drop view flow_startable_adhoc_activities_ai_vw';
+    execute immediate 'drop view flow_adhoc_activity_results_vw';
+    execute immediate 'drop view flow_adhoc_ai_decisions_vw'; 
+
     execute immediate 'drop type flow_t_async_task';
 
   end if;
@@ -134,6 +144,8 @@ drop view flow_p0022_startable_adhoc_activities_vw;
 drop view flow_p0022_started_adhoc_activities_vw;
 drop view flow_p0024_message_start_listeners_vw;
 drop view flow_task_inbox_vw;
+drop view flow_adhoc_activities_vw;
+drop view flow_startable_adhoc_activities_vw;
 drop view flow_instance_connections_lov;
 drop view flow_instance_scopes_vw;
 drop view flow_instance_gateways_lov;
@@ -198,8 +210,6 @@ drop table flow_parser_log cascade constraints;
 drop table flow_stats_history cascade constraints;
 drop table flow_step_stats cascade constraints;
 drop table flow_rest_event_log cascade constraints;
-drop table flow_iterations cascade constraints;
-drop table flow_iterated_objects cascade constraints;
 drop table flow_simple_form_templates cascade constraints;
 drop table flow_ai_prompts cascade constraints;
 drop table flow_bpmn_types cascade constraints;
