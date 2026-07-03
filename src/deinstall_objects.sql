@@ -21,6 +21,7 @@ begin
     end;   
 
     execute immediate 'drop view flow_optimised_diagrams_vw_EE';
+    execute immediate 'drop type flow_t_async_task';
 
   end if;
 end;
