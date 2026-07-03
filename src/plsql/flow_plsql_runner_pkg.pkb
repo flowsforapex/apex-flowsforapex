@@ -152,7 +152,9 @@ as
 
     apex_debug.message
     ( p_message => 'run_task_script input parameters JSON (first 2000 chars): %0'
+
     , p0        => dbms_lob.substr(l_input_parameters, 2000, 1)
+
     );
 
     get_runner_config
@@ -196,13 +198,8 @@ as
         p_plsql_code => l_plsql_code
       );
     end if;
-    
-    apex_debug.message
     ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
     , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
-    );
-
-    apex_debug.message
     ( p_message => 'run_task_script output parameters JSON: %0'
     , p0        => flow_globals.get_output_parameters
     );
