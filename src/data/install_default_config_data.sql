@@ -1,4 +1,7 @@
 PROMPT >> Inital System Configuration for new systems
+declare
+  l_major number;
+  l_minor number;
 begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_default_level'                         ,p_value => '1');
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'logging_hide_userid'                           ,p_value => 'false');
@@ -33,6 +36,21 @@ begin
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_key'                                   ,p_value => '' );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'licensed_to'                                   ,p_value => '' );
   flow_admin_api.set_config_value ( p_update_if_set => false, p_config_key => 'license_expiry_date'                           ,p_value => '' );
+
+  select to_number(substr(version_no, 1, instr(version_no, '.', 1, 1) - 1))
+       , to_number(substr(version_no, instr(version_no, '.', 1, 1) + 1, instr(version_no, '.', 1, 1) - 2))
+    into l_major
+       , l_minor
+    from apex_release;
+
+  flow_admin_api.set_config_value (
+    p_update_if_set => false
+  , p_config_key    => 'monaco_editor_version'
+  , p_value         => case when l_major = 24 and l_minor = 1 then '0.47.0'
+                            when l_major = 24 and l_minor = 2 then '0.51.0'
+                            when l_major = 26 and l_minor = 1 then '0.55.0'
+                            else null end
+  );
 
   commit;
 end;
