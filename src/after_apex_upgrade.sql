@@ -115,4 +115,30 @@ end;
 /
 
 PROMPT >> Flows for APEX Packages recompiled
+
+PROMPT >> Updating monaco editor version
+declare
+  l_major number;
+  l_minor number;
+begin
+  select to_number(substr(version_no, 1, instr(version_no, '.', 1, 1) - 1))
+       , to_number(substr(version_no, instr(version_no, '.', 1, 1) + 1, instr(version_no, '.', 1, 1) - 2))
+    into l_major
+       , l_minor
+    from apex_release;
+
+  flow_admin_api.set_config_value (
+    p_update_if_set => true
+  , p_config_key    => 'monaco_editor_version'
+  , p_value         => case when l_major = 24 and l_minor = 1 then '0.47.0'
+                            when l_major = 24 and l_minor = 2 then '0.51.0'
+                            when l_major = 26 and l_minor = 1 then '0.55.0'
+                            else null end
+  );
+
+  commit;
+end;
+/
+
+PROMPT >> Finished Update Flows for APEX
 PROMPT >> =============================
