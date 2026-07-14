@@ -132,7 +132,7 @@ begin
   , p_config_key    => 'monaco_editor_version'
   , p_value         => case when l_major = 24 and l_minor = 1 then '0.47.0'
                             when l_major = 24 and l_minor = 2 then '0.51.0'
-                            when l_major = 26 and l_minor = 1 then '0.55.0'
+                            when l_major = 26 and l_minor = 1 then '0.55.1'
                             else null end
   );
 
