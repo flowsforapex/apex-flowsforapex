@@ -307,7 +307,8 @@ as
   );
 
   procedure set_engine_app_settings(
-    pi_engine_app_mode in flow_configuration.cfig_value%type
+    pi_engine_app_mode       in flow_configuration.cfig_value%type
+  , pi_monaco_editor_version in flow_configuration.cfig_value%type
   );
 
   procedure set_engine_settings(

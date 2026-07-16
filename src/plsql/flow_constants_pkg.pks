@@ -483,6 +483,7 @@ as
   gc_config_license_key                 constant varchar2(50 char) := 'license_key';
   gc_config_licensed_to                 constant varchar2(50 char) := 'licensed_to';
   gc_config_license_expiry_date         constant varchar2(50 char) := 'license_expiry_date';
+  gc_config_monaco_editor_version       constant varchar2(50 char) := 'monaco_editor_version';
 
 
 -- Config Parameter Valid Values (when not true / false or numeric)

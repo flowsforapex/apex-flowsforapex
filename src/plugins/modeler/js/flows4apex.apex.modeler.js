@@ -66,7 +66,7 @@ f4a.plugins.modeler = f4a.plugins.modeler || {
                         {
                             type: "error",
                             location: ["page"],
-                            message: "Couldn't find Monaco Editor. <br/> Please check the provided version in the Component Settings.",
+                            message: "Couldn't find Monaco Editor. <br/> Please check the provided version under Configuration / Engine App.",
                             unsafe: false,
                         },
                     ] );

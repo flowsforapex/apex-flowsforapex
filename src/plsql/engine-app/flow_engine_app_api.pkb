@@ -2067,7 +2067,7 @@ as
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled     , p_value => pi_archiving_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled    , p_value => pi_archiving_enabled);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purging     , p_value => pi_completed_prcs_purging);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purge_days  , p_value => pi_completed_prcs_purge_days);
   end set_archiving_settings;
@@ -2081,8 +2081,8 @@ as
   as
   begin
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month , p_value => pi_stats_retain_month);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr , p_value => pi_stats_retain_qtr);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month  , p_value => pi_stats_retain_month);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr    , p_value => pi_stats_retain_qtr);
   end set_statistics_settings;
 
 -- The typo set_statictis_settings was included in 23.1 and 24.1 releases and is retained here for upwards
@@ -2103,11 +2103,13 @@ as
 
 
   procedure set_engine_app_settings(
-    pi_engine_app_mode in flow_configuration.cfig_value%type
+    pi_engine_app_mode       in flow_configuration.cfig_value%type
+  , pi_monaco_editor_version in flow_configuration.cfig_value%type
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode , p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode       , p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_monaco_editor_version , p_value => pi_monaco_editor_version);
 
   end set_engine_app_settings;
 
