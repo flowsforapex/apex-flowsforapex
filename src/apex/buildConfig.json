@@ -9,7 +9,7 @@
     , "build_type": "concat"
     , "build_path": "apex/"
     , "script_path": "apex/supportingObjects"
-    , "script_name": "Tables"
+    , "script_name": "DDL"
     , "script_extension": "sql"
     , "log_extension": "log"
     , "add_newline": true
@@ -19,28 +19,8 @@
     , "content":
       [
         { "content_type": "plaintext", "path": "ddl/", "name": "install_scratch.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "types/", "name": "flow_t_correlated_message.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "types/", "name": "flow_t_async_task.sql", "add_show_errors": false }
-      ]
-    }
-  , {
-      "base_path": "../"
-    , "search_path": "/"
-    , "build_type": "concat"
-    , "build_path": "apex/"
-    , "script_path": "apex/supportingObjects"
-    , "script_name": "Comments_Scheduler"
-    , "script_extension": "sql"
-    , "log_extension": "log"
-    , "add_newline": true
-    , "version": "01.00.00"
-    , "schema_name": "FLOWS4APEX"
-    , "keepTempFiles": false
-    , "content":
-      [
-        { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_comments.sql", "add_show_errors": false }
-      , { "content_type": "plaintext", "path": "ddl/", "name": "install_ddl_annotations.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "ddl/", "name": "create_scheduler_objects.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "types/", "name": "flow_t_correlated_message.sql", "add_show_errors": false }
       ]
     }
   , {
@@ -138,7 +118,8 @@
     , "keepTempFiles": false
     , "content":
       [
-        { "content_type": "plaintext", "path": "/", "name": "flow_apex_my_combined_task_list_vw.sql", "add_show_errors": false }
+        { "content_type": "plaintext", "path": "/", "name": "flow_adhoc_activities_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_apex_my_combined_task_list_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_apex_task_inbox_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_apex_task_inbox_my_tasks_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_diagram_categories_lov.sql", "add_show_errors": false }
@@ -162,7 +143,9 @@
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_message_subscriptions_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_process_vars_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_processes_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_rest_step_event_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_rest_subflows_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "/", "name": "flow_startable_adhoc_activities_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_startable_diagrams_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_subflows_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "/", "name": "flow_task_inbox_vw.sql", "add_show_errors": false }
@@ -195,6 +178,9 @@
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0014_variable_log_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0019_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0020_instance_timeline_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0022_adhoc_activities_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0022_startable_adhoc_activities_vw.sql", "add_show_errors": false }
+      , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0022_started_adhoc_activities_vw.sql", "add_show_errors": false }
       , { "content_type": "plaintext", "path": "engine-app/", "name": "flow_p0024_message_start_listeners_vw.sql", "add_show_errors": false }
       ]
     }
