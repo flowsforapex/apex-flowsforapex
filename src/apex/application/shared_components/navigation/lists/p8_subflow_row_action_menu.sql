@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(2407587958394790)
 ,p_name=>'P8_SUBFLOW_ROW_ACTION_MENU'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>3106868787
+,p_version_scn=>8210715764
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(2407770381394791)
@@ -74,6 +74,22 @@ wwv_flow_imp_shared.create_list_item(
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(73474529421861842)
 ,p_list_item_display_sequence=>60
+,p_list_item_link_text=>'-'
+,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(20034469041486139)
+,p_list_item_display_sequence=>62
+,p_list_item_link_text=>'Adhoc Activities'
+,p_list_item_icon=>'fa-box-arrow-in-east'
+,p_list_text_01=>'open-adhoc-activities'
+,p_translate_list_text_y_n=>'Y'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(20034198287474214)
+,p_list_item_display_sequence=>65
 ,p_list_item_link_text=>'-'
 ,p_list_item_link_target=>'separator'
 ,p_list_item_current_type=>'TARGET_PAGE'

@@ -21,7 +21,7 @@ wwv_flow_imp_shared.create_plugin(
 ,p_api_version=>1
 ,p_execution_function=>'flow_plugin_manage_instance.execution'
 ,p_substitute_attributes=>true
-,p_version_scn=>3139072720
+,p_version_scn=>8543933833
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Creating a <i>Flows for APEX</i> Flow Instance declaratively.'
 ,p_version_identifier=>'25.1'

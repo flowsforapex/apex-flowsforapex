@@ -4,7 +4,7 @@ id: 100
 identification: 
   name: Flows for APEX
   alias: FLOWS4APEX
-  version: 25.1
+  version: 26.1
 
 row-search: 
   tokenize: false
@@ -92,7 +92,7 @@ navigation-menu:
   template-options: 
   - '#DEFAULT#'
   - js-defaultCollapsed
-  - js-navCollapsed--hidden
+  - js-navCollapsed--default
   - t-TreeNav--styleA
   list-position: Side
   list: Desktop Navigation Menu # 12495635966008880385
@@ -174,6 +174,9 @@ component-settings:
     name: NATIVE_MAP_REGION
     type: Region
 
+  settings: 
+    attribute-1: Y
+
   subscription: 
     version-number: 1760504774
 
@@ -225,6 +228,15 @@ component-settings:
 
   subscription: 
     version-number: 1760504898
+
+- # ====== Component Setting: PLUGIN_JSON_REGION.UWESIMON.SELFHO
+  id: 21950625319369905
+  identification: 
+    name: PLUGIN_JSON_REGION.UWESIMON.SELFHOST.E
+    type: Region
+
+  subscription: 
+    version-number: 8190513508
 
 - # ====== Component Setting: PLUGIN_COM.FLOWS4APEX.MANAGE_INSTA
   id: 33700780045345979

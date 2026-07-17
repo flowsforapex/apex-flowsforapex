@@ -1,0 +1,35 @@
+.jsonregion {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.jsonregion .t-Region-header {
+  border-block-end-style: none;
+}
+
+.jsonregion .t-Form-itemWrapper img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.jsonregion .t-Form-itemWrapper svg {
+  height: 100%;
+}
+
+.jsonregion .t-Region-header {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.jsonregion .t-Form-itemWrapper input[type=time]::-webkit-calendar-picker-indicator,
+.jsonregion .t-Form-itemWrapper input[type=date]::-webkit-calendar-picker-indicator,
+.jsonregion .t-Form-itemWrapper input[type=datetime-local]::-webkit-calendar-picker-indicator{
+  position: relative;
+  top: -10px;
+}
+
+.jsonregion .t-Form-itemWrapper input[type=time],
+.jsonregion .t-Form-itemWrapper input[type=date],
+.jsonregion .t-Form-itemWrapper input[type=datetime-local]{
+  height: 3rem;
+}

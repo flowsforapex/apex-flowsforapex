@@ -72,6 +72,14 @@ wwv_flow_imp_shared.create_plugin_setting(
 ,p_version_scn=>1760504898
 );
 wwv_flow_imp_shared.create_plugin_setting(
+ p_id=>wwv_flow_imp.id(21950625319369905)
+,p_plugin_type=>'REGION TYPE'
+,p_plugin=>'PLUGIN_JSON_REGION.UWESIMON.SELFHOST.E'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'attribute_01', 'SELECT schema, sqlquery FROM json_region_schema WHERE path=:p1')).to_clob
+,p_version_scn=>8190513508
+);
+wwv_flow_imp_shared.create_plugin_setting(
  p_id=>wwv_flow_imp.id(33700780045345979)
 ,p_plugin_type=>'PROCESS TYPE'
 ,p_plugin=>'PLUGIN_COM.FLOWS4APEX.MANAGE_INSTANCE.PROCESS'

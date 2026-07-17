@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(6338940478461643)
 ,p_name=>'P8_ACTION_MENU'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>1842508720
+,p_version_scn=>5225303820
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(46777067725540092)
@@ -77,6 +77,14 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_display_sequence=>50
 ,p_list_item_link_text=>'-'
 ,p_list_item_link_target=>'separator'
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(20128556570285492)
+,p_list_item_display_sequence=>55
+,p_list_item_link_text=>'Set Logging Level'
+,p_list_item_icon=>'fa-bug'
+,p_list_text_01=>'set-process-logging-level'
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp_shared.create_list_item(

@@ -5093,7 +5093,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 3979109545
+    version-number: 8365845612
 
   callbacks: 
     api-interface: 3
@@ -5121,7 +5121,7 @@
     - '#PLUGIN_FILES#js/flows4apex.viewer.min.js'
 
   information: 
-    version: 25.1
+    version: 26.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
 
   standard-attributes: 
@@ -5254,10 +5254,9 @@
 
     help: 
       help-text: |
-        Leaving this at "Yes" will make the plugin try to refresh itself on page load.<br />
-        This typically makes sense if your query will immediately return a row.<br />
-        If your query doesn't return a row on page load you should set this to "No".<br />
-        Then use a dynamic action to listen on your driving page item(s) and trigger a refresh on the plugin region.<br />
+        Leaving this at "Yes" will make the plugin try to refresh itself on page load.<br/>
+        This typically makes sense if your query will immediately return a row.<br/>
+        If your query doesn't return a row on page load you should set this to "No". Then use a dynamic action to listen on your driving page item(s) and trigger a refresh on the plugin region.<br/>
         Remember to add your driving page items to "Page Items to Submit" for this to work properly.
 
   - # ====== Custom Attribute: Show Toolbar ======================
@@ -5336,7 +5335,7 @@
     help: 
       help-text: |
         Choose if you want the plugin to show the colors defined in the diagram using the bpmn color standard.<br />
-        If you additionally enable the following option <strong>Add Highlighting</strong>, this will take precedence over the bpmn colors.<br />
+        If you additionally provide <strong>Highlighting Data</strong>, this will take precedence over the bpmn colors.<br />
         As this can lead to unexpected results, we strongly recommend to only use one option at once.
 
   - # ====== Custom Attribute: Iteration Data ====================
@@ -5362,11 +5361,38 @@
 
     help: 
       help-text: |
-        Choose the column holding the data of iterating elements in the diagram.<br/>
-        If existing, according elements will show an option to open the list of instances and select the highlighted instance.<br/>
+        Choose the column holding the <strong>Iteration Data</strong> used for listing instances and switching between running instances on iterating elements.<br/>
         Leave empty if you don't want to show iteration data in the viewer.<br/>
         <br/>
-        See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the JSON structure of the iteration data.
+        We highly recommend using the view <em>FLOW_VIEWER_VW</em> as region source for already preformatted data.<br/> If you provide your own data, the JSON must be in the following format: <br/>
+        <pre>
+        {
+          "Activity_A1": [
+            {
+                "stepKey": "abcde",
+                "loopCounter": 1,
+                "description": "Iteration A1 - Iteration 1",
+                "parentStepKey": null,
+                "status": "running",
+                "highlighting": {
+                    "completed": ["Event_A1Start"],
+                    "current": ["Activity_A2"]
+                }
+            },
+            {
+                "stepKey": "bcdef",
+                "loopCounter": 2,
+                "description": "Iteration A1 - Iteration 2",
+                "parentStepKey": null,
+                "status": "running",
+                "highlighting": {
+                    "completed": ["Event_A1Start","Activity_A2"],
+                    "current": ["Activity_A3"]
+                }
+            }
+          ]
+        }
+        </pre>
 
   - # ====== Custom Attribute: User Task Data ====================
     id: 7034632043394054
@@ -5391,11 +5417,17 @@
 
     help: 
       help-text: |
-        Choose the column holding the URLs generated for APEX Page or APEX Simple Form User Tasks.<br/>
+        Choose the column holding the <strong>User Task Data</strong> used for displaying clickable links on APEX Page oder APEX Simple Form User Tasks.<br/>
         If existing, users that are eligible to work on a task can directly click on the icon next to the User Tasks to open the referenced page.<br/>
         Leave empty if you don't want to link User Tasks directly in the viewer.<br/>
         <br/>
-        The URLs for a single process instance need to be wrapped in a JSON object. See view <em>FLOW_INSTANCE_DETAILS_VW</em> on how to build up the required JSON structure of this attribute.
+        We highly recommend using the view <em>FLOW_VIEWER_VW</em> as region source for already preformatted data.<br/> If you provide your own data, the JSON must be in the following format: <br/>
+        <pre>
+        {
+          "Activity_A1": "<URL>",
+          "Activity_A2": "<URL>"
+        }
+        </pre>
 
   - # ====== Custom Attribute: Highlighting Data =================
     id: 7047814619408907
@@ -5418,6 +5450,20 @@
       - Varchar2
       - Clob
 
+    help: 
+      help-text: |
+        Choose the column holding the <strong>Highlighting Data</strong> used for highlighting elements based on the process status.<br/>
+        Leave empty if you don't want to highlight elements.<br/>
+        <br/>
+        We highly recommend using the view <em>FLOW_VIEWER_VW</em> as region source for already preformatted data.<br/> If you provide your own data, the JSON must be in the following format: <br/>
+        <pre>
+        {
+          "current": ["Activity_A2"],
+          "completed": ["Event_Start","Activity_A1"],
+          "error": []
+        }
+        </pre>
+
   - # ====== Custom Attribute: Call Activity Data ================
     id: 7052686319426598
     identification: 
@@ -5439,6 +5485,21 @@
       - Varchar2
       - Clob
 
+    help: 
+      help-text: |
+        Choose the column holding the <strong>Call Activity Data</strong> used for drilldown navigation into Call Activities and the underlying diagrams.<br/>
+        Leave empty if you don't want to allow drilldown navigation.<br/>
+        <br/>
+        We highly recommend using the view <em>FLOW_VIEWER_VW</em> as region source for already preformatted data.<br/> If you provide your own data, the JSON must be in the following format: <br/>
+        <pre>
+        {
+            "callingDiagramIdentifier": 1,
+            "callingObjectId": "Activity_CA1",
+            "breadcrumb": "Parent (1)",
+            "insight": 1
+        }
+        </pre>
+
   - # ====== Custom Attribute: Badges Data =======================
     id: 7054666153432814
     identification: 
@@ -5459,6 +5520,28 @@
       data-types: 
       - Varchar2
       - Clob
+
+    help: 
+      help-text: |
+        Choose the column holding the <strong>Badge Data</strong> used for showing badges on elements. This can be utilized to show statistics of running instances or show additional information on process steps.<br/>
+        Leave empty if you don't want to show badges.<br/>
+        <br/>
+        To provide badge data to the viewer, the JSON must be in the following format: <br/>
+        <pre>
+        {
+          "Activity_C1": [
+            {
+              "position": "TopLeft",
+              "label": "10",
+              "textColor": "#000000",
+              "borderColor": "#000000"
+            }
+          ]
+        }
+        </pre>
+        The JSON object must contain an array for every element with the badge information.<br/>
+        You can attach more than one badge per object. Possible positions are <em>TopLeft</em>, <em>TopRight</em> and <em>BottomLeft</em>.<br/>
+        Typically the label would be calculated dynamically within the currently shown instance.
 
   events: 
   - # ====== Event: mtbv_diagram_loaded ==========================
@@ -5532,7 +5615,7 @@
       file-character-set: Unicode UTF-8
 
   - # ====== File: js/flows4apex.apex.viewer.min.js ==============
-    id: 14887351347905094
+    id: 21896657142573862
     identification: 
       file-name: js/flows4apex.apex.viewer.min.js
 
@@ -6138,7 +6221,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 3139072720
+    version-number: 8543933833
 
   callbacks: 
     api-interface: Function
@@ -6884,6 +6967,952 @@
         where prcs_id = 1
         </pre>
 
+- # ====== Plugin: Json-Region =================================
+  id: 95071050298505914
+  identification: 
+    name: Json-Region
+    internal-name: JSON_REGION.UWESIMON.SELFHOST.E
+    type: Region
+
+  advanced: 
+    quick-pick: false
+
+  subscription: 
+    version-number: 8180318339
+
+  source: 
+    pl/sql-code: |
+      /*
+       * JSON-region-plugin 0.9.8-2
+       * (c) Uwe Simon 2023, 2025, 2026
+       * Apache License Version 2.0
+       *
+       * TODO: Remove conditional compile when min supported version is APEX >=24.2
+       *
+      */
+      
+      /* 
+       * READ a schema from ref-schema-query with column path, schema, sqlquery 
+      */
+      FUNCTION generate_schema(p_refquery IN VARCHAR2 , p_path IN VARCHAR2) RETURN CLOB IS
+          l_json     CLOB;
+          l_sqlquery VARCHAR2(4000);
+      BEGIN
+          APEX_DEBUG.INFO('generate_schema %s: "%s"', p_path, p_refquery);
+          EXECUTE IMMEDIATE p_refquery INTO l_json, l_sqlquery USING p_path;
+          IF l_json IS NULL THEN
+            EXECUTE IMMEDIATE l_sqlquery INTO l_json;
+          END IF;
+      
+          RETURN(l_json);
+       END;
+      
+      /*
+       * Read the JSON-schema from database. The query must return a single row and the first column must be the JSON-schema.
+       */ 
+      FUNCTION readschema(pQuery IN VARCHAR2) 
+        RETURN CLOB IS 
+        l_json                CLOB;
+        l_column_value_list   apex_plugin_util.t_column_value_list;
+      BEGIN
+        l_column_value_list := apex_plugin_util.get_data (
+                  p_sql_statement    => pQuery,
+                  p_min_columns      => 1,
+                  p_max_columns      => 1,
+                  p_component_name   => 'json-region-plugin');
+        IF(l_column_value_list.count=1 AND l_column_value_list(1).count=1 AND l_column_value_list(1)(1) IS NOT NULL) THEN
+          l_json := l_column_value_list(1)(1);
+          APEX_DEBUG.INFO('readschema: %s', l_json);
+        END IF;
+        RETURN l_json;
+      END readschema;
+      
+      /*
+       * Read the JSON-schema from database dictionary. 
+       * The query must return a single row and the first column must be the JSON-schema.
+       * This works only with Oracle >=23x
+       * Hack, use SYS_DBURIGEN to convert LONG to CLOB!!!!
+       */
+      FUNCTION readschemafromdictionary(pItem IN VARCHAR2) 
+        RETURN CLOB IS 
+        l_json                CLOB :=NULL;
+        l_table_name          all_tab_columns.table_name%TYPE;
+        l_owner               all_tab_columns.owner%TYPE;
+        l_column_name         all_tab_columns.column_name%TYPE;
+      BEGIN
+        $IF DBMS_DB_VERSION.VERSION>=23
+        $THEN
+          BEGIN
+            APEX_DEBUG.INFO('readschemafromdictionary for database version %d', DBMS_DB_VERSION.VERSION);
+            SELECT table_name, item_source
+            INTO l_table_name, l_column_name
+            FROM apex_application_page_items i 
+            LEFT OUTER JOIN apex_application_page_regions r ON (r.region_id=i.region_id)
+            WHERE i.application_id=NV('APP_ID') AND item_name=pItem;
+      
+            APEX_DEBUG.INFO('readschemafromdictionary: %s %s.%s', l_owner, l_table_name, l_column_name);
+      
+            SELECT REGEXP_SUBSTR(text, '({.+})',1,1,'n',1) AS json_schema
+            INTO l_json
+            FROM (
+              SELECT table_name, constraint_name,
+                SYS_DBURIGEN(table_name, constraint_name, search_condition, 'text()').getclob() as text 
+              FROM user_constraints WHERE UPPER(search_condition_vc) like '%IS JSON%' AND constraint_type='C'
+            ) c 
+            JOIN user_cons_columns cc ON(c.table_name=cc.table_name AND c.constraint_name=cc.constraint_name)
+            WHERE c.table_name=l_table_name AND column_name=l_column_name;
+          EXCEPTION WHEN NO_DATA_FOUND THEN
+            IF(l_table_name IS NOT NULL) THEN
+              l_json := json_serialize(DBMS_JSON_SCHEMA.describe(l_table_name, l_owner));
+            ELSE
+              APEX_DEBUG.ERROR('readschemafromdictionary JSON-item "%s not connected to database source, no JSON-schema found for database column', pItem);
+            END IF;
+          END;
+          APEX_DEBUG.INFO('readschemafromdictionary JSON %s', substr(l_json,1,1000));
+        $ELSE
+          APEX_DEBUG.ERROR('readschemafromdictionary not supported for database version %d', DBMS_DB_VERSION.VERSION);
+        $END
+        RETURN l_json;
+      END readschemafromdictionary;
+      /*
+       * Called when the plugin is to be rendered
+       */
+      
+      FUNCTION render_json_region(
+          p_region              IN apex_plugin.t_region,
+          p_plugin              IN apex_plugin.t_plugin,
+          p_is_printer_friendly IN BOOLEAN)
+        RETURN apex_plugin.t_region_render_result
+      IS
+        -- plugin attributes
+        l_apex_version        apex_release.version_no%TYPE;
+        l_name                p_region.name%TYPE;   -- name of the region
+        l_dataitem            p_region.source%TYPE; -- dataitem with JSON-data P00_....
+        l_schemaitem          p_region.attribute_15%TYPE;
+        l_source              VARCHAR(32767);       -- source the for JSON-Schema (0: generate, 1: static, others SQL-query)
+        l_schema              VARCHAR(32767);       -- The fixed JSON-schema
+        l_query               VARCHAR(32767);       -- The SQL-query to retrieve the JSON-schema
+        l_colwidth            NUMBER;               -- The column width for the field items in universal theme 1,2,3,4,6,12
+        l_template            VARCHAR(32767);       -- Template used for input items        
+        l_textareawidth       NUMBER;               -- The limit when textarea is used for long tex inputs
+        l_keepattributes      BOOLEAN;              -- keep additional attributes not mentioned in JSON-schema
+        l_additionalschema    VARCHAR(32767);       -- an additional schema merged with the "original" JSON-schema
+        l_headers             BOOLEAN;              -- Show headers when sub-objects are in the JSON-schema
+        l_hide                BOOLEAN;              -- Hide the JSON-field (default is true)
+        l_removenulls         BOOLEAN;              -- Remove attributed from JSON with a NULL-value  
+        l_is_printer_friendly BOOLEAN;              -- printerfriendly output
+        l_showhelp            BOOLEAN;              -- show help for items
+        l_result              apex_plugin.t_region_render_result;
+        l_queryitems          VARCHAR2(4000);
+        l_delimiter           VARCHAR2(1);
+        l_binds               DBMS_SQL.varchar2_table;
+      --  l_columun     apex_plugin.t_region_column := p_region.region_columns(0);
+        l_readonly    BOOLEAN;
+      BEGIN
+      $IF wwv_flow_api.c_current>=20241130
+      $THEN  -- new API for >= APEX_24.2
+        l_dataitem            := UPPER(p_region.attributes.get_varchar2('attribute_10', p_default_value=>p_region.source));
+        l_schemaitem          := p_region.attributes.get_varchar2('attribute_15', p_default_value=>p_region.attribute_15);
+        l_source              := p_region.attributes.get_varchar2('attribute_02', p_default_value=>p_region.attribute_02);
+        l_schema              := p_region.attributes.get_varchar2('attribute_03', p_default_value=>p_region.attribute_03, p_do_substitutions=>TRUE, p_substitutions_escape_mode=>apex_session_state.c_escape_mode_raw);
+        l_query               := p_region.attributes.get_varchar2('attribute_04', p_default_value=>p_region.attribute_04, p_do_substitutions=>TRUE, p_substitutions_escape_mode=>apex_session_state.c_escape_mode_raw);
+        l_colwidth            := p_region.attributes.get_varchar2('attribute_05', p_default_value=>p_region.attribute_05);
+        l_template            := p_region.attributes.get_varchar2('attribute_11', 'floating');        
+        l_textareawidth       := p_region.attributes.get_varchar2('attribute_01', 250);
+        l_keepattributes      := p_region.attributes.get_boolean('attribute_06', false);
+        l_additionalschema    := p_region.attributes.get_varchar2('attribute_14', p_default_value=>p_region.attribute_14, p_do_substitutions=>TRUE, p_substitutions_escape_mode=>apex_session_state.c_escape_mode_raw);
+        l_headers             := p_region.attributes.get_boolean('attribute_07', false);
+        l_hide                := p_region.attributes.get_boolean('attribute_08', true);
+        l_removenulls         := p_region.attributes.get_boolean('attribute_09', true);
+        l_showhelp            := p_region.attributes.get_boolean('attribute_16', false);
+        APEX_DEBUG.TRACE('LEN-01: '||NVL(p_region.attribute_01,'NULL')||' '||LENGTH(p_region.attribute_01));
+      $ELSE
+        l_dataitem            := UPPER(NVL(p_region.attribute_10, p_region.source));
+        l_schemaitem          := p_region.attribute_15;
+        l_source              := p_region.attribute_02;
+        l_schema              := p_region.attribute_03;
+        l_query               := p_region.attribute_04;
+        l_colwidth            := p_region.attribute_05;
+        l_template            := NVL(p_region.attribute_11, 'floating');        
+        l_textareawidth       := NVL(p_region.attribute_01, 250);
+        l_keepattributes      := NVL(p_region.attribute_06, 'N')='Y';
+        l_additionalschema    := p_region.attribute_14;
+        l_headers             := NVL(p_region.attribute_07, 'N')='Y';
+        l_hide                := NVL(p_region.attribute_08, 'Y')='Y';
+        l_removenulls         := NVL(p_region.attribute_09, 'Y')='Y';  
+        l_showhelp            := NVL(p_region.attribute_16, 'N')='Y';  
+        l_is_printer_friendly := p_is_printer_friendly;
+      $END
+        SELECT VERSION_NO INTO l_apex_version FROM APEX_RELEASE;
+        APEX_DEBUG.TRACE('APEX-Version: '||l_apex_version);
+        APEX_DEBUG.TRACE('DB-Version:   '||DBMS_DB_VERSION.VERSION);
+        apex_plugin_util.debug_region(p_plugin => p_plugin, p_region => p_region, p_is_printer_friendly =>l_is_printer_friendly);
+        BEGIN
+          CASE l_source
+          WHEN '1'  THEN -- JSON-schema in static source
+            IF(l_schema IS NULL OR LENGTH(l_schema)=0) THEN
+              l_schema:=readschemafromdictionary(l_dataitem);
+              IF(l_schema IS NULL OR LENGTH(l_schema)=0) THEN
+              l_schema:= NULL;
+              END IF;
+            END IF;
+          ELSE
+            IF(l_query IS NOT NULL) THEN -- dynamic json-schema from configured query
+              l_schema:=readSchema(l_query);  
+            -- Build a list of queryitems required for AJAX-callback
+              l_binds := wwv_flow_utilities.get_binds(l_query);
+              FOR i IN 1 .. l_binds.count
+              LOOP
+                l_queryitems := l_queryitems||l_delimiter||'#'||substr(l_binds(i),2);
+                l_delimiter:=',';
+              END LOOP;
+            END IF;
+          END CASE;
+      
+          EXCEPTION WHEN NO_DATA_FOUND THEN
+            l_schema:=NULL;
+        END;
+        
+        l_schema:=NVL(l_schema, '{"type": "object", "properties": {}}');
+        -- escape input
+        l_dataitem  := NVL(apex_escape.html(l_dataitem), '{}');
+        --l_schema    := apex_escape.json(l_schema);
+        l_readonly  := APEX_REGION.IS_READ_ONLY;
+      
+      $IF wwv_flow_api.c_current<20241130 
+      $THEN   -- must include requireJS when >APEX_24.2
+          APEX_JAVASCRIPT.ADD_REQUIREJS();
+      $END
+      --  APEX_JAVASCRIPT.ADD_ONLOAD_CODE(
+          -- execute the code directly not via add_onload_code. Hack to enable the handlers for text-/number-items
+        APEX_JAVASCRIPT.ADD_INLINE_CODE (
+             p_key=> 'json-region', 
+             p_code => 'initJsonRegion(' ||
+             apex_javascript.add_value(p_region.static_id) || 
+             apex_javascript.add_value(p_region.name) ||        
+             apex_javascript.add_value(apex_plugin.get_ajax_identifier) ||       
+                                      '{' ||
+               apex_javascript.add_attribute('isDynamic', l_query IS NOT NULL AND LENGTH(l_query)>0) ||                                
+               apex_javascript.add_attribute('generateSchema',   (l_source = '0'))||                                
+               apex_javascript.add_attribute('queryitems',       l_queryitems) ||
+               apex_javascript.add_attribute('dataitem',         l_dataitem) ||
+               apex_javascript.add_attribute('schemaitem',       l_schemaitem) ||
+               apex_javascript.add_attribute('name',             l_name) ||
+               apex_javascript.add_attribute('colwidth',         l_colwidth) ||
+               apex_javascript.add_attribute('readonly',         l_readonly) ||
+               apex_javascript.add_attribute('showhelp',         l_showhelp) ||
+               apex_javascript.add_attribute('textareawidth',    l_textareawidth) ||
+               apex_javascript.add_attribute('keepAttributes',   l_keepattributes) ||
+               apex_javascript.add_attribute('headers',          l_headers) ||
+               apex_javascript.add_attribute('hide',             l_hide) || 
+               apex_javascript.add_attribute('removeNulls',      l_removenulls) || 
+               apex_javascript.add_attribute('template',         l_template) || 
+               apex_javascript.add_attribute('schema',           l_schema) ||
+               apex_javascript.add_attribute('additionalschema', l_additionalschema) ||
+               apex_javascript.add_attribute('apex_files',       APEX_APPLICATION.G_IMAGE_PREFIX) ||
+               apex_javascript.add_attribute('nls_date_format',  V('APP_NLS_DATE_FORMAT')) ||
+               apex_javascript.add_attribute('apex_version',     l_apex_version, false,false) ||
+                                      '});'
+        );                                 
+        RETURN l_result;
+        --
+      END render_json_region;
+      
+      /*
+       * The AJAX callback called from inside Javascript in the browser.
+       * Must return a JSON
+       */
+      FUNCTION ajax_json_region(p_region IN apex_plugin.t_region,
+                           p_plugin IN apex_plugin.t_plugin)
+        RETURN apex_plugin.t_region_ajax_result 
+      IS
+        l_sqlquery  VARCHAR2(32767);             -- the SQL-query entered in page designer is passed in attribute_04;
+        l_refquery  VARCHAR2(32767);             -- The query to retreive the schema reference column, If set on region level use it, els from Component level
+        l_function  APEX_APPLICATION.g_x04%TYPE; -- function executed by AJAX-callback
+        l_param1    APEX_APPLICATION.g_x05%TYPE; -- 1st parameter for function
+        l_result    apex_plugin.t_region_ajax_result;
+        l_json      VARCHAR2(32767);
+        l_j         APEX_JSON.T_VALUES;
+        l_svg       CLOB;
+      BEGIN
+        apex_plugin_util.debug_region(p_plugin => p_plugin, p_region => p_region);
+      $IF wwv_flow_api.c_current>=20241130
+      $THEN  -- new API for >= APEX_24.2
+        l_sqlquery  := p_region.attributes.get_varchar2('attribute_04', p_region.attribute_04);
+        l_refquery  := NVL(p_region.attributes.get_varchar2('attribute_12', p_region.attribute_12), p_plugin.attribute_01);  -- region specific attribute_12 or when empty plugin attribute_01
+      $ELSE
+        l_sqlquery  := p_region.attribute_04;
+        l_refquery  := NVL(p_region.attribute_12, p_plugin.attribute_01);
+      $END
+      
+        l_function  := APEX_APPLICATION.g_x04;
+        l_param1    := APEX_APPLICATION.g_x05;
+        BEGIN
+              -- x01-x03 used by QRCode callback
+          APEX_DEBUG.TRACE('ajax_json_region pplugin %s', p_plugin.attribute_01);
+          APEX_DEBUG.TRACE('ajax_json_region source %s', p_region.source);
+          APEX_DEBUG.TRACE('ajax_json_region items %s', p_region.ajax_items_to_submit);
+          APEX_DEBUG.TRACE('ajax_json_region g_x01 %s', APEX_APPLICATION.g_x01);
+          IF(APEX_APPLICATION.g_x01 IS NOT NULL AND LENGTH(APEX_APPLICATION.g_x01)>0) THEN  
+              -- generate a QR-code  QC-code callback uses x01-x03
+      $IF wwv_flow_api.c_current>=20231031 
+      $THEN
+              -- apex_qrcode is only available in APEX >=23.2 (20231031), so conditional compile
+            l_svg := apex_barcode.get_qrcode_svg(p_value => APEX_APPLICATION.g_x01); 
+            apex_json.open_object;
+            apex_json.write('QR', l_svg);
+      $ELSE
+            apex_json.open_object;
+            apex_json.write('{}');
+      $END
+          ELSE
+            APEX_DEBUG.TRACE('ajax_json_region g_x04 %s', l_function);
+            APEX_DEBUG.TRACE('ajax_json_region g_x05 %s', l_param1);
+            CASE APEX_APPLICATION.g_x04
+              WHEN 'getSubschema' THEN  -- x05 contains the JSON-schema requested schema path
+                l_json := generate_schema(l_refquery, l_param1);
+                apex_json.parse(l_j , l_json);
+                apex_json.write(l_j);
+              WHEN 'getSchema' THEN  -- the names of the search items for requested JSON-schema is in pageItems
+                APEX_DEBUG.TRACE('ajax_json_region others');
+                l_json := readschema(l_sqlquery);
+                apex_json.parse(l_j , l_json);
+                apex_json.write(l_j);
+              ELSE 
+                apex_json.open_object;
+            END CASE;
+          END IF;
+        apex_json.close_all();
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+          apex_json.open_object();
+          apex_json.close_all(); 
+          RAISE; 
+        END;
+        --
+        RETURN l_result;
+        --
+      END ajax_json_region;
+      
+      $IF wwv_flow_api.c_current>=20241130
+      $THEN  -- new API for >= APEX_24.2
+      PROCEDURE render_json_region (
+          p_plugin IN            apex_plugin.t_plugin,
+          p_region IN            apex_plugin.t_region,
+          p_param  IN            apex_plugin.t_region_render_param,
+          p_result IN OUT NOCOPY apex_plugin.t_region_render_result )
+      IS
+      BEGIN
+        p_result := render_json_region(p_plugin => p_plugin, p_region => p_region, p_is_printer_friendly => p_param.is_printer_friendly);
+      END;
+      
+      PROCEDURE ajax_json_region (
+          p_plugin IN            apex_plugin.t_plugin,
+          p_region IN            apex_plugin.t_region,
+          p_param  IN            apex_plugin.t_region_ajax_param,
+          p_result IN OUT NOCOPY apex_plugin.t_region_ajax_result ) IS
+      BEGIN
+        p_result := ajax_json_region(p_plugin=>p_plugin, p_region=>p_region);
+      END;
+      $END
+
+  callbacks: 
+    api-interface: Function
+    render-procedure/function-name: render_json_region
+    ajax-procedure/function-name: ajax_json_region
+
+  custom-attributes: 
+    substitute-attribute-values: true
+
+  css: 
+    file-urls: 
+    - '#PLUGIN_FILES#json-region.css'
+
+  javascript: 
+    file-urls: 
+    - '#IMAGE_PREFIX#libraries/apex/#MIN_DIRECTORY#widget.starRating#MIN#.js'
+    - '#IMAGE_PREFIX#libraries/apex/#MIN_DIRECTORY#widget.pctGraph#MIN#.js'
+    - '#PLUGIN_FILES#json-region.js'
+
+  information: 
+    version: 0.9.8.2
+    about-url: 'https://github.com/simonuwe/oracle-apex-json-region'
+    help-text: 'This plug-in was downloaded from https://github.com/simonuwe/oracle-apex-json-region and backported to APEX 20.2.'
+
+  custom-attributes: 
+  - # ====== Custom Attribute: Merge Schema ======================
+    id: 28960794495586476
+    identification: 
+      static-id: attribute_13
+      attribute: 13
+      name: Merge Schema
+      scope: Component
+
+    layout: 
+      sequence: 32
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: N
+
+    condition: 
+      depending-on-custom-attribute: Static Schema # 95072981208531474
+      depending-on-condition-type: NULL
+      always-evaluate: true
+
+    help: 
+      help-text: |
+        "Merge Schema" is used to overwrite (or add proerties to) the JSON-schema retrieved from the data dictionary or generated from the data.
+        A usecase is adding "apex" properties to the JSON-schema or changing the sort order of properties.
+
+  - # ====== Custom Attribute: Additional Schema =================
+    id: 28963034072589529
+    identification: 
+      static-id: attribute_14
+      attribute: 14
+      name: Additional Schema
+      scope: Component
+
+    layout: 
+      sequence: 34
+
+    settings: 
+      type: Textarea
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    condition: 
+      depending-on-custom-attribute: Merge Schema # 28960794495586476
+      depending-on-condition-type: not equal to
+      expression: N
+      always-evaluate: true
+
+    help: 
+      help-text: |
+        A JSON-schema which is merged to the "original" JSON-schema retrieved/generated from the database.
+        Properties in this JSON-schema overwrite attributes in the JSON-schema from database.
+
+  - # ====== Custom Attribute: Page-item =========================
+    id: 33786180050057983
+    identification: 
+      static-id: attribute_15
+      attribute: 15
+      name: Page-item
+      scope: Component
+
+    layout: 
+      sequence: 15
+
+    settings: 
+      type: Page Item
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    condition: 
+      depending-on-custom-attribute: Source # 95071826050519857
+      depending-on-condition-type: equal to
+      expression: 3
+      always-evaluate: true
+
+    help: 
+      help-text: The page item where the JSON-schema is to be found
+
+  - # ====== Custom Attribute: Show Help =========================
+    id: 40699074978276109
+    identification: 
+      static-id: attribute_16
+      attribute: 16
+      name: Show Help
+      scope: Component
+
+    layout: 
+      sequence: 200
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: N
+
+  - # ====== Custom Attribute: SQL-Query for referenced JSON-schem
+    id: 45435395848772865
+    identification: 
+      static-id: attribute_12
+      attribute: 12
+      name: SQL-Query for referenced JSON-schema
+      scope: Component
+
+    layout: 
+      sequence: 36
+
+    settings: 
+      type: SQL Query
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      minimum-columns: 2
+      maximum-columns: 2
+
+    help: 
+      help-text: |
+        The query, which is used to resolve referenced JSON-schema like "$ref: "/defs/xyz". The query must return a single row. Columns: schema: a fixed schema to be used sqlquery: the sqlquery to retrieve the JSON-schema Ther WHERE-clause must filter to the requestit HSON-schema-reference.
+        
+        If empty, the query configured in "Shared Components->Component Settings->JSON-Region" is used.
+
+    examples: 
+      examples: |
+        SELECT schema, sqlquery FROM json_region_schema WHERE path=:p1 
+        
+        The required table could be installed with create_json_region_schema.sql and be deleted with drop_json_region_schema.sql. Example files could be found in the examples directory.
+
+  - # ====== Custom Attribute: SQL-Query for referenced JSON-schem
+    id: 45436949647781138
+    identification: 
+      static-id: attribute_01
+      attribute: 1
+      name: SQL-Query for referenced JSON-schema
+      scope: Application
+
+    layout: 
+      sequence: 200
+
+    settings: 
+      type: SQL Query
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+      minimum-columns: 2
+      maximum-columns: 2
+
+    help: 
+      help-text: 'The query, which is used to resolve referenced JSON-schema like "$ref: "/defs/xyz". The query must return a single row. Columns: schema: a fixed schema to be used sqlquery: the sqlquery to retrieve the JSON-schema Ther WHERE-clause must filter to the requestit HSON-schema-reference.'
+
+    examples: 
+      examples: |
+        SELECT schema, sqlquery FROM json_region_schema WHERE path=:p1 
+        
+        The required table could be installed with create_json_region_schema.sql and be deleted with drop_json_region_schema.sql. Example files could be found in the examples directory.
+
+  - # ====== Custom Attribute: Template ==========================
+    id: 60601363934057794
+    identification: 
+      static-id: attribute_11
+      attribute: 11
+      name: Template
+      scope: Component
+
+    layout: 
+      sequence: 55
+
+    settings: 
+      type: Select List
+      lov-type: Static
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+
+    default: 
+      value: floating
+
+    entries: 
+    - # ====== Entry: Header Floating ==============================
+      id: 60601669875062160
+      entry: 
+        sequence: 10
+        display: Header Floating
+        return: floating
+
+      advanced: 
+        quick-pick: false
+
+    - # ====== Entry: Label Above ==================================
+      id: 60602051907064000
+      entry: 
+        sequence: 20
+        display: Label Above
+        return: above
+
+      advanced: 
+        quick-pick: false
+
+    - # ====== Entry: Label Left ===================================
+      id: 60602474656065065
+      entry: 
+        sequence: 30
+        display: Label Left
+        return: left
+
+      advanced: 
+        quick-pick: false
+
+    - # ====== Entry: Label Hidden =================================
+      id: 60602897734066848
+      entry: 
+        sequence: 40
+        display: Label Hidden
+        return: hidden
+
+      advanced: 
+        quick-pick: false
+
+  - # ====== Custom Attribute: JSON-item =========================
+    id: 95071539237515213
+    identification: 
+      static-id: attribute_10
+      attribute: 10
+      name: JSON-item
+      scope: Component
+
+    layout: 
+      sequence: 5
+
+    settings: 
+      type: Page Item
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+
+    help: 
+      help-text: |
+        The JSON-item the region is linked to. All data shown/edited in the region is read/written to this field-item. 
+        This field-item should be a textarea.
+
+  - # ====== Custom Attribute: Source ============================
+    id: 95071826050519857
+    identification: 
+      static-id: attribute_02
+      attribute: 2
+      name: Source
+      scope: Component
+
+    layout: 
+      sequence: 10
+
+    settings: 
+      type: Select List
+      lov-type: Static
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+
+    default: 
+      value: 1
+
+    help: 
+      help-text: |
+        The source for the JSON-schema.
+        This could be a static schema or a schema retrieved by a SQL-query.
+
+    entries: 
+    - # ====== Entry: Page Item ====================================
+      id: 33779076933978092
+      entry: 
+        sequence: 40
+        display: Page Item
+        return: 3
+
+      advanced: 
+        quick-pick: false
+
+      help: 
+        help-text: JSON-schema is located in a pgae item
+
+    - # ====== Entry: Generate Schema ==============================
+      id: 58286680221080205
+      entry: 
+        sequence: 30
+        display: Generate Schema
+        return: 0
+
+      advanced: 
+        quick-pick: false
+
+      help: 
+        help-text: JSON-schema is generated from data dictionary (duality view or JSON-VALIDATE-constraint)
+
+    - # ====== Entry: Static =======================================
+      id: 95072143892520974
+      entry: 
+        sequence: 10
+        display: Static
+        return: 1
+
+      advanced: 
+        quick-pick: false
+
+      help: 
+        help-text: JSON-schema is static and onfigured in this region
+
+    - # ====== Entry: SQL-Query ====================================
+      id: 95072604655522220
+      entry: 
+        sequence: 20
+        display: SQL-Query
+        return: SQL-Query
+
+      advanced: 
+        quick-pick: false
+
+      help: 
+        help-text: JSON-schema is retrieved by a SQL_query with a single bind-variable
+
+  - # ====== Custom Attribute: Static Schema =====================
+    id: 95072981208531474
+    identification: 
+      static-id: attribute_03
+      attribute: 3
+      name: Static Schema
+      scope: Component
+
+    layout: 
+      sequence: 20
+
+    settings: 
+      type: Textarea
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    condition: 
+      depending-on-custom-attribute: Source # 95071826050519857
+      depending-on-condition-type: not equal to
+      expression: SQL-Query
+      always-evaluate: true
+
+  - # ====== Custom Attribute: SQL-Query =========================
+    id: 95073223993537189
+    identification: 
+      static-id: attribute_04
+      attribute: 4
+      name: SQL-Query
+      scope: Component
+
+    layout: 
+      sequence: 30
+
+    settings: 
+      type: SQL Query
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    condition: 
+      depending-on-custom-attribute: Source # 95071826050519857
+      depending-on-condition-type: equal to
+      expression: SQL-Query
+      always-evaluate: true
+
+    help: 
+      help-text: |
+        The Query to retrieve the JSON-schema. It must return exactly one row with the JSON-schema-column.
+        
+        The schema must contain the attributes
+        type, properties and optionally required.
+        For a detailed JSON-schema description see https://json-schema.org/
+
+  - # ====== Custom Attribute: Column Width ======================
+    id: 95073541094541270
+    identification: 
+      static-id: attribute_05
+      attribute: 5
+      name: Column Width
+      scope: Component
+
+    layout: 
+      sequence: 40
+
+    settings: 
+      type: Integer
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+
+    default: 
+      value: 3
+
+    help: 
+      help-text: |
+        The width of a column.
+        The default universal-theme supports here 1 (12 columns), 2, 3, 4, 6, 12(1 column)
+
+  - # ====== Custom Attribute: Textarealimit =====================
+    id: 95073908190545574
+    identification: 
+      static-id: attribute_01
+      attribute: 1
+      name: Textarealimit
+      scope: Component
+
+    layout: 
+      sequence: 50
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: false
+
+    default: 
+      value: 250
+
+    help: 
+      help-text: The maximal length of a simple text input field. When the maxLength of the field is longer a textarea is used to display the field.
+
+  - # ====== Custom Attribute: Keep additional attributes ========
+    id: 95074212120549753
+    identification: 
+      static-id: attribute_06
+      attribute: 6
+      name: Keep additional attributes
+      scope: Component
+
+    layout: 
+      sequence: 60
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: N
+
+    help: 
+      help-text: When the JSON contains more attributes than defined in the JSON-schema the additional attributes are kept when updating the data.
+
+  - # ====== Custom Attribute: Headers ===========================
+    id: 95074514047554246
+    identification: 
+      static-id: attribute_07
+      attribute: 7
+      name: Headers
+      scope: Component
+
+    layout: 
+      sequence: 70
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: Y
+
+    help: 
+      help-text: When the JSON-schema contains "sub-objects" headers for each sub-object are shown.
+
+  - # ====== Custom Attribute: Hide JSON-item ====================
+    id: 95074783494557347
+    identification: 
+      static-id: attribute_08
+      attribute: 8
+      name: Hide JSON-item
+      scope: Component
+
+    layout: 
+      sequence: 80
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: Y
+
+    help: 
+      help-text: Automatically hide the related JSON-item. This is the default.
+
+  - # ====== Custom Attribute: Remove NULLS from JSON ============
+    id: 95075083082560183
+    identification: 
+      static-id: attribute_09
+      attribute: 9
+      name: Remove NULLS from JSON
+      scope: Component
+
+    layout: 
+      sequence: 90
+
+    settings: 
+      type: Yes/No
+      common: true
+      show-in-wizard: true
+      required: false
+      translatable: false
+
+    default: 
+      value: Y
+
+    help: 
+      help-text: Remove NULL values from JSON. This is useful to compact JSON-data with only a few attributes set.
+
+  files: 
+  - # ====== File: json-region.js ================================
+    id: 29258383939926784
+    identification: 
+      file-name: json-region.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: json-region.min.js ============================
+    id: 40718478590675386
+    identification: 
+      file-name: json-region.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: json-region.css ===============================
+    id: 62504073717135741
+    identification: 
+      file-name: json-region.css
+
+    attributes: 
+      mime-type: text/css
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: marked.esm.js =================================
+    id: 95077103114579179
+    identification: 
+      file-name: marked.esm.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
 - # ====== Plugin: Flows for APEX - Modeler ====================
   id: 120492855282971514
   identification: 
@@ -6895,7 +7924,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 3910110322
+    version-number: 8572546231
 
   callbacks: 
     api-interface: 3
@@ -6913,7 +7942,6 @@
 
   css: 
     file-urls: 
-    - '#PLUGIN_FILES#fonts/codicon.ttf'
     - '#PLUGIN_FILES#css/flows4apex.modeler.css'
 
   javascript: 
@@ -6922,7 +7950,7 @@
     - '#PLUGIN_FILES#js/flows4apex.modeler.min.js'
 
   information: 
-    version: 25.1
+    version: 26.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
 
   standard-attributes: 
@@ -6935,69 +7963,6 @@
       required: true
 
   files: 
-  - # ====== File: js/flows4apex.modeler.min.js ==================
-    id: 16693711513236933
-    identification: 
-      file-name: js/flows4apex.modeler.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/editor.worker.js ===========================
-    id: 16694874414236926
-    identification: 
-      file-name: js/editor.worker.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/839.min.js =================================
-    id: 16695289499236924
-    identification: 
-      file-name: js/839.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/77.min.js ==================================
-    id: 16695688562236924
-    identification: 
-      file-name: js/77.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/914.min.js =================================
-    id: 16696039707236924
-    identification: 
-      file-name: js/914.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/658.min.js =================================
-    id: 16696449220236923
-    identification: 
-      file-name: js/658.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/614.min.js =================================
-    id: 16696887722236923
-    identification: 
-      file-name: js/614.min.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
   - # ====== File: css/flows4apex.modeler.css ====================
     id: 16697359518234962
     identification: 
@@ -7016,46 +7981,19 @@
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: fonts/codicon.ttf =============================
-    id: 16698256606223144
+  - # ====== File: js/flows4apex.modeler.min.js ==================
+    id: 21209269900750504
     identification: 
-      file-name: fonts/codicon.ttf
-
-    attributes: 
-      mime-type: font/ttf
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/628.min.js =================================
-    id: 16700592627179281
-    identification: 
-      file-name: js/628.min.js
+      file-name: js/flows4apex.modeler.min.js
 
     attributes: 
       mime-type: text/javascript
       file-character-set: Unicode UTF-8
 
-  - # ====== File: js/f6283f7ccaed1249d9eb.ttf ===================
-    id: 16703072089179271
+  - # ====== File: js/flows4apex.apex.modeler.min.js =============
+    id: 30029445003208120
     identification: 
-      file-name: js/f6283f7ccaed1249d9eb.ttf
-
-    attributes: 
-      mime-type: font/ttf
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/json.worker.js =============================
-    id: 16704061488167257
-    identification: 
-      file-name: js/json.worker.js
-
-    attributes: 
-      mime-type: text/javascript
-      file-character-set: Unicode UTF-8
-
-  - # ====== File: js/html.worker.js =============================
-    id: 16705501095159597
-    identification: 
-      file-name: js/html.worker.js
+      file-name: js/flows4apex.apex.modeler.min.js
 
     attributes: 
       mime-type: text/javascript
@@ -7072,7 +8010,7 @@
     quick-pick: false
 
   subscription: 
-    version-number: 1999265505
+    version-number: 8180286858
 
   callbacks: 
     api-interface: Function
@@ -7086,7 +8024,7 @@
     substitute-attribute-values: true
 
   information: 
-    version: 25.1
+    version: 26.1
     about-url: 'https://github.com/flowsforapex/apex-flowsforapex'
     help-text: Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step. The step timing functions Start and Pause are also available.
 
@@ -7108,6 +8046,9 @@
       required: false
       translatable: false
 
+    default: 
+      value: STEP_KEY
+
     condition: 
       depending-on-custom-attribute: Flow Instance info # 151287222331012470
       depending-on-condition-type: equal to
@@ -7120,7 +8061,7 @@
         
         <p>This could typically be: </p>
         <ul>
-        <li>An Application Item, often named STEP_KEY.</li>
+        <li>An Application Item, often named STEP_KEY. (Default)</li>
         <li>A Global Page Item, for example P0_STEP_KEY.</li>
         <li>A Page Item on your page.</li>
         </ul>
@@ -7202,6 +8143,9 @@
       required: true
       translatable: false
 
+    default: 
+      value: PROCESS_ID
+
     condition: 
       depending-on-custom-attribute: Flow Instance info # 151287222331012470
       depending-on-condition-type: equal to
@@ -7214,7 +8158,7 @@
         
         <p>This could typically be: </p>
         <ul>
-        <li>An Application Item, often named PROCESS_ID.</li>
+        <li>An Application Item, often named PROCESS_ID. (Default)</li>
         <li>A Global Page Item, for example P0_PROCESS_ID.</li>
         <li>A Page Item on your page.</li>
         </ul>
@@ -7236,6 +8180,9 @@
       required: true
       translatable: false
 
+    default: 
+      value: SUBFLOW_ID
+
     condition: 
       depending-on-custom-attribute: Flow Instance info # 151287222331012470
       depending-on-condition-type: equal to
@@ -7248,7 +8195,7 @@
         
         <p>This could typically be: </p>
         <ul>
-        <li>An Application Item, often named SUBFLOW_ID.</li>
+        <li>An Application Item, often named SUBFLOW_ID. (Default)</li>
         <li>A Global Page Item, for example P0_SUBFLOW_ID.</li>
         <li>A Page Item on your page.</li>
         </ul>

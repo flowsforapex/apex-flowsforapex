@@ -35,69 +35,6 @@
     mime-type: application/json
     file-character-set: Unicode UTF-8
 
-- # ====== Static Application File: lib/prismjs/css/prism.dark.c
-  id: 12618555361993254
-  identification: 
-    file-name: lib/prismjs/css/prism.dark.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/css/prism.css ==
-  id: 12618784715993271
-  identification: 
-    file-name: lib/prismjs/css/prism.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/js/prism.js ====
-  id: 12619103143994029
-  identification: 
-    file-name: lib/prismjs/js/prism.js
-
-  attributes: 
-    mime-type: application/javascript
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/css/prism.min.cs
-  id: 12641794840336847
-  identification: 
-    file-name: lib/prismjs/css/prism.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/css/prism.css.ma
-  id: 12642011694336848
-  identification: 
-    file-name: lib/prismjs/css/prism.css.map
-
-  attributes: 
-    mime-type: application/json
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/css/prism.dark.m
-  id: 12643522207338745
-  identification: 
-    file-name: lib/prismjs/css/prism.dark.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/css/prism.dark.c
-  id: 12643889679338746
-  identification: 
-    file-name: lib/prismjs/css/prism.dark.css.map
-
-  attributes: 
-    mime-type: application/json
-    file-character-set: Unicode UTF-8
-
 - # ====== Static Application File: bpmn-io/bpmn-font/css/bpmn-e
   id: 14357665744109308
   identification: 
@@ -114,24 +51,6 @@
 
   attributes: 
     mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: css/flows4apex.min.css =====
-  id: 14831848939650172
-  identification: 
-    file-name: css/flows4apex.min.css
-
-  attributes: 
-    mime-type: text/css
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: js/flows4apex.min.js =======
-  id: 16651828815466797
-  identification: 
-    file-name: js/flows4apex.min.js
-
-  attributes: 
-    mime-type: text/javascript
     file-character-set: Unicode UTF-8
 
 - # ====== Static Application File: app-100-logo.png ===========
@@ -206,6 +125,51 @@
     mime-type: application/json
     file-character-set: Unicode UTF-8
 
+- # ====== Static Application File: js/flows4apex.min.js =======
+  id: 20369601984395478
+  identification: 
+    file-name: js/flows4apex.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/flows4apex.min.css =====
+  id: 22453341552162387
+  identification: 
+    file-name: css/flows4apex.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/js/prism.js ====
+  id: 23604066652546837
+  identification: 
+    file-name: lib/prismjs/js/prism.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.css ==
+  id: 23604412173548307
+  identification: 
+    file-name: lib/prismjs/css/prism.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: lib/prismjs/css/prism.dark.c
+  id: 23604636682548308
+  identification: 
+    file-name: lib/prismjs/css/prism.dark.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
 - # ====== Static Application File: workflow_black.svg =========
   id: 26991323914877414
   identification: 
@@ -239,23 +203,5 @@
 
   attributes: 
     mime-type: image/svg+xml
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/js/prism.min.js 
-  id: 57432074669854671
-  identification: 
-    file-name: lib/prismjs/js/prism.min.js
-
-  attributes: 
-    mime-type: application/javascript
-    file-character-set: Unicode UTF-8
-
-- # ====== Static Application File: lib/prismjs/js/prism.js.map 
-  id: 57432329230854672
-  identification: 
-    file-name: lib/prismjs/js/prism.js.map
-
-  attributes: 
-    mime-type: application/json
     file-character-set: Unicode UTF-8
 

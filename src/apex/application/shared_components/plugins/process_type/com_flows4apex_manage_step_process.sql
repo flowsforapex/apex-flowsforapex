@@ -21,10 +21,10 @@ wwv_flow_imp_shared.create_plugin(
 ,p_api_version=>1
 ,p_execution_function=>'flow_plugin_manage_instance_step.execution'
 ,p_substitute_attributes=>true
-,p_version_scn=>1999265505
+,p_version_scn=>8180286858
 ,p_subscribe_plugin_settings=>true
 ,p_help_text=>'Process used to Manage a <i>Flows for APEX</i> Flow Instance Step. This plug-in allows you to either complete, reserve or release a Flow Instance Step. The step timing functions Start and Pause are also available.'
-,p_version_identifier=>'25.1'
+,p_version_identifier=>'26.1'
 ,p_about_url=>'https://github.com/flowsforapex/apex-flowsforapex'
 );
 wwv_flow_imp_shared.create_plugin_attribute(
@@ -78,6 +78,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_prompt=>'Process ID Item'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
+,p_default_value=>'PROCESS_ID'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(151287222331012470)
 ,p_depending_on_has_to_exist=>true
@@ -88,7 +89,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '',
 '<p>This could typically be: </p>',
 '<ul>',
-'<li>An Application Item, often named PROCESS_ID.</li>',
+'<li>An Application Item, often named PROCESS_ID. (Default)</li>',
 '<li>A Global Page Item, for example P0_PROCESS_ID.</li>',
 '<li>A Page Item on your page.</li>',
 '</ul>'))
@@ -102,6 +103,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_prompt=>'Subflow ID item'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>true
+,p_default_value=>'SUBFLOW_ID'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(151287222331012470)
 ,p_depending_on_has_to_exist=>true
@@ -112,7 +114,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '',
 '<p>This could typically be: </p>',
 '<ul>',
-'<li>An Application Item, often named SUBFLOW_ID.</li>',
+'<li>An Application Item, often named SUBFLOW_ID. (Default)</li>',
 '<li>A Global Page Item, for example P0_SUBFLOW_ID.</li>',
 '<li>A Page Item on your page.</li>',
 '</ul>'))
@@ -342,6 +344,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 ,p_prompt=>'Step Key'
 ,p_attribute_type=>'PAGE ITEM'
 ,p_is_required=>false
+,p_default_value=>'STEP_KEY'
 ,p_is_translatable=>false
 ,p_depending_on_attribute_id=>wwv_flow_imp.id(151287222331012470)
 ,p_depending_on_has_to_exist=>true
@@ -352,7 +355,7 @@ wwv_flow_imp_shared.create_plugin_attribute(
 '',
 '<p>This could typically be: </p>',
 '<ul>',
-'<li>An Application Item, often named STEP_KEY.</li>',
+'<li>An Application Item, often named STEP_KEY. (Default)</li>',
 '<li>A Global Page Item, for example P0_STEP_KEY.</li>',
 '<li>A Page Item on your page.</li>',
 '</ul>'))

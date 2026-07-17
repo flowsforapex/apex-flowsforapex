@@ -1,4 +1,25 @@
 ---
+- # ====== Authorization: Enterprise Edition ===================
+  id: 29951042215468222
+  identification: 
+    name: Enterprise Edition
+
+  subscription: 
+    version-number: 8547405047
+
+  authorization-scheme: 
+    type: Item equals Value
+
+  settings: 
+    item: P0_LICENSE_EDITION
+    value: enterprise
+
+  server-cache: 
+    evaluation-point: Once per Session
+
+  error: 
+    error-message: '&APP_TEXT$APP_ENTERPRISE_EDITION_DIALOG!RAW.'
+
 - # ====== Authorization: Administration Rights ================
   id: 12495496796563879971
   identification: 

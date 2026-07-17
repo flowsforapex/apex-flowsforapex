@@ -15,7 +15,7 @@ wwv_flow_imp_shared.create_list(
  p_id=>wwv_flow_imp.id(3291351989268379)
 ,p_name=>'P9_CONFIGURATION_PAGES'
 ,p_list_status=>'PUBLIC'
-,p_version_scn=>3770182256
+,p_version_scn=>8547403504
 );
 wwv_flow_imp_shared.create_list_item(
  p_id=>wwv_flow_imp.id(3291576005268381)
@@ -106,6 +106,17 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_link_target=>'f?p=&APP_ID.:44:&SESSION.::&DEBUG.:RP:::'
 ,p_list_item_icon=>'fa-ai'
 ,p_list_text_01=>'AI Prompts and Quick Actions'
+,p_security_scheme=>wwv_flow_imp.id(29951042215468222)
+,p_list_item_current_type=>'TARGET_PAGE'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(29949648470424662)
+,p_list_item_display_sequence=>101
+,p_list_item_link_text=>'AI Prompts'
+,p_list_item_link_target=>'javascript:apex.theme.openRegion(''enterprise-edition-dg'')'
+,p_list_item_icon=>'fa-ai'
+,p_list_text_01=>'AI Prompts and Quick Actions'
+,p_security_scheme=>'!'||wwv_flow_imp.id(29951042215468222)
 ,p_list_item_current_type=>'TARGET_PAGE'
 );
 wwv_flow_imp.component_end;
