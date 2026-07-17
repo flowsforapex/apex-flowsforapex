@@ -21,6 +21,8 @@ PROMPT >> -------------------------------------------
 PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
 -- note this is only required for 25.1 to 261 upgrade. For subsequent migrations, use replace. Note Oracle 19c bug on ADD OR REPLACE of annotations which complicates this.
 -- run this as last feature migration.
+set define '^'
+set concat '.'
 column ann_cmd new_value ann_cmd noprint
 select case
          when exists (
@@ -29,9 +31,9 @@ select case
                  where owner = 'SYS'
                    and view_name = 'USER_ANNOTATIONS_USAGE'
               ) then
-           '@@../../ddl/install_ddl_annotations.sql'
+           '../../ddl/install_ddl_annotations.sql'
          else
-           'prompt >> Skipping schema annotations (annotation feature unavailable)'
+           'no_annotations.sql'
        end as ann_cmd
   from dual;
 ^ann_cmd.
