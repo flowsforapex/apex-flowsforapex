@@ -33,7 +33,7 @@ prompt APPLICATION 984342 - Sample Flows for APEX Application
 -- Application Export:
 --   Application:     984342
 --   Name:            Sample Flows for APEX Application
---   Date and Time:   11:35 Friday July 17, 2026
+--   Date and Time:   06:06 Tuesday July 28, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -39438,6 +39438,10 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[        <apex:apexPage>]''',
 '      ,q''[          <apex:pageId></apex:pageId>]''',
 '      ,q''[        </apex:apexPage>]''',
+'      ,q''[        <apex:potentialGroups>]''',
+'      ,q''[          <apex:expressionType>static</apex:expressionType>]''',
+'      ,q''[          <apex:expression>ACCOUNTANT</apex:expression>]''',
+'      ,q''[        </apex:potentialGroups>]''',
 '      ,q''[      </bpmn:extensionElements>]''',
 '      ,q''[      <bpmn:incoming>approved_vp</bpmn:incoming>]''',
 '      ,q''[      <bpmn:incoming>no_vp</bpmn:incoming>]''',
@@ -39831,15 +39835,15 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[    <bpmn:sequenceFlow id="declined_mgr" name="declined_mgr" sourceRef="check_status_mgr" targetRef="inform_employee" apex:sequence="10">]''',
 '      ,q''[      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody" conditionType="plsqlFunctionBody">return expe_flow_expenseclaims.check_status(p_expe_id =&gt; flow_globals.business_ref, p_path =&gt; ''declined_m'
 ||'gr'']''',
-'      ,q''[);</bpmn:conditionExpression>]''',
-'      ,q''[    </bpmn:sequenceFlow>]''',
-'      ,q''[    <bpmn:sequenceFlow id="Flow_0bk3hoe" sourceRef="inform_employee" targetRef="correct_expense_claim" />]''',
-'      ,q''[    <bpmn:sequenceFlow id="yes_'))
+'      ,q''['))
 );
 wwv_flow_imp_shared.append_to_install_script(
  p_id=>wwv_flow_imp.id(4656332336789849673)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'vp" name="yes" sourceRef="check_amount" targetRef="review_expense_vp" apex:sequence="10">]''',
+');</bpmn:conditionExpression>]''',
+'      ,q''[    </bpmn:sequenceFlow>]''',
+'      ,q''[    <bpmn:sequenceFlow id="Flow_0bk3hoe" sourceRef="inform_employee" targetRef="correct_expense_claim" />]''',
+'      ,q''[    <bpmn:sequenceFlow id="yes_vp" name="yes" sourceRef="check_amount" targetRef="review_expense_vp" apex:sequence="10">]''',
 '      ,q''[      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression" conditionType="plsqlFunctionBody">expe_flow_expenseclaims.check_limit_exceeded(p_expe_id =&gt; flow_globals.business_ref)</bpmn:conditionExpression'
 ||'>]''',
 '      ,q''[    </bpmn:sequenceFlow>]''',
