@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   10:22 Tuesday July 28, 2026
+--   Date and Time:   14:48 Tuesday July 28, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -28534,6 +28534,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source_data_type=>'VARCHAR2'
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(19312058558507283)
+,p_item_default=>'Simple Process Starter'
 ,p_prompt=>'Category'
 ,p_source=>'DGRM_CATEGORY'
 ,p_source_type=>'FACET_COLUMN'

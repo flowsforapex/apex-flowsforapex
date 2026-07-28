@@ -33,7 +33,7 @@ prompt APPLICATION 984342 - Sample Flows for APEX Application
 -- Application Export:
 --   Application:     984342
 --   Name:            Sample Flows for APEX Application
---   Date and Time:   10:21 Tuesday July 28, 2026
+--   Date and Time:   14:47 Tuesday July 28, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -39681,6 +39681,10 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[          <apex:formTemplateItem>P13_TEMPLATE_STATIC_ID</apex:formTemplateItem>]''',
 '      ,q''[          <apex:formTemplateId>correct_expense</apex:formTemplateId>]''',
 '      ,q''[        </apex:apexSimpleForm>]''',
+'      ,q''[        <apex:potentialGroups>]''',
+'      ,q''[          <apex:expressionType>static</apex:expressionType>]''',
+'      ,q''[          <apex:expression>EMPLOYEE</apex:expression>]''',
+'      ,q''[        </apex:potentialGroups>]''',
 '      ,q''[      </bpmn:extensionElements>]''',
 '      ,q''[      <bpmn:incoming>Flow_0bk3hoe</bpmn:incoming>]''',
 '      ,q''[      <bpmn:incoming>Flow_1vr2sob</bpmn:incoming>]''',
@@ -39833,14 +39837,13 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression" conditionType="plsqlFunctionBody">:F4A$PAYMENT_REVIEW = ''REJECTED''</bpmn:conditionExpression>]''',
 '      ,q''[    </bpmn:sequenceFlow>]''',
 '      ,q''[    <bpmn:sequenceFlow id="declined_mgr" name="declined_mgr" sourceRef="check_status_mgr" targetRef="inform_employee" apex:sequence="10">]''',
-'      ,q''[      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody" conditionType="plsqlFunctionBody">return expe_flow_expenseclaims.check_status(p_expe_id =&gt; flow_globals.business_ref, p_path =&gt; ''declined_m'
-||'gr'']''',
-'      ,q''['))
+'      ,q''[      <bpmn:conditionExpress'))
 );
 wwv_flow_imp_shared.append_to_install_script(
  p_id=>wwv_flow_imp.id(4656332336789849673)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-');</bpmn:conditionExpression>]''',
+'ion xsi:type="bpmn:tFormalExpression" language="plsqlFunctionBody" conditionType="plsqlFunctionBody">return expe_flow_expenseclaims.check_status(p_expe_id =&gt; flow_globals.business_ref, p_path =&gt; ''declined_mgr'']''',
+'      ,q''[);</bpmn:conditionExpression>]''',
 '      ,q''[    </bpmn:sequenceFlow>]''',
 '      ,q''[    <bpmn:sequenceFlow id="Flow_0bk3hoe" sourceRef="inform_employee" targetRef="correct_expense_claim" />]''',
 '      ,q''[    <bpmn:sequenceFlow id="yes_vp" name="yes" sourceRef="check_amount" targetRef="review_expense_vp" apex:sequence="10">]''',
