@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   11:35 Friday July 17, 2026
+--   Date and Time:   10:22 Tuesday July 28, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -34438,7 +34438,7 @@ begin
 wwv_flow_imp_shared.create_install_check(
  p_id=>wwv_flow_imp.id(11299551897390780)
 ,p_install_id=>wwv_flow_imp.id(39283140404587418)
-,p_name=>'Check Version of Flows for APEX  25.1'
+,p_name=>'Check for Flows for APEX 26.1'
 ,p_sequence=>10
 ,p_check_type=>'FUNCTION_BODY'
 ,p_check_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -34447,7 +34447,7 @@ wwv_flow_imp_shared.create_install_check(
 '  l_check_success          boolean:= false;',
 '  l_flows_found            number;',
 '  l_flows_actual_version   varchar2(10 char);',
-'  c_flows_required_version varchar2(10 char) := ''25.1'';',
+'  c_flows_required_version varchar2(10 char) := ''26.1'';',
 '',
 'begin',
 '  -- check if package exists',
@@ -34482,7 +34482,7 @@ wwv_flow_imp_shared.create_install_check(
 '    return l_check_success;',
 'end;'))
 ,p_check_condition2=>'PLSQL'
-,p_failure_message=>'Please first install Flows for APEX 25.1.x.'
+,p_failure_message=>'Please first install Flows for APEX 26.1.x.'
 );
 end;
 /
