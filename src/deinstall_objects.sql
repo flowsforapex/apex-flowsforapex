@@ -4,8 +4,8 @@ PROMPT >> ====================================
 PROMPT >> Scheduler Objects
 begin
   sys.dbms_scheduler.drop_job     (job_name => 'APEX_FLOW_STEP_TIMERS_J');
-  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P');
-  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P');
+  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P', force => true);
+  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P', force => true);
 end;
 /
 
