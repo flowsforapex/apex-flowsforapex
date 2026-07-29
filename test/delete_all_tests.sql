@@ -19,7 +19,7 @@ drop package test_006_lanes_roles;
 drop package test_007_procvars;
 drop package test_008_subproc_misc;
 drop package test_009_call_activity_nesting;
-drop package test_010_variable_expression;
+drop package test_010_variable_expressions;
 drop package test_011_var_exps_in_callActivities;
 drop package test_012_call_activity_timer_BEs;
 drop package test_013_call_Activity_escalation_BEs;

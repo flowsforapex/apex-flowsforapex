@@ -4,7 +4,7 @@ begin
   l_dgrm_content := apex_string.join_clob(
     apex_t_varchar2(
       q'[<?xml version="1.0" encoding="UTF-8"?>]'
-      ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="http://flowsforapex.org" id="Definitions_90a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="26.1.0">]'
+      ,q'[<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_90a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="26.1.0">]'
       ,q'[  <bpmn:process id="Process_90a_ai_basic" isExecutable="true">]'
       ,q'[    <bpmn:startEvent id="Start" name="Start">]'
       ,q'[      <bpmn:outgoing>Flow_start_to_a</bpmn:outgoing>]'
