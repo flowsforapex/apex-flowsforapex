@@ -33,7 +33,7 @@ prompt APPLICATION 984342 - Sample Flows for APEX Application
 -- Application Export:
 --   Application:     984342
 --   Name:            Sample Flows for APEX Application
---   Date and Time:   05:28 Wednesday July 29, 2026
+--   Date and Time:   12:04 Wednesday July 29, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -15556,6 +15556,11 @@ wwv_flow_imp_shared.create_template_option(
 end;
 /
 prompt --application/shared_components/globalization/language
+begin
+null;
+end;
+/
+prompt --application/shared_components/globalization/translations
 begin
 null;
 end;
@@ -32714,7 +32719,8 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>10
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_plug_display_point=>'REGION_POSITION_01'
-,p_plug_source=>'<p>Demonstrates the integration of the extension <i>Flows for APEX</i> in a custom app.</p>'
+,p_location=>null
+,p_plug_source=>'<p>Demonstrates the integration of <i>Flows for APEX</i> in a custom app.</p>'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
   'output_as', 'HTML')).to_clob
@@ -38489,9 +38495,10 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(4368804566440046061)
 ,p_plug_display_sequence=>30
 ,p_plug_display_point=>'SUB_REGIONS'
+,p_location=>null
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<h2>About This Application</h2>',
-'<p>This sample application demonstrates how you can interact with the extension <i>Flows for APEX</i>. It implements a basic expense claim process that was modeled using <i>Flows for APEX</i>.</p>'))
+'<p>This sample application demonstrates how you can interact with <i>Flows for APEX</i>. It implements a basic expense claim process that was modeled using <i>Flows for APEX</i>.</p>'))
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
   'output_as', 'HTML')).to_clob
