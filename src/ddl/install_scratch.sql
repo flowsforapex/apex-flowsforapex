@@ -231,7 +231,8 @@ alter table flow_iterated_objects
 alter table flow_iterated_objects
   add constraint flow_iobj_uk unique    ( iobj_prcs_id
                                         , iobj_iteration_var
-                                        , iobj_var_scope);
+                                        , iobj_var_scope
+                                        , iobj_step_key );
 
 create index flow_iobj_step_key_ix on flow_iterated_objects
                                         ( iobj_prcs_id

@@ -17,6 +17,7 @@ PROMPT >> Running Schema Upgrade from 25.1 to 26.1
 PROMPT >> -------------------------------------------
 
 @@feature-adhoc-subprocs.sql
+@@fix-879-iteration-objects.sql
 
 PROMPT >> Adding Schema Annotations (requires Oracle 19.28+ or 23ai)
 -- note this is only required for 25.1 to 261 upgrade. For subsequent migrations, use replace. Note Oracle 19c bug on ADD OR REPLACE of annotations which complicates this.
