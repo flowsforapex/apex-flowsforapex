@@ -33,7 +33,7 @@ prompt APPLICATION 100 - Flows for APEX
 -- Application Export:
 --   Application:     100
 --   Name:            Flows for APEX
---   Date and Time:   10:50 Thursday July 16, 2026
+--   Date and Time:   11:18 Wednesday July 29, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -80106,15 +80106,30 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_name=>'Launch Assistant'
 ,p_action=>'NATIVE_OPEN_AI_ASSISTANT'
 ,p_plugin_init_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'',
-'    const quickActions = JSON.parse( apex.items.P7_QUICK_ACTIONS.value );',
+'function (options) {',
+'    const quickActions = JSON.parse(',
+'        apex.items.P7_QUICK_ACTIONS.value',
+'    );',
 '',
 '    for (const element of quickActions) {',
-'        options.view.quickActions.push( element );',
+'        options.view.quickActions.push(element);',
 '    }',
 '',
-'    apex.debug.log( "options", options);',
+'    options.useChatContext = (chatModel, chatView) => {',
+'        const { SUBVIEW_RENDER } = apex.ai.ChatView.events;',
+'',
+'        chatView.on(',
+'            SUBVIEW_RENDER,',
+'            function onSubviewRender(event, subView) {',
+'                if (subView.model.user?.isAi) {',
+'                    chatView.renderQuickActions();',
+'                    chatView.off(SUBVIEW_RENDER, onSubviewRender);',
+'                }',
+'            }',
+'        );',
+'    };',
+'',
+'    apex.debug.log("options", options);',
 '    return options;',
 '}'))
 ,p_attribute_01=>'DIALOG'
@@ -98240,7 +98255,7 @@ end;
 prompt --application/deployment/definition
 begin
 wwv_flow_imp_shared.create_install(
- p_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30210531648852655)
 ,p_welcome_message=>'This application installer will guide you through the process of creating your database objects and seed data.'
 ,p_configuration_message=>'You can configure the following attributes of your application.'
 ,p_build_options_message=>'You can choose to include the following build options.'
@@ -98258,8 +98273,8 @@ wwv_flow_imp_shared.create_install(
 'PROMPT >> Scheduler Objects',
 'begin',
 '  sys.dbms_scheduler.drop_job     (job_name => ''APEX_FLOW_STEP_TIMERS_J'');',
-'  sys.dbms_scheduler.drop_program (program_name => ''APEX_FLOW_STEP_TIMERS_P'');',
-'  sys.dbms_scheduler.drop_program (program_name => ''APEX_FLOW_CANCEL_APEX_TASK_P'');',
+'  sys.dbms_scheduler.drop_program (program_name => ''APEX_FLOW_STEP_TIMERS_P'', force => true);',
+'  sys.dbms_scheduler.drop_program (program_name => ''APEX_FLOW_CANCEL_APEX_TASK_P'', force => true);',
 'end;',
 '/',
 '',
@@ -98474,14 +98489,15 @@ wwv_flow_imp_shared.create_install(
 'PROMPT >> ===============================================',
 ''))
 ,p_required_free_kb=>100
+,p_required_sys_privs=>'CREATE PROCEDURE:CREATE SEQUENCE:CREATE TABLE:CREATE TRIGGER:CREATE TYPE :CREATE VIEW'
 );
 end;
 /
 prompt --application/deployment/install/install_ddl
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16861456264091642)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30433690061455545)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'DDL'
 ,p_sequence=>10
 ,p_script_type=>'INSTALL'
@@ -98719,7 +98735,8 @@ wwv_flow_imp_shared.create_install_script(
 'alter table flow_iterated_objects',
 '  add constraint flow_iobj_uk unique    ( iobj_prcs_id',
 '                                        , iobj_iteration_var',
-'                                        , iobj_var_scope);',
+'                                        , iobj_var_scope',
+'                                        , iobj_step_key );',
 '',
 'create index flow_iobj_step_key_ix on flow_iterated_objects',
 '                                        ( iobj_prcs_id',
@@ -99169,15 +99186,15 @@ wwv_flow_imp_shared.create_install_script(
 ', lgsf_priority             NUMBER',
 ', lgsf_apex_task_id         NUMBER',
 ', lgsf_user				    VARCHAR2(255 char)	',
-', lgsf_comment         	    VARCHAR2(2000 CHAR)',
-');',
-'',
-'create index flow_lgsf_ix on flow'))
+', lgsf_comment         	    VA'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861456264091642)
+ p_id=>wwv_flow_imp.id(30433690061455545)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'_step_event_log (lgsf_prcs_id, lgsf_objt_id );',
+'RCHAR2(2000 CHAR)',
+');',
+'',
+'create index flow_lgsf_ix on flow_step_event_log (lgsf_prcs_id, lgsf_objt_id );',
 '',
 'create table flow_variable_event_log',
 '( lgvr_prcs_id			    number not null',
@@ -99555,8 +99572,8 @@ end;
 prompt --application/deployment/install/install_ddl_comments
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(24279918838260208)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30433881449462291)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'DDL Comments'
 ,p_sequence=>11
 ,p_script_type=>'INSTALL'
@@ -99803,7 +99820,7 @@ wwv_flow_imp_shared.create_install_script(
 'comment on column flow_adhoc_subprocs.ahsp_next_recommended_check                        is ''AI-recommend'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(24279918838260208)
+ p_id=>wwv_flow_imp.id(30433881449462291)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ed timestamp for next management check'';',
 'comment on column flow_adhoc_subprocs.ahsp_next_check_reason                             is ''AI explanation for the recommended next check timing'';',
@@ -100028,8 +100045,8 @@ end;
 prompt --application/deployment/install/install_ddl_annotations
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(24280187970261728)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30434052812464044)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'DDL Annotations'
 ,p_sequence=>12
 ,p_script_type=>'INSTALL'
@@ -100334,7 +100351,7 @@ wwv_flow_imp_shared.create_install_script(
 'alte'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(24280187970261728)
+ p_id=>wwv_flow_imp.id(30434052812464044)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'r table flow_subflows modify sbfl_reservation            annotations (add if not exists content ''Username who has reserved the current task'');',
 'alter table flow_subflows modify sbfl_reservation            annotations (replace content ''Username who has reserved the current task'');',
@@ -100609,7 +100626,7 @@ wwv_flow_imp_shared.append_to_install_script(
 'alter table flow_iterations modify iter_step_key     annotations (add if not exists '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(24280187970261728)
+ p_id=>wwv_flow_imp.id(30434052812464044)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'content ''Step key for this iteration'');',
 'alter table flow_iterations modify iter_step_key     annotations (replace content ''Step key for this iteration'');',
@@ -100890,7 +100907,7 @@ wwv_flow_imp_shared.append_to_install_script(
 'alter table flow_variable_event_log modi'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(24280187970261728)
+ p_id=>wwv_flow_imp.id(30434052812464044)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'fy lgvr_var_date  annotations (add if not exists content ''Variable value (DATE) at time of event'');',
 'alter table flow_variable_event_log modify lgvr_var_date  annotations (replace content ''Variable value (DATE) at time of event'');',
@@ -101212,7 +101229,7 @@ wwv_flow_imp_shared.append_to_install_script(
 'alter table flow_ai_prompts modify aipr_lang               annotations (repl'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(24280187970261728)
+ p_id=>wwv_flow_imp.id(30434052812464044)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ace content ''Language code for this prompt'');',
 'alter table flow_ai_prompts modify aipr_provider_type_code annotations (add if not exists content ''AI provider type - OCI_GENAI, OPENAI, etc.'');',
@@ -101262,8 +101279,8 @@ end;
 prompt --application/deployment/install/install_packages_specifications
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30434268226466028)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Packages Specifications'
 ,p_sequence=>20
 ,p_script_type=>'INSTALL'
@@ -101727,7 +101744,7 @@ wwv_flow_imp_shared.create_install_script(
 '  gc_prcs_event_enter_call            constant  varchar2(20 char) :='))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' ''start called model'';',
 '  gc_prcs_event_leave_call            constant  varchar2(20 char) := ''finish called model'';',
@@ -102287,7 +102304,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    ,'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' p_step_info            in flow_types_pkg.flow_step_info',
 '    );',
@@ -103054,7 +103071,7 @@ unistr('This example will create a new process instance called \201CMy Instance 
 'This function creates a new process instance based on a diagram id (process specification) and returns the Process ID of the newly created proc'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ess',
 '',
@@ -103836,7 +103853,7 @@ unistr('This example show how to get the \201Cgateway-no-route\201D message in f
 '    p_pro'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'cess_id       in flow_processes.prcs_id%type',
 '  , p_subflow_id       in flow_subflows.sbfl_id%type',
@@ -104545,7 +104562,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '  , p_step_key            in flow_subflows.sbfl_step_key%type defau'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'lt null',
 '  , p_called_internally   in boolean default false',
@@ -105385,7 +105402,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '  ( p_msub_id                    flow_m'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'essage_subscriptions.msub_id%type',
 '  );',
@@ -106254,7 +106271,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '( pi_prcs_id       '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '    in flow_processes.prcs_id%type                       -- Process ID',
 ', pi_var_name          in flow_process_variables.prov_var_name%type         -- Name of the process variable',
@@ -107037,7 +107054,7 @@ unistr('-- Created  19-JAN-2023  J\00F6rg Doppelreiter (solicon IT GmbH)'),
 '                               , pio_pro'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'v_arr  in out nocopy json_array_t ',
 '                               , pi_add_error_msg   boolean default true );',
@@ -107953,7 +107970,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '  function create'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861677788090453)
+ p_id=>wwv_flow_imp.id(30434268226466028)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '_instance(',
 '    pi_dgrm_id        in flow_diagrams.dgrm_id%type',
@@ -108160,8 +108177,8 @@ end;
 prompt --application/deployment/install/install_views
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30434476002467425)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Views'
 ,p_sequence=>30
 ,p_script_type=>'INSTALL'
@@ -109010,7 +109027,7 @@ wwv_flow_imp_shared.create_install_script(
 ''))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
+ p_id=>wwv_flow_imp.id(30434476002467425)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '    join flow_diagrams dgrm',
 '      on prdg.prdg_dgrm_id = dgrm.dgrm_id',
@@ -109569,7 +109586,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    execute immediate q''[alter view flow_instance_timeline_vw modify (performed_by  annotations (add content ''User or s'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
+ p_id=>wwv_flow_imp.id(30434476002467425)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ystem that triggered this event''))]'';',
 '    execute immediate q''[alter view flow_instance_timeline_vw modify (prcs_id       annotations (add content ''Process instance this timeline entry belongs to''))]'';',
@@ -110219,7 +110236,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '        , sbfl.sbfl_iterati'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
+ p_id=>wwv_flow_imp.id(30434476002467425)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'on_type -- remove from prod',
 '        , sbfl.sbfl_step_key',
@@ -110401,9 +110418,14 @@ wwv_flow_imp_shared.append_to_install_script(
 '     , upper(lgvr_var_name) as lgvr_var_name_uc',
 '     , lgvr_scope',
 '     , lgvr_var_type',
-'     , flow_proc_vars_int.get_var_as_vc2 ( pi_prcs_id => lgvr_prcs_id, ',
-'                                           pi_var_name => lgvr_var_name, ',
-'                                           pi_scope => lgvr_scope) as lgvr_var_value ',
+'     , case',
+'           when lgvr_var_vc2  is not null then lgvr_var_vc2',
+'           when lgvr_var_num  is not null then cast(lgvr_var_num as varchar2(4000))',
+'           when lgvr_var_date is not null then to_char(lgvr_var_date, v(''APP_DATE_TIME_FORMAT''))',
+'           when lgvr_var_clob is not null then cast(dbms_lob.substr(lgvr_var_clob, 1000) as varchar2(4000))',
+'           when lgvr_var_tstz is not null then to_char(lgvr_var_tstz, v(''NLS_TIMESTAMP_TZ_FORMAT''))',
+'           when lgvr_var_json is not null then cast(dbms_lob.substr(lgvr_var_json, 1000) as varchar2(4000))',
+'         end as  lgvr_var_value ',
 '     , lgvr_objt_id',
 '     , (select coalesce(objt_name, objt_bpmn_id) ',
 '          from flow_objects objt',
@@ -110781,7 +110803,12 @@ wwv_flow_imp_shared.append_to_install_script(
 '        application_id     varchar2(4000) path ''$.applicationId''',
 '      , page_id            varchar2(4000) path ''$.pageId''',
 '      , username           varchar2(4000) path ''$.username''',
-'      , is_callable        varchar2(4000) path ''$.isCallable''',
+'      , '))
+);
+wwv_flow_imp_shared.append_to_install_script(
+ p_id=>wwv_flow_imp.id(30434476002467425)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'is_callable        varchar2(4000) path ''$.isCallable''',
 '   ) jt',
 '   where objt_attributes is not null',
 '   and objt_tag_name = ''bpmn:process''',
@@ -110789,12 +110816,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '',
 '-- ---------------------------------------------------------------------------',
 '-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)',
-'-- ------------------------------------------'))
-);
-wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'---------------------------------',
+'-- ---------------------------------------------------------------------------',
 'declare',
 '  l_major pls_integer := dbms_db_version.version;',
 'begin',
@@ -111346,7 +111368,12 @@ wwv_flow_imp_shared.append_to_install_script(
 'with read only',
 ';',
 '',
-'-- ---------------------------------------------------------------------------',
+'-- --------------------------------------------------------------------'))
+);
+wwv_flow_imp_shared.append_to_install_script(
+ p_id=>wwv_flow_imp.id(30434476002467425)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'-------',
 '-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)',
 '-- ---------------------------------------------------------------------------',
 'declare',
@@ -111354,12 +111381,7 @@ wwv_flow_imp_shared.append_to_install_script(
 'begin',
 '  if l_major >= 23 then',
 '    execute immediate q''[alter view flow_p0010_instances_vw annotations',
-'  ( add app     ''Flows for APEX'))
-);
-wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'''',
+'  ( add app     ''Flows for APEX''',
 '  , add type    ''runtime''',
 '  , add content ''Process instances with diagram and status icons, action placeholders, and checkbox widget for engine app page 10''',
 '  )]'';',
@@ -112057,17 +112079,17 @@ wwv_flow_imp_shared.append_to_install_script(
 '*/',
 'create or replace view flow_p0022_startable_adhoc_activities_vw as',
 '  select fsaa.dgrm_id                              as  dgrm_id',
-'       , fsaa.subproc_sbfl_id                      as  subproc_sbfl_id',
+'    '))
+);
+wwv_flow_imp_shared.append_to_install_script(
+ p_id=>wwv_flow_imp.id(30434476002467425)
+,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'   , fsaa.subproc_sbfl_id                      as  subproc_sbfl_id',
 '       , fsaa.prcs_id                              as  prcs_id  ',
 '       , fsaa.subproc_step_key                     as  subproc_step_key',
 '       , fsaa.subproc_bpmn_id                      as  subproc_bpmn_id',
 '       , fsaa.activity_bpmn_id                     as  activity_bpmn_id',
-'       , fsaa.activity_'))
-);
-wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16861828882089069)
-,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'name                        as  activity_name ',
+'       , fsaa.activity_name                        as  activity_name ',
 '       , fsaa.activity_description                 as  activity_description',
 '       , fsaa.activity_grouping                    as  activity_grouping',
 '       , fsaa.activity_display_order               as  activity_display_order',
@@ -112198,8 +112220,8 @@ end;
 prompt --application/deployment/install/install_packages_bodies
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30434682229468687)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Packages Bodies'
 ,p_sequence=>40
 ,p_script_type=>'INSTALL'
@@ -112968,7 +112990,7 @@ wwv_flow_imp_shared.create_install_script(
 '          ( pi_prcs_id      => p_process_id'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '',
 '          , pi_sbfl_id      => p_subflow_id',
@@ -113843,7 +113865,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '         where curr_objt.obj'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 't_tag_name in ( ''bpmn:userTask'' , ''bpmn:adHocSubProcess'' )',
 '           and sbfl.sbfl_status in ( flow_constants_pkg.gc_sbfl_status_running',
@@ -114469,7 +114491,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    , ''subflow'', p_s'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ubflow_id',
 '    );',
@@ -115168,7 +115190,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '  , pi_conn_src_bpmn_id in flow_objects.objt_bp'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mn_id%type',
 '  , pi_conn_tgt_bpmn_id in flow_objects.objt_bpmn_id%type',
@@ -115963,7 +115985,7 @@ wwv_flow_imp_shared.append_to_install_script(
 ' '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' (',
 '    pi_bpmn_id         in flow_types_pkg.t_bpmn_id',
@@ -116686,7 +116708,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '               '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '  , details.detail_id',
 '                 , details.detail_value',
@@ -117451,7 +117473,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '             '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '      select proc.proc_id',
 '                        , proc.proc_name',
@@ -118213,7 +118235,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '                                                              , p_column_idx'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' => 1 )',
 '                                          as timestamp with time zone);         ',
@@ -118876,7 +118898,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '                                              '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '       lower(sys.dbms_random.string(''X'',8))',
 '                                                   )',
@@ -119687,7 +119709,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '                and output_paths.conn_tag_name = pi_conn_t'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ype',
 '            ) as objt_output_paths',
@@ -120486,7 +120508,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    return apex_util.clob_to_blob( p_clob => pi_clob )'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ';',
 '  $end',
@@ -121213,7 +121235,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '        if child_subflows.objt_sub_tag_name = '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_constants_pkg.gc_bpmn_timer_event_definition then',
 '          flow_timers_pkg.terminate_timer',
@@ -121912,7 +121934,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '  ( p_message => ''Running Step Info - target_objt_tag : %0 (treat like %2 ), target_objt_subtag : %1, iteration: %3 (lo'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'op: %4), iter_id: %5, iobj_id: %6 iteration var %7''',
 '  , p0 => p_step_info.target_objt_tag',
@@ -122529,7 +122551,7 @@ end;
 /
 begin
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flows.sbfl_step_key%type default null',
 '    , p_called_internally  in boolean default false',
@@ -123283,7 +123305,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '      , p2 => pi_'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'expression.expr_set',
 '      );',
@@ -124002,7 +124024,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '       where sflg'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '_prcs_id        = pi_sbfl_rec.sbfl_prcs_id',
 '         and sflg_sbfl_id        = pi_sbfl_rec.sbfl_id',
@@ -124607,7 +124629,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '                         and conn.conn_tag_name = flo'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'w_constants_pkg.gc_bpmn_sequence_flow',
 '                         and ( objt.objt_tag_name = flow_constants_pkg.gc_bpmn_gateway_parallel',
@@ -125320,7 +125342,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    output_parameters := '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'l_json_obj.to_clob();',
 '  end set_output_parameter_object;',
@@ -126087,7 +126109,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    , p_c'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'omment     in flow_instance_event_log.lgpr_comment%type default null',
 '    )',
@@ -126782,7 +126804,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '             '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '              and    lgpr_timestamp < systimestamp - l_purge_interval);',
 '',
@@ -127505,7 +127527,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '  , p_new_due_on       in flow_subflows.sbfl_due_on%type default null'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '',
 '  , p_new_priority     in flow_subflows.sbfl_priority%type default null',
@@ -128237,7 +128259,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '     and msub.msub_key_value       = p_msg.key_value',
 '         for update of msub_id wait 2',
@@ -129054,7 +129076,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    l_param_name       varc'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'har2(128);',
 '    l_expression_type  varchar2(50);',
@@ -129935,7 +129957,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    end'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' if;',
 '',
@@ -130817,7 +130839,7 @@ wwv_flow_imp_shared.append_to_install_script(
 ', pi_exception_on_null in boolean defau'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'lt false',
 ') return flow_process_variables.prov_var_type%type',
@@ -131560,7 +131582,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '-- Signature 1a - set varchar2 process variable with known'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' or default scope',
 '',
@@ -132400,7 +132422,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '      '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '        ( pi_prcs_id            => pi_prcs_id',
 '              , pi_var_name           => pi_var_name',
@@ -133101,7 +133123,7 @@ end;
 /
 begin
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '_status_terminate);',
 '',
@@ -133659,7 +133681,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '     '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '                                , pi_message            => SQLERRM ',
 '                                     , pi_stacktrace         => dbms_utility.format_error_backtrace ',
@@ -134583,7 +134605,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '  where sbfl_id = pi_sbfl_id;',
 '',
@@ -135256,7 +135278,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    l_ai_temperature_setting   flow_types_pkg.t_bpmn_attribut'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'e_vc2; ',
 '    l_ai_model                 flow_types_pkg.t_bpmn_attribute_vc2;',
@@ -135855,7 +135877,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    apex_debug.enter ( ''get_iteration_settings'')'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ';',
 '    l_details := get_expression_details ( pi_expr_json  => pi_expr);',
@@ -136580,7 +136602,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '-- used to dri'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 've process performance history charts on engine app p16',
 '--  current day statistics are based on live data',
@@ -137284,7 +137306,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    -- Reason: A subflow could immed'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'iately disappear if we''re stepping through it completely.',
 '    -- check for any errors on the step',
@@ -138016,7 +138038,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '        -- se'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 't work started time',
 '        flow_engine.start_step ',
@@ -138726,7 +138748,7 @@ unistr('          -- repeating / cycle timer.  If unlimited or less than max rep
 '                                     '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '             , pi_var_name => substr  ( l_timer_def.oracle_date,6',
 '                                                                                    , length(l_timer_def.oracle_date)-6',
@@ -139518,7 +139540,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '       and objt.objt_dgrm_id = p_sbfl_in'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'fo.sbfl_dgrm_id',
 '       ;',
@@ -140132,7 +140154,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '       where task.task_id = p_a'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'pex_task_id;  ',
 '',
@@ -140825,7 +140847,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '          , p_subflow_id => ape'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'x_application.g_x03',
 '          , p_new_step   => apex_application.g_x04',
@@ -141713,7 +141735,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    p_value in var'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'char2',
 '  ) ',
@@ -142517,7 +142539,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '    select prcs_id ||''_''|| prcs_name || ''_'' || to_char(current_date, ''YY'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'YYDDMM_HH24MISS'')',
 '      into l_file_name',
@@ -143289,7 +143311,7 @@ end;
 /
 begin
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'value contains two values otherwise raise error',
 '               if l_split_values.count != 2 then',
@@ -144040,7 +144062,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '              p_message =>'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' p_process.attribute_09',
 '            , p_level   => apex_debug.c_log_level_info',
@@ -144671,7 +144693,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '                                     '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '       flow_process_vars.get_var_date(',
 '                                               pi_prcs_id  => l_prcs_id',
@@ -145479,7 +145501,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '          l_r'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862115577086769)
+ p_id=>wwv_flow_imp.id(30434682229468687)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'esult := ''{"message":"Validation successful","success":"true"}'';',
 '        exception',
@@ -146227,8 +146249,8 @@ end;
 prompt --application/deployment/install/install_examples
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30434841471470104)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Examples'
 ,p_sequence=>50
 ,p_script_type=>'INSTALL'
@@ -146628,7 +146650,7 @@ unistr('      ,q''[To instruct our gateway ''Gateway_Three'' which way to route 
 '      ,q''[    <bpmn:association id="Association_0hx891w" sourceRef="Activity_Concept3" targetRef="TextAnnotation_'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '1vzs22f" />]''',
 '      ,q''[    <bpmn:textAnnotation id="TextAnnotation_0kv1ra3">]''',
@@ -147056,7 +147078,7 @@ unistr('      ,q''[Note that we always prefix Flows for APEX variables with F4A$
 '      ,q''[    <bpmn:task id="Activity'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '_1po2k4u" name="That&#39;s Enough&#10;about&#10;Parallel&#10;Gateways">]''',
 '      ,q''[      <bpmn:incoming>Flow_1k49en2</bpmn:incoming>]''',
@@ -147472,7 +147494,7 @@ unistr('      ,q''[At the end of our parallel section, we have another Parallel 
 '      ,q''[      <bpmn:incoming>Flow_080bqby</bpmn:in'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'coming>]''',
 '      ,q''[      <bpmn:outgoing>Flow_0mzxaxx</bpmn:outgoing>]''',
@@ -147912,7 +147934,7 @@ unistr('      ,q''[In our example, we''ve set a variable to ''PIZZA:CHIPS'' usin
 '      ,q''[    <bpmn:sequenceFlow id="Flow_04zw2uj" sourceRef="Gate'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'way_0vx9hk2" targetRef="Activity_1dpg3fy" />]''',
 '      ,q''[    <bpmn:task id="Activity_17qqrdj" name="Wait for a fixed Duration (ISO 8601 Style)">]''',
@@ -148359,7 +148381,7 @@ unistr('      ,q''[* The interval at which timers are checked would typically be
 '      ,q''[    <bpmn:task id="Activi'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ty_0f3qzi7" name="Intro">]''',
 '      ,q''[      <bpmn:incoming>Flow_1mu28br</bpmn:incoming>]''',
@@ -148798,7 +148820,7 @@ unistr('      ,q''[      <bpmn:text>This executes a function body, returning ''y
 '    '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '  ,q''[          <dc:Bounds x="1622" y="1005" width="78" height="14" />]''',
 '      ,q''[        </bpmndi:BPMNLabel>]''',
@@ -149258,7 +149280,7 @@ unistr('      ,q''[      <bpmn:text>Bind Syntax -\00A0]'''),
 '      ,q''[Just like APEX, but we add F4A$ in front of the'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ' variable name to separate Process Variables from Page Items, etc. So refer to the ''MyVar'' variable as]''',
 '      ,q''[]''',
@@ -149685,7 +149707,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '      ,q''[   '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '   <bpmn:incoming>Flow_199lc3i</bpmn:incoming>]''',
 '      ,q''[      <bpmn:outgoing>Flow_05hp9u3</bpmn:outgoing>]''',
@@ -150101,7 +150123,7 @@ unistr('    pi_dgrm_description => ''The provided Business Process Model and Not
 '      ,q''[    <bpmn:exc'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'lusiveGateway id="Gateway_1vauko0">]''',
 '      ,q''[      <bpmn:incoming>Flow_1mqgk8a</bpmn:incoming>]''',
@@ -150520,7 +150542,7 @@ unistr('      ,q''[3. \00A0Then in the ''Scheduling'' Region, select the ''Prior
 '   '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '   ,q''[      <bpmndi:BPMNShape id="Activity_0d46kjr_di" bpmnElement="Activity_0133nx5" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">]''',
 '      ,q''[        <dc:Bounds x="1260" y="390" width="100" height="80" />]''',
@@ -150985,7 +151007,7 @@ unistr('      ,q''[In this example we call AI once to get process routing instru
 '      ,q''[      <bpmndi:BPMNEdge i'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'd="Flow_1ppfquf_di" bpmnElement="Flow_1ppfquf">]''',
 '      ,q''[        <di:waypoint x="170" y="-40" />]''',
@@ -151410,7 +151432,7 @@ unistr('      ,q''[Collapsed SubProcesses can run multiple times, once for each 
 '      ,q''[      <b'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'pmndi:BPMNEdge id="Flow_0fcs7xz_di" bpmnElement="Flow_0fcs7xz">]''',
 '      ,q''[        <di:waypoint x="1030" y="870" />]''',
@@ -151865,7 +151887,7 @@ unistr('      ,q''[Sub Processes can encapsulate part of your business process, 
 '      ,q''['))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '        <di:waypoint x="530" y="310" />]''',
 '      ,q''[      </bpmndi:BPMNEdge>]''',
@@ -152298,7 +152320,7 @@ unistr('      ,q''[And the Escalation Throw Event (Purple) in SubProcess B throw
 '      ,q''[      '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<bpmndi:BPMNEdge id="Flow_00jpo2b_di" bpmnElement="Flow_00jpo2b">]''',
 '      ,q''[        <di:waypoint x="1265" y="330" />]''',
@@ -152704,7 +152726,7 @@ unistr('      ,q''[- step the ''Take Order'' path forward into the ''Process Ord
 '      ,q''[      <bpmndi:BPMNShape id="Event_0s'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'vbp8u_di" bpmnElement="Event_0vziymp">]''',
 '      ,q''[        <dc:Bounds x="962" y="162" width="36" height="36" />]''',
@@ -153169,7 +153191,7 @@ unistr('The Customer Sales Promotion Process is an example of a business process
 '      ,q''[      <bpmndi:BPMNEdge id="Flow_1xjwnbj_d'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'i" bpmnElement="Flow_1xjwnbj">]''',
 '      ,q''[        <di:waypoint x="1630" y="560" />]''',
@@ -153619,7 +153641,7 @@ unistr('      ,q''[You can control how the process shows up in your monitoring a
 '      ,q'''))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '[      </bpmndi:BPMNShape>]''',
 '      ,q''[      <bpmndi:BPMNShape id="Gateway_1hvg7i1_di" bpmnElement="Gateway_1hvg7i1" isMarkerVisible="true">]''',
@@ -154078,7 +154100,7 @@ unistr('      ,q''[      <bpmn:text>Some BPMN Lanes map nicely to ROLES in your 
 'In this tutorial, we are focusing on a process model called "My Revenue Process." This model illustrates a streamlined approach to handling sales deals and the subsequent financial processes'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ', like commission payments. By using lanes and sub-lanes (child lanes), you can create a detailed representation of functional roles and responsibilities within your organization.',
 '',
@@ -154538,7 +154560,7 @@ unistr('      ,q''[      <bpmn:text>This is another process, which gets \00A0sta
 ''))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '      ,q''[        <bpmn:flowNodeRef>Activity_0mhkzh2</bpmn:flowNodeRef>]''',
 '      ,q''[        <bpmn:flowNodeRef>Gateway_12krons</bpmn:flowNodeRef>]''',
@@ -154958,7 +154980,7 @@ unistr('      ,q''[    <bpmn:endEvent id="Event_0bqx3lb" name="Message End Event
 '      ,q''[      <bpmndi:BPMNShape id="Activity_1p1'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 't10d_di" bpmnElement="Activity_17locw8" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">]''',
 '      ,q''[        <dc:Bounds x="1480" y="1080" width="100" height="80" />]''',
@@ -155431,7 +155453,7 @@ unistr('      ,q''[\00A0It''s hard to do this with Community Edition...</bpmn:te
 '      ,q''[          <apex:correlationV'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'alue>]''',
 '      ,q''[            <apex:expressionType>static</apex:expressionType>]''',
@@ -155915,7 +155937,7 @@ unistr('3.  **Shipper**: Executes shipment based on the Supplier\2019s instructi
 '      ,q''[    <bpmn:sequenceFlow id="Flow_00jstgp" sourceRef="Event'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '_Start" targetRef="Activity_PreSplit" />]''',
 '      ,q''[    <bpmn:sequenceFlow id="Flow_1i6fc42" sourceRef="Activity_PreSplit" targetRef="Gateway_Split" />]''',
@@ -156387,7 +156409,7 @@ end;
 /
 begin
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'pmndi:BPMNEdge>]''',
 '      ,q''[      <bpmndi:BPMNEdge id="BPMNEdge_185yip0" bpmnElement="Association_00wsf7y">]''',
@@ -156844,7 +156866,7 @@ unistr('      ,q''[      <bpmn:text>Hint: \00A0If you are struggling to remember
 '    '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '  ,q''[        <dc:Bounds x="760" y="540" width="100" height="80" />]''',
 '      ,q''[      </bpmndi:BPMNShape>]''',
@@ -157326,7 +157348,7 @@ unistr('*   **Parallel vs. Sequential Execution:** Remember that "paraLLeL" has 
 '      ,q''['))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '    </bpmn:parallelGateway>]''',
 '      ,q''[    <bpmn:subProcess id="Activity_A2" name="A2">]''',
@@ -157791,7 +157813,7 @@ unistr('      ,q''[Use the Iteration Selector in the Viewer \00A0to choose which
 '      ,q''[    </bpmndi:BP'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'MNPlane>]''',
 '      ,q''[  </bpmndi:BPMNDiagram>]''',
@@ -158248,7 +158270,7 @@ unistr('      ,q''[THIS SECTION WILL ONLY\00A0]'''),
 '      ,q'''))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '[    <bpmn:sequenceFlow id="Flow_0av2w95" sourceRef="Activity_userTask" targetRef="Activity_1noqbij" />]''',
 '      ,q''[    <bpmn:sequenceFlow id="Flow_139aflr" sourceRef="Activity_Reminder" targetRef="Event_uT_remind_end" />]''',
@@ -158654,7 +158676,7 @@ unistr('      ,q''[    <bpmn:intermediateCatchEvent id="Event_TimerH" name="Time
 '      ,q''[        <bpmn:incom'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ing>Flow_0a3amjb</bpmn:incoming>]''',
 '      ,q''[        <bpmn:outgoing>Flow_0uoidfy</bpmn:outgoing>]''',
@@ -159099,7 +159121,7 @@ unistr('      ,q''[      <bpmn:task id="Activity_1i49a3k" name="Check Messages. 
 '  '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '    ,q''[          </apex:outputCollection>]''',
 '      ,q''[        </bpmn:extensionElements>]''',
@@ -159525,7 +159547,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '      ,q''[        </bpmndi'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 ':BPMNLabel>]''',
 '      ,q''[      </bpmndi:BPMNShape>]''',
@@ -160004,7 +160026,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '      ,q''[        <dc:Bounds x="1142" y="312" width="36" height="36" />]'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '''',
 '      ,q''[        <bpmndi:BPMNLabel>]''',
@@ -160513,7 +160535,7 @@ wwv_flow_imp_shared.append_to_install_script(
 '      ,q''[        <bpm'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'ndi:BPMNLabel />]''',
 '      ,q''[      </bpmndi:BPMNShape>]''',
@@ -160945,7 +160967,7 @@ unistr('      ,q''[You can specify default values here -- which you might want t
 '      ,q''[      '))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(23694628846758989)
+ p_id=>wwv_flow_imp.id(30434841471470104)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '</bpmndi:BPMNEdge>]''',
 '      ,q''[      <bpmndi:BPMNEdge id="Flow_0a0c6c3_di" bpmnElement="Flow_0a0c6c3">]''',
@@ -161053,8 +161075,8 @@ end;
 prompt --application/deployment/install/install_configuration_data
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16862598153081089)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30435000725471737)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Configuration Data'
 ,p_sequence=>60
 ,p_script_type=>'INSTALL'
@@ -161123,8 +161145,8 @@ end;
 prompt --application/deployment/install/install_bpmn_type_data
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16862782519079088)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30435290914473253)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'BPMN Type Data'
 ,p_sequence=>70
 ,p_script_type=>'INSTALL'
@@ -161366,8 +161388,8 @@ end;
 prompt --application/deployment/install/install_engine_messages_english
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(16862983805077431)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30435440050476106)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Engine Messages - English'
 ,p_sequence=>80
 ,p_script_type=>'INSTALL'
@@ -161676,7 +161698,7 @@ wwv_flow_imp_shared.create_install_script(
 '    values ( ''rewind-no-last-step'', ''en'', q''[Rewind - no last completed step foun'))
 );
 wwv_flow_imp_shared.append_to_install_script(
- p_id=>wwv_flow_imp.id(16862983805077431)
+ p_id=>wwv_flow_imp.id(30435440050476106)
 ,p_script_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'd immediately before gateway to rewind to. ]'' );',
 '  insert into flow_messages( fmsg_message_key, fmsg_lang, fmsg_message_content )',
@@ -161776,8 +161798,8 @@ end;
 prompt --application/deployment/install/install_release_tutorials
 begin
 wwv_flow_imp_shared.create_install_script(
- p_id=>wwv_flow_imp.id(23694839570761210)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30435858723478895)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Release Tutorials'
 ,p_sequence=>90
 ,p_script_type=>'INSTALL'
@@ -161825,8 +161847,8 @@ end;
 prompt --application/deployment/checks
 begin
 wwv_flow_imp_shared.create_install_check(
- p_id=>wwv_flow_imp.id(16865431935012872)
-,p_install_id=>wwv_flow_imp.id(16835557389579389)
+ p_id=>wwv_flow_imp.id(30433478510451383)
+,p_install_id=>wwv_flow_imp.id(30210531648852655)
 ,p_name=>'Privilege Check'
 ,p_sequence=>10
 ,p_check_type=>'FUNCTION_BODY'
