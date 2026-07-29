@@ -33,7 +33,7 @@ prompt APPLICATION 984342 - Sample Flows for APEX Application
 -- Application Export:
 --   Application:     984342
 --   Name:            Sample Flows for APEX Application
---   Date and Time:   14:47 Tuesday July 28, 2026
+--   Date and Time:   05:28 Wednesday July 29, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -124,7 +124,7 @@ wwv_imp_workspace.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Release 25.1.0'
+,p_flow_version=>'Release 26.1'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -38706,7 +38706,7 @@ wwv_flow_imp_shared.create_install_script(
 '  from expe_expenses      expe',
 '  join flow_instances_vw  inst on expe.expe_id = to_number(inst.prcs_business_ref default -1 on conversion error)',
 ' where inst.dgrm_name = ''Expense Claims''',
-'   and expe.expe_status != ''paid''',
+'   and expe.expe_status not in (''paid'', ''declined_mgr'')',
 'with read only',
 '/',
 '',

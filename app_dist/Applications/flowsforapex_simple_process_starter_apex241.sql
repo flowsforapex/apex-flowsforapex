@@ -33,7 +33,7 @@ prompt APPLICATION 984343 - Simple Process Starter
 -- Application Export:
 --   Application:     984343
 --   Name:            Simple Process Starter
---   Date and Time:   14:48 Tuesday July 28, 2026
+--   Date and Time:   05:27 Wednesday July 29, 2026
 --   Exported By:     DENNIS.AMTHOR@HYAND.COM
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -119,7 +119,7 @@ wwv_imp_workspace.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Release 25.1'
+,p_flow_version=>'Release 26.1'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -33478,6 +33478,18 @@ wwv_flow_imp_shared.create_install_script(
 '      ,q''[          </apex:parameters>]''',
 '      ,q''[          <apex:resultVariable>ORDER_REVIEW</apex:resultVariable>]''',
 '      ,q''[        </apex:apexApproval>]''',
+'      ,q''[        <apex:potentialUsers>]''',
+'      ,q''[          <apex:expressionType>sqlQueryList</apex:expressionType>]''',
+'      ,q''[          <apex:expression>select user_name]''',
+'      ,q''[from   apex_appl_acl_user_roles]''',
+'      ,q''[where  role_static_id = ''ADMIN''</apex:expression>]''',
+'      ,q''[        </apex:potentialUsers>]''',
+'      ,q''[        <apex:businessAdmin>]''',
+'      ,q''[          <apex:expressionType>sqlQueryList</apex:expressionType>]''',
+'      ,q''[          <apex:expression>select user_name]''',
+'      ,q''[from   apex_appl_acl_user_roles]''',
+'      ,q''[where  role_static_id = ''ADMIN''</apex:expression>]''',
+'      ,q''[        </apex:businessAdmin>]''',
 '      ,q''[      </bpmn:extensionElements>]''',
 '      ,q''[      <bpmn:incoming>Flow_1fjuv49</bpmn:incoming>]''',
 '      ,q''[      <bpmn:outgoing>Flow_095lm91</bpmn:outgoing>]''',
