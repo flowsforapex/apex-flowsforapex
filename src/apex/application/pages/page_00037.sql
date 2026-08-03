@@ -677,10 +677,10 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'Set Settings'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'flow_engine_app_api.set_timers_settings(',
-'  pi_timer_max_cycles      => :P37_TIMER_MAX_CYCLES',
-', pi_timer_status          => :P37_TIMER_STATUS',
-', pi_timer_repeat_interval => :P37_TIMER_REPEAT_INTERVAL',
+'flow_engine_app_api.set_statistics_settings(',
+'  pi_stats_retain_daily => :P37_STATS_RETAIN_DAILY',
+', pi_stats_retain_month => :P37_STATS_RETAIN_MONTH',
+', pi_stats_retain_qtr   => :P37_STATS_RETAIN_QTR',
 ');'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'

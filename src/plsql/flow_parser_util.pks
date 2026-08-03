@@ -22,12 +22,14 @@ as
   type t_expr_rec is
     record
     (
-      expr_set        flow_object_expressions.expr_set%type
-    , expr_order      flow_object_expressions.expr_order%type
-    , expr_var_name   flow_object_expressions.expr_var_name%type
-    , expr_var_type   flow_object_expressions.expr_var_type%type
-    , expr_type       flow_object_expressions.expr_type%type
-    , expr_expression flow_object_expressions.expr_expression%type
+      expr_set         flow_object_expressions.expr_set%type
+    , expr_order       flow_object_expressions.expr_order%type
+    , expr_var_name    flow_object_expressions.expr_var_name%type
+    , expr_var_type    flow_object_expressions.expr_var_type%type
+    , expr_type        flow_object_expressions.expr_type%type
+    , expr_expression  flow_object_expressions.expr_expression%type
+    , expr_source_type flow_object_expressions.expr_source_type%type
+    , expr_source      flow_object_expressions.expr_source%type
     );
   type t_expr_tab is table of t_expr_rec index by pls_integer;
   type t_objt_expr_tab is table of t_expr_tab index by flow_types_pkg.t_bpmn_id;

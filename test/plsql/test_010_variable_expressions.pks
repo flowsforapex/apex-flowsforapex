@@ -16,37 +16,40 @@ create or replace package test_010_variable_expressions is
     --%beforeall
     procedure set_up_process;
 
-    --%test('check test can establish APEX session')
+    --%test('A. check test can establish APEX session')
     procedure test_apex_session_creation;
 
-    --%test('Static Process Variable type expressions')
+    --%test('B. Static Process Variable type expressions')
     procedure var_exp_static;
     
-    --%test('Copy Process Variable type expressions')
+    --%test('C. Copy Process Variable type expressions')
     procedure var_exp_procvar;
     
-    --%test('SQL Single type expressions')
+    --%test('D. SQL Single type expressions')
     procedure var_exp_sqlsingle;
     
-    --%test('SQL Multi type expressions')
+    --%test('E. SQL Multi type expressions')
     procedure var_exp_sqlmulti;
     
-    --%test('SQL JSON Array type expressions')
+    --%test('F. SQL JSON Array type expressions')
     procedure var_exp_sqlarray;
 
-    --%test('PL/SQL Expression (legacy) type expressions')
+    --%test('G. PL/SQL Expression (legacy) type expressions')
     procedure var_exp_expression;
     
-    --%test('PL/SQL Function Body (legacy) type expressions')
+    --%test('H. PL/SQL Function Body (legacy) type expressions')
     procedure var_exp_funcbody;
 
-    --%test('PL/SQL Expression (raw) type expressions')
+    --%test('I. PL/SQL Expression (raw) type expressions')
     procedure var_exp_raw_expression;
     
-    --%test('PL/SQL Function Body (raw) type expressions')
+    --%test('J. PL/SQL Function Body (raw) type expressions')
     procedure var_exp_raw_funcbody;
+
+    --%test('L. JSONpath expressions')
+    procedure var_exp_jsonpath;
         
-    --%test('Variable expressions process completed as expected')
+    --%test('Z. Variable expressions process completed as expected')
     procedure var_exp_process_completed;
 
     --%afterall

@@ -1,6 +1,6 @@
 ***************************************************
 *                                                 *
-*            Flows for APEX v25.1                 *
+*            Flows for APEX v26.1                 *
 *             Community Edition                   *
 *          Installation instructions              *
 *              flowsforapex.org                   *
@@ -38,6 +38,23 @@ MIGRATING EXISTING INSTALLATIONS
 - Follow the instructions at https://flowsforapex.org/latest/migration/
 
 HISTORY
+* v26.1 Community Edition
+- adds Task Input and Output Parameters, which can be used in this release to pass parameters into / out of PL/SQL script tasks.
+- adds JSONPath variable expressions to declaratively extract scalar or JSON objects from a JSON process variable
+- Adds the ability to change instance logging level of a running process instance using flow_admin_api.set_process_logging_level.
+- Adds the ability to change instance logging level of a running process instance from the Action menu in the Flow Monitor details page.
+- Provides underlying support for BPMN Adhoc SubProcesses (Enterprise Edition feature), allowing manual or AI-driven adhoc sub processes.
+- includes a .xsd file defining Flows for APEX extensions to BPMN, for use with AI coding tools.
+- Engine app now includes a report showing any active Message Start Event listeners, supporting EE Message Flow Start Events.
+- Add / Update database comments for all tables and columns
+- Add database schema annotations for all tables and table columns for appropriate database versions.  Also for views and view columns (view annotations only supported with database 23ai+)
+- All tasks now include a Description field for better human and AI understanding of their purpose.
+- Fixes a bug that sometimes caused restarted errored subflows that subsequently error again to cause instance failures.
+- Removes bundled copy of Monaco editor to reduce app size, instead relying on the Monaco editor already included in APEX.  
+  - Note: On upgrading underlying APEX version, you might need to reconfigure the Component Settings for the Flows for APEX - Modeler plugin to set Monaco version matching your system.
+- Includes the ORACLE-APEX-JSON-REGION plugin from Ewe Simon.
+- Support for APEX v26.1. (Note: You must upgrade the Universal Theme to 26.1 before using the Flows for APEX app).
+
 * v25.1 Community Edition
   - Adds GenAI Service Task.
   - Adds Error Boundary Events on Script tasks

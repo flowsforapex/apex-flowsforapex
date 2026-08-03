@@ -108,6 +108,12 @@ set define off;
 @@"A24d - APEX Human Task - Cancellation - New Plugin_0.sql";
 @@"A25a - Script Task Proc Var Binding and Substitution_0.sql";
 @@"A25b - Script Task Exception handling_0.sql";
+@@"A25c - Script Task Parameters API Coverage_0.sql";
+@@"A26a - Association to SequenceFlow_0.sql";
 @@"A27a - Variable Expression Errors_0.sql";
+@@"A28a - Script Task Runtime Parameters_0.sql";
+@@"A90a - Basic AI Model.sql";
+@@"A90b - Basic AI Model with Variables_0.sql"; 
+@@"A90c - AI Gateway Routing Model_0.sql";
 commit;
 PROMPT >> Models created

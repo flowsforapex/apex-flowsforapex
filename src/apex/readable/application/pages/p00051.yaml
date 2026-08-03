@@ -172,6 +172,98 @@ regions:
       output-as: Text (escape special characters)
       show-line-breaks: true
 
+- # ====== Region: JSON Region =================================
+  id: 16614196185628237
+  identification: 
+    name: JSON Region
+    type: Json-Region
+
+  layout: 
+    sequence: 30
+    parent-region: Preview # 16614529475628241
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--textContent
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      json-item: P51_JSON
+      source: Page Item
+      page-item: P51_SFTE_CONTENT
+      merge-schema: false
+      column-width: 3
+      textarealimit: 250
+      template: Header Floating
+      keep-additional-attributes: false
+      headers: true
+      hide-json-item: true
+      remove-nulls-from-json: true
+      show-help: false
+
+- # ====== Region: Preview =====================================
+  id: 16614529475628241
+  identification: 
+    name: Preview
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
 page-items: 
 - # ====== Page Item: P51_SFTE_STATIC_ID =======================
   id: 5570664007899128
@@ -386,6 +478,63 @@ page-items:
     store-value-encrypted-in-session-state: true
     restricted-characters: All characters can be saved.
 
+- # ====== Page Item: P51_JSON =================================
+  id: 16614451658628240
+  identification: 
+    name: P51_JSON
+    type: Textarea
+
+  label: 
+    label: Json
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 10
+    region: Preview # 16614529475628241
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
 buttons: 
 - # ====== Button: CANCEL ======================================
   id: 5593882060964019
@@ -522,6 +671,36 @@ buttons:
     type: Item is NULL
     item: P51_SFTE_ID
 
+- # ====== Button: OPEN_PREVIEW ================================
+  id: 16613579079628231
+  identification: 
+    button-name: OPEN_PREVIEW
+    label: Open Preview
+
+  layout: 
+    sequence: 60
+    region: Edit Simple Form Template # 5590953265964017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text with Icon
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--iconLeft
+    - t-Button--padBottom
+    icon: fa-eye
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
 dynamic-actions: 
 - # ====== Dynamic Action: Cancel Dialog =======================
   id: 5593903400964019
@@ -547,6 +726,52 @@ dynamic-actions:
     execution: 
       sequence: 10
       event: Cancel Dialog # 5593903400964019
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: OPEN_PREVIEW clicked ================
+  id: 16614218638628238
+  identification: 
+    name: OPEN_PREVIEW clicked
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: OPEN_PREVIEW # 16613579079628231
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 16614304860628239
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Preview # 16614529475628241
+
+    execution: 
+      sequence: 20
+      event: OPEN_PREVIEW clicked # 16614218638628238
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 16615291256628248
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: JSON Region # 16614196185628237
+
+    execution: 
+      sequence: 10
+      event: OPEN_PREVIEW clicked # 16614218638628238
       fire-when-event-result-is: True
       fire-on-initialization: false
 

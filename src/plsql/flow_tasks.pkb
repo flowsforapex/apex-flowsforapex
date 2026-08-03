@@ -67,6 +67,7 @@ create or replace package body flow_tasks as
     )
   is 
     l_usertask_type         flow_types_pkg.t_bpmn_attribute_vc2;
+    l_subject_template      flow_types_pkg.t_bpmn_attribute_vc2;
     l_priority_json         flow_types_pkg.t_bpmn_attribute_vc2;
     l_priority              flow_subflows.sbfl_priority%type;
     l_due_on_json         flow_types_pkg.t_bpmn_attribute_vc2;
@@ -88,13 +89,36 @@ create or replace package body flow_tasks as
     , p_subflow_id => p_sbfl_info.sbfl_id
     , p_sbfl_info  => p_sbfl_info
     );  
-    -- get the userTask subtype  
+    -- get the userTask subtype and optional subject template
     select objt.objt_attributes."taskType"
+         , objt.objt_attributes."apex"."subject"
       into l_usertask_type
+         , l_subject_template
       from flow_objects objt
      where objt.objt_bpmn_id = p_step_info.target_objt_ref
        and objt.objt_dgrm_id = p_sbfl_info.sbfl_dgrm_id
        ;
+
+    if l_subject_template is not null then
+      flow_proc_vars_int.do_substitution
+      ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
+      , pi_sbfl_id  => p_sbfl_info.sbfl_id
+      , pi_scope    => p_sbfl_info.sbfl_scope
+      , pi_step_key => p_sbfl_info.sbfl_step_key
+      , pio_string  => l_subject_template
+      );
+    end if;
+
+    update flow_subflows sbfl
+       set sbfl.sbfl_subject        = substr(l_subject_template,1, 1000)
+         , sbfl.sbfl_last_update    = systimestamp
+         , sbfl.sbfl_last_update_by = coalesce
+                                       ( sys_context('apex$session','app_user')
+                                       , sys_context('userenv','os_user')
+                                       , sys_context('userenv','session_user')
+                                       )
+     where sbfl.sbfl_id      = p_sbfl_info.sbfl_id
+       and sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id;
 
     case l_usertask_type
       when flow_constants_pkg.gc_apex_usertask_apex_approval then
@@ -143,10 +167,8 @@ create or replace package body flow_tasks as
     );
     
     flow_plsql_runner_pkg.run_task_script(
-      pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
-    , pi_sbfl_id  => p_sbfl_info.sbfl_id
+      pi_sbfl_rec => p_sbfl_info
     , pi_objt_id  => p_step_info.target_objt_id
-    , pi_step_key => p_sbfl_info.sbfl_step_key
     );
 
     flow_engine.flow_complete_step 
@@ -230,10 +252,8 @@ create or replace package body flow_tasks as
     case get_task_type( pi_objt_id => p_step_info.target_objt_id )  
       when flow_constants_pkg.gc_apex_task_execute_plsql then
             flow_plsql_runner_pkg.run_task_script
-            ( pi_prcs_id  => p_sbfl_info.sbfl_prcs_id
-            , pi_sbfl_id  => p_sbfl_info.sbfl_id
+            ( pi_sbfl_rec => p_sbfl_info
             , pi_objt_id  => p_step_info.target_objt_id
-            , pi_step_key => p_sbfl_info.sbfl_step_key
             );
       when flow_constants_pkg.gc_apex_servicetask_send_mail then 
            flow_services.send_email
@@ -444,8 +464,7 @@ create or replace package body flow_tasks as
     case get_task_type( p_step_info.target_objt_id )
       when flow_constants_pkg.gc_apex_task_execute_plsql then
         flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
+        ( pi_sbfl_rec => p_sbfl_info
         , pi_objt_id => p_step_info.target_objt_id
         );
       else
@@ -527,8 +546,7 @@ create or replace package body flow_tasks as
         );
     when flow_constants_pkg.gc_apex_task_execute_plsql then
         flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
+        ( pi_sbfl_rec => p_sbfl_info
         , pi_objt_id => p_step_info.target_objt_id
         );
     end case;
@@ -644,9 +662,8 @@ create or replace package body flow_tasks as
         );
 
         flow_plsql_runner_pkg.run_task_script
-        ( pi_prcs_id => p_sbfl_info.sbfl_prcs_id
-        , pi_sbfl_id => p_sbfl_info.sbfl_id
-        , pi_objt_id => p_step_info.target_objt_id
+        ( pi_sbfl_rec => p_sbfl_info
+        , pi_objt_id  => p_step_info.target_objt_id
         );
 
         flow_engine.flow_complete_step   --- remove the complete step?

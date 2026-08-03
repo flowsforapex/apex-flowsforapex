@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_90b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="26.1.0">
+  <bpmn:process id="Process_90b_ai_variables" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Start">
+      <bpmn:outgoing>Flow_start_to_a</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="TaskA" name="Task A">
+      <bpmn:incoming>Flow_start_to_a</bpmn:incoming>
+      <bpmn:outgoing>Flow_a_to_b</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_start_to_a" sourceRef="Start" targetRef="TaskA" />
+    <bpmn:task id="TaskB" name="Task B">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>task_b_started</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>Task B Variable Set</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>task_b_timestamp</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>plsqlExpression</apex:varExpressionType>
+            <apex:varExpression>to_char(systimestamp, 'YYYY-MM-DD HH24:MI:SS.FF3')</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_a_to_b</bpmn:incoming>
+      <bpmn:outgoing>Flow_b_to_c</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_a_to_b" sourceRef="TaskA" targetRef="TaskB" />
+    <bpmn:task id="TaskC" name="Task C">
+      <bpmn:incoming>Flow_b_to_c</bpmn:incoming>
+      <bpmn:outgoing>Flow_c_to_d</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_b_to_c" sourceRef="TaskB" targetRef="TaskC" />
+    <bpmn:task id="TaskD" name="Task D">
+      <bpmn:incoming>Flow_c_to_d</bpmn:incoming>
+      <bpmn:outgoing>Flow_d_to_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_c_to_d" sourceRef="TaskC" targetRef="TaskD" />
+    <bpmn:endEvent id="End" name="End">
+      <bpmn:incoming>Flow_d_to_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_d_to_end" sourceRef="TaskD" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_90b">
+    <bpmndi:BPMNPlane id="BPMNPlane_90b" bpmnElement="Process_90b_ai_variables">
+      <bpmndi:BPMNEdge id="Flow_start_to_a_di" bpmnElement="Flow_start_to_a">
+        <di:waypoint x="208" y="260" />
+        <di:waypoint x="270" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_a_to_b_di" bpmnElement="Flow_a_to_b">
+        <di:waypoint x="370" y="260" />
+        <di:waypoint x="430" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_b_to_c_di" bpmnElement="Flow_b_to_c">
+        <di:waypoint x="530" y="260" />
+        <di:waypoint x="590" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_c_to_d_di" bpmnElement="Flow_c_to_d">
+        <di:waypoint x="690" y="260" />
+        <di:waypoint x="750" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_d_to_end_di" bpmnElement="Flow_d_to_end">
+        <di:waypoint x="850" y="260" />
+        <di:waypoint x="922" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_start_di" bpmnElement="Start">
+        <dc:Bounds x="172" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="178" y="285" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_task_a_di" bpmnElement="TaskA">
+        <dc:Bounds x="270" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_task_b_di" bpmnElement="TaskB">
+        <dc:Bounds x="430" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_task_c_di" bpmnElement="TaskC">
+        <dc:Bounds x="590" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_task_d_di" bpmnElement="TaskD">
+        <dc:Bounds x="750" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_end_di" bpmnElement="End">
+        <dc:Bounds x="922" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="931" y="285" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

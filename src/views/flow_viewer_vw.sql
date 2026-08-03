@@ -99,3 +99,30 @@ with all_completed as (
     left join user_tasks usta
       on prcs.prcs_id = usta.prcs_id
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_viewer_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'BPMN viewer data with highlighting states, call activity relationships, and user task URLs for diagram visualisation'
+  , add note    'This view is intended for querying the data needed to render a single process diagram in a viewer. It is not intended for general querying across multiple instances or for other purposes. For more general querying of instance states, use the flow_instance_variables_vw, flow_instance_events_vw, and flow_instance_gateways_lov views instead.'
+  )]';
+    execute immediate q'[alter view flow_viewer_vw modify (prcs_id            annotations (add content 'Process instance identifier'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (prdg_id            annotations (add content 'Instance diagram record being visualised'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (dgrm_content       annotations (add content 'BPMN XML content for rendering in the viewer'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (highlighting_data  annotations (add content 'JSON structure defining current, completed, and error element highlighting'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (call_activity_data annotations (add content 'JSON structure describing call activity sub-process relationships'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (iteration_data     annotations (add content 'JSON structure describing loop and multi-instance iteration state'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (user_task_data     annotations (add content 'JSON structure with user task step keys and APEX page display data'))]';
+    execute immediate q'[alter view flow_viewer_vw modify (badges_data        annotations (add content 'JSON structure for count badge overlays on diagram elements'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

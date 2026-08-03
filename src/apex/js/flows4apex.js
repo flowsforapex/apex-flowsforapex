@@ -83,12 +83,36 @@ function getSubflowData(action, element){
   };
 }
 
+function getLoggingLevelData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
+  return {
+    "x01": action,
+    "x02": apex.jQuery( el ).attr("data-prcs"),
+    "x03": apex.jQuery( el ).attr("data-logging-level")
+  };
+}
 function getBulkSubflowData(action){
   return {
     "x01": action,
     "f01": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-prcs" ),
     "f02": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "value" ),
     "f03": childrenAttributeToArray( "#subflows .a-IRR-tableContainer", 'input[name="f02"]:checked', "data-key" )
+  };
+}
+    
+function getAdhocActivityData(action, element){
+  let el = element;
+  if ( el.type === undefined || el.type !== "button") {
+    el = apex.jQuery(element).closest("button");
+  }
+  return {
+    "x01": action,
+    "x02": apex.jQuery( el ).attr("data-prcs"),
+    "x03": apex.jQuery( el ).attr("data-sbfl"),
+    "x04": apex.jQuery( el ).attr("data-activity")
   };
 }
 
@@ -152,12 +176,23 @@ function sendToServer(dataToSend, options = {}){
         }
         if ( options.refreshRegion !== undefined && options.refreshRegion.length > 0 ) {
           options.refreshRegion.forEach(function(name) {
-            if (apex.region(name).type === "InteractiveReport") {
-              var currentRowsPerPage = apex.jQuery("#" + name + "_ir").data().apexInteractiveReport.options.currentRowsPerPage;
-              var currentPage = apex.jQuery("#" + name +" .a-IRR-pagination-label").text().split('-')[0].trim();
-              apex.jQuery("#" + name + "_ir").data().apexInteractiveReport._paginate("pgR_min_row=" + currentPage + "max_rows=" + currentRowsPerPage + "rows_fetched=" + currentRowsPerPage );
+            /*Try to refresh parent page region from modal */
+            if (apex.region(name) === null) {
+                if (apex.util.getTopApex().region(name).type === "InteractiveReport") {
+                    var currentRowsPerPage = apex.util.getTopApex().jQuery("#" + name + "_ir").data().apexInteractiveReport.options.currentRowsPerPage;
+                    var currentPage = apex.util.getTopApex().jQuery("#" + name +" .a-IRR-pagination-label").text().split('-')[0].trim();
+                    apex.util.getTopApex().jQuery("#" + name + "_ir").data().apexInteractiveReport._paginate("pgR_min_row=" + currentPage + "max_rows=" + currentRowsPerPage + "rows_fetched=" + currentRowsPerPage );
+                } else {
+                    apex.util.getTopApex().region(name).refresh();
+                }
             } else {
-              apex.region(name).refresh();
+                if (apex.region(name).type === "InteractiveReport") {
+                  var currentRowsPerPage = apex.jQuery("#" + name + "_ir").data().apexInteractiveReport.options.currentRowsPerPage;
+                  var currentPage = apex.jQuery("#" + name +" .a-IRR-pagination-label").text().split('-')[0].trim();
+                  apex.jQuery("#" + name + "_ir").data().apexInteractiveReport._paginate("pgR_min_row=" + currentPage + "max_rows=" + currentRowsPerPage + "rows_fetched=" + currentRowsPerPage );
+                } else {
+                  apex.region(name).refresh();
+                }
             }
           })
         }
@@ -365,6 +400,24 @@ function redirectToFlowDiagramTaskStatus(action, element){
   var data = getflowInstanceData(action, element);
   data.x02 = apex.jQuery( element ).attr("data-dgrm");
   sendToServer(data);
+}
+    
+function redirectToAdhocActivityPage(action, element){
+  var data = getSubflowData(action, element);
+  data.x05 = apex.jQuery( element ).attr("data-dgrm");
+  data.x06 = apex.jQuery( element ).attr("data-current");
+  sendToServer(data);
+}
+
+function startAdhocActivity(action, element){
+  if (apex.items.P0_LICENSE_EDITION.value === "enterprise"){
+    var data = getAdhocActivityData(action, element);
+    var options = {};
+    options.refreshRegion = ["adhoc-activities", "started-adhoc-activities","flow-monitor"];
+    sendToServer(data, options);
+  } else {
+    apex.theme.openRegion("enterprise-edition-dg");
+  }
 }
 
 function initViewer( prcsId, prcsName, displaySetting ) {
@@ -1035,6 +1088,31 @@ function openRepositionSubflowDialog(action, element){
   apex.theme.openRegion( "reposition_subflow_dialog" );
 }
 
+function setProcessLoggingLevel( action, element ) {
+  if ( apex.jQuery( "#process-logging-level-dialog" ).dialog( "isOpen" ) ) {
+    var data = getflowInstanceData( action, element );
+    data.x03 = apex.item("P8_NEW_LOGGING_LEVEL").getValue();
+
+    apex.theme.closeRegion( "process-logging-level-dialog" );
+    var options = {};
+    options.refreshRegion = ["flow-instance-detail","subflows"];
+    sendToServer(data, options);
+  } 
+  else {
+    openProcessLoggingLevelDialog( action, element );
+  }
+};
+
+function openProcessLoggingLevelDialog(action, element){
+  apex
+    .jQuery( "#set-process-logging-level-btn" )
+    .attr( "data-prcs", apex.jQuery( element ).attr( "data-prcs" ) );
+  apex
+    .jQuery( "#set-process-logging-level-btn" )
+    .attr( "data-logging-level", apex.jQuery( element ).attr( "data-logging-level" ) );  
+  apex.theme.openRegion( "process-logging-level-dialog" );
+}
+
 function rewindLastStep( action, element ){
   if ( apex.jQuery( "#instance_action_dialog" ).dialog( "isOpen" ) ) {
     apex.theme.closeRegion( "instance_action_dialog" );
@@ -1294,6 +1372,12 @@ function initActions(){
           }
         },
         {
+          name: "open-adhoc-activities",
+          action: function ( event, focusElement ) {
+            redirectToAdhocActivityPage(this.name, focusElement);
+          }
+        },
+        {
           name: "add-process-variable",
           action: function ( event, focusElement ) {
             addProcessVariable( 'process-variable', focusElement );
@@ -1321,6 +1405,12 @@ function initActions(){
           name: "bulk-delete-process-variable",
           action: function ( event, focusElement ) {
             bulkDeleteProcessVariable( this.name );
+          }
+        },
+        {
+          name: "set-process-logging-level",
+          action: function ( event, focusElement ) {
+            setProcessLoggingLevel(this.name, focusElement);
           }
         },
         {
@@ -1428,7 +1518,17 @@ function initActions(){
         ]
       );
     }
-
+    
+    if ( pageId === "22") {
+      apex.actions.add( [
+        {
+          name: "start-adhoc-activity",
+          action: function ( event, focusElement ) {
+            startAdhocActivity( this.name, focusElement );
+          },
+        }
+      ] );
+    }
     if (pageId === "8" || pageId === "10") {
       apex.actions.add([
         {
@@ -1850,6 +1950,9 @@ function initPage8() {
                 ? false
                 : true;
           }
+          if ( item.action === "open-adhoc-activities" ) {
+            item.disabled = sbflStatus === "in adhoc subprocess" ? false : true;
+          }
           if ( item.action === "reschedule-timer" ) {
             item.disabled = sbflStatus === "waiting for timer" ? false : true;
           }
@@ -1995,6 +2098,10 @@ function initPage10() {
     } );
 
   } );
+}
+
+function initPage22() {
+  initActions();
 }
 
 /* Utility functions for viewer plugin dynamic (click) actions */

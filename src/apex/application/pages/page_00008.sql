@@ -1116,7 +1116,8 @@ wwv_flow_imp_page.create_page_plug(
 '       end as current_class,',
 '       case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 1 else 1',
 '       end as current_level,',
-'       SBFL_ITERATION_PATH',
+'       SBFL_ITERATION_PATH,',
+'       SBFL_CURRENT_BPMN_ID',
 '  from FLOW_P0008_SUBFLOWS_VW',
 'where sbfl_prcs_id = :P8_PRCS_ID'))
 ,p_plug_source_type=>'NATIVE_IR'
@@ -1313,7 +1314,9 @@ wwv_flow_imp_page.create_worksheet_column(
 'data-sbfl="#SBFL_ID#"',
 'data-key = "#SBFL_STEP_KEY#"',
 'data-status="#SBFL_STATUS#"',
-'data-reservation="#SBFL_RESERVATION#">',
+'data-reservation="#SBFL_RESERVATION#"',
+'data-dgrm="#SBFL_SBFL_DGRM_ID#"',
+'data-current="#SBFL_CURRENT_BPMN_ID#">',
 '    <span aria-hidden="true" class="t-Icon fa fa-bars"></span>',
 '</button>'))
 ,p_allow_sorting=>'N'
@@ -1371,7 +1374,8 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_column_label=>'Quick Action'
 ,p_column_html_expression=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" ',
-'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#">',
+'data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#"',
+'data-dgrm="#SBFL_SBFL_DGRM_ID#" data-current="#SBFL_CURRENT_BPMN_ID#">',
 '    <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#',
 '</button>'))
 ,p_column_type=>'STRING'
@@ -1489,6 +1493,16 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_heading_alignment=>'LEFT'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(20044730981654226)
+,p_db_column_name=>'SBFL_CURRENT_BPMN_ID'
+,p_display_order=>300
+,p_column_identifier=>'AH'
+,p_column_label=>'Current Step BPMN ID'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(8498061205860315)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -1511,15 +1525,15 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_sort_direction_6=>'ASC'
 );
 wwv_flow_imp_page.create_worksheet_condition(
- p_id=>wwv_flow_imp.id(9080997864512051)
+ p_id=>wwv_flow_imp.id(20089386814209799)
 ,p_report_id=>wwv_flow_imp.id(8498061205860315)
 ,p_condition_type=>'FILTER'
 ,p_allow_delete=>'Y'
 ,p_column_name=>'SBFL_STATUS'
 ,p_operator=>'in'
-,p_expr=>'running,error,waiting for timer'
-,p_condition_sql=>'"SBFL_STATUS" in (#APXWS_EXPR_VAL1#, #APXWS_EXPR_VAL2#, #APXWS_EXPR_VAL3#)'
-,p_condition_display=>'#APXWS_COL_NAME# #APXWS_OP_NAME# ''running, error, waiting for timer''  '
+,p_expr=>'running,error,waiting for timer,in adhoc subprocess'
+,p_condition_sql=>'"SBFL_STATUS" in (#APXWS_EXPR_VAL1#, #APXWS_EXPR_VAL2#, #APXWS_EXPR_VAL3#, #APXWS_EXPR_VAL4#)'
+,p_condition_display=>'#APXWS_COL_NAME# #APXWS_OP_NAME# ''running, error, waiting for timer, in adhoc subprocess''  '
 ,p_enabled=>'Y'
 );
 wwv_flow_imp_page.create_page_plug(
@@ -1616,6 +1630,19 @@ wwv_flow_imp_page.create_page_plug(
 ,p_list_id=>wwv_flow_imp.id(6338940478461643)
 ,p_plug_source_type=>'NATIVE_LIST'
 ,p_list_template_id=>wwv_flow_imp.id(12495525309455880143)
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(20046519469654244)
+,p_plug_name=>'Set Process Logging Level'
+,p_region_name=>'process-logging-level-dialog'
+,p_region_template_options=>'#DEFAULT#:js-dialog-size480x320'
+,p_plug_template=>wwv_flow_imp.id(12495608896288880263)
+,p_plug_display_sequence=>100
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_location=>null
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(62707563129232545)
@@ -1791,6 +1818,22 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_css_classes=>'js-actionButton'
 ,p_icon_css_classes=>'fa-info-circle-o'
 ,p_button_cattributes=>'data-action="flow-instance-audit" data-prcs="&P8_PRCS_ID." data-name="&P8_PRCS_NAME."'
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(20046714256654246)
+,p_button_sequence=>10
+,p_button_plug_id=>wwv_flow_imp.id(20046519469654244)
+,p_button_name=>'SET_LOGGING_LEVEL'
+,p_button_static_id=>'set-process-logging-level-btn'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_imp.id(12495521767510880126)
+,p_button_is_hot=>'Y'
+,p_button_image_alt=>'Set Logging Level'
+,p_button_position=>'NEXT'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'js-actionButton'
+,p_button_cattributes=>'data-action="set-process-logging-level" data-prcs="" data-logging-level="" '
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(62707677337232546)
@@ -2459,6 +2502,21 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_04=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(20046638891654245)
+,p_name=>'P8_NEW_LOGGING_LEVEL'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(20046519469654244)
+,p_prompt=>'New Logging Level'
+,p_display_as=>'NATIVE_SELECT_LIST'
+,p_named_lov=>'LOGGING_LEVELS'
+,p_lov=>'.'||wwv_flow_imp.id(11503678828527)||'.'
+,p_cHeight=>1
+,p_field_template=>wwv_flow_imp.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_lov_display_extra=>'NO'
+,p_attribute_01=>'NONE'
+);
+wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(44803138381176613)
 ,p_name=>'P8_LOADED_DIAGRAM'
 ,p_item_sequence=>60
@@ -2598,14 +2656,15 @@ wwv_flow_imp_page.create_page_da_action(
 '',
 'apex.jQuery(".subflow-actions-btn").each(function(){',
 '  var sbflStatus = apex.jQuery(this).data("status");',
-'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" || sbflStatus === "suspended" || prcsStatus === "suspended" ? false : true );',
+'  apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" || sbflStatus === "suspended" || sbflStatus === "in adhoc subprocess" || prcsStatus === "suspended" ? false : true );',
 '});',
 '',
-'$("td[headers*=subflow_status_col]").each(function() {',
-'    var className = ''ffa-color--'' + $(this).text();',
-'    $(this).addClass(className);',
-'  }',
-');',
+'$("td[headers*=subflow_status_col]").each(function () {',
+'  var statusText = $(this).text().trim().toLowerCase();',
+'  var statusSlug = statusText.replace(/\s+/g, "-");',
+'  var className = "ffa-color--" + statusSlug;',
+'  $(this).addClass(className);',
+'});',
 '',
 '$("th.a-IRR-header").each(function(i){',
 '    if ( apex.jQuery(this).attr("id") === undefined) {',
@@ -2624,7 +2683,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_region_id=>wwv_flow_imp.id(6133652177393567089)
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
-,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded'
+,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION.251|REGION TYPE|mtbv_diagram_loaded'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(6012103981464528)
@@ -2924,7 +2983,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_expression=>'clickCondition($v(''P8_OBJT_LIST''), this.data);'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
-,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click'
+,p_bind_event_type=>'PLUGIN_COM.FLOWS4APEX.VIEWER.REGION.251|REGION TYPE|mtbv_element_click'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(6005591668464524)

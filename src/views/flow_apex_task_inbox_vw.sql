@@ -44,7 +44,10 @@ select null as app_id
      , null as task_def_id
      , coalesce( objt_curr.objt_name, sbfl.sbfl_current ) as task_def_name
      , null as task_def_static_id
-     , prcs.prcs_name||' ('||bref.prov_var_vc2||') - '||coalesce( objt_curr.objt_name, sbfl.sbfl_current) as subject
+  , coalesce
+    ( sbfl.sbfl_subject
+    , prcs.prcs_name||' ('||bref.prov_var_vc2||') - '||coalesce( objt_curr.objt_name, sbfl.sbfl_current)
+    ) as subject
      , null as details_app_id
      , dgrm.dgrm_name as details_app_name
      , case objt_curr.objt_tag_name
@@ -123,3 +126,22 @@ left join flow_process_variables bref
 where objt_curr.objt_tag_name = 'bpmn:userTask' 
   and sbfl.sbfl_status = 'running'
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_apex_task_inbox_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Running Flows user tasks with timing, assignment, priority, and lane information for APEX task inbox display. This view is intended for direct use in APEX applications but can be used elsewhere as well.  Deprecated - use flow_apex_my_combined_task_list_vw instead, which combines with APEX native tasks and provides more metadata.'
+  , add deprecation 'This view is deprecated and will be removed in a future release. Use flow_apex_my_combined_task_list_vw instead.'
+  )]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

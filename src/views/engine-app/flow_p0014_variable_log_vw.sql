@@ -19,3 +19,22 @@ as
          end as lgvr_value
     from flow_variable_event_log
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0014_variable_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'logging'
+  , add content 'Variable change log with type-coalesced display value for engine app page 14'
+  )]';
+    execute immediate q'[alter view flow_p0014_variable_log_vw modify (lgvr_value annotations (add content 'Variable value coalesced across all typed columns as VARCHAR2'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

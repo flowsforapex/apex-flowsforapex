@@ -15,3 +15,21 @@ as
     and dgrm_status in ('draft','released')
   with read only
   ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_diagrams_parsed_lov annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'Draft and released parsed diagrams available for LOV selection'
+  )]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

@@ -23,3 +23,24 @@ as
        , case when lgpr_error_info is not null then '</code></pre>' end as posttag
     from flow_instance_event_log lgpr
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0013_instance_log_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Instance event log with event icons and error HTML formatting for engine app page 13'
+  )]';
+    execute immediate q'[alter view flow_p0013_instance_log_vw modify (lgpr_prcs_event_icon annotations (add content 'FA icon CSS class representing the event type'))]';
+    execute immediate q'[alter view flow_p0013_instance_log_vw modify (pretag annotations (add content 'HTML pre/code open tag for error info display; null when no error'))]';
+    execute immediate q'[alter view flow_p0013_instance_log_vw modify (posttag annotations (add content 'HTML pre/code close tag for error info display; null when no error'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

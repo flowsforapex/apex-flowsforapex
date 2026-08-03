@@ -34,6 +34,12 @@ PROMPT >> Installing Package Specifications
 @plsql/test_023_custom_extensions.pks
 @plsql/test_024_usertask_approval_task.pks
 @plsql/test_025_script_tasks.pks
+@plsql/test_026_parser_regressions.pks
+@plsql/test_027_var_exp_errors.pks
+@plsql/test_028_task_parameters.pks
+@plsql/test_090_ai_basic_model.pks
+@plsql/test_090_ai_basic_model_b.pks
+@plsql/test_090_ai_gateway_routing.pks
 
 PROMPT >> Installing Package Bodies
 
@@ -62,6 +68,12 @@ PROMPT >> Installing Package Bodies
 @plsql/test_023_custom_extensions.pkb
 @plsql/test_024_usertask_approval_task.pkb
 @plsql/test_025_script_tasks.pkb
+@plsql/test_026_parser_regressions.pkb
+@plsql/test_027_var_exp_errors.pkb
+@plsql/test_028_task_parameters.pkb
+@plsql/test_090_ai_basic_model.pkb
+@plsql/test_090_ai_basic_model_b.pkb
+@plsql/test_090_ai_gateway_routing.pkb
 
 PROMPT >> Engine Test Scripts Installed
 

@@ -2509,6 +2509,46 @@ regions:
       - '#DEFAULT#'
       - js-addActions
 
+- # ====== Region: Set Process Logging Level ===================
+  id: 20046519469654244
+  identification: 
+    name: Set Process Logging Level
+    type: Static Content
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: process-logging-level-dialog
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
 - # ====== Region: Instance Events =============================
   id: 29001516138505995
   identification: 
@@ -3198,7 +3238,8 @@ regions:
              end as current_class,
              case when :P8_DIAGRAM_LEVEL = SBFL_DIAGRAM_LEVEL then 1 else 1
              end as current_level,
-             SBFL_ITERATION_PATH
+             SBFL_ITERATION_PATH,
+             SBFL_CURRENT_BPMN_ID
         from FLOW_P0008_SUBFLOWS_VW
       where sbfl_prcs_id = :P8_PRCS_ID
     page-items-to-submit: 
@@ -3874,7 +3915,9 @@ regions:
           data-sbfl="#SBFL_ID#"
           data-key = "#SBFL_STEP_KEY#"
           data-status="#SBFL_STATUS#"
-          data-reservation="#SBFL_RESERVATION#">
+          data-reservation="#SBFL_RESERVATION#"
+          data-dgrm="#SBFL_SBFL_DGRM_ID#"
+          data-current="#SBFL_CURRENT_BPMN_ID#">
               <span aria-hidden="true" class="t-Icon fa fa-bars"></span>
           </button>
 
@@ -4005,7 +4048,8 @@ regions:
       column-formatting: 
         html-expression: |
           <button type="button" class="t-Button t-Button--icon t-Button--link t-Button--iconLeft js-actionButton" 
-          data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#">
+          data-prcs="#SBFL_PRCS_ID#" data-sbfl="#SBFL_ID#" data-key = "#SBFL_STEP_KEY#" data-action="#QUICK_ACTION#"
+          data-dgrm="#SBFL_SBFL_DGRM_ID#" data-current="#SBFL_CURRENT_BPMN_ID#">
               <span aria-hidden="true" class="t-Icon t-Icon--left fa #QUICK_ACTION_ICON#"></span>#QUICK_ACTION_LABEL#
           </button>
 
@@ -4066,6 +4110,47 @@ regions:
 
       layout: 
         sequence: 290
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SBFL_CURRENT_BPMN_ID ========================
+      id: 20044730981654226
+      identification: 
+        column-name: SBFL_CURRENT_BPMN_ID
+        type: Plain Text
+
+      heading: 
+        heading: Current Step BPMN ID
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 300
         column-alignment: start
 
       accessibility: 
@@ -5906,6 +5991,67 @@ page-items:
     store-value-encrypted-in-session-state: false
     restricted-characters: All characters can be saved.
 
+- # ====== Page Item: P8_NEW_LOGGING_LEVEL =====================
+  id: 20046638891654245
+  identification: 
+    name: P8_NEW_LOGGING_LEVEL
+    type: Select List
+
+  label: 
+    label: New Logging Level
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Set Process Logging Level # 20046519469654244
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: LOGGING_LEVELS # 11503678828527
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
 - # ====== Page Item: P8_LOADED_DIAGRAM ========================
   id: 44803138381176613
   identification: 
@@ -6925,6 +7071,42 @@ buttons:
     - data-key=""
     - data-no-update="true"
 
+- # ====== Button: SET_LOGGING_LEVEL ===========================
+  id: 20046714256654246
+  identification: 
+    button-name: SET_LOGGING_LEVEL
+    label: Set Logging Level
+
+  layout: 
+    sequence: 10
+    region: Set Process Logging Level # 20046519469654244
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - js-actionButton
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: set-process-logging-level-btn
+    custom-attributes: 
+    - data-action="set-process-logging-level"
+    - data-prcs=""
+    - data-logging-level=""
+    - null
+
 - # ====== Button: RESCHEDULE_TIMER ============================
   id: 62707677337232546
   identification: 
@@ -7163,14 +7345,15 @@ dynamic-actions:
         
         apex.jQuery(".subflow-actions-btn").each(function(){
           var sbflStatus = apex.jQuery(this).data("status");
-          apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" || sbflStatus === "suspended" || prcsStatus === "suspended" ? false : true );
+          apex.jQuery(this).prop("disabled", sbflStatus === "running" || sbflStatus === "error" || sbflStatus === "waiting for timer" || sbflStatus === "suspended" || sbflStatus === "in adhoc subprocess" || prcsStatus === "suspended" ? false : true );
         });
         
-        $("td[headers*=subflow_status_col]").each(function() {
-            var className = 'ffa-color--' + $(this).text();
-            $(this).addClass(className);
-          }
-        );
+        $("td[headers*=subflow_status_col]").each(function () {
+          var statusText = $(this).text().trim().toLowerCase();
+          var statusSlug = statusText.replace(/\s+/g, "-");
+          var className = "ffa-color--" + statusSlug;
+          $(this).addClass(className);
+        });
         
         $("th.a-IRR-header").each(function(i){
             if ( apex.jQuery(this).attr("id") === undefined) {
@@ -7376,7 +7559,7 @@ dynamic-actions:
     type: Immediate
 
   when: 
-    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_element_click
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION.251|REGION TYPE|mtbv_element_click
     selection-type: Region
     region: Flow Viewer # 6133652177393567089
 
@@ -7519,7 +7702,7 @@ dynamic-actions:
     type: Immediate
 
   when: 
-    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION|REGION TYPE|mtbv_diagram_loaded
+    event: PLUGIN_COM.FLOWS4APEX.VIEWER.REGION.251|REGION TYPE|mtbv_diagram_loaded
     selection-type: Region
     region: Flow Viewer # 6133652177393567089
 

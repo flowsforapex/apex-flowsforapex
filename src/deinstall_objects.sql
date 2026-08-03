@@ -4,8 +4,8 @@ PROMPT >> ====================================
 PROMPT >> Scheduler Objects
 begin
   sys.dbms_scheduler.drop_job     (job_name => 'APEX_FLOW_STEP_TIMERS_J');
-  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P');
-  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P');
+  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_STEP_TIMERS_P', force => true);
+  sys.dbms_scheduler.drop_program (program_name => 'APEX_FLOW_CANCEL_APEX_TASK_P', force => true);
 end;
 /
 
@@ -18,9 +18,20 @@ begin
                                 enqueue    => true);                      
       sys.dbms_aqadm.drop_queue (queue_name => 'FLOW_CORRELATED_MESSAGES_Q');
       sys.dbms_aqadm.drop_queue_table (queue_table => 'FLOW_CORRELATED_MESSAGES_QT');
+      sys.dbms_aqadm.stop_queue (queue_name => 'FLOW_ASYNC_TASKS_Q',
+                                enqueue    => true,
+                                dequeue    => true);
+      sys.dbms_aqadm.drop_queue (queue_name => 'FLOW_ASYNC_TASKS_Q');
+      sys.dbms_aqadm.drop_queue_table (queue_table => 'FLOW_ASYNC_TASKS_QT');
+
     end;   
 
     execute immediate 'drop view flow_optimised_diagrams_vw_EE';
+    execute immediate 'drop view flow_startable_adhoc_activities_ai_vw';
+    execute immediate 'drop view flow_adhoc_activity_results_vw';
+    execute immediate 'drop view flow_adhoc_ai_decisions_vw'; 
+
+    execute immediate 'drop type flow_t_async_task';
 
   end if;
 end;
@@ -43,6 +54,7 @@ drop package flow_db_exec;
 drop package flow_message_flow;
 drop package flow_message_util;
 drop package flow_message_util_ee;
+drop package flow_async_tasks_ee;
 drop package flow_proc_vars_int;
 drop package flow_instances;
 drop package flow_instances_util_ee;
@@ -50,6 +62,7 @@ drop package flow_rewind;
 drop package flow_engine;
 drop package flow_api_pkg;
 drop package flow_admin_api;
+drop package flow_admin_api_ee;
 drop package flow_timers_pkg;
 drop package flow_reservations;
 drop package flow_gateways;
@@ -58,6 +71,10 @@ drop package flow_engine_util;
 drop package flow_types_pkg;
 drop package flow_constants_pkg;
 drop package flow_engine_app_api;
+drop package flow_adhoc_subprocesses;
+drop package flow_adhoc_subprocesses_ai;
+drop package flow_adhoc_subprocesses_core;
+drop package flow_adhoc_subprocesses_util;
 drop package flow_call_activities;
 drop package flow_subprocesses;
 drop package flow_apex_session;
@@ -68,6 +85,7 @@ drop package flow_theme_api;
 drop package flow_apex_env;
 drop package flow_log_admin;
 drop package flow_process_vars;
+drop package flow_parameters;
 drop package flow_statistics;
 drop package flow_simple_form_template;
 drop package flow_ai_prompt_ee;
@@ -121,7 +139,13 @@ drop view flow_p0014_subflows_vw;
 drop view flow_p0014_variable_log_vw;
 drop view flow_p0019_vw;
 drop view flow_p0020_instance_timeline_vw;
+drop view flow_p0022_adhoc_activities_vw;
+drop view flow_p0022_startable_adhoc_activities_vw;
+drop view flow_p0022_started_adhoc_activities_vw;
+drop view flow_p0024_message_start_listeners_vw;
 drop view flow_task_inbox_vw;
+drop view flow_adhoc_activities_vw;
+drop view flow_startable_adhoc_activities_vw;
 drop view flow_instance_connections_lov;
 drop view flow_instance_scopes_vw;
 drop view flow_instance_gateways_lov;
@@ -130,6 +154,7 @@ drop view flow_instance_timeline_vw;
 drop view flow_instance_variables_vw;
 drop view flow_instances_vw;
 drop view flow_subflows_vw;
+drop view flow_object_input_schema_vw;
 drop view flow_diagram_categories_lov;
 drop view flow_diagrams_parsed_lov;
 drop view flow_diagrams_vw;
@@ -152,6 +177,8 @@ drop view flow_variable_event_timeline_vw;
 drop view flow_instance_events_vw;
 drop view flow_instance_summary_json_vw;
 drop view flow_my_originated_instances_vw;
+drop view flow_adhoc_activities_vw;
+drop view flow_startable_adhoc_activities_vw;
 
 PROMPT >> Tables
 drop table flow_connections cascade constraints;
@@ -160,6 +187,10 @@ drop table flow_message_subscriptions cascade constraints;
 drop table flow_processes cascade constraints;
 drop table flow_iterations cascade constraints;
 drop table flow_iterated_objects cascade constraints;
+drop table flow_adhoc_subprocs cascade constraints;
+drop table flow_adhoc_subflows cascade constraints;
+drop table flow_call_activities cascade constraints;
+drop table flow_adhoc_subproc_ai_decisions cascade constraints;
 drop table flow_subflows cascade constraints;
 drop table flow_subflow_log cascade constraints;
 drop table flow_diagrams cascade constraints;
@@ -179,8 +210,6 @@ drop table flow_parser_log cascade constraints;
 drop table flow_stats_history cascade constraints;
 drop table flow_step_stats cascade constraints;
 drop table flow_rest_event_log cascade constraints;
-drop table flow_iterations cascade constraints;
-drop table flow_iterated_objects cascade constraints;
 drop table flow_simple_form_templates cascade constraints;
 drop table flow_ai_prompts cascade constraints;
 drop table flow_bpmn_types cascade constraints;
@@ -189,4 +218,3 @@ drop type flow_t_correlated_message;
 
 PROMPT >> Finished Removal of Flows4APEX Database Objects
 PROMPT >> ===============================================
-

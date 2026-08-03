@@ -21,6 +21,8 @@ as
   , expr_var_type       flow_object_expressions.expr_var_type%type
   , expr_type           flow_object_expressions.expr_type%type
   , expr_expression     flow_object_expressions.expr_expression%type
+  , expr_source_type    flow_object_expressions.expr_source_type%type
+  , expr_source         flow_object_expressions.expr_source%type
   , expr_objt_bpmn_id   flow_objects.objt_bpmn_id%type
   );
 
@@ -41,6 +43,8 @@ as
          , expr.expr_var_type
          , expr.expr_type
          , expr.expr_expression
+          , expr.expr_source_type
+          , expr.expr_source
          , objt.objt_bpmn_id as expr_objt_bpmn_id
     bulk collect into l_expressions
       from flow_object_expressions expr
@@ -364,6 +368,223 @@ as
       -- $F4AMESSAGE 'var_exp_plsql_error' || 'Subflow : %0 Error in %2 expression for Variable : %1'
   end set_plsql;  
 
+  procedure set_json_path
+  ( pi_prcs_id      flow_processes.prcs_id%type
+  , pi_expression   t_expr_rec
+  , pi_sbfl_id      flow_subflows.sbfl_id%type
+  , pi_step_key     flow_subflows.sbfl_step_key%type
+  , pi_var_scope    flow_subflows.sbfl_scope%type
+  , pi_expr_scope   flow_subflows.sbfl_scope%type
+  )
+  as
+    l_result_rec        flow_proc_vars_int.t_proc_var_value;
+    l_source_json       clob;
+    l_source_type       varchar2(50 char);
+    l_source_name       varchar2(50 char);
+    l_path              varchar2(4000 char);
+    l_json_fragment     clob;
+    l_scalar_text       varchar2(32767);
+    l_json_scalar       clob;
+    l_has_value         boolean := false;
+  begin
+    apex_debug.enter
+    ( 'flow_expressions.set_json_path'
+    , 'expr_var_name', pi_expression.expr_var_name
+    , 'expr_var_type', pi_expression.expr_var_type
+    , 'expr_path', pi_expression.expr_expression
+    , 'expr_source_type', pi_expression.expr_source_type
+    , 'expr_source', pi_expression.expr_source
+    );
+
+    l_result_rec.var_name := pi_expression.expr_var_name;
+    l_result_rec.var_type := pi_expression.expr_var_type;
+
+    l_source_type := lower(pi_expression.expr_source_type);
+    l_source_name := pi_expression.expr_source;
+    l_path := pi_expression.expr_expression;
+
+    if l_source_type is null then
+      l_source_type := 'processvariable';
+    end if;
+
+    case l_source_type
+      when 'processvariable' then
+        if l_source_name is null then
+          apex_debug.warn('JSONPath expression missing source variable name.');
+        else
+          l_source_json := flow_proc_vars_int.get_var_json
+                           ( pi_prcs_id  => pi_prcs_id
+                           , pi_var_name => l_source_name
+                           , pi_scope    => pi_expr_scope
+                           );
+          if l_source_json is null then
+            l_source_json := flow_proc_vars_int.get_var_clob
+                             ( pi_prcs_id  => pi_prcs_id
+                             , pi_var_name => l_source_name
+                             , pi_scope    => pi_expr_scope
+                             );
+          end if;
+        end if;
+
+      when 'taskoutput' then
+        if pi_expression.expr_set not in ( flow_constants_pkg.gc_expr_set_after_task
+                                         , flow_constants_pkg.gc_expr_set_on_event ) then
+          apex_debug.warn('taskOutput source used outside afterTask/onEvent expression set.');
+        else
+          select sbfl_task_output_parameters
+            into l_source_json
+            from flow_subflows
+           where sbfl_id = pi_sbfl_id;
+        end if;
+
+      when 'taskinput' then
+        if pi_expression.expr_set != flow_constants_pkg.gc_expr_set_after_task then
+          apex_debug.warn('taskInput source used outside afterTask expression set.');
+        else
+          select sbfl_task_input_parameters
+            into l_source_json
+            from flow_subflows
+           where sbfl_id = pi_sbfl_id;
+        end if;
+
+      else
+        apex_debug.warn('Unsupported JSONPath source type: ' || pi_expression.expr_source_type);
+    end case;
+
+    if l_source_json is null or l_source_json is not json then
+      apex_debug.warn('JSONPath source is null or not JSON for variable %0.', pi_expression.expr_var_name);
+    else
+      if pi_expression.expr_var_type = flow_constants_pkg.gc_prov_var_type_json then
+        begin
+          l_json_fragment := json_query(l_source_json, l_path returning clob);
+        exception
+          when others then
+            apex_debug.error(
+              p_message => 'JSONPath error for path %0: %1'
+            , p0 => l_path
+            , p1 => sqlerrm
+            );
+            raise e_var_exp_jsonpath_error;
+        end;
+
+        if l_json_fragment is not null then
+          l_has_value := true;
+          if pi_expression.expr_var_type = flow_constants_pkg.gc_prov_var_type_json then
+            l_result_rec.var_json := l_json_fragment;
+          else
+            l_result_rec.var_clob := l_json_fragment;
+          end if;
+        end if;
+      end if;
+
+      if not l_has_value then
+        case pi_expression.expr_var_type
+          when flow_constants_pkg.gc_prov_var_type_varchar2 then
+            l_scalar_text := json_value(l_source_json, l_path returning varchar2);
+            l_result_rec.var_vc2 := l_scalar_text;
+            l_has_value := (l_scalar_text is not null);
+          when flow_constants_pkg.gc_prov_var_type_number then
+            l_result_rec.var_num := json_value(l_source_json, l_path returning number);
+            l_has_value := (l_result_rec.var_num is not null);
+          when flow_constants_pkg.gc_prov_var_type_date then
+            l_scalar_text := json_value(l_source_json, l_path returning varchar2);
+            if l_scalar_text is not null then
+              begin
+                if l_scalar_text != to_char( to_date( l_scalar_text, flow_constants_pkg.gc_prov_default_date_format )
+                                           , flow_constants_pkg.gc_prov_default_date_format ) then
+                  raise e_var_exp_date_format_error;
+                end if;
+              exception
+                when others then
+                  raise e_var_exp_date_format_error;
+              end;
+              l_result_rec.var_date := to_date(l_scalar_text, flow_constants_pkg.gc_prov_default_date_format);
+              l_has_value := true;
+            end if;
+          when flow_constants_pkg.gc_prov_var_type_tstz then
+            l_scalar_text := json_value(l_source_json, l_path returning varchar2);
+            if l_scalar_text is not null then
+              begin
+                if l_scalar_text != to_char( to_timestamp_tz( l_scalar_text, flow_constants_pkg.gc_prov_default_tstz_format )
+                                           , flow_constants_pkg.gc_prov_default_tstz_format ) then
+                  raise e_var_exp_date_format_error;
+                end if;
+              exception
+                when others then
+                  raise e_var_exp_date_format_error;
+              end;
+              l_result_rec.var_tstz := to_timestamp_tz(l_scalar_text, flow_constants_pkg.gc_prov_default_tstz_format);
+              apex_debug.message ('Parsed timestamp with timezone: %0', l_result_rec.var_tstz);
+              l_has_value := true;
+            end if;
+          when flow_constants_pkg.gc_prov_var_type_clob then
+            l_scalar_text := json_value(l_source_json, l_path returning varchar2(32767));
+            if l_scalar_text is not null then
+              l_result_rec.var_clob := to_clob(l_scalar_text);
+              l_has_value := true;
+            else
+              l_result_rec.var_clob := json_query(l_source_json, l_path returning clob);
+              l_has_value := (l_result_rec.var_clob is not null);
+            end if;
+        end case;
+      end if;
+    end if;
+
+    if not l_has_value then
+      apex_debug.warn('JSONPath expression returned null for variable %0.', pi_expression.expr_var_name);
+    end if;
+
+    flow_proc_vars_int.set_var
+    ( pi_prcs_id        => pi_prcs_id
+    , pi_var_value      => l_result_rec
+    , pi_sbfl_id        => pi_sbfl_id
+    , pi_objt_bpmn_id   => pi_expression.expr_objt_bpmn_id
+    , pi_expr_set       => pi_expression.expr_set
+    , pi_scope          => pi_var_scope
+    );
+
+  exception
+    when e_var_exp_date_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_date_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+    when e_var_exp_json_format_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_json_format'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_json_format' || 'Error setting Process Variable %1: Incorrect JSON Format (Subflow: %0, Set: %3.)'
+    when e_var_exp_jsonpath_error then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_jsonpath_error'
+      , p0 => pi_sbfl_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_expression
+      , p3 => pi_expression.expr_set
+      );
+      -- $F4AMESSAGE 'var_exp_jsonpath_error' || 'Error setting Process Variable %1: Invalid JSONPath expression "%2" (Subflow: %0, Set: %3).'
+    when others then
+      flow_errors.handle_instance_error
+      ( pi_prcs_id        => pi_prcs_id
+      , pi_sbfl_id        => pi_sbfl_id
+      , pi_message_key    => 'var_exp_static_general'
+      , p0 => pi_prcs_id
+      , p1 => pi_expression.expr_var_name
+      , p2 => pi_expression.expr_set
+      );
+  end set_json_path;
+
   /**********************************************************************
   **
   ** Main Procedure
@@ -454,6 +675,15 @@ as
             , pi_var_scope    => pi_var_scope
             , pi_expr_scope   => pi_expr_scope             
             );  
+          when l_expressions(i).expr_type = flow_constants_pkg.gc_expr_type_json_path then
+            set_json_path
+            ( pi_prcs_id      => pi_prcs_id
+            , pi_expression   => l_expressions(i)
+            , pi_sbfl_id      => pi_sbfl_id
+            , pi_step_key     => pi_step_key
+            , pi_var_scope    => pi_var_scope
+            , pi_expr_scope   => pi_expr_scope
+            );
           else
               pragma coverage ('not_feasible');
               null;

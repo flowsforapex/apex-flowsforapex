@@ -280,6 +280,21 @@ as
           , p_step_key      => apex_application.g_x04
           , p_comment       => apex_application.g_x05       
           );
+        when 'START-ADHOC-ACTIVITY' then
+          flow_api_pkg.flow_start_adhoc_activity 
+          (
+            p_process_id       => apex_application.g_x02
+          , p_subflow_id       => apex_application.g_x03
+          , p_activity_bpmn_id => apex_application.g_x04
+          );
+        when 'OPEN-ADHOC-ACTIVITIES' then
+          l_url := apex_page.get_url(
+              p_page => 22
+            , p_items => 'P22_PRCS_ID,P22_SBFL_ID,P22_SUBPROC_STEP_KEY,P22_DGRM_ID,P22_SUBPROCESS_BPMN_ID'
+            , p_values => apex_application.g_x02||','||apex_application.g_x03||','||apex_application.g_x04||
+                          ','||apex_application.g_x05||','||apex_application.g_x06
+            , p_clear_cache => 22
+          );
         when 'FLOW-INSTANCE-AUDIT' then
           l_url := apex_page.get_url(
               p_page => 14
@@ -287,6 +302,12 @@ as
             , p_values => apex_application.g_x02||','||apex_application.g_x03
             , p_clear_cache => 'RP'
           );
+        when 'SET-PROCESS-LOGGING-LEVEL' then
+          flow_admin_api.set_process_logging_level
+          (
+            p_process_id     => apex_application.g_x02
+          , p_logging_level  => apex_application.g_x03
+          );  
         when 'EDIT-FLOW-DIAGRAM' then
           l_url := apex_page.get_url(
               p_page => 7
@@ -2046,7 +2067,7 @@ as
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled     , p_value => pi_archiving_enabled);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_logging_archive_enabled    , p_value => pi_archiving_enabled);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purging     , p_value => pi_completed_prcs_purging);
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_completed_prcs_purge_days  , p_value => pi_completed_prcs_purge_days);
   end set_archiving_settings;
@@ -2060,8 +2081,8 @@ as
   as
   begin
       flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_daily  , p_value => pi_stats_retain_daily);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month , p_value => pi_stats_retain_month);
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr , p_value => pi_stats_retain_qtr);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_month  , p_value => pi_stats_retain_month);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_stats_retain_summary_qtr    , p_value => pi_stats_retain_qtr);
   end set_statistics_settings;
 
 -- The typo set_statictis_settings was included in 23.1 and 24.1 releases and is retained here for upwards
@@ -2082,11 +2103,13 @@ as
 
 
   procedure set_engine_app_settings(
-    pi_engine_app_mode in flow_configuration.cfig_value%type
+    pi_engine_app_mode       in flow_configuration.cfig_value%type
+  , pi_monaco_editor_version in flow_configuration.cfig_value%type
   )
   as
   begin
-      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode , p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_engine_app_mode       , p_value => pi_engine_app_mode);
+      flow_engine_util.set_config_value( p_config_key => flow_constants_pkg.gc_config_monaco_editor_version , p_value => pi_monaco_editor_version);
 
   end set_engine_app_settings;
 

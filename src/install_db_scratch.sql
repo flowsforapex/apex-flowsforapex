@@ -15,6 +15,23 @@ PROMPT >> Common Objects
 PROMPT >> Adding Comments
 @ddl/install_ddl_comments.sql
 
+PROMPT >> Adding Schema Annotations (requires a version of Oracle containing annotations feature (should be Oracle 19.28+ or 23ai+)
+column ann_cmd new_value ann_cmd noprint
+select case
+         when exists (
+                select 1
+                  from all_views
+                 where owner = 'SYS'
+                   and view_name = 'USER_ANNOTATIONS_USAGE'
+              ) then
+           '@ddl/install_ddl_annotations.sql'
+         else
+           'prompt >> Skipping schema annotations (annotation feature unavailable)'
+       end as ann_cmd
+  from dual;
+^ann_cmd.
+whenever sqlerror exit rollback
+
 PROMPT >> Installing Database Scheduler Objects
 @ddl/create_scheduler_objects.sql
 

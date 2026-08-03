@@ -13,3 +13,22 @@ as
   where obj.objt_tag_name in ('bpmn:exclusiveGateway', 'bpmn:inclusiveGateway')
   and ( select count(*) from flow_connections conn where conn.conn_src_objt_id = obj.objt_id ) > 1
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_instance_diagrams_lov annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Diagrams active within a process instance for LOV selection'
+  )]';
+    execute immediate q'[alter view flow_instance_diagrams_lov modify (calling_diagram annotations (add content 'Name of the calling diagram, or Main Diagram for the root level'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

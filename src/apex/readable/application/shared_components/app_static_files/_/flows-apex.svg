@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <g style="isolation: isolate">
+    <g id="Layer_1" data-name="Layer 1">
+      <rect width="64" height="64" fill="#0077df"/>
+      <path d="M32.5,27h13a.5.5,0,0,0,.5-.5v-10a.5.5,0,0,0-.5-.5h-13a.5.5,0,0,0-.5.5V21H21.5a.5.5,0,0,0-.5.5v3.293l-6.854,6.853a.5.5,0,0,0,0,.708L21,39.207V42.5a.5.5,0,0,0,.5.5H32v4.5a.5.5,0,0,0,.5.5h13a.5.5,0,0,0,.5-.5v-10a.5.5,0,0,0-.5-.5h-13a.5.5,0,0,0-.5.5V42H22V39.207l6.854-6.853a.5.5,0,0,0,0-.708L22,24.793V22H32v4.5A.5.5,0,0,0,32.5,27ZM33,38H45v9H33Zm-11.5.293L15.207,32,21.5,25.707,27.793,32ZM33,17H45v9H33Z" opacity="0.4" style="mix-blend-mode: multiply;isolation: isolate"/>
+      <rect x="33" y="38" width="12" height="9" fill="#fcfbfa" opacity="0.6" style="isolation: isolate"/>
+      <rect x="33" y="17" width="12" height="9" fill="#fcfbfa" opacity="0.6" style="isolation: isolate"/>
+      <rect x="17.05" y="27.55" width="8.9" height="8.9" transform="translate(-16.33 24.575) rotate(-45)" fill="#fcfbfa" opacity="0.9" style="isolation: isolate"/>
+    </g>
+  </g>
+</svg>

@@ -635,6 +635,11 @@ create or replace package body flow_instances as
       from flow_iterated_objects
      where iobj_prcs_id = p_process_id
      ;
+    -- clean up any adhoc subprocesses
+    delete
+      from flow_adhoc_subprocs 
+     where ahsp_prcs_id = p_process_id
+    ;
     -- delete the subflows
     delete
       from flow_subflows sbfl
@@ -987,6 +992,11 @@ create or replace package body flow_instances as
       from flow_iterated_objects
      where iobj_prcs_id = p_process_id
      ;
+    -- clean up any adhoc subprocesses
+    delete
+      from flow_adhoc_subprocs 
+     where ahsp_prcs_id = p_process_id
+    ;
     delete
       from flow_subflows sbfl
      where sbfl.sbfl_prcs_id = p_process_id
@@ -1109,6 +1119,45 @@ create or replace package body flow_instances as
                                               )  
       where prcs.prcs_id = p_process_id;
   end set_was_altered;
+
+  procedure set_logging_level
+    (
+      p_process_id      in flow_processes.prcs_id%type
+    , p_logging_level  in flow_processes.prcs_logging_level%type
+    )
+  is
+  begin
+      -- check logging level is valid
+      if p_logging_level not in ( flow_constants_pkg.gc_logging_level_none
+                               , flow_constants_pkg.gc_logging_level_abnormal_events
+                               , flow_constants_pkg.gc_logging_level_major_events
+                               , flow_constants_pkg.gc_logging_level_routine
+                               , flow_constants_pkg.gc_logging_level_full)
+      then
+        flow_errors.handle_instance_error
+        ( pi_prcs_id        => p_process_id
+        , pi_message_key    => 'invalid-logging-level'
+        , p0                => p_logging_level       
+        );
+        -- $F4AMESSAGE 'invalid-logging-level' || 'Invalid logging level (%0) specified. Valid levels are none, abnormal_events, major_events, routine, full.'
+      end if; 
+      
+      update flow_processes prcs
+      set prcs.prcs_logging_level = p_logging_level
+        , prcs.prcs_last_update = systimestamp
+        , prcs.prcs_last_update_by = coalesce ( sys_context('apex$session','app_user') 
+                                              , sys_context('userenv','os_user')
+                                              , sys_context('userenv','session_user')
+                                              )  
+      where prcs.prcs_id = p_process_id;
+      -- log the logging level change
+      flow_logging.log_instance_event
+      ( p_process_id  => p_process_id
+      , p_event       => flow_constants_pkg.gc_prcs_event_logging_level_set
+      , p_event_level => flow_constants_pkg.gc_logging_level_major_events
+      , p_comment     => 'Process logging level set to '||p_logging_level
+      );      
+  end set_logging_level;  
 
 end flow_instances;
 /

@@ -550,7 +550,73 @@ as
     l_settings.inside_var        := l_details.expr_inside_var;
     l_settings.description       := l_details.expr_description;
     return l_settings;
-  end get_iteration_settings;   
+  end get_iteration_settings;
+
+  function get_json_setting_multiline
+  ( pi_objt_attributes   in clob
+  , pi_setting_path      in varchar2
+  , pi_default_value     in varchar2 default null
+  , pi_line_separator    in varchar2 default chr(10)
+  ) return varchar2
+  is
+    l_json_obj      sys.json_object_t;
+    l_current_obj   sys.json_object_t;
+    l_path_parts    apex_t_varchar2;
+    l_json_array    sys.json_array_t;
+    l_array_size    number;
+    l_result        varchar2(32767);
+    l_item_value    varchar2(32767);
+  begin
+    apex_debug.enter('flow_settings.get_json_setting_multiline', 'path', pi_setting_path);
+
+    if pi_objt_attributes is null then
+      return pi_default_value;
+    end if;
+
+    l_json_obj := sys.json_object_t.parse(pi_objt_attributes);
+    l_current_obj := l_json_obj;
+    l_path_parts := apex_string.split(pi_setting_path, '.');
+
+    for i in 1 .. l_path_parts.count - 1 loop
+      if not l_current_obj.has(l_path_parts(i)) then
+        return pi_default_value;
+      end if;
+      l_current_obj := l_current_obj.get_object(l_path_parts(i));
+    end loop;
+
+    if not l_current_obj.has(l_path_parts(l_path_parts.count)) then
+      return pi_default_value;
+    end if;
+
+    if l_current_obj.get(l_path_parts(l_path_parts.count)).is_array then
+      l_json_array := l_current_obj.get_array(l_path_parts(l_path_parts.count));
+      l_array_size := l_json_array.get_size;
+
+      for i in 0 .. l_array_size - 1 loop
+        l_item_value := l_json_array.get_string(i);
+
+        if    nvl(length(l_result), 0)
+            + case when i > 0 then length(pi_line_separator) else 0 end
+            + length(l_item_value) > 32767
+        then
+          raise value_error;
+        end if;
+
+        if i > 0 then
+          l_result := l_result || pi_line_separator;
+        end if;
+        l_result := l_result || l_item_value;
+      end loop;
+
+      return l_result;
+    end if;
+
+    return l_current_obj.get_string(l_path_parts(l_path_parts.count));
+  exception
+    when others then
+      apex_debug.error('Error extracting JSON setting %0: %1', pi_setting_path, sqlerrm);
+      return pi_default_value;
+  end get_json_setting_multiline;
 
 end flow_settings;
 /

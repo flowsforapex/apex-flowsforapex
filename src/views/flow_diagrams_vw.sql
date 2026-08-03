@@ -18,3 +18,22 @@ as
        , dgrm.dgrm_content
   from flow_diagrams dgrm
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_diagrams_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'definition'
+  , add content 'Process diagrams with metadata, status icons, and BPMN XML content'
+  )]';
+    execute immediate q'[alter view flow_diagrams_vw modify (dgrm_status_icon annotations (add content 'Font Awesome icon CSS class for the diagram status'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

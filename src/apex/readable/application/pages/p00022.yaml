@@ -1,0 +1,1387 @@
+---
+# ====== Page: Ad Hoc Activities =============================
+id: 22
+identification: 
+  name: Ad Hoc Activities
+  alias: AD-HOC-ACTIVITIES
+  title: Ad Hoc Activities
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Drawer
+  template-options: 
+  - '#DEFAULT#'
+  - js-dialog-class-t-Drawer--pullOutEnd
+  - js-dialog-class-t-Drawer--xl
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_IMAGES#lib/prismjs/js/prism.js'
+  execute-when-page-loads: initPage22();
+
+css: 
+  inline: |
+    span.col-no-wrap {
+        text-wrap: nowrap;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Startable Activities ========================
+  id: 16803482167123702
+  identification: 
+    name: Startable Activities
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Content Block
+    template-options: 
+    - '#DEFAULT#'
+    - t-ContentBlock--h3
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Started Activities ==========================
+  id: 16803577815123703
+  identification: 
+    name: Started Activities
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Content Block
+    template-options: 
+    - '#DEFAULT#'
+    - t-ContentBlock--h3
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Ad Hoc Activities - Cards ===================
+  id: 20034979759645870
+  identification: 
+    name: Ad Hoc Activities - Cards
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0022_STARTABLE_ADHOC_ACTIVITIES_VW
+    include-rowid-column: false
+    where-clause: |
+      subproc_bpmn_id = :P22_SUBPROCESS_BPMN_ID and
+      subproc_step_key = :P22_SUBPROC_STEP_KEY and
+      dgrm_id = :P22_DGRM_ID
+    page-items-to-submit: 
+    - P22_SUBPROCESS_BPMN_ID
+    - P22_SUBPROC_STEP_KEY
+    - P22_DGRM_ID
+
+  order-by: 
+    type: Static Value
+    order-by-clause: ACTIVITY_DISPLAY_ORDER
+
+  layout: 
+    sequence: 10
+    parent-region: Startable Activities # 16803482167123702
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: adhoc-activities
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 21785465464192737
+    appearance: 
+      layout: Grid
+      grid-columns: Auto
+
+    title: 
+      advanced-formatting: false
+      column: ACTIVITY_NAME
+
+    subtitle: 
+      advanced-formatting: false
+
+    body: 
+      advanced-formatting: false
+      column: ACTIVITY_DESCRIPTION
+
+    secondary-body: 
+      advanced-formatting: false
+
+    icon-and-badge: 
+      icon-source: Icon Class Column
+      icon-column: ACTIVITY_ICON
+      icon-position: Start
+      icon-description: '&ACTIVITY_TAG_NAME.'
+      badge-column: BADGE_LABEL
+      badge-css-classes: 
+      - '&BADGE_CSS_CLASS.'
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    messages: 
+      when-no-data-found: No Startable Activities Now
+
+    actions: 
+    - # ====== Action: Start =======================================
+      id: 21785533403192738
+      identification: 
+        type: Button
+        label: Start
+
+      layout: 
+        position: Secondary
+        sequence: 10
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:23:&SESSION.::&DEBUG.:23:P23_ACTIVITY_BPMN_ID,P23_ACTIVITY_NAME,P23_DGRM_ID,P23_PRCS_ID,P23_SBFL_ID:&ACTIVITY_BPMN_ID.,&ACTIVITY_NAME.,&DGRM_ID.,&PRCS_ID.,&SUBPROC_SBFL_ID.'
+          page: 23 # Adhoc Activity Launcher
+          clear-cache: 23
+          values: 
+            p23_activity_bpmn_id: '&ACTIVITY_BPMN_ID.'
+            p23_activity_name: '&ACTIVITY_NAME.'
+            p23_dgrm_id: '&DGRM_ID.'
+            p23_prcs_id: '&PRCS_ID.'
+            p23_sbfl_id: '&SUBPROC_SBFL_ID.'
+
+      appearance: 
+        display-type: Text
+        hot: true
+
+- # ====== Region: Started Ad Hoc Activities  ==================
+  id: 20042766778654206
+  identification: 
+    name: 'Started Ad Hoc Activities '
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: FLOW_P0022_STARTED_ADHOC_ACTIVITIES_VW
+    include-rowid-column: false
+    where-clause: |2
+          prcs_id           = :P22_PRCS_ID
+      and subproc_bpmn_id   = :P22_SUBPROCESS_BPMN_ID
+      and subproc_step_key  = :P22_SUBPROC_STEP_KEY
+    order-by-clause: status desc, start_time
+    page-items-to-submit: 
+    - P22_PRCS_ID
+    - P22_SUBPROCESS_BPMN_ID
+    - P22_SUBPROC_STEP_KEY
+
+  layout: 
+    sequence: 90
+    parent-region: Started Activities # 16803577815123703
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: started-adhoc-activities
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 20042829107654207
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    messages: 
+      when-no-data-found: No started activities
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 20090304772210529
+      identification: 
+        name: Primary Report
+        alias: 200904
+
+    columns: 
+    - # ====== Column: SBFL_ID =====================================
+      id: 20042996027654208
+      identification: 
+        column-name: SBFL_ID
+        type: Plain Text
+
+      heading: 
+        heading: Sbfl Id
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 10
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: PRCS_ID =====================================
+      id: 20043049277654209
+      identification: 
+        column-name: PRCS_ID
+        type: Plain Text
+
+      heading: 
+        heading: Prcs Id
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: DGRM_ID =====================================
+      id: 20043161633654210
+      identification: 
+        column-name: DGRM_ID
+        type: Plain Text
+
+      heading: 
+        heading: Dgrm Id
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SUBPROC_BPMN_ID =============================
+      id: 20043230948654211
+      identification: 
+        column-name: SUBPROC_BPMN_ID
+        type: Plain Text
+
+      heading: 
+        heading: Subproc Bpmn Id
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SUBPROC_SBFL_ID =============================
+      id: 20043315912654212
+      identification: 
+        column-name: SUBPROC_SBFL_ID
+        type: Plain Text
+
+      heading: 
+        heading: Subproc Sbfl Id
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 50
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SUBPROC_STEP_KEY ============================
+      id: 20043423097654213
+      identification: 
+        column-name: SUBPROC_STEP_KEY
+        type: Plain Text
+
+      heading: 
+        heading: Subproc Step Key
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 60
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: STARTING_OBJECT =============================
+      id: 20043547723654214
+      identification: 
+        column-name: STARTING_OBJECT
+        type: Plain Text
+
+      heading: 
+        heading: Starting Object
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 70
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: STARTING_OBJECT_NAME ========================
+      id: 20043675718654215
+      identification: 
+        column-name: STARTING_OBJECT_NAME
+        type: Plain Text
+
+      heading: 
+        heading: Starting Object Name
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 80
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: <span class="col-no-wrap">#STARTING_OBJECT_NAME#</span>
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: STARTING_STEP_KEY ===========================
+      id: 20043797818654216
+      identification: 
+        column-name: STARTING_STEP_KEY
+        type: Plain Text
+
+      heading: 
+        heading: Starting Step Key
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 90
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: REPEAT_COUNT ================================
+      id: 20043876303654217
+      identification: 
+        column-name: REPEAT_COUNT
+        type: Plain Text
+
+      heading: 
+        heading: Repeat Count
+        alignment: end
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 100
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: STATUS ======================================
+      id: 20043980239654218
+      identification: 
+        column-name: STATUS
+        type: Plain Text
+
+      heading: 
+        heading: Status
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 110
+        column-alignment: center
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '<span class="sbfl_status_badge"><i class="status_icon fa #STATUS_ICON#"></i>#STATUS#</span>'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      advanced: 
+        static-id: started-adhoc-activities-status-col
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: START_TIME ==================================
+      id: 20044003120654219
+      identification: 
+        column-name: START_TIME
+        type: Plain Text
+
+      heading: 
+        heading: Start Time
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 130
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: COMPLETE_TIME ===============================
+      id: 20044154072654220
+      identification: 
+        column-name: COMPLETE_TIME
+        type: Plain Text
+
+      heading: 
+        heading: Complete Time
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 140
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+        date-ranges: All
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: INPUTS ======================================
+      id: 20044205895654221
+      identification: 
+        column-name: INPUTS
+        type: Plain Text
+
+      heading: 
+        heading: Inputs
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 150
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '{if INPUTS/}<pre><code class="language-json">#INPUTS#</code></pre>{endif/}'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: None
+
+      enable-users-to: 
+        hide: true
+        sort: false
+        filter: true
+        highlight: true
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: OUTPUTS =====================================
+      id: 20044373269654222
+      identification: 
+        column-name: OUTPUTS
+        type: Plain Text
+
+      heading: 
+        heading: Outputs
+        alignment: start
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 160
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '{if OUTPUTS/}<pre><code class="language-json">#OUTPUTS#</code></pre>{endif/}'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: None
+
+      enable-users-to: 
+        hide: true
+        sort: false
+        filter: true
+        highlight: true
+        control-break: false
+        aggregate: false
+        compute: false
+        chart: false
+        group-by: false
+        pivot: false
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: STATUS_ICON =================================
+      id: 21785624989192739
+      identification: 
+        column-name: STATUS_ICON
+        type: Hidden
+
+      heading: 
+        heading: Status Icon
+
+      layout: 
+        sequence: 120
+
+      source: 
+        primary-key: false
+
+      security: 
+        escape-special-characters: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+page-items: 
+- # ====== Page Item: P22_SUBPROCESS_BPMN_ID ===================
+  id: 20042266213654201
+  identification: 
+    name: P22_SUBPROCESS_BPMN_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P22_DGRM_ID ==============================
+  id: 20042353825654202
+  identification: 
+    name: P22_DGRM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P22_PRCS_ID ==============================
+  id: 20042485537654203
+  identification: 
+    name: P22_PRCS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P22_SBFL_ID ==============================
+  id: 20042535409654204
+  identification: 
+    name: P22_SBFL_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P22_SUBPROC_STEP_KEY =====================
+  id: 20042659812654205
+  identification: 
+    name: P22_SUBPROC_STEP_KEY
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CLOSE =======================================
+  id: 20044469144654223
+  identification: 
+    button-name: CLOSE
+    label: Close
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close ===============================
+  id: 20044512769654224
+  identification: 
+    name: Close
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE # 20044469144654223
+
+  actions: 
+  - # ====== Action: Close =======================================
+    id: 20044627679654225
+    identification: 
+      name: Close
+      action: Close Dialog
+
+    execution: 
+      sequence: 10
+      event: Close # 20044512769654224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed =======================
+  id: 21785875255192741
+  identification: 
+    name: Dialog Closed
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Startable Activities # 16803482167123702
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 21785920148192742
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: 'Started Ad Hoc Activities ' # 20042766778654206
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed # 21785875255192741
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 21786184314192744
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Ad Hoc Activities - Cards # 20034979759645870
+
+    execution: 
+      sequence: 20
+      event: Dialog Closed # 21785875255192741
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Started Activities Report Refreshed =
+  id: 22454301098378831
+  identification: 
+    name: Started Activities Report Refreshed
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: After Refresh
+    selection-type: Region
+    region: Started Activities # 16803577815123703
+
+  actions: 
+  - # ====== Action: Refresh Prism ===============================
+    id: 21786099948192743
+    identification: 
+      name: Refresh Prism
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        Prism.highlightAll();
+        apex.event.trigger("body", "apexwindowresized");
+
+    affected-elements: 
+      selection-type: Region
+      region: 'Started Ad Hoc Activities ' # 20042766778654206
+
+    execution: 
+      sequence: 20
+      event: Started Activities Report Refreshed # 22454301098378831
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22454751270378839
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("td[headers*=started-adhoc-activities-status-col]").each(function () {
+          var statusText = $(this).text().trim().toLowerCase();
+          var statusSlug = statusText.replace(/\s+/g, "-");
+          var className = "ffa-color--" + statusSlug;
+          $(this).addClass(className);
+        });
+        
+
+    affected-elements: 
+      selection-type: Region
+      region: Started Activities # 16803577815123703
+
+    execution: 
+      sequence: 10
+      event: Started Activities Report Refreshed # 22454301098378831
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+

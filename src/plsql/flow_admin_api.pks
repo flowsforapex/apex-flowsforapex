@@ -257,5 +257,37 @@ The process instance does **not** need to be suspended to use this procedure.
 Available in Flows for APEX Enterprise Edition.
 **/
 
+  procedure set_process_logging_level
+  ( p_process_id        in flow_processes.prcs_id%type
+  , p_logging_level     in flow_processes.prcs_logging_level%type
+  );
+/**
+Procedure set_process_logging_level
+This procedure sets the logging level for a running process instance.
+The logging level determines the amount of logging that is performed for the process instance.
+Valid logging levels are:
+  - none - no logging is performed
+  - abnormal events - only logging of abnormal events (errors, warnings)
+  - major events - logging of major events (step completions, gateway decisions)
+  - routine - logging of all events except full variable values
+  - full - full / debug logging of all events including full variable values
+Available in Flows for APEX Community and Enterprise Edition.
+**/
+
+  function test_ai_connection
+  ( p_ai_interface   in varchar2
+  , p_ai_service     in varchar2 default null
+  , p_ai_provider    in varchar2 default null
+  , p_ai_model       in varchar2 default null
+  , p_prompt         in clob default 'Hello AI World'
+  ) return clob;
+/**
+Function test_ai_connection
+This function executes a lightweight AI connectivity/configuration smoke test for an admin-supplied interface and model configuration.
+The function is intended for design-time/admin validation (for example, from modeler property panel actions), and returns a JSON result payload.
+
+Available in Flows for APEX Enterprise Edition.
+**/
+
 end flow_admin_api;
 /

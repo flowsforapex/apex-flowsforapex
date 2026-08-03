@@ -14,7 +14,7 @@ create or replace package flow_constants_pkg
   authid definer
 as
 
-  gc_version constant varchar2(10 char) := '25.1';
+  gc_version constant varchar2(10 char) := '26.1';
 
   gc_true          constant varchar2(1 byte)  := 'Y';
   gc_false         constant varchar2(1 byte)  := 'N';
@@ -41,6 +41,7 @@ as
 
   gc_bpmn_process                      constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'process';
   gc_bpmn_subprocess                   constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'subProcess';
+  gc_bpmn_adhoc_subprocess             constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'adHocSubProcess';
   gc_bpmn_call_activity                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'callActivity';
 
   gc_bpmn_start_event                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'startEvent';
@@ -70,6 +71,7 @@ as
   gc_bpmn_gateway_event_based          constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'eventBasedGateway';
 
   gc_bpmn_sequence_flow                constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'sequenceFlow';
+  gc_bpmn_association                  constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'association';
 
   gc_bpmn_task                         constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'task';
   gc_bpmn_usertask                     constant flow_types_pkg.t_bpmn_id := gc_bpmn_prefix || 'userTask';
@@ -92,7 +94,29 @@ as
   gc_apex_process_page_id             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'pageId';
   gc_apex_process_username            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'username';
   gc_apex_process_business_admin      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'businessAdmin';
+
+  -- bpmnAdhocSubProcess
+  gc_apex_adhoc_completion_condition  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'completionCondition';
+  gc_apex_adhoc_adhoc_visibility      constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'adhocVisibility';
+  gc_apex_adhoc_starting_activities   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'startingActivities';
   
+  -- adhoc subprocess visibility in APEX task lists
+  gc_adhoc_task_visibility_none       constant flow_types_pkg.t_bpmn_id := 'none';
+  gc_adhoc_task_visibility_subproc    constant flow_types_pkg.t_bpmn_id := 'subprocess';
+  gc_adhoc_task_visibility_activities constant flow_types_pkg.t_bpmn_id := 'activities';
+  gc_adhoc_task_visibility_all        constant flow_types_pkg.t_bpmn_id := 'all';
+
+  -- adhoc subprocess control options
+  gc_adhoc_control_manual             constant flow_types_pkg.t_bpmn_id := 'manual';
+  gc_adhoc_control_autonomous         constant flow_types_pkg.t_bpmn_id := 'ai';
+  gc_adhoc_control_hybrid             constant flow_types_pkg.t_bpmn_id := 'hybrid';
+  gc_adhoc_control_recommendation     constant flow_types_pkg.t_bpmn_id := 'recommendation';
+
+  -- Operating Mode Constants  (used to control certain aspects of engine behaviour at activity level, 
+  -- such as AI decision making where demo mode allows "demo time" use for future scenarios, for testing/demo purposes)
+  gc_operating_mode_demo              constant varchar2(10) := 'demo';
+  gc_operating_mode_production        constant varchar2(10) := 'production';
+
   -- userTask
   gc_apex_usertask_apex_page          constant flow_types_pkg.t_bpmn_id := 'apexPage';
   gc_apex_usertask_apex_approval      constant flow_types_pkg.t_bpmn_id := 'apexApproval';
@@ -154,6 +178,26 @@ as
   --terminateEndEvent
   gc_apex_process_status              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'processStatus';
 
+  -- Task Input/Output Parameters
+  gc_apex_input_parameters            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'inputParameters';
+  gc_apex_output_parameters           constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputParameters';
+  gc_apex_output_assignments          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'outputAssignments';
+  gc_apex_parameter                   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'parameter';
+  gc_apex_assignment                  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'assignment';
+  gc_apex_parameter_name              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'name';
+  gc_apex_parameter_type              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'type';
+  gc_apex_parameter_required          constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'required';
+  gc_apex_parameter_description       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'description';
+  gc_apex_parameter_source            constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'source';
+  gc_apex_parameter_expression_type   constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expressionType';
+  gc_apex_parameter_expression        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expression';
+  gc_apex_parameter_enum              constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'enum';
+  gc_apex_parameter_items             constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'items';
+  gc_apex_parameter_properties        constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'properties';
+  gc_apex_assignment_source_parameter constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'sourceParameter';
+  gc_apex_assignment_target_variable  constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'targetVariable';
+  gc_apex_assignment_expression       constant flow_types_pkg.t_bpmn_id := gc_apex_prefix || 'expression';
+
   -- Oracle format timer definitions
   gc_timer_type_oracle_date           constant flow_types_pkg.t_bpmn_id := 'oracleDate';
   gc_timer_type_oracle_duration       constant flow_types_pkg.t_bpmn_id := 'oracleDuration';
@@ -196,6 +240,8 @@ as
   gc_timer_def_key                    constant flow_types_pkg.t_bpmn_id := 'timerDefinition';
   
   gc_task_type_key                    constant flow_types_pkg.t_bpmn_id := 'taskType';
+  gc_async_before_key                 constant flow_types_pkg.t_bpmn_id := 'async_before';
+  gc_async_after_key                  constant flow_types_pkg.t_bpmn_id := 'async_after';
 
   gc_terminate_result                 constant flow_types_pkg.t_bpmn_id := 'processStatus';
 
@@ -245,11 +291,13 @@ as
   gc_sbfl_status_waiting_event        constant  varchar2(20 char) := 'waiting for event';
   gc_sbfl_status_waiting_approval     constant  varchar2(20 char) := 'waiting for approval';
   gc_sbfl_status_waiting_message      constant  varchar2(20 char) := 'waiting for message';
+  gc_sbfl_status_queued_async         constant  varchar2(20 char) := 'queued for async';
   gc_sbfl_status_waiting_iter         constant  varchar2(20 char) := 'waiting iterations';
   gc_sbfl_status_proceed_gateway      constant  varchar2(20 char) := 'proceed from gateway';
   gc_sbfl_status_split                constant  varchar2(20 char) := 'split';
   gc_sbfl_status_iterating            constant  varchar2(20 char) := 'iterating';
   gc_sbfl_status_in_subprocess        constant  varchar2(20 char) := 'in subprocess';
+  gc_sbfl_status_in_adhoc_subprocess  constant  varchar2(20 char) := 'in adhoc subprocess';
   gc_sbfl_status_in_callactivity      constant  varchar2(20 char) := 'in call activity';
   gc_sbfl_status_error                constant  varchar2(20 char) := 'error';
   gc_sbfl_status_suspended            constant  varchar2(20 char) := 'suspended';
@@ -282,12 +330,18 @@ as
   gc_prcs_event_leave_call            constant  varchar2(20 char) := 'finish called model';
   gc_prcs_event_priority_set          constant  varchar2(20 char) := 'priority set';
   gc_prcs_event_due_on_set            constant  varchar2(20 char) := 'due on set';
+  gc_prcs_event_logging_level_set     constant  varchar2(20 char) := 'logging level set';
   gc_prcs_event_warning               constant  varchar2(20 char) := 'warning';
   gc_prcs_event_sbfl_marked_delete    constant  varchar2(20 char) := 'subflow mark delete';
   gc_prcs_event_sbfl_deleted          constant  varchar2(20 char) := 'subflow deleted';
   gc_prcs_event_sbfl_repositioned     constant  varchar2(20 char) := 'subflow repositioned';
   gc_prcs_event_rewind_subprocess     constant  varchar2(20 char) := 'rewind subprocess';
   gc_prcs_event_rewind_call_activity  constant  varchar2(20 char) := 'rewind call activity';
+  gc_prcs_event_ahsp_ai_decision      constant  varchar2(20 char) := 'ahsp ai decision';
+  gc_prcs_event_ahsp_ai_schedule      constant  varchar2(20 char) := 'ahsp ai schedule';
+  gc_prcs_event_ahsp_ai_approved      constant  varchar2(20 char) := 'ahsp ai approved';
+  gc_prcs_event_ahsp_ai_discarded     constant  varchar2(20 char) := 'ahsp ai discarded';
+  gc_prcs_event_ahsp_cc_met           constant  varchar2(20 char) := 'ahsp cc met';
 
   -- Subflow and Step Events
   gc_step_event_became_current        constant  varchar2(20 char) := 'current step';
@@ -311,6 +365,8 @@ as
   gc_step_event_iteration_started     constant  varchar2(20 char) := 'iteration started';
   gc_step_event_iteration_completed   constant  varchar2(20 char) := 'iteration completed';
   gc_step_event_iteration_terminated  constant  varchar2(20 char) := 'iteration terminated';
+  gc_step_event_async_enqueued        constant  varchar2(20 char) := 'async enqueued';
+  gc_step_event_async_dequeued        constant  varchar2(20 char) := 'async dequeued';
   gc_step_event_message_dequeued      constant  varchar2(20 char) := 'message dequeued';
   gc_step_event_message_enqueued      constant  varchar2(20 char) := 'message enqueued';
   gc_step_event_cancelled             constant  varchar2(20 char) := 'APEX task cancelled';
@@ -358,6 +414,7 @@ as
   gc_expr_type_sql                      constant flow_types_pkg.t_expr_type := 'sqlQuerySingle';
   gc_expr_type_sql_delimited_list       constant flow_types_pkg.t_expr_type := 'sqlQueryList';
   gc_expr_type_sql_json_array           constant flow_types_pkg.t_expr_type := 'sqlQueryArray';
+  gc_expr_type_json_path                constant flow_types_pkg.t_expr_type := 'jsonPath';
   gc_expr_type_plsql_function_body      constant flow_types_pkg.t_expr_type := 'plsqlFunctionBody';  -- vc2 typed functionbody (e.g., date returns vc2)
   gc_expr_type_plsql_expression         constant flow_types_pkg.t_expr_type := 'plsqlExpression';    -- vc2 typed expression  (e.g., date returns vc2)
   gc_expr_type_plsql_raw_function_body  constant flow_types_pkg.t_expr_type := 'plsqlRawFunctionBody';  -- raw functionbody  (e.g., date returns date)
@@ -391,6 +448,7 @@ as
   gc_logging_level_abnormal_events     constant number := 1;
   gc_logging_level_major_events        constant number := 2;
   gc_logging_level_routine             constant number := 4;
+  gc_logging_level_ai_explainability   constant number := 7;
   gc_logging_level_full                constant number := 8;
 
 -- Config Parameter Keys
@@ -425,6 +483,7 @@ as
   gc_config_license_key                 constant varchar2(50 char) := 'license_key';
   gc_config_licensed_to                 constant varchar2(50 char) := 'licensed_to';
   gc_config_license_expiry_date         constant varchar2(50 char) := 'license_expiry_date';
+  gc_config_monaco_editor_version       constant varchar2(50 char) := 'monaco_editor_version';
 
 
 -- Config Parameter Valid Values (when not true / false or numeric)
@@ -433,6 +492,8 @@ as
   gc_config_logging_level_standard           constant varchar2(2000 char) := 'standard';    -- instances and tasks
   gc_config_logging_level_secure             constant varchar2(2000 char) := 'secure';      -- standard + diagram changes
   gc_config_logging_level_full               constant varchar2(2000 char) := 'full';        -- secure + variable changes
+
+  
   gc_config_engine_app_mode_dev              constant varchar2(2000 char) := 'development';
   gc_config_engine_app_mode_prod             constant varchar2(2000 char) := 'production';
   gc_config_dup_step_prevention_legacy       constant varchar2(2000 char) := 'legacy';      -- null step key allowed

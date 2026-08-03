@@ -98,29 +98,61 @@ as
 
   procedure run_task_script
   (
-    pi_prcs_id  in flow_processes.prcs_id%type
-  , pi_sbfl_id  in flow_subflows.sbfl_id%type
+    pi_sbfl_rec in flow_subflows%rowtype
   , pi_objt_id  in flow_objects.objt_id%type
-  , pi_step_key in flow_subflows.sbfl_step_key%type default null
   )
   as
     l_use_apex_exec boolean := false;
     l_plsql_code    clob;
     l_do_autobind   boolean := false;
+    l_input_parameter_definitions clob;
+    l_input_parameters            clob;
 
     l_sql_parameters apex_exec.t_parameters;
   begin
     apex_debug.enter 
     ( 'run_task_script'
     , 'pi_objt_id', pi_objt_id
+    , 'pi_sbfl_id', pi_sbfl_rec.sbfl_id
     );
 
-    flow_globals.set_context 
-    ( pi_prcs_id      => pi_prcs_id
-    , pi_sbfl_id      => pi_sbfl_id 
-    , pi_step_key     => pi_step_key
-    , pi_scope        => flow_engine_util.get_scope ( p_process_id => pi_prcs_id, p_subflow_id => pi_sbfl_id)
-    , pi_loop_counter => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_id)
+    -- AHSP starts may provide precomputed input parameters. For standard PL/SQL tasks,
+    -- compute them from the BPMN definitions at execution time.
+    l_input_parameters := pi_sbfl_rec.sbfl_task_input_parameters;
+
+    if l_input_parameters is null then
+      l_input_parameter_definitions := flow_parameters.get_input_parameter_definitions
+                                       ( pi_objt_id => pi_objt_id );
+
+      if l_input_parameter_definitions is not null
+         and l_input_parameter_definitions is json then
+        l_input_parameters := flow_parameters.process_input_parameters
+                              ( pi_parameter_definitions => l_input_parameter_definitions
+                              , pi_user_input_data       => null
+                              , pi_process_id            => pi_sbfl_rec.sbfl_prcs_id
+                              , pi_subflow_id            => pi_sbfl_rec.sbfl_id
+                              , pi_scope                 => pi_sbfl_rec.sbfl_scope
+                              , pi_allow_user_input      => (pi_sbfl_rec.sbfl_is_adhoc = flow_constants_pkg.gc_true)
+                              );
+
+        update flow_subflows
+           set sbfl_task_input_parameters = l_input_parameters
+         where sbfl_id = pi_sbfl_rec.sbfl_id;
+      end if;
+    end if;
+
+    flow_globals.set_context
+    ( pi_prcs_id          => pi_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id          => pi_sbfl_rec.sbfl_id
+    , pi_step_key         => pi_sbfl_rec.sbfl_step_key
+    , pi_scope            => flow_engine_util.get_scope ( p_process_id => pi_sbfl_rec.sbfl_prcs_id, p_subflow_id => pi_sbfl_rec.sbfl_id)
+    , pi_loop_counter     => flow_engine_util.get_loop_counter (pi_sbfl_id => pi_sbfl_rec.sbfl_id)
+    , pi_input_parameters => l_input_parameters
+    );
+
+    apex_debug.message
+    ( p_message => 'run_task_script input parameters JSON (first 2000 chars): %0'
+    , p0        => dbms_lob.substr(l_input_parameters, 2000, 1)
     );
 
     get_runner_config
@@ -133,10 +165,10 @@ as
 
     flow_proc_vars_int.do_substitution
     (
-      pi_prcs_id  => pi_prcs_id
-    , pi_sbfl_id  => pi_sbfl_id
+      pi_prcs_id  => pi_sbfl_rec.sbfl_prcs_id
+    , pi_sbfl_id  => pi_sbfl_rec.sbfl_id
     , pi_scope    => flow_globals.scope
-    , pi_step_key => pi_step_key
+    , pi_step_key => pi_sbfl_rec.sbfl_step_key
     , pio_string  => l_plsql_code
     );
 
@@ -144,9 +176,9 @@ as
       -- bind in process variables rather than APEX session state
       l_sql_parameters := flow_proc_vars_int.get_parameter_list
                           ( pi_expr       => l_plsql_code
-                          , pi_prcs_id     => pi_prcs_id
-                          , pi_sbfl_id    => pi_sbfl_id
-                          , pi_step_key   => pi_step_key
+                          , pi_prcs_id     => pi_sbfl_rec.sbfl_prcs_id
+                          , pi_sbfl_id    => pi_sbfl_rec.sbfl_id
+                          , pi_step_key   => pi_sbfl_rec.sbfl_step_key
                           , pi_scope      => flow_globals.scope
                           );
     end if;
@@ -163,6 +195,18 @@ as
       (
         p_plsql_code => l_plsql_code
       );
+    end if;
+
+    apex_debug.message
+    ( p_message => 'run_task_script output parameters JSON (first 2000 chars): %0'
+    , p0        => dbms_lob.substr(flow_globals.get_output_parameters, 2000, 1)
+    );
+               
+    -- Save output parameters back to the database if any were set
+    if flow_globals.get_output_parameters is not null then
+      update flow_subflows
+         set sbfl_task_output_parameters = flow_globals.get_output_parameters
+       where sbfl_id = pi_sbfl_rec.sbfl_id;
     end if;
 
   exception
@@ -188,11 +232,22 @@ as
       );
       raise flow_globals.throw_bpmn_error_event;
     when others then
-      apex_debug.error
-      (
-        p_message => 'Error during flow_plsql_runner_pkg.run_task_script. SQLERRM: %s'
-      , p0        => sqlerrm
-      );
+      -- common error is that l_plsql_code is missing a final semicolon. Test if final char is a semicolon and give a helpful message if not.
+      if l_plsql_code is not null and dbms_lob.substr(l_plsql_code,-1) <> ';' then
+        apex_debug.error
+        (
+          p_message => 'Error during flow_plsql_runner_pkg.run_task_script. Possible missing semicolon at end of PL/SQL code. Code: "%1" SQLERRM: %0'
+        , p0        => sqlerrm
+        , p1        => l_plsql_code
+        );
+      else
+        apex_debug.error
+        (
+          p_message => 'Error during flow_plsql_runner_pkg.run_task_script. Code: "%1" SQLERRM: %0'
+        , p0        => sqlerrm
+        , p1        => l_plsql_code
+        );
+      end if;
       raise e_plsql_script_failed;
   end run_task_script;
 

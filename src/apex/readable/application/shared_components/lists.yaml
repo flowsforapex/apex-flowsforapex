@@ -5,7 +5,7 @@
     name: P8_SUBFLOW_ROW_ACTION_MENU
 
   subscription: 
-    version-number: 3106868787
+    version-number: 8210715764
 
   source: 
     type: Static Values
@@ -313,6 +313,44 @@
       1.: rewind-sub-menu
 
   - # ====== Entry: - ============================================
+    id: 20034198287474214
+    label: 
+      label: '-'
+
+    layout: 
+      sequence: 65
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Adhoc Activities =============================
+    id: 20034469041486139
+    label: 
+      label: Adhoc Activities
+
+    icon: 
+      image/icon-css-classes: fa-box-arrow-in-east
+
+    layout: 
+      sequence: 62
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: true
+      1.: open-adhoc-activities
+
+  - # ====== Entry: - ============================================
     id: 73474529421861842
     label: 
       label: '-'
@@ -440,7 +478,7 @@
     name: P9_CONFIGURATION_PAGES
 
   subscription: 
-    version-number: 3770182256
+    version-number: 8547403504
 
   source: 
     type: Static Values
@@ -709,6 +747,36 @@
       translatable: false
       1.: AI Prompts and Quick Actions
 
+    security: 
+      authorization-scheme: Enterprise Edition # 29951042215468222
+
+  - # ====== Entry: AI Prompts ===================================
+    id: 29949648470424662
+    label: 
+      label: AI Prompts
+
+    icon: 
+      image/icon-css-classes: fa-ai
+
+    layout: 
+      sequence: 101
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: "javascript:apex.theme.openRegion('enterprise-edition-dg')"
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: AI Prompts and Quick Actions
+
+    security: 
+      authorization-scheme: '{Not Enterprise Edition}' # 29951042215468222
+
 - # ====== List: P8_SUBFLOW_HEADER_ACTION_MENU =================
   id: 4409050172512221
   identification: 
@@ -857,7 +925,7 @@
     name: P8_ACTION_MENU
 
   subscription: 
-    version-number: 1842508720
+    version-number: 5225303820
 
   source: 
     type: Static Values
@@ -1149,6 +1217,24 @@
 
     user-defined-attributes: 
       translatable: false
+
+  - # ====== Entry: Set Logging Level ============================
+    id: 20128556570285492
+    label: 
+      label: Set Logging Level
+
+    icon: 
+      image/icon-css-classes: fa-bug
+
+    layout: 
+      sequence: 55
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+      1.: set-process-logging-level
 
   - # ====== Entry: Display Setting ==============================
     id: 46154425883410953
@@ -2251,7 +2337,7 @@
     name: Desktop Navigation Menu
 
   subscription: 
-    version-number: 2163469949
+    version-number: 8185285865
 
   source: 
     type: Static Values
@@ -2291,7 +2377,7 @@
       label: Flow Management
 
     icon: 
-      image/icon-css-classes: fa-sitemap-horizontal
+      image/icon-css-classes: fa-workflow
 
     layout: 
       sequence: 15
@@ -2313,6 +2399,38 @@
 
     user-defined-attributes: 
       translatable: false
+
+  - # ====== Entry: Message Start Listeners ======================
+    id: 22334385039326188
+    label: 
+      label: Message Start Listeners
+
+    icon: 
+      image/icon-css-classes: fa-envelope-clock
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 24
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:24:&SESSION.::&DEBUG.::::'
+        page: 24 # Message Start Listeners
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Function Body
+      language: PL/SQL
+      pl/sql-function-body: return flow_apex_env.ee;
 
   - # ====== Entry: Dashboard ====================================
     id: 34586567175532090
@@ -2347,7 +2465,7 @@
       label: Flow Monitor
 
     icon: 
-      image/icon-css-classes: fa-sequence
+      image/icon-css-classes: fa-gantt-chart
 
     layout: 
       sequence: 30

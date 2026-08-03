@@ -95,9 +95,13 @@
           if (l_user_style_id is not null ) then
               begin
                   select name
-                  into l_user_style
-                  from apex_application_theme_styles
-                  where theme_style_id = l_user_style_id;
+                    into l_user_style
+                    from apex_application_theme_styles ts
+                    join apex_workspaces w
+                      on w.workspace = ts.workspace
+                     and w.workspace_id = :workspace_id
+                   where theme_style_id = l_user_style_id
+                     and ts.application_id = :app_id;
               exception
                   when no_data_found
                   then l_user_style := case :THEME_PLUGIN_CLASS when 'FLOWS' then 'Vita' else 'Vita - Dark' end;
@@ -165,7 +169,7 @@
     point: Before Header
 
   subscription: 
-    version-number: 1760504900
+    version-number: 4152201753
 
 - # ====== Application Process: SET_INIT_THEME_MODE ============
   id: 29402085585388580

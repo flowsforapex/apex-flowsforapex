@@ -20,6 +20,7 @@ PROMPT >> Engine
 @plsql/flow_message_flow.pks
 @plsql/flow_message_util.pks
 @plsql/flow_message_util_ee.pks
+@plsql/flow_async_tasks_ee.pks
 @plsql/flow_api_pkg.pks
 @plsql/flow_engine_util.pks
 @plsql/flow_gateways.pks
@@ -29,6 +30,9 @@ PROMPT >> Engine
 @plsql/flow_timers_pkg.pks
 @plsql/flow_instances.pks
 @plsql/flow_instances_util_ee.pks
+@plsql/flow_adhoc_subprocesses_util.pks
+@plsql/flow_adhoc_subprocesses_core.pks
+@plsql/flow_adhoc_subprocesses_ai.pks
 @plsql/flow_rewind.pks
 @plsql/flow_engine.pks
 @plsql/flow_settings.pks
@@ -36,11 +40,13 @@ PROMPT >> Engine
 @plsql/flow_proc_vars_int.pks
 @plsql/flow_db_exec.pks
 @plsql/flow_process_vars.pks
+@plsql/flow_parameters.pks
 @plsql/flow_expressions.pks
 @plsql/flow_usertask_pkg.pks
 @plsql/flow_plsql_runner_pkg.pks
 @plsql/flow_apex_session.pks
 @plsql/flow_subprocesses.pks
+@plsql/flow_adhoc_subprocesses.pks
 @plsql/flow_call_activities.pks
 @plsql/flow_logging.pks
 @plsql/flow_globals.pks
@@ -48,6 +54,7 @@ PROMPT >> Engine
 @plsql/flow_diagram.pks
 @plsql/flow_log_admin.pks
 @plsql/flow_admin_api.pks
+@plsql/flow_admin_api_ee.pks
 @plsql/flow_statistics.pks
 @plsql/flow_iteration.pks
 @plsql/flow_simple_form_template.pks
@@ -69,6 +76,7 @@ PROMPT >> Installing Views
 @views/flow_subflows_vw.sql
 @views/flow_diagrams_parsed_lov.sql
 @views/flow_diagram_categories_lov.sql
+@views/flow_adhoc_activities_vw.sql
 @views/flow_apex_task_inbox_vw.sql
 @views/flow_apex_task_inbox_my_tasks_vw.sql
 @views/flow_apex_my_combined_task_list_vw.sql
@@ -78,7 +86,9 @@ PROMPT >> Installing Views
 @views/flow_instance_connections_lov.sql
 @views/flow_instance_gateways_lov.sql
 @views/flow_instance_scopes_vw.sql
+@views/flow_instance_summary_json_vw.sql
 @views/flow_diagrams_vw.sql
+@views/flow_object_input_schema_vw.sql
 @views/flow_instance_diagrams_lov.sql
 @views/flow_instance_events_vw.sql
 @views/flow_diagrams_instanciated_lov.sql
@@ -91,6 +101,7 @@ PROMPT >> Installing Views
 @views/flow_rest_processes_vw.sql
 @views/flow_rest_step_event_log_vw.sql
 @views/flow_rest_subflows_vw.sql
+@views/flow_startable_adhoc_activities_vw.sql
 @views/flow_viewer_vw.sql
 @views/flow_variable_event_timeline_vw
 
@@ -99,6 +110,7 @@ PROMPT >>
 PROMPT >> Engine
 @plsql/flow_proc_vars_int.pkb
 @plsql/flow_process_vars.pkb
+@plsql/flow_parameters.pkb
 @plsql/flow_expressions.pkb
 @plsql/flow_settings.pkb
 @plsql/flow_db_exec.pkb
@@ -163,6 +175,7 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0008_subflows_vw.sql
 @views/engine-app/flow_p0008_variables_vw.sql
 @views/engine-app/flow_p0008_message_subscriptions_vw.sql
+@views/engine-app/flow_p0024_message_start_listeners_vw.sql
 @views/engine-app/flow_p0010_instances_vw.sql
 @views/engine-app/flow_p0013_attributes_vw.sql
 @views/engine-app/flow_p0013_expressions_vw.sql
@@ -178,7 +191,10 @@ PROMPT >> Page Views
 @views/engine-app/flow_p0014_variable_log_vw.sql
 @views/engine-app/flow_p0019_vw.sql
 @views/engine-app/flow_p0020_instance_timeline_vw.sql
-
+@views/engine-app/flow_p0022_adhoc_activities_vw.sql
+@views/engine-app/flow_p0022_startable_adhoc_activities_vw.sql
+@views/engine-app/flow_p0022_started_adhoc_activities_vw.sql
+@views/engine-app/flow_p0024_message_start_listeners_vw.sql
 
 PROMPT >> Global App Package Body
 @plsql/engine-app/flow_engine_app_api.pkb

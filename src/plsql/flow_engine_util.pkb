@@ -138,15 +138,30 @@ as
   end check_subflow_exists;
 
 function get_subprocess_parent_subflow
-  ( p_process_id in flow_processes.prcs_id%type
-  , p_subflow_id in flow_subflows.sbfl_id%type
-  , p_current    in flow_objects.objt_bpmn_id%type -- an object in the subprocess
+  ( p_sbfl_info   in flow_subflows%rowtype
+  , p_current     in flow_objects.objt_bpmn_id%type -- an object in the subprocess
   ) return flow_types_pkg.t_subflow_context
   is
     l_parent_subflow          flow_types_pkg.t_subflow_context;
-    l_parent_subproc_activity flow_objects.objt_bpmn_id%type;
   begin
-
+    -- should return the subprocess that called this subprocess, call activity, 
+    -- or adhoc subprocess
+    case p_sbfl_info.sbfl_is_adhoc 
+    when flow_constants_pkg.gc_true then
+      -- get parent subflow for an adhoc subprocess
+      select calling_sbfl.sbfl_id
+           , calling_sbfl.sbfl_step_key
+           , calling_sbfl.sbfl_scope
+        into l_parent_subflow.sbfl_id
+           , l_parent_subflow.step_key
+           , l_parent_subflow.scope
+        from flow_subflows calling_sbfl
+       where calling_sbfl.sbfl_id      = p_sbfl_info.sbfl_sbfl_id
+         and calling_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
+         ;
+      return l_parent_subflow;
+    else 
+    -- get parent subflow for a subprocess or a call_activity
     select calling_sbfl.sbfl_id
          , calling_sbfl.sbfl_step_key
          , calling_sbfl.sbfl_scope
@@ -157,9 +172,10 @@ function get_subprocess_parent_subflow
       join flow_subflows called_sbfl
         on called_sbfl.sbfl_calling_sbfl = calling_sbfl.sbfl_id
        and called_sbfl.sbfl_prcs_id = calling_sbfl.sbfl_prcs_id
-     where called_sbfl.sbfl_id = p_subflow_id
-       and called_sbfl.sbfl_prcs_id = p_process_id
+     where called_sbfl.sbfl_id = p_sbfl_info.sbfl_id
+       and called_sbfl.sbfl_prcs_id = p_sbfl_info.sbfl_prcs_id
        ;
+    end case;
     return l_parent_subflow;
   exception
       when no_data_found then
@@ -410,7 +426,10 @@ end get_object_tag;
     , p_iteration_var             in flow_process_variables.prov_var_name%type default null
     , p_iteration_var_scope       in flow_subflows.sbfl_scope%type default null
     , p_iter_id                   in flow_iterations.iter_id%type default null    
-    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null                 
+    , p_iterated_object           in flow_iterated_objects.iobj_id%type default null    
+    , p_is_adhoc                  in boolean default false 
+    , p_hide_in_task_list         in varchar2 default null  
+    , p_task_input_parameters     in clob default null          
     ) return flow_types_pkg.t_subflow_context
   is 
     l_timestamp           flow_subflows.sbfl_became_current%type;
@@ -425,6 +444,7 @@ end get_object_tag;
     l_level_parent        flow_subflows.sbfl_id%type := 0;
     l_is_new_level        varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_is_new_scope        varchar2(1 byte) := flow_constants_pkg.gc_false;
+    l_is_adhoc            varchar2(1 byte) := flow_constants_pkg.gc_false;
     l_follows_ebg         flow_subflows.sbfl_is_following_ebg%type;
     l_new_iter_id         flow_iterations.iter_id%type;
   begin
@@ -442,14 +462,24 @@ end get_object_tag;
     if p_follows_ebg then
       l_follows_ebg := flow_constants_pkg.gc_true;
     end if;
+    if p_is_adhoc then
+      l_is_adhoc := flow_constants_pkg.gc_true;
+    end if;
 
     if p_parent_subflow is  null then
     -- initial subflow in process.   Get starting Lane info. (could be null)
     -- database 23.3 bug 35862529 means this will return NDF if there are no lanes so we handle (ignore) the NDF
-      begin
-        select lane_objt.objt_bpmn_id
+    -- database 23.8 bug 36838600 requires that you add the column aliases isRole and role on the 3rd and 4th line of 
+    --                            select list (or get ORA-600 [qolTextIdn:1])
+    -- database 23.10 (aka 26.0)  bug introduced while fixing 33561572 means we have to add an optimiser instruction using 
+    --                            fix_control to disable that fix to avoid another ORA-600 [qolTextIdn:1] 
+    --                            adds - ( /*+ OPT_PARAM('_fix_control' '33561572:0') */ )
+
+      begin 
+        select /*+ OPT_PARAM('_fix_control' '33561572:0') */
+               lane_objt.objt_bpmn_id
              , lane_objt.objt_name
-             , lane_objt.objt_attributes."apex"."isRole" isrole
+             , lane_objt.objt_attributes."apex"."isRole" isRole
              , lane_objt.objt_attributes."apex"."role"   role
           into l_lane
              , l_lane_name
@@ -469,7 +499,7 @@ end get_object_tag;
     else
     -- new subflow in existing process
     -- get process level, diagram level, scope, calling subflow for copy down unless this is the initial subflow in a process
-      select sbfl.sbfl_process_level
+      select coalesce ( ahsp.ahsp_process_level, sbfl.sbfl_process_level)
            , sbfl.sbfl_diagram_level
            , sbfl.sbfl_scope
            , sbfl.sbfl_lane
@@ -478,7 +508,11 @@ end get_object_tag;
            , sbfl.sbfl_lane_role
            , case l_is_new_level
                 when 'Y' then p_parent_subflow  
-                when 'N' then sbfl.sbfl_calling_sbfl
+                when 'N' then 
+                    case l_is_adhoc
+                      when 'Y' then p_parent_sbfl_proc_level
+                      else sbfl.sbfl_calling_sbfl
+                    end
              end 
            , coalesce(p_iter_id, sbfl_iter_id)
         into l_process_level
@@ -491,6 +525,8 @@ end get_object_tag;
            , l_level_parent
            , l_new_iter_id
         from flow_subflows sbfl
+        left join flow_adhoc_subprocs ahsp
+          on sbfl.sbfl_id = ahsp.ahsp_sbfl_id
        where sbfl.sbfl_id = p_parent_subflow;
     end if;
 
@@ -526,6 +562,9 @@ end get_object_tag;
          , sbfl_iteration_var_scope
          , sbfl_iter_id
          , sbfl_iobj_id
+         , sbfl_is_adhoc
+         , sbfl_hide_in_task_list
+         , sbfl_task_input_parameters
          )
     values
          ( p_process_id
@@ -559,6 +598,12 @@ end get_object_tag;
          , p_iteration_var_scope
          , l_new_iter_id  
          , p_iterated_object         
+         , l_is_adhoc 
+         , p_hide_in_task_list
+         , case l_is_adhoc
+             when 'Y' then p_task_input_parameters
+             else null
+           end
          )
     returning sbfl_id, sbfl_step_key, sbfl_route, sbfl_scope into l_new_subflow_context
     ;                                 
@@ -586,7 +631,7 @@ end get_object_tag;
     end if;
 
     apex_debug.info
-    ( p_message => '... New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7'
+    ( p_message => '... New Subflow started.  Process: %0 Subflow: %1 Step Key: %2 Scope: %3 Lane: %4 ( %5 ) LoopCounter: %6. Iter_id: %7 Hide: %8'
     , p0        => p_process_id
     , p1        => l_new_subflow_context.sbfl_id
     , p2        => l_new_subflow_context.step_key
@@ -595,6 +640,7 @@ end get_object_tag;
     , p5        => l_lane_name
     , p6        => p_loop_counter
     , p7        => l_new_iter_id
+    , p8        => p_hide_in_task_list
     );
     return l_new_subflow_context;
   end subflow_start;
@@ -882,7 +928,7 @@ end get_object_tag;
   begin
     apex_debug.info( p_message => '-- Joining JSON Array to CLOB, size %0', p0 => p_json_array.get_size );
     for i in 0..p_json_array.get_size - 1 loop
-      l_return := l_return || p_json_array.get_string( i ) || apex_application.lf;
+      l_return := l_return || p_json_array.get_clob( i ) || apex_application.lf;
     end loop;
     return l_return;
   end json_array_join;
@@ -957,7 +1003,6 @@ end get_object_tag;
 
   end clob_to_blob;
 
-
   -- initialise step key enforcement parameter
 
   begin
@@ -966,7 +1011,6 @@ end get_object_tag;
                                 , p_default_value => flow_constants_pkg.gc_config_default_dup_step_prevention 
                                 )
                                 = flow_constants_pkg.gc_config_dup_step_prevention_strict
-                             );
-
+                             );  
 end flow_engine_util;
 /

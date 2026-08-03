@@ -215,6 +215,7 @@ create or replace package body flow_logging as
   , p_iteration_status  in flow_types_pkg.t_iteration_status default null
   , p_matching_object   in flow_objects.objt_bpmn_id%type default null
   , p_notes             in flow_subflow_log.sflg_notes%type default null
+  , p_log_to_subflow_log in boolean default true
   )
   is 
     l_notes    varchar2(20);
@@ -225,31 +226,33 @@ create or replace package body flow_logging as
       l_notes := null;
     end if;
     -- current instance status / progress logging
-    insert into flow_subflow_log sflg
-    ( sflg_prcs_id
-    , sflg_objt_id
-    , sflg_sbfl_id
-    , sflg_step_key
-    , sflg_last_updated
-    , sflg_dgrm_id
-    , sflg_diagram_level
-    , sflg_matching_object
-    , sflg_notes
-    , sflg_iter_id
-    )
-    select p_process_id
-         , p_completed_object
-         , p_subflow_id
-         , sbfl.sbfl_step_key
-         , sysdate
-         , sbfl.sbfl_dgrm_id
-         , sbfl.sbfl_diagram_level
-         , p_matching_object
-         , p_notes
-         , sbfl.sbfl_iter_id
-      from flow_subflows sbfl
-     where sbfl.sbfl_id = p_subflow_id
-    ;
+    if p_log_to_subflow_log then
+      insert into flow_subflow_log sflg
+      ( sflg_prcs_id
+      , sflg_objt_id
+      , sflg_sbfl_id
+      , sflg_step_key
+      , sflg_last_updated
+      , sflg_dgrm_id
+      , sflg_diagram_level
+      , sflg_matching_object
+      , sflg_notes
+      , sflg_iter_id
+      )
+      select p_process_id
+           , p_completed_object
+           , p_subflow_id
+           , sbfl.sbfl_step_key
+           , sysdate
+           , sbfl.sbfl_dgrm_id
+           , sbfl.sbfl_diagram_level
+           , p_matching_object
+           , p_notes
+           , sbfl.sbfl_iter_id
+        from flow_subflows sbfl
+       where sbfl.sbfl_id = p_subflow_id
+        ;
+    end if;
 
     -- system event logging
     if event_logging_level(p_process_id) >= flow_constants_pkg.gc_logging_level_abnormal_events

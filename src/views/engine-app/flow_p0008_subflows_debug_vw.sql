@@ -72,3 +72,31 @@ as
     from flow_subflows_vw sbfl
 with read only
 ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Debug subflow view exposing all internal columns, status icons, and action controls (not installed by default)'
+  )]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (sbfl_current annotations (add content 'Display name of the current BPMN object (from sbfl_current_name)'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (calling_object annotations (add content 'Display name of the calling object or Main Diagram for the root level'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (sbfl_starting_object annotations (add content 'Display name of the subflow starting object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (sbfl_status_icon annotations (add content 'FA icon CSS class for the subflow status'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (actions annotations (add content 'Null placeholder for inline actions column'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (checkbox annotations (add content 'APEX checkbox widget with status, process, step key, and reservation data attributes'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (quick_action_icon annotations (add content 'FA icon CSS class for the applicable quick action'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (quick_action_label annotations (add content 'Translated label for the quick action button'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (quick_action annotations (add content 'Action identifier string used by the JavaScript action handler'))]';
+    execute immediate q'[alter view flow_p0008_subflows_debug_vw modify (timer_status_info annotations (add content 'Formatted scheduled timer time for subflows waiting for a timer'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

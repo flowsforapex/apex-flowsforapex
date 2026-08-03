@@ -3,6 +3,7 @@ as
   select sbfl.sbfl_id
        , sbfl.sbfl_prcs_id
        , sbfl.sbfl_current_name as sbfl_current
+       , sbfl.sbfl_current as sbfl_current_bpmn_id
        , sbfl.sbfl_iteration_path
        , sbfl.sbfl_step_key
        , sbfl.sbfl_sbfl_dgrm_id
@@ -23,25 +24,26 @@ as
        , sbfl.sbfl_last_update at time zone sessiontimezone as sbfl_last_update
        , sbfl.sbfl_status
        , case sbfl.sbfl_status
-             when 'running' then 'fa-play-circle-o'
-             when 'created' then 'fa-plus-circle-o'
-             when 'completed' then 'fa-check-circle-o'
-             when 'terminated' then 'fa-stop-circle-o'
-             when 'suspended' then 'fa-pause-circle-o'
-             when 'error' then 'fa-exclamation-circle-o'
-             when 'split' then 'fa fa-share-alt'
-             when 'in subprocess' then 'fa fa-share-alt'
-             when 'in call activity' then 'fa fa-share-alt'
-             when 'waiting at gateway' then 'fa fa-hand-stop-o'
-             when 'waiting for timer' then 'fa fa-clock-o'
-             when 'waiting for event' then 'fa fa-hand-stop-o'
-             when 'waiting for approval' then 'fa fa-question-square-o'
-             when 'waiting for message' then 'fa fa-envelope-o'
-             when 'waiting iterations' then 'fa fa-align-justify fa-rotate-90'
-             when 'iterating' then 'fa fa-align-justify fa-rotate-90'
-             when 'delete on resume' then 'fa fa-trash fam-pause fam-is-danger'
-             when 'restart on resume' then 'fa fa-pause-circle-o'
-             when 'canceling task' then 'fa fa-trash fam-play fam-is-danger'
+             when 'running'             then 'fa-play-circle-o'
+             when 'created'             then 'fa-plus-circle-o'
+             when 'completed'           then 'fa-check-circle-o'
+             when 'terminated'          then 'fa-stop-circle-o'
+             when 'suspended'           then 'fa-pause-circle-o'
+             when 'error'               then 'fa-exclamation-circle-o'
+             when 'split'               then 'fa-share-alt'
+             when 'in subprocess'       then 'fa-share-alt'
+             when 'in call activity'    then 'fa-share-alt'
+             when 'in adhoc subprocess' then 'fa-box-arrow-in-east'
+             when 'waiting at gateway'  then 'fa-hand-stop-o'
+             when 'waiting for timer'   then 'fa-clock-o'
+             when 'waiting for event'   then 'fa-hand-stop-o'
+             when 'waiting for approval'then 'fa-question-square-o'
+             when 'waiting for message' then 'fa-envelope-o'
+             when 'waiting iterations'  then 'fa-align-justify fa-rotate-90'
+             when 'iterating'           then 'fa-align-justify fa-rotate-90'
+             when 'delete on resume'    then 'fa-trash fam-pause fam-is-danger'
+             when 'restart on resume'   then 'fa-pause-circle-o'
+             when 'canceling task'      then 'fa-trash fam-play fam-is-danger'
          end as sbfl_status_icon
        , sbfl.sbfl_priority
        , sbfl.sbfl_due_on
@@ -57,18 +59,52 @@ as
             when sbfl.sbfl_status = 'error' then 'fa-redo-arrow'
             when sbfl.sbfl_status = 'running' then 'fa-sign-out'
             when sbfl.sbfl_status = 'waiting for timer' then 'fa-clock-o'
+            when sbfl.sbfl_status = 'in adhoc subprocess' then 'fa-box-arrow-in-east'
           end as quick_action_icon 
         , case 
             when sbfl.sbfl_status = 'error' then apex_lang.message('APP_RESTART_STEP')
             when sbfl.sbfl_status = 'running' then apex_lang.message('APP_COMPLETE_STEP')
             when sbfl.sbfl_status = 'waiting for timer' then apex_lang.message('APP_RESCHEDULE_TIMER')
+            when sbfl.sbfl_status = 'in adhoc subprocess' then apex_lang.message('APP_ADHOC_DETAILS')
           end as quick_action_label 
         , case 
             when sbfl.sbfl_status = 'error' then 'restart-step'
             when sbfl.sbfl_status = 'running' then 'complete-step'
             when sbfl.sbfl_status = 'waiting for timer' then 'reschedule-timer'
+            when sbfl.sbfl_status = 'in adhoc subprocess' then 'open-adhoc-activities'
           end as quick_action 
         , case when sbfl.sbfl_status = 'waiting for timer' then ' @ ' || sbfl.timr_start_on at time zone sessiontimezone end as timer_status_info
     from flow_subflows_vw sbfl
 with read only
 ;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0008_subflows_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Subflow list with status icons, quick action controls, and checkbox widget for engine app page 8'
+  )]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_current annotations (add content 'Display name of the current BPMN object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_current_bpmn_id annotations (add content 'Raw BPMN ID of the current object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (calling_object annotations (add content 'Display name of the calling object or Main Diagram for the root level'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_starting_object annotations (add content 'Display name of the subflow starting object'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_status_icon annotations (add content 'FA icon CSS class for the subflow status'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_timr_start_on annotations (add content 'Scheduled timer start time in session timezone'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (sbfl_current_lane annotations (add content 'Display name of the lane where the current step is executing'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (actions annotations (add content 'Null placeholder for inline actions column'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (checkbox annotations (add content 'APEX checkbox widget with status, process, step key, and reservation data attributes'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (quick_action_icon annotations (add content 'FA icon CSS class for the quick action'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (quick_action_label annotations (add content 'Translated label for the quick action button'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (quick_action annotations (add content 'Action identifier string for the JavaScript handler'))]';
+    execute immediate q'[alter view flow_p0008_subflows_vw modify (timer_status_info annotations (add content 'Formatted timer time for subflows waiting for a timer'))]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

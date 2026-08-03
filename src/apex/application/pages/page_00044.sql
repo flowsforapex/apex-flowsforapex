@@ -18,6 +18,7 @@ wwv_flow_imp_page.create_page(
 ,p_step_title=>'Configuration - AI Prompts'
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
+,p_required_role=>wwv_flow_imp.id(29951042215468222)
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 );

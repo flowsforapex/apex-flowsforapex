@@ -412,6 +412,74 @@ The `flow_admin_api` package gives you access to the Flows for APEX engine admin
         raise;
   end flow_force_next_step;
 
+  procedure set_process_logging_level
+  ( p_process_id     in flow_processes.prcs_id%type
+  , p_logging_level  in flow_processes.prcs_logging_level%type
+  )
+  is
+    l_session_id   number;
+  begin     
+    if v('APP_SESSION') is null then
+      l_session_id := flow_apex_session.create_api_session (p_process_id => p_process_id);
+    end if;   
+
+    flow_instances.set_logging_level ( p_process_id     => p_process_id
+                                    , p_logging_level  => p_logging_level
+                                    );
+    if l_session_id is not null then
+      flow_apex_session.delete_session (p_session_id => l_session_id );
+    end if;   
+  exception
+      when others then
+        if l_session_id is not null then
+          flow_apex_session.delete_session (p_session_id => l_session_id );
+        end if;
+        raise;
+  end set_process_logging_level;
+
+  function test_ai_connection
+  ( p_ai_interface   in varchar2
+  , p_ai_service     in varchar2 default null
+  , p_ai_provider    in varchar2 default null
+  , p_ai_model       in varchar2 default null
+  , p_prompt         in clob default 'Hello AI World'
+  ) return clob
+  is
+    e_feature_requires_ee exception;
+    l_result          clob;
+    l_error_response  sys.json_object_t;
+  begin
+  $IF flow_apex_env.ee $THEN
+    l_result :=
+      flow_admin_api_ee.test_ai_connection
+      (
+        p_ai_interface => p_ai_interface
+      , p_ai_service   => p_ai_service
+      , p_ai_provider  => p_ai_provider
+      , p_ai_model     => p_ai_model
+      , p_prompt       => p_prompt
+      );
+    return l_result;
+  $ELSE
+    raise e_feature_requires_ee;
+  $END
+  exception
+    when e_feature_requires_ee then
+      l_error_response := sys.json_object_t();
+      l_error_response.put('success', false);
+      l_error_response.put('aiInterface', p_ai_interface);
+      l_error_response.put('errorCode', -20001);
+      l_error_response.put('errorMessage', apex_lang.message('feature-requires-ee'));
+      return l_error_response.to_clob;
+    when others then
+      l_error_response := sys.json_object_t();
+      l_error_response.put('success', false);
+      l_error_response.put('aiInterface', p_ai_interface);
+      l_error_response.put('errorCode', sqlcode);
+      l_error_response.put('errorMessage', apex_lang.message('ai-connection-error'));
+      -- $F4AMESSAGE 'ai-connection-error' || 'AI connection definition incorrect - check your configuration'
+      return l_error_response.to_clob;
+  end test_ai_connection;
 
 end flow_admin_api;
 /

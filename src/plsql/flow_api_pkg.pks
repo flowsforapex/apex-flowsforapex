@@ -417,6 +417,35 @@ begin
 end;
 ```
 **/
+   procedure flow_start_adhoc_activity (
+      p_process_id in flow_processes.prcs_id%type -- Process ID
+,
+      p_subflow_id in flow_subflows.sbfl_id%type -- Subflow ID
+,
+      p_activity_bpmn_id in flow_objects.objt_bpmn_id%type -- BPMN ID of the activity to start
+,
+      p_user_input_parameters in clob default null -- User input parameters as JSON. Will be combined with process variables and static values.
+   ); 
+   /**
+Procedure flow_start_adhoc_activity
+This procedure is used to start an ad-hoc activity within an adhoc sub process.
+
+EXAMPLE
+
+This example will start an ad-hoc activity with BPMN ID 'MyAdHocActivity' in process instance 345, passing in 
+2 parameters 'param1' and 'param2' with values 'value1' and 'value2' respectively.
+
+```sql
+begin
+   flow_api_pkg.flow_start_adhoc_activity(
+        p_process_id            => 345
+      , p_subflow_id            => 3
+      , p_activity_bpmn_id      => 'MyAdHocActivity'
+      , p_user_input_parameters => '{"param1":"value1","param2":"value2"}'
+   );
+end;
+```
+**/
    procedure flow_pause_step (
       p_process_id in flow_processes.prcs_id%type -- Process ID
 ,
@@ -871,6 +900,85 @@ This procedure is used to manually step timers forward in a process instance whe
 EXAMPLE
 ```sql
 flow_api_pkg.step_timers;
+```
+**/
+
+  procedure flow_adhoc_request_ai_decision 
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type  
+  , p_step_key    in flow_subflows.sbfl_step_key%type
+  , p_comment     in varchar2 default 'Manual UI Request'
+  );
+/**
+Procedure flow_adhoc_request_ai_decision
+
+This procedure is used to manually request AI assistance for an adhoc subprocess.
+This can be called from the UI when users want to trigger AI decision-making
+for manual or hybrid control mode subprocesses.
+
+EXAMPLE
+```sql
+flow_api_pkg.flow_adhoc_request_ai_decision(
+  p_process_id => 123,
+  p_subflow_id => 456,
+  p_step_key   => 'A1B2C3',
+  p_comment    => 'User requested AI review'
+);
+```
+**/
+
+  procedure flow_adhoc_approve_recommendation
+  (
+    p_process_id       in flow_processes.prcs_id%type
+  , p_subflow_id       in flow_subflows.sbfl_id%type
+  , p_step_key         in flow_subflows.sbfl_step_key%type
+  , p_asad_id          in flow_adhoc_subproc_ai_decisions.asad_id%type
+  , p_activity_bpmn_id in flow_objects.objt_bpmn_id%type
+  );
+/**
+Procedure flow_adhoc_approve_recommendation
+
+Approves a single AI-recommended activity in recommendation control mode.
+Validates the decision is still pending, extracts pre-filled parameters from
+the AI decision, and starts the activity via the standard adhoc activity path.
+When all startActivity actions in the recommendation set have been approved the
+decision is automatically marked as dispatched.
+
+EXAMPLE
+```sql
+flow_api_pkg.flow_adhoc_approve_recommendation(
+  p_process_id       => 123,
+  p_subflow_id       => 456,
+  p_step_key         => 'A1B2C3',
+  p_asad_id          => 99,
+  p_activity_bpmn_id => 'Activity_CheckBag'
+);
+```
+**/
+
+  procedure flow_adhoc_discard_recommendation
+  (
+    p_process_id  in flow_processes.prcs_id%type
+  , p_subflow_id  in flow_subflows.sbfl_id%type
+  , p_step_key    in flow_subflows.sbfl_step_key%type
+  , p_asad_id     in flow_adhoc_subproc_ai_decisions.asad_id%type
+  );
+/**
+Procedure flow_adhoc_discard_recommendation
+
+Discards a pending AI recommendation in recommendation control mode without
+starting any activities.  The decision is stamped as dispatch_completed so it
+no longer appears on the Startable Activities cards.
+
+EXAMPLE
+```sql
+flow_api_pkg.flow_adhoc_discard_recommendation(
+  p_process_id => 123,
+  p_subflow_id => 456,
+  p_step_key   => 'A1B2C3',
+  p_asad_id    => 99
+);
 ```
 **/
 

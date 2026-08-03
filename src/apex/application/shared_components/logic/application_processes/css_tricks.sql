@@ -32,9 +32,13 @@ wwv_flow_imp_shared.create_flow_process(
 '    if (l_user_style_id is not null ) then',
 '        begin',
 '            select name',
-'            into l_user_style',
-'            from apex_application_theme_styles',
-'            where theme_style_id = l_user_style_id;',
+'              into l_user_style',
+'              from apex_application_theme_styles ts',
+'              join apex_workspaces w',
+'                on w.workspace = ts.workspace',
+'               and w.workspace_id = :workspace_id',
+'             where theme_style_id = l_user_style_id',
+'               and ts.application_id = :app_id;',
 '        exception',
 '            when no_data_found',
 '            then l_user_style := case :THEME_PLUGIN_CLASS when ''FLOWS'' then ''Vita'' else ''Vita - Dark'' end;',
@@ -97,7 +101,7 @@ wwv_flow_imp_shared.create_flow_process(
 '',
 'end;'))
 ,p_process_clob_language=>'PLSQL'
-,p_version_scn=>1760504900
+,p_version_scn=>4152201753
 );
 wwv_flow_imp.component_end;
 end;

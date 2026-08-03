@@ -95,6 +95,33 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_01=>'2'
 ,p_attribute_02=>'NONE'
 );
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(16615446856628250)
+,p_name=>'P34_MONACO_EDITOR_VERSION'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_imp.id(11214749648054909)
+,p_prompt=>'Monaco Editor Version'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_colspan=>2
+,p_field_template=>wwv_flow_imp.id(12495522847445880132)
+,p_item_template_options=>'#DEFAULT#'
+,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'Specify the version of the Monaco Editor which is used in the current APEX instance.',
+'The editor inside the modeler will then hook onto this version of the Monaco Editor.',
+'<br/>',
+'<br/>',
+'Integrated versions for supported APEX releases:',
+'<ul>',
+'<li>APEX 24.1: 0.47.0</li>',
+'<li>APEX 24.2: 0.51.0</li>',
+'<li>APEX 26.1: 0.55.1</li>',
+'</ul>'))
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(3201508723229275)
 ,p_computation_sequence=>70
@@ -108,6 +135,19 @@ wwv_flow_imp_page.create_page_computation(
 '         , p_default_value => flow_constants_pkg.gc_config_default_engine_app_mode',
 '       );'))
 );
+wwv_flow_imp_page.create_page_computation(
+ p_id=>wwv_flow_imp.id(30018851703146801)
+,p_computation_sequence=>80
+,p_computation_item=>'P34_MONACO_EDITOR_VERSION'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'FUNCTION_BODY'
+,p_computation_language=>'PLSQL'
+,p_computation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'return flow_engine_util.get_config_value(',
+'           p_config_key =>  flow_constants_pkg.gc_config_monaco_editor_version',
+'         , p_default_value => null',
+'       );'))
+);
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(3204611384229276)
 ,p_process_sequence=>10
@@ -116,7 +156,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_name=>'Set Settings'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'flow_engine_app_api.set_engine_app_settings(',
-'  pi_engine_app_mode => :P34_ENGINE_APP_MODE',
+'  pi_engine_app_mode       => :P34_ENGINE_APP_MODE',
+', pi_monaco_editor_version => :P34_MONACO_EDITOR_VERSION',
 ');'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'

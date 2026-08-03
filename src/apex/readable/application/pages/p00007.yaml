@@ -3750,15 +3750,30 @@ dynamic-actions:
 
     advanced: 
       initialization-javascript-function: |
-        function( options ) {
-        
-            const quickActions = JSON.parse( apex.items.P7_QUICK_ACTIONS.value );
+        function (options) {
+            const quickActions = JSON.parse(
+                apex.items.P7_QUICK_ACTIONS.value
+            );
         
             for (const element of quickActions) {
-                options.view.quickActions.push( element );
+                options.view.quickActions.push(element);
             }
         
-            apex.debug.log( "options", options);
+            options.useChatContext = (chatModel, chatView) => {
+                const { SUBVIEW_RENDER } = apex.ai.ChatView.events;
+        
+                chatView.on(
+                    SUBVIEW_RENDER,
+                    function onSubviewRender(event, subView) {
+                        if (subView.model.user?.isAi) {
+                            chatView.renderQuickActions();
+                            chatView.off(SUBVIEW_RENDER, onSubviewRender);
+                        }
+                    }
+                );
+            };
+        
+            apex.debug.log("options", options);
             return options;
         }
 

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:apex="https://flowsforapex.org" id="Definitions_90c" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Flows for APEX" exporterVersion="26.1.0">
+  <bpmn:process id="Process_90c_ai_gateways" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Start">
+      <bpmn:outgoing>Flow_start_to_variables</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="SetVariables" name="Set Process Variables">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>user_type</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>ADMIN</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>1</apex:varSequence>
+            <apex:varName>priority_level</apex:varName>
+            <apex:varDataType>NUMBER</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>5</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>2</apex:varSequence>
+            <apex:varName>region</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>NORTH</apex:varExpression>
+          </apex:processVariable>
+          <apex:processVariable>
+            <apex:varSequence>3</apex:varSequence>
+            <apex:varName>timestamp_var</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>2026-03-13 10:00:00</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_start_to_variables</bpmn:incoming>
+      <bpmn:outgoing>Flow_variables_to_inclusive_gw</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_start_to_variables" sourceRef="Start" targetRef="SetVariables" />
+    <bpmn:inclusiveGateway id="InclusiveGateway" name="Inclusive Gateway">
+      <bpmn:incoming>Flow_variables_to_inclusive_gw</bpmn:incoming>
+      <bpmn:outgoing>Flow_to_admin_task</bpmn:outgoing>
+      <bpmn:outgoing>Flow_to_priority_task</bpmn:outgoing>
+      <bpmn:outgoing>Flow_to_north_task</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_variables_to_inclusive_gw" sourceRef="SetVariables" targetRef="InclusiveGateway" />
+    <bpmn:task id="AdminTask" name="Admin Task">
+      <bpmn:incoming>Flow_to_admin_task</bpmn:incoming>
+      <bpmn:outgoing>Flow_admin_to_join</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_to_admin_task" name="Admin User" sourceRef="InclusiveGateway" targetRef="AdminTask" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$user_type = 'ADMIN'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="PriorityTask" name="High Priority Task">
+      <bpmn:incoming>Flow_to_priority_task</bpmn:incoming>
+      <bpmn:outgoing>Flow_priority_to_join</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_to_priority_task" name="High Priority" sourceRef="InclusiveGateway" targetRef="PriorityTask" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$priority_level >= 3</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="NorthTask" name="North Region Task">
+      <bpmn:incoming>Flow_to_north_task</bpmn:incoming>
+      <bpmn:outgoing>Flow_north_to_join</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_to_north_task" name="North Region" sourceRef="InclusiveGateway" targetRef="NorthTask" apex:sequence="30">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$region like '%NORTH%'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:inclusiveGateway id="JoinGateway" name="Join Gateway">
+      <bpmn:incoming>Flow_admin_to_join</bpmn:incoming>
+      <bpmn:incoming>Flow_priority_to_join</bpmn:incoming>
+      <bpmn:incoming>Flow_north_to_join</bpmn:incoming>
+      <bpmn:outgoing>Flow_join_to_routing</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_admin_to_join" sourceRef="AdminTask" targetRef="JoinGateway" />
+    <bpmn:sequenceFlow id="Flow_priority_to_join" sourceRef="PriorityTask" targetRef="JoinGateway" />
+    <bpmn:sequenceFlow id="Flow_north_to_join" sourceRef="NorthTask" targetRef="JoinGateway" />
+    <bpmn:task id="SetRouting" name="Set Routing Variable">
+      <bpmn:extensionElements>
+        <apex:beforeTask>
+          <apex:processVariable>
+            <apex:varSequence>0</apex:varSequence>
+            <apex:varName>routing_decision</apex:varName>
+            <apex:varDataType>VARCHAR2</apex:varDataType>
+            <apex:varExpressionType>static</apex:varExpressionType>
+            <apex:varExpression>APPROVE</apex:varExpression>
+          </apex:processVariable>
+        </apex:beforeTask>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_join_to_routing</bpmn:incoming>
+      <bpmn:outgoing>Flow_routing_to_exclusive_gw</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_join_to_routing" sourceRef="JoinGateway" targetRef="SetRouting" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway" name="Exclusive Gateway" default="Flow_to_default">
+      <bpmn:incoming>Flow_routing_to_exclusive_gw</bpmn:incoming>
+      <bpmn:outgoing>Flow_to_approve</bpmn:outgoing>
+      <bpmn:outgoing>Flow_to_reject</bpmn:outgoing>
+      <bpmn:outgoing>Flow_to_default</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_routing_to_exclusive_gw" sourceRef="SetRouting" targetRef="ExclusiveGateway" />
+    <bpmn:task id="ApproveTask" name="Approve Task">
+      <bpmn:incoming>Flow_to_approve</bpmn:incoming>
+      <bpmn:outgoing>Flow_approve_to_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_to_approve" name="Approve" sourceRef="ExclusiveGateway" targetRef="ApproveTask" apex:sequence="10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$routing_decision = 'APPROVE'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="RejectTask" name="Reject Task">
+      <bpmn:incoming>Flow_to_reject</bpmn:incoming>
+      <bpmn:outgoing>Flow_reject_to_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_to_reject" name="Reject" sourceRef="ExclusiveGateway" targetRef="RejectTask" apex:sequence="20">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="plsqlExpression">:F4A$routing_decision = 'REJECT'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="DefaultTask" name="Default Task">
+      <bpmn:incoming>Flow_to_default</bpmn:incoming>
+      <bpmn:outgoing>Flow_default_to_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_to_default" name="Default" sourceRef="ExclusiveGateway" targetRef="DefaultTask" apex:sequence="30" />
+    <bpmn:endEvent id="End" name="End">
+      <bpmn:incoming>Flow_approve_to_end</bpmn:incoming>
+      <bpmn:incoming>Flow_reject_to_end</bpmn:incoming>
+      <bpmn:incoming>Flow_default_to_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_approve_to_end" sourceRef="ApproveTask" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_reject_to_end" sourceRef="RejectTask" targetRef="End" />
+    <bpmn:sequenceFlow id="Flow_default_to_end" sourceRef="DefaultTask" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_90c">
+    <bpmndi:BPMNPlane id="BPMNPlane_90c" bpmnElement="Process_90c_ai_gateways">
+      <bpmndi:BPMNEdge id="Flow_start_to_variables_di" bpmnElement="Flow_start_to_variables">
+        <di:waypoint x="188" y="260" />
+        <di:waypoint x="250" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_variables_to_inclusive_gw_di" bpmnElement="Flow_variables_to_inclusive_gw">
+        <di:waypoint x="350" y="260" />
+        <di:waypoint x="420" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_admin_task_di" bpmnElement="Flow_to_admin_task">
+        <di:waypoint x="445" y="235" />
+        <di:waypoint x="445" y="180" />
+        <di:waypoint x="550" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_priority_task_di" bpmnElement="Flow_to_priority_task">
+        <di:waypoint x="470" y="260" />
+        <di:waypoint x="550" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_north_task_di" bpmnElement="Flow_to_north_task">
+        <di:waypoint x="445" y="285" />
+        <di:waypoint x="445" y="340" />
+        <di:waypoint x="550" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_admin_to_join_di" bpmnElement="Flow_admin_to_join">
+        <di:waypoint x="650" y="180" />
+        <di:waypoint x="705" y="180" />
+        <di:waypoint x="705" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_priority_to_join_di" bpmnElement="Flow_priority_to_join">
+        <di:waypoint x="650" y="260" />
+        <di:waypoint x="680" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_north_to_join_di" bpmnElement="Flow_north_to_join">
+        <di:waypoint x="650" y="340" />
+        <di:waypoint x="705" y="340" />
+        <di:waypoint x="705" y="285" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_join_to_routing_di" bpmnElement="Flow_join_to_routing">
+        <di:waypoint x="730" y="260" />
+        <di:waypoint x="780" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_routing_to_exclusive_gw_di" bpmnElement="Flow_routing_to_exclusive_gw">
+        <di:waypoint x="880" y="260" />
+        <di:waypoint x="950" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_approve_di" bpmnElement="Flow_to_approve">
+        <di:waypoint x="975" y="235" />
+        <di:waypoint x="975" y="180" />
+        <di:waypoint x="1080" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_reject_di" bpmnElement="Flow_to_reject">
+        <di:waypoint x="1000" y="260" />
+        <di:waypoint x="1080" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_default_di" bpmnElement="Flow_to_default">
+        <di:waypoint x="975" y="285" />
+        <di:waypoint x="975" y="340" />
+        <di:waypoint x="1080" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_approve_to_end_di" bpmnElement="Flow_approve_to_end">
+        <di:waypoint x="1180" y="180" />
+        <di:waypoint x="1220" y="180" />
+        <di:waypoint x="1220" y="242" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_reject_to_end_di" bpmnElement="Flow_reject_to_end">
+        <di:waypoint x="1180" y="260" />
+        <di:waypoint x="1202" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_default_to_end_di" bpmnElement="Flow_default_to_end">
+        <di:waypoint x="1180" y="340" />
+        <di:waypoint x="1220" y="340" />
+        <di:waypoint x="1220" y="278" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_start_di" bpmnElement="Start">
+        <dc:Bounds x="152" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="285" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_setvariables_di" bpmnElement="SetVariables">
+        <dc:Bounds x="250" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_inclusive_di" bpmnElement="InclusiveGateway">
+        <dc:Bounds x="420" y="235" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="405" y="295" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_admintask_di" bpmnElement="AdminTask">
+        <dc:Bounds x="550" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_prioritytask_di" bpmnElement="PriorityTask">
+        <dc:Bounds x="550" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_northtask_di" bpmnElement="NorthTask">
+        <dc:Bounds x="550" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_join_di" bpmnElement="JoinGateway">
+        <dc:Bounds x="680" y="235" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="295" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_setrouting_di" bpmnElement="SetRouting">
+        <dc:Bounds x="780" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_exclusive_di" bpmnElement="ExclusiveGateway" isMarkerVisible="true">
+        <dc:Bounds x="950" y="235" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="932" y="295" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_approvetask_di" bpmnElement="ApproveTask">
+        <dc:Bounds x="1080" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_rejecttask_di" bpmnElement="RejectTask">
+        <dc:Bounds x="1080" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_defaulttask_di" bpmnElement="DefaultTask">
+        <dc:Bounds x="1080" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_end_di" bpmnElement="End">
+        <dc:Bounds x="1202" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1211" y="285" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

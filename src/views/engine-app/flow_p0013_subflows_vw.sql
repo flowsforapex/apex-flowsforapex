@@ -16,3 +16,21 @@ as
        , sbfl.sbfl_apex_task_id
     from flow_subflows sbfl
 with read only;
+
+-- ---------------------------------------------------------------------------
+-- Schema annotations (Oracle 23+ only; skipped on 19c/21c; idempotent - safe to re-run)
+-- ---------------------------------------------------------------------------
+declare
+  l_major pls_integer := dbms_db_version.version;
+begin
+  if l_major >= 23 then
+    execute immediate q'[alter view flow_p0013_subflows_vw annotations
+  ( add app     'Flows for APEX'
+  , add type    'runtime'
+  , add content 'Subflows with timezone-adjusted timestamps for the debug panel in engine app page 13'
+  )]';
+  end if;
+end;
+/
+
+whenever sqlerror exit failure

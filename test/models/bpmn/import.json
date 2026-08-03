@@ -751,10 +751,50 @@
       "file": "A25b - Script Task Exception handling_0.bpmn"
     },
     {
+        "dgrm_name": "A26a - Association to SequenceFlow",
+        "dgrm_short_description": null,
+        "dgrm_description": null,
+        "dgrm_icon": null,
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A26a - Association to SequenceFlow_0.bpmn"
+    },
+    {
       "dgrm_name":"A27a - Variable Expression Errors",
       "dgrm_version":"0",
       "dgrm_status":"draft",
       "dgrm_category":"Testing",
       "file":"A27a - Variable Expression Errors_0.bpmn"
-      }
+    },
+    {
+        "dgrm_name": "A90a - Basic AI Model",
+        "dgrm_short_description": null,
+        "dgrm_description": null,
+        "dgrm_icon": null,
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A90a - Basic AI Model_0.bpmn"
+    },
+    {
+        "dgrm_name": "A90b - Basic AI Model with Variables",
+        "dgrm_short_description": null,
+        "dgrm_description": null,
+        "dgrm_icon": null,
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A90b - Basic AI Model with Variables_0.bpmn"
+    },
+    {
+        "dgrm_name": "A90c - AI Gateway Routing Model",
+        "dgrm_short_description": null,
+        "dgrm_description": null,
+        "dgrm_icon": null,
+        "dgrm_version": "0",
+        "dgrm_status": "draft",
+        "dgrm_category": "Testing",
+        "file": "A90c - AI Gateway Routing Model_0.bpmn"
+    }
 ]

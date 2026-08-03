@@ -11,23 +11,27 @@ as
     l_region_id p_region.static_id%type := p_region.static_id;
     
     l_show_custom_extensions flow_configuration.cfig_value%type;
+    l_monaco_editor_version  flow_configuration.cfig_value%type;
   begin
     apex_plugin_util.debug_region
     (
       p_plugin => p_plugin
     , p_region => p_region
     );
+
+    apex_javascript.add_requirejs;
     
     -- get config value for plugin mode
-    begin
-        select cfig_value
-        into l_show_custom_extensions
-        from flow_configuration
-        where cfig_key = 'modeler_show_custom_extensions';
-    exception
-        when no_data_found then
-            l_show_custom_extensions := 'false';
-    end;
+    l_show_custom_extensions := flow_admin_api.get_config_value(
+      p_config_key    => 'modeler_show_custom_extensions'
+    , p_default_value => 'false'
+    );
+    
+    -- get config value for monaco editor
+    l_monaco_editor_version := flow_admin_api.get_config_value(
+      p_config_key    => 'monaco_editor_version'
+    , p_default_value => null
+    );
 
     apex_javascript.add_onload_code
     (
@@ -61,6 +65,12 @@ as
         (
           p_name      => 'themePluginClass'
         , p_value     => v('THEME_PLUGIN_CLASS')
+        , p_add_comma => true
+        ) ||
+        apex_javascript.add_attribute
+        (
+          p_name      => 'monacoEditorVersion'
+        , p_value     => l_monaco_editor_version
         , p_add_comma => true
         ) ||
         '})'
