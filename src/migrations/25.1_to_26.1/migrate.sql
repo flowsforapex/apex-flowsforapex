@@ -37,7 +37,7 @@ select case
            'no_annotations.sql'
        end as ann_cmd
   from dual;
-^ann_cmd.
+@@^ann_cmd.
 whenever sqlerror exit rollback
 
 @@set_flows_version.sql
