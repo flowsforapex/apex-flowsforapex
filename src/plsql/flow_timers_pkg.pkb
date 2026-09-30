@@ -394,7 +394,7 @@ create or replace package body flow_timers_pkg as
       out_interv_ym := to_yminterval( 'P' || coalesce(l_ym_part, '0Y') );
       out_interv_ds := to_dsinterval( 'P' || coalesce(l_ds_part, '0D') );
 
-      out_start_tstz  := coalesce( in_start_tstz, systimestamp ) + out_interv_ym + out_interv_ds;
+      out_start_tstz  := add_months( coalesce( in_start_tstz, systimestamp ), extract(year from out_interv_ym) * 12 + extract(month from out_interv_ym) ) + out_interv_ds;
     else
       raise e_invalid_duration;
     end if;
@@ -603,7 +603,7 @@ create or replace package body flow_timers_pkg as
                                              );
           l_parsed_duration_ds := to_dsinterval ( nvl ( l_timer_def.oracle_duration_ds , '000 00:00:00') );
           l_parsed_duration_ym := to_yminterval ( nvl ( l_timer_def.oracle_duration_ym, '0-0') );
-          l_parsed_tstz := systimestamp + l_parsed_duration_ym + l_parsed_duration_ds;
+          l_parsed_tstz := add_months( systimestamp, extract(year from l_parsed_duration_ym) * 12 + extract(month from l_parsed_duration_ym) ) + l_parsed_duration_ds;
 
         when flow_constants_pkg.gc_timer_type_oracle_cycle then
           -- oracle cycle timer - all 3 parameters can be substituted with vc2-type proc var
